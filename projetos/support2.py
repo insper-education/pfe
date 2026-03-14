@@ -8,6 +8,7 @@ Data: 4 de Janeiro de 2025
 
 import datetime
 
+from django.db.models import Q
 from django.shortcuts import get_object_or_404
 
 
@@ -24,11 +25,11 @@ from operacional.models import Curso
 from users.models import Alocacao, PFEUser, Alocacao, Associado, Aluno
 
 
-def get_areas_estudantes(alunos):
+def get_areas_estudantes(alunos, areas=None):
     """Retorna dicionário com as áreas de interesse da lista de entrada."""
     usuarios = [aluno.user for aluno in alunos]
 
-    todas_areas = Area.objects.filter(ativa=True)
+    todas_areas = areas if areas is not None else Area.objects.filter(ativa=True)
     areaspfe = {
         area: (AreaDeInteresse.objects.filter(usuario__in=usuarios, area=area), area.descricao)
         for area in todas_areas
@@ -38,11 +39,12 @@ def get_areas_estudantes(alunos):
 
     return areaspfe, outras
 
-def get_areas_propostas(propostas):
+def get_areas_propostas(propostas, areas=None):
     """Retorna dicionário com as áreas de interesse da lista de entrada."""
+    todas_areas = areas if areas is not None else Area.objects.filter(ativa=True)
     areaspfe = {
         area: (AreaDeInteresse.objects.filter(proposta__in=propostas, area=area), area.descricao)
-        for area in Area.objects.filter(ativa=True)
+        for area in todas_areas
     }
 
     outras = AreaDeInteresse.objects.filter(proposta__in=propostas, area__isnull=True)
@@ -61,6 +63,23 @@ def _monta_tabela_areas(areaspfe, campo_origem):
     return tabela
 
 
+def filtra_areas_ativas_por_periodo(ano=None, semestre=None, todas=False):
+    """Filtra áreas ativas considerando período (ano/semestre) e vigência da área."""
+    areas = Area.objects.filter(ativa=True)
+    if todas or ano is None or semestre is None:
+        return areas
+
+    ano = int(ano)
+    semestre = int(semestre)
+    inicio = datetime.date(ano, 1, 1) if semestre == 1 else datetime.date(ano, 7, 1)
+    fim = datetime.date(ano, 6, 30) if semestre == 1 else datetime.date(ano, 12, 31)
+
+    return areas.filter(
+        Q(ativa_de__isnull=True) | Q(ativa_de__lte=fim),
+        Q(ativa_ate__isnull=True) | Q(ativa_ate__gte=inicio),
+    )
+
+
 def contexto_distribuicao_areas(tipo, ano, semestre, todas, areas_ativas, curso="todos", cursos_insper=None):
     """Monta contexto de distribuicao para estudantes, propostas ou projetos."""
     context = {"areas": areas_ativas,}
@@ -71,7 +90,7 @@ def contexto_distribuicao_areas(tipo, ano, semestre, todas, areas_ativas, curso=
 
         usuarios_ids = estudantes.values_list("user_id", flat=True)
         total_preenchido = AreaDeInteresse.objects.filter(usuario_id__in=usuarios_ids).values("usuario_id").distinct().count()
-        areaspfe, outras = get_areas_estudantes(estudantes)
+        areaspfe, outras = get_areas_estudantes(estudantes, areas=areas_ativas)
         context.update({
             "total": estudantes.count(),
             "total_preenchido": total_preenchido,
@@ -85,7 +104,7 @@ def contexto_distribuicao_areas(tipo, ano, semestre, todas, areas_ativas, curso=
         if not todas:
             propostas = propostas.filter(ano=ano, semestre=semestre)
 
-        areaspfe, outras = get_areas_propostas(propostas)
+        areaspfe, outras = get_areas_propostas(propostas, areas=areas_ativas)
         context.update({
             "total": propostas.count(),
             "areaspfe": areaspfe,
@@ -100,7 +119,7 @@ def contexto_distribuicao_areas(tipo, ano, semestre, todas, areas_ativas, curso=
 
         propostas_ids = projetos.values_list("proposta_id", flat=True)
         propostas_projetos = Proposta.objects.filter(id__in=propostas_ids).distinct()
-        areaspfe, outras = get_areas_propostas(propostas_projetos)
+        areaspfe, outras = get_areas_propostas(propostas_projetos, areas=areas_ativas)
 
         context.update({
             "total": propostas_projetos.count(),
@@ -114,13 +133,21 @@ def contexto_distribuicao_areas(tipo, ano, semestre, todas, areas_ativas, curso=
     return context
 
 
-def _atualiza_tabela_areas(tabela_areas, areaspfe, outras, total_preenchido):
+def _atualiza_tabela_areas(tabela_areas, areaspfe, outras, total_preenchido, ano, semestre):
     """Atualiza as colunas de áreas para uma edição específica."""
+    ano = int(ano)
+    semestre = int(semestre)
+
     for area, objs in areaspfe.items():
+        # Checa se é valida em area.ativa_de e area.ativa_ate
+        if ano < area.ativa_de.year or (ano == area.ativa_de.year and (1 if semestre==1 else 9) < area.ativa_de.month) or (area.ativa_ate and (ano > area.ativa_ate.year or (ano == area.ativa_ate.year and (1 if semestre==1 else 9) > area.ativa_de.month))):
+            ativa = False
+        else:
+            ativa = True
         quantidade = objs[0].count() if objs[0] else 0
         percentual = 100 * (quantidade / total_preenchido) if total_preenchido > 0 else 0
         cor = 255 - 180 * (quantidade / total_preenchido) if total_preenchido > 0 else 0
-        tabela_areas[area].append([quantidade, percentual, cor])
+        tabela_areas[area].append([quantidade, percentual, cor, ativa])
 
     outras_txt = ", ".join([o.outras for o in outras if o.outras])
     tabela_areas["outras"].append(outras_txt)
@@ -133,7 +160,7 @@ def contexto_evolucao_areas(tipo, edicoes, curso="todos", cursos_insper=None):
         "PREENCHIDOS": [],
         "outras": [],
     }
-    for area in Area.objects.filter(ativa=True):
+    for area in Area.objects.filter():
         tabela_areas[area] = []
 
     if tipo == "estudantes":
@@ -149,7 +176,7 @@ def contexto_evolucao_areas(tipo, edicoes, curso="todos", cursos_insper=None):
             tabela_areas["PREENCHIDOS"].append(total_preenchido)
 
             areaspfe, outras = get_areas_estudantes(estudantes_as)
-            _atualiza_tabela_areas(tabela_areas, areaspfe, outras, total_preenchido)
+            _atualiza_tabela_areas(tabela_areas, areaspfe, outras, total_preenchido, ano, semestre)
 
         return tabela_areas
 
@@ -166,7 +193,7 @@ def contexto_evolucao_areas(tipo, edicoes, curso="todos", cursos_insper=None):
             tabela_areas["PREENCHIDOS"].append(total_preenchido)
 
             areaspfe, outras = get_areas_propostas(propostas_as)
-            _atualiza_tabela_areas(tabela_areas, areaspfe, outras, total_preenchido)
+            _atualiza_tabela_areas(tabela_areas, areaspfe, outras, total_preenchido, ano, semestre)
 
         return tabela_areas
 
@@ -184,7 +211,7 @@ def contexto_evolucao_areas(tipo, edicoes, curso="todos", cursos_insper=None):
             tabela_areas["PREENCHIDOS"].append(total_preenchido)
 
             areaspfe, outras = get_areas_propostas(propostas_projetos)
-            _atualiza_tabela_areas(tabela_areas, areaspfe, outras, total_preenchido)
+            _atualiza_tabela_areas(tabela_areas, areaspfe, outras, total_preenchido, ano, semestre)
 
         return tabela_areas
 

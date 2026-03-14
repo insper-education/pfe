@@ -115,8 +115,13 @@
               {% else %}
                 <td style="background-color: rgb(255,255,255);">{% lng area.titulo area.titulo_en %}</td>
                 {% for no_anose in valores %}
-                  <td style="text-align: right; background-color: rgb({{no_anose.2|floatformat:"0"}}, {{no_anose.2|floatformat:"0"}}, 255);">{{no_anose.0}}</td>
-                  <td style="text-align: right; background-color: rgb({{no_anose.2|floatformat:"0"}}, {{no_anose.2|floatformat:"0"}}, 255);">{{no_anose.1|floatformat:"0"}}%</td>
+                  {% if not no_anose.3 %} {# Se não for ativa, marca com um X vermelho #}
+                    <td style="text-align: center; background-color: rgb(255,200,200);"></td>
+                    <td style="text-align: right; background-color: rgb(255,200,200);"></td>
+                  {% else %}
+                    <td style="text-align: right; background-color: rgb({{no_anose.2|floatformat:"0"}}, {{no_anose.2|floatformat:"0"}}, 255);">{{no_anose.0}}</td>  
+                    <td style="text-align: right; background-color: rgb({{no_anose.2|floatformat:"0"}}, {{no_anose.2|floatformat:"0"}}, 255);">{{no_anose.1|floatformat:"0"}}%</td>
+                  {% endif %}
                 {% endfor %}
               {% endif %}
             </tr>

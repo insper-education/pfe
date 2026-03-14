@@ -2209,7 +2209,11 @@ class Area(models.Model):
                                     help_text="Descrição da área de interesse em inglês")
 
     ativa = models.BooleanField("Ativa", default=True,
-                                help_text="Se a área de interesse está sendo usada atualmente")
+                                 help_text="Se a área de interesse está ativa")
+    ativa_de = models.DateField("Ativa Desde", null=True, blank=True, default=datetime.date.today,
+                                help_text="Desde quando a área de interesse está ativa")
+    ativa_ate = models.DateField("Ativa Até", null=True, blank=True,
+                                help_text="Até quando a área de interesse está ativa ")
 
     def __str__(self):
         return self.titulo
@@ -2217,6 +2221,7 @@ class Area(models.Model):
     class Meta:
         verbose_name = "Área"
         verbose_name_plural = "Áreas"
+        ordering = ["titulo"]
 
 class AreaDeInteresse(models.Model):
     """Usado para fazer o mapeando da proposta ou da pessoa para área de interesse."""
@@ -2401,7 +2406,7 @@ class Pedido(models.Model):
         ("aprovado", "Aprovado"),
         ("reprovado", "Reprovado"),
     )
-    status = models.CharField(max_length=20, choices=STATUS_PEDIDO, default='pendente')
+    status = models.CharField(max_length=20, choices=STATUS_PEDIDO, default="pendente")
     
     observacoes = models.TextField("Observações", max_length=3000, null=True, blank=True)
     
@@ -2414,7 +2419,7 @@ class Pedido(models.Model):
     class Meta:
         verbose_name = "Pedido de Recurso"
         verbose_name_plural = "Pedidos de Recursos"
-        ordering = ['-data_solicitacao']
+        ordering = ["-data_solicitacao"]
 
     def __str__(self):
         return f"{self.get_tipo_display()} - {self.projeto}"
@@ -2451,10 +2456,10 @@ class Pedido(models.Model):
         
         if self.tipo == "github":
             html += f"<li>Repositório: {d.get('repo_nome', '')}</li>"
-            pub = d.get('repo_publico')
+            pub = d.get("repo_publico")
             if pub:
                 html += f"<li><b>Público:</b> Sim (Justificativa: {d.get('repo_publico_justificativa', 'N/A')})</li>"
-            github_users = d.get('github_users', {})
+            github_users = d.get("github_users", {})
             if github_users:
                 html += f"<li>Membros:<ul>"
                 for k, v in github_users.items():

@@ -37,6 +37,7 @@ from .models import Area, AreaDeInteresse, Banca, Reuniao, ReuniaoParticipante, 
 from .support import simple_upload
 from .support2 import get_areas_propostas, get_areas_estudantes, recupera_envolvidos
 from .support2 import anota_participacao, contexto_distribuicao_areas, contexto_evolucao_areas
+from .support2 import filtra_areas_ativas_por_periodo
 from .support3 import calcula_objetivos, cap_name, media
 from .support3 import divide57, get_notas_alocacao
 from .support3 import get_medias_oa, is_projeto_liberado
@@ -188,13 +189,13 @@ def distribuicao_areas(request, tipo = "estudantes"):
         tipo = tipo_post
         if edicao == "todas":
             todas = True
+            areas_ativas = filtra_areas_ativas_por_periodo(todas=True)
         else:
             ano, semestre = edicao.split('.')
+            areas_ativas = filtra_areas_ativas_por_periodo(ano=ano, semestre=semestre)
 
         if tipo == "estudantes":
             curso = request.POST.get("curso", "todos")
-
-        areas_ativas = Area.objects.filter(ativa=True)
 
         context = contexto_distribuicao_areas(
             tipo=tipo, todas=todas,
