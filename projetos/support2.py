@@ -7,6 +7,7 @@ Data: 4 de Janeiro de 2025
 """
 
 import datetime
+from collections import defaultdict
 
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
@@ -63,6 +64,94 @@ def _monta_tabela_areas(areaspfe, campo_origem):
     return tabela
 
 
+def _monta_tabela_niveis(areaspfe, campo_origem):
+    """Monta tabela de níveis por origem e área.
+
+    Valor armazenado:
+    - 1, 2, 3: nível de interesse definido
+    - 0: área selecionada sem nível definido
+    """
+    tabela_niveis = {}
+    for _area, objs in areaspfe.items():
+        for obj in objs[0]:
+            origem = getattr(obj, campo_origem)
+            origem_id = getattr(origem, "id", None)
+            if origem_id is None:
+                continue
+
+            if origem_id not in tabela_niveis:
+                tabela_niveis[origem_id] = {}
+
+            nivel = obj.nivel_interesse if obj.nivel_interesse in (1, 2, 3) else 0
+            atual = tabela_niveis[origem_id].get(obj.area_id)
+
+            # Se houver conflito, prioriza nível explícito sobre ausência de nível.
+            if atual is None or (atual == 0 and nivel in (1, 2, 3)):
+                tabela_niveis[origem_id][obj.area_id] = nivel
+
+    return tabela_niveis
+
+
+def _monta_dados_barras_area(areas_ativas, area_interesses):
+    """Monta dados agregados para gráfico de barras empilhadas por nível de interesse."""
+    agrupado = {
+        area.id: {
+            "area": area,
+            "descricao": area.descricao,
+            "itens": [],
+            "counts": {0: 0, 1: 0, 2: 0, 3: 0},
+        }
+        for area in areas_ativas
+    }
+
+    for item in area_interesses:
+        bucket = agrupado.get(item.area_id)
+        if not bucket:
+            continue
+        bucket["itens"].append(item)
+
+        nivel = item.nivel_interesse if item.nivel_interesse in (1, 2, 3) else 0
+        bucket["counts"][nivel] += 1
+
+    max_total = 0
+    for bucket in agrupado.values():
+        total = sum(bucket["counts"].values())
+        bucket["total"] = total
+        max_total = max(max_total, total)
+
+    niveis = [
+        {"key": 0, "label": "Sem nível", "color": "#111111"},
+        {"key": 1, "label": "Muito Interesse", "color": "#0f766e"},
+        {"key": 2, "label": "Interesse Médio", "color": "#d97706"},
+        {"key": 3, "label": "Interesse Complementar", "color": "#2563eb"},
+    ]
+
+    dados = []
+    for area in areas_ativas:
+        bucket = agrupado[area.id]
+        segmentos = []
+        for nivel in niveis:
+            quantidade = bucket["counts"][nivel["key"]]
+            largura = (100.0 * quantidade / max_total) if max_total > 0 else 0
+            segmentos.append({
+                "key": nivel["key"],
+                "label": nivel["label"],
+                "color": nivel["color"],
+                "count": quantidade,
+                "width": largura,
+            })
+
+        dados.append({
+            "area": bucket["area"],
+            "descricao": bucket["descricao"],
+            "itens": bucket["itens"],
+            "total": bucket["total"],
+            "segmentos": segmentos,
+        })
+
+    return dados
+
+
 def filtra_areas_ativas_por_periodo(ano=None, semestre=None, todas=False):
     """Filtra áreas ativas considerando período (ano/semestre) e vigência da área."""
     areas = Area.objects.filter(ativa=True)
@@ -91,12 +180,15 @@ def contexto_distribuicao_areas(tipo, ano, semestre, todas, areas_ativas, curso=
         usuarios_ids = estudantes.values_list("user_id", flat=True)
         total_preenchido = AreaDeInteresse.objects.filter(usuario_id__in=usuarios_ids).values("usuario_id").distinct().count()
         areaspfe, outras = get_areas_estudantes(estudantes, areas=areas_ativas)
+        area_interesses = AreaDeInteresse.objects.filter(usuario_id__in=usuarios_ids, area__in=areas_ativas).select_related("area", "usuario", "usuario__aluno")
         context.update({
             "total": estudantes.count(),
             "total_preenchido": total_preenchido,
             "areaspfe": areaspfe,
             "outras": outras,
             "tabela": _monta_tabela_areas(areaspfe, "usuario"),
+            "tabela_niveis": _monta_tabela_niveis(areaspfe, "usuario"),
+            "area_chart_data": _monta_dados_barras_area(areas_ativas, area_interesses),
         })
 
     elif tipo == "propostas":
@@ -105,11 +197,15 @@ def contexto_distribuicao_areas(tipo, ano, semestre, todas, areas_ativas, curso=
             propostas = propostas.filter(ano=ano, semestre=semestre)
 
         areaspfe, outras = get_areas_propostas(propostas, areas=areas_ativas)
+        propostas_ids = propostas.values_list("id", flat=True)
+        area_interesses = AreaDeInteresse.objects.filter(proposta_id__in=propostas_ids, area__in=areas_ativas).select_related("area", "proposta")
         context.update({
             "total": propostas.count(),
             "areaspfe": areaspfe,
             "outras": outras,
             "tabela": _monta_tabela_areas(areaspfe, "proposta"),
+            "tabela_niveis": _monta_tabela_niveis(areaspfe, "proposta"),
+            "area_chart_data": _monta_dados_barras_area(areas_ativas, area_interesses),
         })
         
     elif tipo == "projetos":
@@ -120,12 +216,15 @@ def contexto_distribuicao_areas(tipo, ano, semestre, todas, areas_ativas, curso=
         propostas_ids = projetos.values_list("proposta_id", flat=True)
         propostas_projetos = Proposta.objects.filter(id__in=propostas_ids).distinct()
         areaspfe, outras = get_areas_propostas(propostas_projetos, areas=areas_ativas)
+        area_interesses = AreaDeInteresse.objects.filter(proposta_id__in=propostas_ids, area__in=areas_ativas).select_related("area", "proposta")
 
         context.update({
             "total": propostas_projetos.count(),
             "areaspfe": areaspfe,
             "outras": outras,
             "tabela": _monta_tabela_areas(areaspfe, "proposta"),
+            "tabela_niveis": _monta_tabela_niveis(areaspfe, "proposta"),
+            "area_chart_data": _monta_dados_barras_area(areas_ativas, area_interesses),
         })
     else:
         raise ValueError("Tipo inválido para distribuição de áreas")
