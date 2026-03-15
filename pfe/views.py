@@ -116,38 +116,9 @@ def custom_400(request, exception):
     #t.render(Context({"exception_value": value,})
     return HttpResponse(mensagem)
 
-
-from projetos.models import Area, AreaDeInteresse
-
 @login_required
 @permission_required("users.view_administrador", raise_exception=True)
 def migracao(request):
     """temporário."""
     message = "Nada Feito"
-
-    areas = Area.objects.all()
-    for area in areas:
-        if area.ativa:
-            area.ativa_de = "2018-08-01"
-            if area.id == 26 or area.id == 27:
-                area.ativa_de = "2021-01-01"
-            area.save()
-        else:
-            # Deleteramos as áreas inativas para evitar confusão, já que não estão mais em uso
-            area.delete()
-
-    areadeinteresse = AreaDeInteresse.objects.filter(proposta__isnull=False)
-    areadeinteresse = areadeinteresse.filter(proposta__ano__lte=2021, area__id__in=[26, 27])
-    for adi in areadeinteresse:
-        adi.delete()
-
-    #Criando areas
-    # Cibersegurança, Cybersecurity
-    # Engenharia de Software, Software Engineering
-    # Logística e Supply Chain, Logistics and Supply Chain
-    Area.objects.create(titulo="Cibersegurança", titulo_en="Cybersecurity", ativa=True, ativa_de="2026-08-01", descricao="Exemplos: segurança de redes e sistemas; análise de vulnerabilidades; testes de invasão (penetration testing); criptografia aplicada; segurança em nuvem; segurança de dispositivos e hardware. Conhecimentos: redes de computadores; sistemas operacionais; criptografia; protocolos de comunicação; segurança de software; análise de malware.", descricao_en="Examples: network and system security; vulnerability analysis; penetration testing; applied cryptography; cloud security; device and hardware security. Knowledge: computer networks; operating systems; cryptography; communication protocols; software security; malware analysis.")
-    Area.objects.create(titulo="Engenharia de Software", titulo_en="Software Engineering", ativa=True, ativa_de="2026-08-01", descricao="Exemplos: desenvolvimento de aplicações web e mobile; desenvolvimento backend e frontend; criação de APIs e microsserviços; automação de testes; integração contínua e entrega contínua (CI/CD). Conhecimentos: desenvolvimento avançado de software; arquitetura de software; bancos de dados; engenharia de requisitos; testes de software; versionamento e DevOps.", descricao_en="Examples: web and mobile application development; backend and frontend development; API and microservices creation; test automation; continuous integration and delivery (CI/CD). Knowledge: advanced software development; software architecture; databases; requirements engineering; software testing; versioning and DevOps.")
-    Area.objects.create(titulo="Logística e Supply Chain", titulo_en="Logistics and Supply Chain", ativa=True, ativa_de="2026-08-01", descricao="Exemplos: otimização de rotas e transporte; planejamento de demanda e estoques; logística urbana; automação de centros de distribuição; análise de desempenho de cadeias de suprimentos. Conhecimentos: pesquisa operacional; otimização; modelagem matemática; análise de dados; sistemas de informação logísticos; gestão de operações.", descricao_en="Examples: route optimization and transportation; demand and inventory planning; urban logistics; automation of distribution centers; performance analysis of supply chains. Knowledge: operational research; optimization; mathematical modeling; data analysis; logistical information systems; operations management.")
-
-    message = "Migrando Áreas..."
     return HttpResponse(message)
