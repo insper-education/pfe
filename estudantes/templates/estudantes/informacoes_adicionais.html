@@ -47,7 +47,14 @@
       </div>
       <span style="display: inline-block; margin-left: 4px; margin-bottom: 1px;">
         {% lng "Selecionar suas áreas de interesse" "Select your areas of interest" %}:</span><br>
-      {% include "areas.html" with areas_de_interesse_selecionadas=estudante.user.areadeinteresse_set.all com_borda=True %}
+      {% if form.non_field_errors %}
+        <div class="alert alert-danger mt-2 mb-2">
+          {% for erro in form.non_field_errors %}
+            <div>{{ erro }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+      {% include "areas_com_interesses.html" with areas_de_interesse_selecionadas=estudante.user.areadeinteresse_set.all com_borda=True %}
       
       {% include "estudantes/includes/trab_ativ_famil.html" %}
 

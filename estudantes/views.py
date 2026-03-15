@@ -776,29 +776,32 @@ def informacoes_adicionais(request):
 
             form = EstudanteInformacoesForm(request.POST)
             if form.is_valid():
-                cria_area_estudante(request, request.user.aluno)
+                areas_ok, areas_erro = cria_area_estudante(request, request.user.aluno)
+                if not areas_ok:
+                    form.add_error(None, areas_erro)
+                else:
 
-                cd = form.cleaned_data
-                # Campos em Aluno
-                request.user.aluno.trabalhou = cd.get("trabalhou")
-                request.user.aluno.atividades = cd.get("atividades")
-                request.user.aluno.familia = cd.get("familia")
-                request.user.aluno.trabalhara = cd.get("trabalhara")
-                request.user.aluno.recrutadores = bool(cd.get("recrutadores"))
+                    cd = form.cleaned_data
+                    # Campos em Aluno
+                    request.user.aluno.trabalhou = cd.get("trabalhou")
+                    request.user.aluno.atividades = cd.get("atividades")
+                    request.user.aluno.familia = cd.get("familia")
+                    request.user.aluno.trabalhara = cd.get("trabalhara")
+                    request.user.aluno.recrutadores = bool(cd.get("recrutadores"))
 
-                # Campos em PFEUser
-                request.user.linkedin = cd.get("linkedin")
-                request.user.celular = cd.get("celular")
-                request.user.conta_github = cd.get("conta_github")
+                    # Campos em PFEUser
+                    request.user.linkedin = cd.get("linkedin")
+                    request.user.celular = cd.get("celular")
+                    request.user.conta_github = cd.get("conta_github")
 
-                request.user.save()
-                request.user.aluno.save()
+                    request.user.save()
+                    request.user.aluno.save()
 
-                context = {
-                    "area_principal": True,
-                    "mensagem": {"pt": "Dados atualizados.", "en": "Data updated."},
-                }
-                return render(request, "generic_ml.html", context=context)
+                    context = {
+                        "area_principal": True,
+                        "mensagem": {"pt": "Dados atualizados.", "en": "Data updated."},
+                    }
+                    return render(request, "generic_ml.html", context=context)
             else:
                 # Cai para o render abaixo com erros no form
                 pass

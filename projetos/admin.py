@@ -283,8 +283,7 @@ class AcompanhamentoAdmin(admin.ModelAdmin):
 class AreaDeInteresseAdmin(admin.ModelAdmin):
     """Area De Interesse."""
 
-    list_display = ("area", "usuario", "proposta",)
-    #list_filter = ("area", "usuario__aluno__ano", "usuario__aluno__semestre",)
+    list_display = ("area", "nivel_interesse", "usuario", "proposta",)
     list_filter = ("area", AnoSemestreFilter)
     search_fields = ["usuario__username", "proposta__organizacao__sigla", "proposta__titulo",]
 

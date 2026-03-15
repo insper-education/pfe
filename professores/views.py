@@ -111,7 +111,7 @@ def avaliacoes_pares(request, prof_id=None, proj_id=None):
             projetos = projetos.filter(orientador=request.user.professor)
 
         edicao = request.POST.get("edicao")
-        print("Edição selecionada:", edicao)
+
         if edicao and edicao != "todas":
             ano, semestre = edicao.split('.')
             projetos = projetos.filter(ano=ano, semestre=semestre)

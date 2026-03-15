@@ -2240,6 +2240,14 @@ class AreaDeInteresse(models.Model):
     area = models.ForeignKey(Area, null=True, blank=True, on_delete=models.SET_NULL,
                              help_text="área de interesse")
 
+    TIPO_INTERESSE = ( # não mudar a ordem dos números
+        (1, "Muito Interesse"),
+        (2, "Interesse Médio"),
+        (3, "Interesse Complementar"),
+    )
+    nivel_interesse = models.PositiveSmallIntegerField("Nível de Interesse", null=True, blank=True, choices=TIPO_INTERESSE,
+                                                       help_text="Nível de interesse da área (1-3) sendo 1 o mais interesse e 3 o menos interesse")
+
     class Meta:
         verbose_name = "Área de Interesse"
         verbose_name_plural = "Áreas de Interesse"

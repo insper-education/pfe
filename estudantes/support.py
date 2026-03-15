@@ -30,27 +30,74 @@ logger = logging.getLogger("django")
 
 def cria_area_estudante(request, estudante):
     """Cria um objeto Areas e preenche ele."""
-    check_values = request.POST.getlist("selection")
+    prioridades = []
+    usados = set()
+    campos_prioridade = [f"area_prioridade_{nivel}" for nivel in (1, 2, 3)]
+    usa_formato_prioridade = any(campo in request.POST for campo in campos_prioridade)
 
-    todas_areas = Area.objects.filter(ativa=True)
-    for area in todas_areas:
-        if area.titulo in check_values:
-            if not AreaDeInteresse.objects.filter(area=area, usuario=estudante.user).exists():
-                area = AreaDeInteresse.objects.create(usuario=estudante.user, area=area)
-                area.save()
-        else:
-            if AreaDeInteresse.objects.filter(area=area, usuario=estudante.user).exists():
-                AreaDeInteresse.objects.get(area=area, usuario=estudante.user).delete()
+    if usa_formato_prioridade:
+        # Novo formato: três seleções ranqueadas obrigatórias.
+        for nivel in (1, 2, 3):
+            area_id = request.POST.get(f"area_prioridade_{nivel}", "").strip()
+            if not area_id:
+                return False, "Selecione as 3 áreas de interesse (uma por prioridade)."
+            if not area_id.isdigit():
+                return False, "Valor inválido para área de interesse."
+
+            area_id_int = int(area_id)
+            if area_id_int in usados:
+                return False, "As 3 prioridades devem ter áreas diferentes."
+
+            area = Area.objects.filter(id=area_id_int, ativa=True).first()
+            if not area:
+                return False, "Uma das áreas selecionadas não está mais ativa."
+
+            prioridades.append((area, nivel))
+            usados.add(area_id_int)
+
+    else:
+        # Compatibilidade com formato antigo de checkboxes.
+        check_values = request.POST.getlist("areas_de_interesse")
+        check_values_unicos = []
+        for titulo in check_values:
+            if titulo not in check_values_unicos:
+                check_values_unicos.append(titulo)
+
+        if len(check_values_unicos) != 3:
+            return False, "Selecione exatamente 3 áreas de interesse."
+
+        nivel = 1
+        for titulo in check_values_unicos:
+            area = Area.objects.filter(ativa=True, titulo=titulo).first()
+            if not area:
+                return False, "Uma das áreas selecionadas não está mais ativa."
+            prioridades.append((area, nivel))
+            nivel += 1
+
+    if len(prioridades) != 3:
+        return False, "Selecione exatamente 3 áreas de interesse."
+
+    ids_escolhidos = [area.id for area, _ in prioridades]
+
+    # Remove áreas antigas que não foram selecionadas.
+    AreaDeInteresse.objects.filter(usuario=estudante.user).exclude(area=None).exclude(area_id__in=ids_escolhidos).delete()
+
+    for area, nivel in prioridades:
+        area_interesse, _ = AreaDeInteresse.objects.get_or_create(usuario=estudante.user, area=area)
+        if area_interesse.nivel_interesse != nivel:
+            area_interesse.nivel_interesse = nivel
+            area_interesse.save(update_fields=["nivel_interesse"])
 
     outras = request.POST.get("outras", "").strip()
     if outras != "":
         outra, _ = AreaDeInteresse.objects.get_or_create(area=None, usuario=estudante.user)
-        outra.ativa = True
         outra.outras = request.POST.get("outras", "")
         outra.save()
     else:
         if AreaDeInteresse.objects.filter(area=None, usuario=estudante.user).exists():
             AreaDeInteresse.objects.get(area=None, usuario=estudante.user).delete()
+
+    return True, None
 
 
 def check_alocacao_semanal(alocacao, ano, semestre, PRAZO):
