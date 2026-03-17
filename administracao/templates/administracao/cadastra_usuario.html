@@ -331,7 +331,7 @@
                 <option value="{{organizacao.id}}" {% if organizacao_selecionada.id == organizacao.id %}selected="selected"{% endif %}>{{organizacao.nome}} ({{organizacao.sigla}})</option>
               {% endfor %}
             </select>
-            <a class="btn btn-light btn-sm" href="{% url 'cadastrar_organizacao' %}" title="{% lng 'Cadastrar organização' 'Register organization' %}">&#10133;</a>
+            <a class="btn btn-light btn-sm" href="{% url 'cadastrar_organizacao' %}" title="Cadastrar organização">&#10133;</a>
           </div>
         </div>
 
