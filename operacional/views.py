@@ -33,7 +33,7 @@ from documentos.models import TipoDocumento
 
 from projetos.models import Aviso, Certificado, Evento, Configuracao, Pedido
 from projetos.models import Projeto, Banca, Conexao
-from projetos.messages import email
+from projetos.messages import email, htmlizar
 from projetos.tipos import TIPO_EVENTO
 from projetos.support import get_upload_path, simple_upload
 from projetos.support5 import envia_mensagens_avisos
@@ -486,7 +486,12 @@ def gerir_pedidos(request):
             &nbsp;&nbsp;&nbsp;&nbsp;Seu pedido foi <b>{pedido.status}</b>.<br><br>
         """
         if resposta:
-            email_message += f"&nbsp;&nbsp;&nbsp;&nbsp;Resposta:<br><div style='margin-left: 20px;'>{resposta}</div><br><br>"
+            resposta_html = htmlizar(resposta)
+            email_message += (
+                "&nbsp;&nbsp;&nbsp;&nbsp;Resposta:<br>"
+                f"<div style='margin-left: 20px; padding: 8px 10px; border-left: 3px solid #dbe2ea; "
+                f"background-color: #f8fafc; border-radius: 4px; color: #1f2937;'>{resposta_html}</div><br><br>"
+            )
         email_message += f"""
             &nbsp;&nbsp;&nbsp;&nbsp;Tipo: {pedido.tipo.capitalize()}<br>
             &nbsp;&nbsp;&nbsp;&nbsp;Projeto: {pedido.projeto.proposta.titulo}<br>
@@ -497,7 +502,7 @@ def gerir_pedidos(request):
             email_message += f"&bull; {alocacao.aluno.user.get_full_name()} &lt;{alocacao.aluno.user.email}&gt;<br>"
         email_message += f"""
             </div><br>
-            &nbsp;&nbsp;&nbsp;&nbsp;Solicitante: {request.user.get_full_name()} &lt;{request.user.email}&gt;<br><br>
+            &nbsp;&nbsp;&nbsp;&nbsp;Responsável: {request.user.get_full_name()} &lt;{request.user.email}&gt;<br><br>
             &nbsp;&nbsp;&nbsp;&nbsp;Detalhes do pedido:<br>
             <div style="margin-left: 20px;">
             {pedido.get_detalhes_completos()}

@@ -42,11 +42,16 @@ def render_message(template, context, urlize=True):
     return message
 
 def htmlizar(text):
-    """Coloca <br> nas quebras de linha e manter espaços."""
-    text = text.replace("\n", "<br>\n")
-    text = text.replace("  ", "&nbsp; ")
-    #text = urlize(text, nofollow=True) #Como algumas mensagens estão com links, o urlize bagunça o texto
+    """Converte texto simples para HTML preservando quebras e espaçamento."""
+    if text is None:
+        return ""
 
+    text = str(text)
+    text = text.replace("\r\n", "\n").replace("\r", "\n")
+    text = html.escape(text)
+    text = text.replace("\n", "<br>\n")
+    while "  " in text:
+        text = text.replace("  ", "&nbsp; ")
     return text
 
 @shared_task
