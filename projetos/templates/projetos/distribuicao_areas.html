@@ -47,6 +47,7 @@
       overflow: hidden;
       display: flex;
       border: 1px solid #e2e8f0;
+      animation: revealTrack 0.8s ease-out both;
     }
 
     .seg {
@@ -57,6 +58,21 @@
     .seg-1 { background: #0f766e; }
     .seg-2 { background: #d97706; }
     .seg-3 { background: #2563eb; }
+
+    @keyframes revealTrack {
+      from {
+        clip-path: inset(0 100% 0 0);
+      }
+      to {
+        clip-path: inset(0 0 0 0);
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .area-track {
+        animation: none;
+      }
+    }
 
     .area-total {
       text-align: right;
