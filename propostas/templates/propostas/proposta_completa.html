@@ -414,7 +414,7 @@
               {% for estudante in sem_opcao %}
                 <tr class="font-weight-bold" style="background-color:rgb(255, 148, 255);">
                   <td><a href="{% url 'estudante_detail' estudante.id %}">{{estudante.user.get_full_name}}</a></td>
-                  <td>{{estudante.curso2}}</td>
+                  <td>{% lng estudante.curso2.nome estudante.curso2.nome_en %}</td>
                   <td class="text-center" data-order="0">
                     {% lng "SEM" "WITHOUT" %}
                   </td>
