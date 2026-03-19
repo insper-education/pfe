@@ -111,9 +111,16 @@ def send_mail_task(subject, message, from_email, recipient_list, **kwargs):
     auth_user = kwargs.pop("auth_user", None)
 
     subject = str(subject or "")
+    message = str(message or "")
+    from_email = str(from_email or "")
+    html_message = str(html_message) if html_message is not None else None
 
     # Preserva o HTML original do corpo mesmo quando html_message nao e enviado explicitamente.
     html_content = html_message if html_message is not None else message
+
+    if calendar_invite is not None and not isinstance(calendar_invite, dict):
+        logger.warning("calendar_invite invalido ignorado (tipo=%s)", type(calendar_invite).__name__)
+        calendar_invite = None
 
     recipients = _coerce_addresses(recipient_list)
     valid_recipients, invalid_recipients = _split_valid_addresses(recipients)
@@ -156,7 +163,6 @@ def send_mail_task(subject, message, from_email, recipient_list, **kwargs):
         )
 
         if html_content:
-            # Outlook tende a respeitar melhor quando o corpo principal ja e text/html.
             email_message.content_subtype = "html"
 
         if calendar_invite:
@@ -166,10 +172,14 @@ def send_mail_task(subject, message, from_email, recipient_list, **kwargs):
             email_message.attach(filename, content, f"text/calendar; method={method}; charset=UTF-8")
 
         sent_count = email_message.send(fail_silently=fail_silently)
+        failed_items = []
+        if fail_silently and not sent_count:
+            failed_items = [{"reason": "silent_send_failure", "error": "email backend retornou 0 sem excecao"}]
+            logger.warning("Envio sem excecao, mas com retorno 0. subject=%s", subject)
 
         return {
             "sent": sent_count,
-            "failed": [],
+            "failed": failed_items,
             "invalid": invalid_recipients,
             "invalid_reply_to": invalid_reply_to,
         }
@@ -184,11 +194,17 @@ def send_mail_task(subject, message, from_email, recipient_list, **kwargs):
                 "invalid_reply_to": invalid_reply_to,
             }
         raise
+    finally:
+        try:
+            connection.close()
+        except Exception:
+            logger.warning("Falha ao fechar conexao de e-mail. subject=%s", subject)
 
 def email(subject, recipient_list, message, aviso_automatica=True, delay_seconds=0, calendar_invite=None, reply_to=None):
     """Envia e-mail automaticamente (ou com atraso)."""
     email_from = settings.EMAIL_USER + " <" + settings.EMAIL_HOST_USER + ">"
     auth_user = settings.EMAIL_HOST_USER
+    message = str(message or "")
 
     if aviso_automatica:
         configuracao = get_object_or_404(Configuracao)
