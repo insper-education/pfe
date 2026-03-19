@@ -9,9 +9,12 @@ Data: 18 de Outubro de 2019
 from celery import shared_task
 #from datetime import datetime, timedelta
 import logging
+from email.utils import parseaddr
 
 from django.conf import settings
 from django.core.mail import EmailMultiAlternatives, get_connection
+from django.core.exceptions import ValidationError
+from django.core.validators import validate_email
 from django.shortcuts import get_object_or_404
 from django.template import Context, Template
 from django.utils import html
@@ -54,6 +57,51 @@ def htmlizar(text):
         text = text.replace("  ", "&nbsp; ")
     return text
 
+
+def _coerce_addresses(value):
+    """Normaliza entradas de e-mail para lista de strings."""
+    if value is None:
+        return []
+
+    if isinstance(value, (list, tuple, set)):
+        raw_items = list(value)
+    else:
+        raw_items = [value]
+
+    addresses = []
+    for item in raw_items:
+        if item is None:
+            continue
+
+        text = str(item).strip()
+        if not text:
+            continue
+
+        for part in text.replace(";", ",").split(","):
+            part = part.strip()
+            if part:
+                addresses.append(part)
+
+    return addresses
+
+
+def _split_valid_addresses(addresses):
+    """Separa enderecos validos dos invalidos."""
+    valid = []
+    invalid = []
+
+    for address in addresses:
+        _, parsed_email = parseaddr(address)
+        candidate = (parsed_email or address or "").strip()
+
+        try:
+            validate_email(candidate)
+            valid.append(candidate)
+        except ValidationError:
+            invalid.append(address)
+
+    return valid, invalid
+
 @shared_task
 def send_mail_task(subject, message, from_email, recipient_list, **kwargs):
     calendar_invite = kwargs.pop("calendar_invite", None)
@@ -63,30 +111,78 @@ def send_mail_task(subject, message, from_email, recipient_list, **kwargs):
     fail_silently = kwargs.pop("fail_silently", True)
     auth_user = kwargs.pop("auth_user", None)
 
-    if auth_user:
-        connection = get_connection(username=auth_user, password=settings.EMAIL_HOST_PASSWORD)
-    else:
-        connection = get_connection()
+    subject = str(subject or "")
+    message = str(message or "")
+    html_message = str(html_message or "") if html_message is not None else None
 
-    email_message = EmailMultiAlternatives(
-        subject=subject,
-        body=strip_tags(message),
-        from_email=from_email,
-        to=recipient_list,
-        reply_to=reply_to,
-        connection=connection,
-    )
+    recipients = _coerce_addresses(recipient_list)
+    valid_recipients, invalid_recipients = _split_valid_addresses(recipients)
+    if invalid_recipients:
+        logger.warning("Destinatarios invalidos ignorados: %s", invalid_recipients)
 
-    if html_message:
-        email_message.attach_alternative(html_message, "text/html")
+    if not valid_recipients:
+        logger.error("Nenhum destinatario valido para envio. subject=%s", subject)
+        return {"sent": 0, "failed": [], "invalid": invalid_recipients}
 
-    if calendar_invite:
-        method = calendar_invite.get("method", "REQUEST")
-        content = calendar_invite.get("content", "")
-        filename = calendar_invite.get("filename", "invite.ics")
-        email_message.attach(filename, content, f"text/calendar; method={method}; charset=UTF-8")
+    normalized_reply_to = _coerce_addresses(reply_to)
+    valid_reply_to, invalid_reply_to = _split_valid_addresses(normalized_reply_to)
+    if invalid_reply_to:
+        logger.warning("Reply-To invalido ignorado: %s", invalid_reply_to)
 
-    email_message.send(fail_silently=fail_silently)
+    try:
+        if auth_user:
+            connection = get_connection(username=auth_user, password=settings.EMAIL_HOST_PASSWORD)
+        else:
+            connection = get_connection()
+    except Exception as e:
+        logger.exception("Falha ao criar conexao de e-mail. subject=%s, error=%s", subject, str(e))
+        if fail_silently:
+            return {
+                "sent": 0,
+                "failed": [{"reason": "connection_error", "error": str(e)}],
+                "invalid": invalid_recipients,
+                "invalid_reply_to": invalid_reply_to,
+            }
+        raise
+
+    try:
+        email_message = EmailMultiAlternatives(
+            subject=subject,
+            body=strip_tags(html_message or message),
+            from_email=from_email,
+            to=valid_recipients,
+            reply_to=valid_reply_to or None,
+            connection=connection,
+        )
+
+        if html_message:
+            email_message.attach_alternative(html_message, "text/html")
+
+        if calendar_invite:
+            method = calendar_invite.get("method", "REQUEST")
+            content = calendar_invite.get("content", "")
+            filename = calendar_invite.get("filename", "invite.ics")
+            email_message.attach(filename, content, f"text/calendar; method={method}; charset=UTF-8")
+
+        sent_count = email_message.send(fail_silently=fail_silently)
+
+        return {
+            "sent": sent_count,
+            "failed": [],
+            "invalid": invalid_recipients,
+            "invalid_reply_to": invalid_reply_to,
+        }
+
+    except Exception as e:
+        logger.exception("Falha no envio de e-mail. subject=%s, error=%s", subject, str(e))
+        if fail_silently:
+            return {
+                "sent": 0,
+                "failed": [{"reason": "send_error", "error": str(e)}],
+                "invalid": invalid_recipients,
+                "invalid_reply_to": invalid_reply_to,
+            }
+        raise
 
 def email(subject, recipient_list, message, aviso_automatica=True, delay_seconds=0, calendar_invite=None, reply_to=None):
     """Envia e-mail automaticamente (ou com atraso)."""
@@ -99,8 +195,8 @@ def email(subject, recipient_list, message, aviso_automatica=True, delay_seconds
         message += configuracao.msg_email_automatico
         message += "</small>"
 
-    # Removing "\\r\\n' from header 'Subject' to avoid breaking the email
-    subject = subject.replace('\r', '').replace('\n', '')
+    # Removing "\\r\\n" from header "Subject" to avoid breaking the email
+    subject = str(subject or "").replace("\r", "").replace("\n", "")
     
     try:
         if delay_seconds == 0:
