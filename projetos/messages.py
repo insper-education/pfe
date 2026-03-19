@@ -51,7 +51,6 @@ def htmlizar(text):
 
     text = str(text)
     text = text.replace("\r\n", "\n").replace("\r", "\n")
-    text = html.escape(text)
     text = text.replace("\n", "<br>\n")
     while "  " in text:
         text = text.replace("  ", "&nbsp; ")
