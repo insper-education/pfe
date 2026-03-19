@@ -152,7 +152,7 @@ def send_mail_task(subject, message, from_email, recipient_list, **kwargs):
     try:
         email_message = EmailMultiAlternatives(
             subject=subject,
-            body=plain_content,
+            body=html_content or plain_content,
             from_email=from_email,
             to=valid_recipients,
             reply_to=valid_reply_to or None,
@@ -160,7 +160,8 @@ def send_mail_task(subject, message, from_email, recipient_list, **kwargs):
         )
 
         if html_content:
-            email_message.attach_alternative(html_content, "text/html")
+            # Outlook tende a respeitar melhor quando o corpo principal ja e text/html.
+            email_message.content_subtype = "html"
 
         if calendar_invite:
             method = calendar_invite.get("method", "REQUEST")
