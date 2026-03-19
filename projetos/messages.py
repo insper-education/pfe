@@ -112,12 +112,9 @@ def send_mail_task(subject, message, from_email, recipient_list, **kwargs):
     auth_user = kwargs.pop("auth_user", None)
 
     subject = str(subject or "")
-    message = str(message or "")
-    html_message = str(html_message) if html_message is not None else None
 
     # Preserva o HTML original do corpo mesmo quando html_message nao e enviado explicitamente.
     html_content = html_message if html_message is not None else message
-    plain_content = strip_tags(message)
 
     recipients = _coerce_addresses(recipient_list)
     valid_recipients, invalid_recipients = _split_valid_addresses(recipients)
@@ -152,7 +149,7 @@ def send_mail_task(subject, message, from_email, recipient_list, **kwargs):
     try:
         email_message = EmailMultiAlternatives(
             subject=subject,
-            body=html_content or plain_content,
+            body=html_content,
             from_email=from_email,
             to=valid_recipients,
             reply_to=valid_reply_to or None,
