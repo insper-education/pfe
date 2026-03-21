@@ -747,7 +747,7 @@ def mensagem_edicao_banca(banca, atualizada=False, excluida=False, enviar=False)
     if excluida:
         subject += " - Cancelada"
     else:
-        subject += " - Reagendada" if atualizada else "Agendada"
+        subject += " - Atualizada" if atualizada else "Agendada"
 
     projeto = banca.get_projeto()
     if banca.alocacao:
