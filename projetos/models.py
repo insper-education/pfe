@@ -2410,15 +2410,17 @@ class Pedido(models.Model):
     dados = models.TextField("Dados", default="{}", help_text="Detalhes do pedido em formato JSON")
     
     STATUS_PEDIDO = (
-        ("pendente", "Pendente"),
-        ("aprovado", "Aprovado"),
-        ("reprovado", "Reprovado"),
+        ("pendente", {"pt": "Pendente", "en": "Pending"}),
+        ("aprovado", {"pt": "Aprovado", "en": "Approved"}),
+        ("reprovado", {"pt": "Reprovado", "en": "Rejected"}),
     )
     status = models.CharField(max_length=20, choices=STATUS_PEDIDO, default="pendente")
     
     observacoes = models.TextField("Observações", max_length=3000, null=True, blank=True)
     
     resposta = models.TextField("Resposta da Coordenação/Equipe", max_length=3000, null=True, blank=True)
+    historico_respostas = models.TextField("Histórico de Respostas", max_length=5000, null=True, blank=True,
+                                           help_text="Registro de todas as respostas e interações relacionadas a este pedido, incluindo datas e autores das respostas.")
     data_resposta = models.DateTimeField("Data da Resposta", null=True, blank=True)
     respondente = models.ForeignKey("users.PFEUser", null=True, blank=True, on_delete=models.SET_NULL,
                                     related_name="pedido_respondente",
@@ -2431,6 +2433,16 @@ class Pedido(models.Model):
 
     def __str__(self):
         return f"{self.get_tipo_display()} - {self.projeto}"
+
+    @property
+    def is_pendente(self):
+        return self.status == "pendente"
+
+    def get_status(self):
+        return dict(self.STATUS_PEDIDO).get(self.status, {}).get("pt", "Desconecido")
+
+    def get_status_en(self):
+        return dict(self.STATUS_PEDIDO).get(self.status, {}).get("en", "Unknown")
 
     @property
     def dados_dict(self):

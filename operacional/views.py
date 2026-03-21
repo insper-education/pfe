@@ -409,10 +409,49 @@ def plano_aulas(request):
 @permission_required("users.altera_professor", raise_exception=True)
 def gerir_pedidos(request):
     """Gerencia pedidos feitos por estudantes, como pedidos de prorrogação, etc."""
+
+    edicoes = get_edicoes(Projeto)[0]
+    edicao = request.POST.get("edicao") if request.method == "POST" else None
+
+    if not edicao and edicoes:
+        # Mantem o mesmo comportamento visual do seletor (última edição por padrão)
+        edicao = edicoes[-1]
+
+    if edicao and edicao != "todas":
+        try:
+            ano, semestre = map(int, edicao.split("."))
+            pedidos = Pedido.objects.filter(projeto__ano=ano, projeto__semestre=semestre)
+        except (TypeError, ValueError):
+            pedidos = Pedido.objects.all()
+            edicao = "todas"
+    else:
+        pedidos = Pedido.objects.all()
+        edicao = "todas"
+
+    pedidos = pedidos.order_by("status", "-data_solicitacao")
+    pedidos_pendentes = pedidos.filter(status="pendente")
+    pedidos_processados = pedidos.exclude(status="pendente")
+
+    context = {
+        "titulo": {"pt": "Gerenciar Pedidos", "en": "Manage Requests"},
+        "edicoes": edicoes,
+        "selecionada_edicao": edicao,
+        "pedidos_pendentes": pedidos_pendentes,
+        "pedidos_processados": pedidos_processados,
+    }
+
+    return render(request, "operacional/gerir_pedidos.html", context=context)
+
+
+@login_required
+@permission_required("users.altera_professor", raise_exception=True)
+def pedido_view(request, pedido_id):
+    """Gerencia pedidos feitos por estudantes, como pedidos de prorrogação, etc."""
+    pedido = get_object_or_404(Pedido, id=pedido_id)
     
-    if request.method == "POST":
+    if request.headers.get("X-Requested-With") == "XMLHttpRequest" and request.method == "POST":
         configuracao = get_object_or_404(Configuracao)
-        pedido_id = request.POST.get("pedido_id")
+        pedido_id = request.POST.get("pedido_id") or pedido_id
         acao = request.POST.get("acao")
         resposta = request.POST.get("resposta", "")
 
@@ -470,6 +509,12 @@ def gerir_pedidos(request):
             
             projeto.save()
         
+        historico_atual = pedido.historico_respostas or ""
+        separador = "\n" if historico_atual else ""
+        pedido.historico_respostas = (
+            f"{historico_atual}{separador}"
+            f"• {request.user.username} [{datetime.datetime.now().strftime('%d/%m %H:%M')}] ({pedido.get_status()}) : {resposta}"
+        )
         pedido.resposta = resposta
         pedido.data_resposta = datetime.datetime.now()
         pedido.respondente = request.user
@@ -515,18 +560,14 @@ def gerir_pedidos(request):
 
         email(email_subject, email_recipients, email_message, reply_to=[configuracao.tecnico.email])
 
-        
-        return redirect("gerir_pedidos")
-
-    pedidos = Pedido.objects.all().order_by("status", "-data_solicitacao")
-    
-    # Organiza os pedidos para facilitar a visualização
-    pedidos_pendentes = pedidos.filter(status="pendente")
-    pedidos_processados = pedidos.exclude(status="pendente")
+        return JsonResponse({
+            "atualizado": True,
+            "pedido_id": pedido.id,
+            "mensagem": f"Pedido {pedido.status} com sucesso.",
+        })
 
     context = {
-        "titulo": { "pt": "Gerenciar Pedidos", "en": "Manage Requests" },
-        "pedidos_pendentes": pedidos_pendentes,
-        "pedidos_processados": pedidos_processados,
+        "titulo": {"pt": "Pedido", "en": "Request"},
+        "pedido": pedido,
     }
-    return render(request, "operacional/gerir_pedidos.html", context=context)
+    return render(request, "operacional/pedido_view.html", context=context)

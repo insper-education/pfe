@@ -2,439 +2,165 @@
 {% load linguas %}
 {% load static %}
 
+{% block head %}
+  <style>
+    .pedido-card { background: #fff; border: 1px solid #e2e8f0; border-left: 4px solid #64748b; border-radius: 8px; margin-bottom: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+    .pedido-card > .open-modal { display: flex; justify-content: space-between; align-items: center; gap: 0.9rem; color: inherit; cursor: pointer; border-radius: 8px; }
+    .pedido-info { display: flex; gap: 1rem; align-items: center; flex: 1; min-width: 0; padding: 0.8rem 0.95rem; }
+    .pedido-card > .open-modal .badge { margin-right: 0.95rem; flex-shrink: 0; white-space: nowrap; align-self: center; }
+    .pedido-card > .open-modal:hover { background: #f8fafc; }
+    .pedido-card.status-pendente { border-left-color: #f59e0b; }
+    .pedido-card.status-aprovado { border-left-color: #10b981; }
+    .pedido-card.status-reprovado { border-left-color: #ef4444; }
+
+    @keyframes pedidoFlash {
+      0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.45); transform: translateY(0); }
+      30% { box-shadow: 0 0 0 6px rgba(16, 185, 129, 0.2); transform: translateY(-1px); }
+      100% { box-shadow: 0 1px 3px rgba(0,0,0,0.1); transform: translateY(0); }
+    }
+
+    .pedido-card.card-atualizado { animation: pedidoFlash 1.2s ease; border-color: #10b981; }
+
+    .pedido-toast { position: fixed; right: 1rem; bottom: 1rem; background: #065f46; color: #ecfdf5; border: 1px solid #10b981; border-radius: 8px; padding: 0.75rem 1rem; box-shadow: 0 8px 24px rgba(2, 6, 23, 0.2); z-index: 1061; opacity: 0; transform: translateY(12px); pointer-events: none; transition: opacity 0.22s ease, transform 0.22s ease; max-width: 320px; font-size: 0.92rem; line-height: 1.25; }
+    .pedido-toast.show { opacity: 1; transform: translateY(0); }
+
+    .badge { padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; }
+    .badge.pendente { background: #fef3c7; color: #b45309; }
+    .badge.aprovado { background: #d1fae5; color: #047857; }
+    .badge.reprovado { background: #fee2e2; color: #b91c1c; }
+    
+    .section-title { margin-top: 2rem; margin-bottom: 1rem; font-size: 1.25rem; color: #334155; border-bottom: 2px solid #e2e8f0; padding-bottom: 0.5rem; }
+    .page-container { max-width: 1000px; margin: 0 auto; }
+
+    @media (max-width: 900px) {
+      .page-container { padding: 1rem; }
+    }
+  </style>
+{% endblock %}
+
 {% block content %}
-<style>
-  .pedido-card {
-    background: #fff;
-    border: 1px solid #e2e8f0;
-    border-radius: 8px;
-    margin-bottom: 1rem;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-    border-left: 4px solid #64748b;
-  }
-  .pedido-card.status-pendente { border-left-color: #f59e0b; }
-  .pedido-card.status-aprovado { border-left-color: #10b981; }
-  .pedido-card.status-reprovado { border-left-color: #ef4444; }
 
-  .card-header {
-    padding: 1rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background: #f8fafc;
-    border-bottom: 1px solid #e2e8f0;
-    border-radius: 8px 8px 0 0;
-    cursor: pointer;
-    transition: background-color 0.2s;
-  }
-  .card-header:hover {
-    background: #f1f5f9;
-  }
-  
-  .card-content {
-    padding: 1.5rem;
-    display: none;
-  }
-  .card-content.open {
-    display: block;
-  }
+  {% include "edicoes.html" %}
 
-  .badge {
-    padding: 0.25rem 0.75rem;
-    border-radius: 9999px;
-    font-size: 0.75rem;
-    font-weight: 600;
-    text-transform: uppercase;
-  }
-  .badge.pendente { background: #fef3c7; color: #b45309; }
-  .badge.aprovado { background: #d1fae5; color: #047857; }
-  .badge.reprovado { background: #fee2e2; color: #b91c1c; }
-  
-  .section-title {
-    margin-top: 2rem;
-    margin-bottom: 1rem;
-    font-size: 1.25rem;
-    color: #334155;
-    border-bottom: 2px solid #e2e8f0;
-    padding-bottom: 0.5rem;
-  }
-
-  .btn-action {
-    padding: 0.5rem 1rem;
-    border-radius: 6px;
-    border: none;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-  .btn-approve { background: #10b981; color: white; }
-  .btn-approve:hover { background: #059669; }
-  .btn-reject { background: #ef4444; color: white; }
-  .btn-reject:hover { background: #dc2626; }
-
-  .page-container {
-    max-width: 1000px;
-    margin: 0 auto;
-    padding: 2rem;
-  }
-
-  .pedido-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 2rem;
-  }
-
-  .acao-botoes {
-    display: flex;
-    gap: 0.5rem;
-    flex-wrap: wrap;
-  }
-
-  .troca-decisao {
-    display: flex;
-    gap: 1rem;
-    align-items: center;
-    flex-wrap: wrap;
-  }
-
-  .troca-decisao textarea {
-    flex: 1;
-    min-width: 220px;
-  }
-
-  @media (max-width: 900px) {
-    .page-container {
-      padding: 1rem;
-    }
-
-    .pedido-grid {
-      grid-template-columns: 1fr;
-      gap: 1rem;
-    }
-
-    .btn-action {
-      width: 100%;
-    }
-
-    .troca-decisao textarea {
-      min-width: 100%;
-      width: 100%;
-    }
-  }
-</style>
-
-<div class="page-container">
-  <h1 style="margin-bottom: 0.5rem;">{% lng "Gestão de Pedidos de Recursos" "Resource Request Management" %}</h1>
-  <p class="text-muted">{% lng "Gerencie as solicitações feitas pelos grupos de projeto." "Manage requests made by project groups." %}</p>
-
-  <h2 class="section-title">{% lng "Pendentes" "Pending" %} <span style="font-size: 0.9rem; background: #f59e0b; color: #fff; padding: 2px 8px; border-radius: 12px; vertical-align: middle;">{{ pedidos_pendentes.count }}</span></h2>
-  
-  {% if pedidos_pendentes %}
-    {% for pedido in pedidos_pendentes %}
-      <div class="pedido-card status-pendente">
-        <div class="card-header" onclick="toggleCard({{ pedido.id }})">
-          <div style="display: flex; gap: 1rem; align-items: center;">
-            <div style="font-size: 1.5rem;">{{ pedido.get_icone }}</div>
-            <div>
-              <div style="font-weight: 600; color: #1e293b;">{{ pedido.get_tipo_display }}</div>
-              <div style="color: #64748b; font-size: 0.85rem;">
-                <a href="{% url 'projeto_infos' pedido.projeto.id %}"> {{pedido.projeto.get_titulo_org}}</a><br>
-                 {% lng "Solicitado por:" "Requested by:" %} {{ pedido.solicitante.get_full_name }} • {{ pedido.data_solicitacao|date:"d/m/Y H:i" }}
-                 {% if pedido.data_resposta %}
-                   <br>{% lng "Respondido por:" "Responded by:" %} {{ pedido.respondente.get_full_name }} • {{ pedido.data_resposta|date:"d/m/Y H:i" }}
-                 {% endif %}
-              </div>
-            </div>
-          </div>
-          <span class="badge pendente">{% lng "PENDENTE" "PENDING" %}</span>
-        </div>
-        
-        <div id="card-{{ pedido.id }}" class="card-content">
-          <form method="post">
-            {% csrf_token %}
-            <input type="hidden" name="pedido_id" value="{{ pedido.id }}">
-            
-            <div class="pedido-grid" style="margin-bottom: 1.5rem;">
-               <div>
-                 <h4 style="margin-top: 0; color: #475569;">{% lng "Detalhes do Pedido" "Request Details" %}</h4>
-                 <div style="background: #f8fafc; padding: 1rem; border-radius: 6px; border: 1px solid #e2e8f0;">
-                   {{ pedido.get_detalhes_completos|safe }}
-                 </div>
-                 {% if pedido.observacoes %}
-                   <div style="margin-top: 1rem;">
-                     <strong>{% lng "Observações:" "Notes:" %}</strong> {{ pedido.observacoes|linebreaksbr }}
-                   </div>
-                 {% endif %}
-               </div>
-               
-               <div>
-                 <h4 style="margin-top: 0; color: #475569;">{% lng "Ação da Coordenação" "Coordination Action" %}</h4>
-                 
-                 {# Campos específicos por tipo de pedido #}
-                 {% if pedido.tipo == 'github' %}
-                   <div class="form-group" style="margin-bottom: 0.75rem;">
-                     <label style="display: block; margin-bottom: 0.3rem; font-weight: 500; font-size: 0.9rem;">{% lng "URL do Time no Github" "Team URL on Github" %}</label>
-                     <input type="url" 
-                            name="url_time_github" 
-                            class="form-control form-control-sm" 
-                            placeholder="https://github.com/orgs/capstone-insper/teams/..."
-                            {% if pedido.projeto.url_time_github %}value="{{pedido.projeto.url_time_github}}"{% endif %}
-                            style="border-radius: 6px;">
-                     <small class="text-muted" style="font-size: 0.8rem;">
-                       {% lng "URL do time/repositório do projeto no Github" "Project team/repository URL on Github" %}
-                     </small>
-                   </div>
-                 {% elif pedido.tipo == 'overleaf' %}
-                   <div class="form-group" style="margin-bottom: 0.75rem;">
-                     <label style="display: block; margin-bottom: 0.3rem; font-weight: 500; font-size: 0.9rem;">{% lng "URL do LaTeX" "LaTeX URL" %}</label>
-                     <input type="url" 
-                            name="url_latex" 
-                            class="form-control form-control-sm" 
-                            placeholder="https://www.overleaf.com/..."
-                            {% if pedido.projeto.url_latex %}value="{{pedido.projeto.url_latex}}"{% endif %}
-                            style="border-radius: 6px;">
-                     <small class="text-muted" style="font-size: 0.8rem;">
-                       {% lng "URL do projeto em editor de LaTeX online" "Project URL in online LaTeX editor" %}
-                     </small>
-                   </div>
-                 {% elif pedido.tipo == 'nuvem' %}
-                   <div class="form-group" style="margin-bottom: 0.75rem;">
-                     <label style="display: block; margin-bottom: 0.3rem; font-weight: 500; font-size: 0.9rem;">{% lng "Informações de Conta AWS" "AWS Account Information" %}</label>
-                     <input type="text" 
-                            name="conta_aws" 
-                            class="form-control form-control-sm" 
-                            placeholder="Informações de conta AWS para o projeto"
-                            {% if pedido.projeto.conta_aws %}value="{{pedido.projeto.conta_aws}}"{% endif %}
-                            style="border-radius: 6px;">
-                     <small class="text-muted" style="font-size: 0.8rem;">
-                       {% lng "Credenciais e informações de acesso à AWS" "AWS access credentials and information" %}
-                     </small>
-                   </div>
-                 {% elif pedido.tipo == 'llm' %}
-                   <div class="form-group" style="margin-bottom: 0.75rem;">
-                     <label style="display: block; margin-bottom: 0.3rem; font-weight: 500; font-size: 0.9rem;">{% lng "Chave de Acesso LLM" "LLM Access Key" %}</label>
-                     <input type="text" 
-                            name="apontamento_llm" 
-                            class="form-control form-control-sm" 
-                            placeholder="Chave API e informações de acesso"
-                            {% if pedido.projeto.apontamento_llm %}value="{{pedido.projeto.apontamento_llm}}"{% endif %}
-                            style="border-radius: 6px;">
-                     <small class="text-muted" style="font-size: 0.8rem;">
-                       {% lng "Chave de API e informações de acesso ao LLM" "LLM API key and access information" %}
-                     </small>
-                   </div>
-                 {% elif pedido.tipo == 'equipamento' %}
-                   <div class="form-group" style="margin-bottom: 0.75rem;">
-                     <label style="display: block; margin-bottom: 0.3rem; font-weight: 500; font-size: 0.9rem;">{% lng "Detalhes do Equipamento Aprovado" "Approved Equipment Details" %}</label>
-                     <textarea name="lista_equipamentos" 
-                               class="form-control form-control-sm" 
-                               rows="3" 
-                               placeholder="Liste os equipamentos aprovados com detalhes..."
-                               style="border-radius: 6px;">{% if pedido.projeto.lista_equipamentos %}{{pedido.projeto.lista_equipamentos}}{% endif %}</textarea>
-                     <small class="text-muted" style="font-size: 0.8rem;">
-                       {% lng "Equipamentos emprestados e suas condições" "Borrowed equipment and its conditions" %}
-                     </small>
-                   </div>
-                 {% elif pedido.tipo == "compra" %}
-                   <div class="form-group" style="margin-bottom: 0.75rem;">
-                     <label style="display: block; margin-bottom: 0.3rem; font-weight: 500; font-size: 0.9rem;">{% lng "Detalhes da Compra Aprovada" "Approved Purchase Details" %}</label>
-                     <textarea name="lista_compras" 
-                               class="form-control form-control-sm" 
-                               rows="3" 
-                               placeholder="Detalhes da compra aprovada, valores, fornecedor..."
-                               style="border-radius: 6px;">{% if pedido.projeto.lista_compras %}{{pedido.projeto.lista_compras}}{% endif %}</textarea>
-                     <small class="text-muted" style="font-size: 0.8rem;">
-                       {% lng "Detalhes da compra realizada ou autorizada" "Details of purchase made or authorized" %}
-                     </small>
-                   </div>
-                 {% elif pedido.tipo == "rede" %}
-                   <div class="form-group" style="margin-bottom: 0.75rem;">
-                     <label style="display: block; margin-bottom: 0.3rem; font-weight: 500; font-size: 0.9rem;">{% lng "Encaminhamento de Rede" "Network Handling" %}</label>
-                     <textarea name="apontamento_rede" 
-                               class="form-control form-control-sm" 
-                               rows="3" 
-                               placeholder="Ex: Porta 443 liberada para IP 200.10.1.15, válido até 30/03"
-                               style="border-radius: 6px;"></textarea>
-                     <small class="text-muted" style="font-size: 0.8rem;">
-                       {% lng "Informe o que foi liberado/bloqueado e qualquer restrição aplicada" "Describe what was allowed/blocked and any applied restrictions" %}
-                     </small>
-                   </div>
-                 {% endif %}
-                 
-                 <div class="form-group" style="margin-bottom: 1rem;">
-                   <label style="display: block; margin-bottom: 0.3rem; font-weight: 500; font-size: 0.9rem;">{% lng "Resposta / Justificativa" "Response / Justification" %}</label>
-                   <textarea name="resposta" class="form-control form-control-sm" rows="3" style="width: 100%; border-radius: 6px; padding: 0.5rem;" placeholder="Opcionalmente, insira uma resposta..."></textarea>
-                 </div>
-                 
-                 <div class="acao-botoes">
-                   <button type="submit" name="acao" value="aprovar" class="btn-action btn-approve">
-                     {% lng "Aprovar" "Approve" %}
-                   </button>
-                   <button type="submit" name="acao" value="reprovar" class="btn-action btn-reject">
-                     {% lng "Reprovar" "Reject" %}
-                   </button>
-                 </div>
-               </div>
-            </div>
-          </form>
-        </div>
-      </div>
-    {% endfor %}
-  {% else %}
-    <p style="text-align: center; color: #94a3b8; padding: 2rem;">{% lng "Nenhum pedido pendente." "No pending requests." %}</p>
-  {% endif %}
-
-
-  <h2 class="section-title">{% lng "Processados (Aprovados / Reprovados)" "Processed (Approved / Rejected)" %}</h2>
-  
-  {% if pedidos_processados %}
-    {% for pedido in pedidos_processados %}
-      <div class="pedido-card status-{{ pedido.status }}">
-        <div class="card-header" onclick="toggleCard({{ pedido.id }})">
-          <div style="display: flex; gap: 1rem; align-items: center;">
-            <div style="font-size: 1.5rem; opacity: 0.7;">{{ pedido.get_icone }}</div>
-            <div>
-              <div style="font-weight: 600; color: #1e293b;">{{ pedido.get_tipo_display }}</div>
-              <div style="color: #64748b; font-size: 0.85rem;">
-                <a href="{% url 'projeto_infos' pedido.projeto.id %}"> {{pedido.projeto.get_titulo}}</a><br>
-                {% lng "Solicitado por:" "Requested by:" %} {{ pedido.solicitante.get_full_name }} • {{ pedido.data_solicitacao|date:"d/m/Y H:i" }}
-                {% if pedido.data_resposta %}
-                  <br>{% lng "Respondido por:" "Responded by:" %} {{ pedido.respondente.get_full_name }} • {{ pedido.data_resposta|date:"d/m/Y H:i" }}
-                {% endif %}
-              </div>
-            </div>
-          </div>
-          <span class="badge {{ pedido.status }}">{{ pedido.get_status_display|upper }}</span>
-        </div>
-        
-        <div id="card-{{ pedido.id }}" class="card-content">
-          <div class="pedido-grid">
-             <div>
-               <h4 style="margin-top: 0; color: #475569;">{% lng "Detalhes do Pedido" "Request Details" %}</h4>
-               <div style="background: #f8fafc; padding: 1rem; border-radius: 6px; border: 1px solid #e2e8f0;">
-                 {{ pedido.get_detalhes_completos|safe }}
-               </div>
-             </div>
-             <div>
-               <h4 style="margin-top: 0; color: #475569;">{% lng "Histórico" "History" %}</h4>
-               <div style="margin-bottom: 0.5rem;">
-                  <strong>{% lng "Status:" "Status:" %}</strong> 
-                  <span class="badge {{ pedido.status }}">{{ pedido.get_status_display }}</span>
-               </div>
-               <div style="margin-bottom: 0.5rem;">
-                  <strong>{% lng "Data da Resposta:" "Response Date:" %}</strong> {{ pedido.data_resposta|date:"d/m/Y H:i" }}
-               </div>
-               <div style="background: #fff; border: 1px solid #e2e8f0; padding: 1rem; border-radius: 6px;">
-                 <strong>{% lng "Resposta:" "Response:" %}</strong><br>
-                 {{ pedido.resposta|linebreaksbr|default:"-" }}
-               </div>
-               
-               <form method="post" style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #eee;">
-                 {% csrf_token %}
-                 <input type="hidden" name="pedido_id" value="{{ pedido.id }}">
-                 <div style="font-size: 0.85rem; color: #64748b; margin-bottom: 0.5rem;">{% lng "Mudar decisão:" "Change decision:" %}</div>
-                 
-                 {# Campos específicos por tipo de pedido #}
-                 {% if pedido.tipo == 'github' %}
-                   <div class="form-group" style="margin-bottom: 0.5rem;">
-                     <input type="url" 
-                            name="url_time_github" 
-                            class="form-control form-control-sm" 
-                            placeholder="URL do Time no Github"
-                            {% if pedido.projeto.url_time_github %}value="{{pedido.projeto.url_time_github}}"{% endif %}
-                            style="border-radius: 6px; font-size: 0.85rem;">
-                   </div>
-                 {% elif pedido.tipo == 'overleaf' %}
-                   <div class="form-group" style="margin-bottom: 0.5rem;">
-                     <input type="url" 
-                            name="url_latex" 
-                            class="form-control form-control-sm" 
-                            placeholder="URL do LaTeX"
-                            {% if pedido.projeto.url_latex %}value="{{pedido.projeto.url_latex}}"{% endif %}
-                            style="border-radius: 6px; font-size: 0.85rem;">
-                   </div>
-                 {% elif pedido.tipo == 'nuvem' %}
-                   <div class="form-group" style="margin-bottom: 0.5rem;">
-                     <input type="text" 
-                            name="conta_aws" 
-                            class="form-control form-control-sm" 
-                            placeholder="Informações de Conta AWS"
-                            {% if pedido.projeto.conta_aws %}value="{{pedido.projeto.conta_aws}}"{% endif %}
-                            style="border-radius: 6px; font-size: 0.85rem;">
-                   </div>
-                 {% elif pedido.tipo == 'llm' %}
-                   <div class="form-group" style="margin-bottom: 0.5rem;">
-                     <input type="text" 
-                            name="apontamento_llm" 
-                            class="form-control form-control-sm" 
-                            placeholder="Chave de Acesso LLM"
-                            {% if pedido.projeto.apontamento_llm %}value="{{pedido.projeto.apontamento_llm}}"{% endif %}
-                            style="border-radius: 6px; font-size: 0.85rem;">
-                   </div>
-                 {% elif pedido.tipo == 'equipamento' %}
-                   <div class="form-group" style="margin-bottom: 0.5rem;">
-                     <textarea name="lista_equipamentos" 
-                               class="form-control form-control-sm" 
-                               rows="2" 
-                               placeholder="Detalhes do equipamento"
-                               style="border-radius: 6px; font-size: 0.85rem;">{% if pedido.projeto.lista_equipamentos %}{{pedido.projeto.lista_equipamentos}}{% endif %}</textarea>
-                   </div>
-                 {% elif pedido.tipo == 'compra' %}
-                   <div class="form-group" style="margin-bottom: 0.5rem;">
-                     <textarea name="lista_compras" 
-                               class="form-control form-control-sm" 
-                               rows="2" 
-                               placeholder="Detalhes da compra"
-                               style="border-radius: 6px; font-size: 0.85rem;">{% if pedido.projeto.lista_compras %}{{pedido.projeto.lista_compras}}{% endif %}</textarea>
-                   </div>
-                 {% elif pedido.tipo == 'rede' %}
-                   <div class="form-group" style="margin-bottom: 0.5rem;">
-                     <textarea name="apontamento_rede" 
-                               class="form-control form-control-sm" 
-                               rows="2" 
-                               placeholder="Apontamento de rede (liberações/restrições)"
-                               style="border-radius: 6px; font-size: 0.85rem;"></textarea>
-                   </div>
-                 {% endif %}
-                 
-                 <div class="troca-decisao">
-                    <textarea name="resposta" class="form-control form-control-sm" rows="1" style="flex:1; border-radius: 6px; padding: 0.5rem; font-size: 0.85rem;" placeholder="Nova resposta..."></textarea>
-                    
-                    {% if pedido.status != 'aprovado' %}
-                    <button type="submit" name="acao" value="aprovar" class="btn-action btn-approve" style="padding: 0.25rem 0.5rem; font-size: 0.8rem;">
-                        {% lng "Aprovar" "Approve" %}
-                    </button>
+  <div class="page-container">
+    <div id="pedido-toast" class="pedido-toast" role="status" aria-live="polite"></div>
+    <div id="atualizar">
+    
+      <h2 class="section-title">{% lng "Pendentes" "Pending" %} <span style="font-size: 0.9rem; background: #f59e0b; color: #fff; padding: 2px 8px; border-radius: 12px; vertical-align: middle;">{{ pedidos_pendentes.count }}</span></h2>
+      {% if pedidos_pendentes %}
+        {% for pedido in pedidos_pendentes %}
+          <div class="pedido-card status-pendente" data-pedido-id="{{ pedido.id }}">
+            <div class="open-modal" data-url="{% url 'pedido_view' pedido.id %}" role="button" tabindex="0" aria-label="Abrir pedido {{ pedido.id }}">
+            {% comment %} <div class="card-header" onclick="toggleCard({{ pedido.id }})"> {% endcomment %}
+              <div class="pedido-info">
+                <div style="font-size: 1.5rem;">{{ pedido.get_icone }}</div>
+                <div>
+                  <div style="font-weight: 600; color: #1e293b;">{{ pedido.get_tipo_display }}</div>
+                  <div style="color: #64748b; font-size: 0.85rem;">
+                    <a href="{% url 'projeto_infos' pedido.projeto.id %}"> {{pedido.projeto.get_titulo_org}}</a><br>
+                    {% lng "Solicitado por:" "Requested by:" %} {{ pedido.solicitante.get_full_name }} • {{ pedido.data_solicitacao|date:"d/m/Y H:i" }}
+                    {% if pedido.data_resposta %}
+                      <br>{% lng "Respondido por:" "Responded by:" %} {{ pedido.respondente.get_full_name }} • {{ pedido.data_resposta|date:"d/m/Y H:i" }}
                     {% endif %}
-                    {% if pedido.status != 'reprovado' %}
-                    <button type="submit" name="acao" value="reprovar" class="btn-action btn-reject" style="padding: 0.25rem 0.5rem; font-size: 0.8rem;">
-                        {% lng "Reprovar" "Reject" %}
-                    </button>
-                    {% endif %}
-                 </div>
-               </form>
-
-             </div>
+                  </div>
+                </div>
+              </div>
+              <span class="badge {{ pedido.status }}">{% lng pedido.get_status|upper pedido.get_status_en|upper %}</span>
+            </div>
           </div>
-        </div>
-      </div>
-    {% endfor %}
-  {% else %}
-    <p style="text-align: center; color: #94a3b8; padding: 2rem;">{% lng "Nenhum pedido processado ainda." "No processed requests yet." %}</p>
-  {% endif %}
+        {% endfor %}
+      {% else %}
+        <p style="text-align: center; color: #94a3b8; padding: 2rem;">{% lng "Nenhum pedido pendente." "No pending requests." %}</p>
+      {% endif %}
 
-</div>
 
-<script>
-  function toggleCard(id) {
-    const content = document.getElementById('card-' + id);
-    if (content.style.display === 'block') {
-      content.style.display = 'none';
-      content.parentElement.querySelector('.card-header').style.backgroundColor = '#f8fafc';
-    } else {
-      content.style.display = 'block';
-      content.parentElement.querySelector('.card-header').style.backgroundColor = '#f1f5f9';
+      <h2 class="section-title">{% lng "Processados (Aprovados / Reprovados)" "Processed (Approved / Rejected)" %}</h2>
+      
+      {% if pedidos_processados %}
+        {% for pedido in pedidos_processados %}
+          <div class="pedido-card status-{{ pedido.status }}" data-pedido-id="{{ pedido.id }}">
+            {% comment %} <div class="card-header" onclick="toggleCard({{ pedido.id }})"> {% endcomment %}
+            <div class="open-modal" data-url="{% url 'pedido_view' pedido.id %}" role="button" tabindex="0" aria-label="Abrir pedido {{ pedido.id }}">
+              <div class="pedido-info">
+                <div style="font-size: 1.5rem; opacity: 0.7;">{{ pedido.get_icone }}</div>
+                <div>
+                  <div style="font-weight: 600; color: #1e293b;">{{ pedido.get_tipo_display }}</div>
+                  <div style="color: #64748b; font-size: 0.85rem;">
+                    <a href="{% url 'projeto_infos' pedido.projeto.id %}"> {{pedido.projeto.get_titulo_org}}</a><br>
+                    {% lng "Solicitado por:" "Requested by:" %} {{ pedido.solicitante.get_full_name }} • {{ pedido.data_solicitacao|date:"d/m/Y H:i" }}
+                    {% if pedido.data_resposta %}
+                      <br>{% lng "Respondido por:" "Responded by:" %} {{ pedido.respondente.get_full_name }} • {{ pedido.data_resposta|date:"d/m/Y H:i" }}
+                    {% endif %}
+                  </div>
+                </div>
+              </div>
+              <span class="badge {{ pedido.status }}">{% lng pedido.get_status|upper pedido.get_status_en|upper %}</span>
+            </div>
+          </div>
+        {% endfor %}
+      {% else %}
+        <p style="text-align: center; color: #94a3b8; padding: 2rem;">{% lng "Nenhum pedido processado ainda." "No processed requests yet." %}</p>
+      {% endif %}
+    </div>
+
+  </div>
+
+  <script>
+    var pedidoToastTimer = null;
+
+    function mostra_toast_pedido(mensagem) {
+      var toast = $("#pedido-toast");
+      if (!toast.length || !mensagem) {
+        return;
+      }
+
+      toast.text(mensagem).addClass("show");
+
+      if (pedidoToastTimer) {
+        clearTimeout(pedidoToastTimer);
+      }
+
+      pedidoToastTimer = setTimeout(function() {
+        toast.removeClass("show");
+      }, 2300);
     }
-  }
-</script>
+
+    function atualiza_pedidos_lista(pedidoIdAtualizado, mensagemToast) {
+      var target = "#atualizar";
+      var edicaoSelecionada = $("#filterEdicao option:selected").val() || "todas";
+      $(target).fadeOut("fast", function() {
+        $.ajax({
+          url: window.location.href,
+          type: "POST",
+          data: {
+            edicao: edicaoSelecionada,
+            "csrfmiddlewaretoken": "{{ csrf_token }}"
+          },
+          success: function(data) {
+            $(target).html($(data).find(target).html()).fadeIn("fast");
+            if (pedidoIdAtualizado) {
+              var seletor = ".pedido-card[data-pedido-id='" + pedidoIdAtualizado + "']";
+              var card = $(target).find(seletor).first();
+              if (card.length) {
+                card.addClass("card-atualizado");
+                setTimeout(function() {
+                  card.removeClass("card-atualizado");
+                }, 1300);
+                card[0].scrollIntoView({behavior: "smooth", block: "center"});
+              }
+            }
+            mostra_toast_pedido(mensagemToast);
+            {% include "linguas_ajax.html" %}
+          },
+          error: function() {
+            window.location.reload();
+          }
+        });
+      });
+    }
+  </script>
+
+  {% include "edicoes_ajax.html" %}
+  {% include "base-modal.html" %}
 
 {% endblock %}

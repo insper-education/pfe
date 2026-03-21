@@ -1,0 +1,351 @@
+{% load linguas %}
+{% load static %}
+
+<style>
+  .pedido-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+  }
+
+  .acao-botoes {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .btn-action {
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    border: none;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .btn-approve { background: #10b981; color: #fff; }
+  .btn-approve:hover { background: #059669; }
+  .btn-reject { background: #ef4444; color: #fff; }
+  .btn-reject:hover { background: #dc2626; }
+
+  .modal-footer-acoes {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-left: auto;
+  }
+
+  .modal-body {
+    max-height: 75vh;
+    overflow-y: auto;
+  }
+
+  @media (max-width: 900px) {
+    .pedido-grid { grid-template-columns: 1fr; }
+    .btn-action { width: 100%; }
+  }
+</style>
+
+<form id="pedidoform" method="post" action="{% url 'pedido_view' pedido.id %}" enctype="multipart/form-data">
+  {% csrf_token %}
+  <input type="hidden" name="acao" id="acao_pedido" value="">
+
+  <div class="modal-header">
+    <h5 id="anotacao" class="modal-title" style="text-overflow: ellipsis; white-space: nowrap; overflow: hidden;">
+      {% lng "Atualizar Pedido" "Update Request" %} - {{ pedido.projeto.get_titulo_org }}
+    </h5>    
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+
+  <div class="modal-body">
+    {% if pedido.status == 'pendente' %}
+      <div id="card-{{ pedido.id }}">
+        
+        <input type="hidden" name="pedido_id" value="{{ pedido.id }}">
+          
+          <div class="pedido-grid" style="margin-bottom: 1.5rem;">
+              <div>
+                <h4 style="margin-top: 0; color: #475569;">{% lng "Detalhes do Pedido" "Request Details" %}</h4>
+                <div style="background: #f8fafc; padding: 1rem; border-radius: 6px; border: 1px solid #e2e8f0;">
+                  {{ pedido.get_detalhes_completos|safe }}
+                </div>
+                {% if pedido.observacoes %}
+                  <div style="margin-top: 1rem;">
+                    <strong>{% lng "Observações:" "Notes:" %}</strong> {{ pedido.observacoes|linebreaksbr }}
+                  </div>
+                {% endif %}
+              </div>
+              
+              <div>
+                <h4 style="margin-top: 0; color: #475569;">{% lng "Ação da Coordenação" "Coordination Action" %}</h4>
+                
+                {# Campos específicos por tipo de pedido #}
+                {% if pedido.tipo == 'github' %}
+                  <div class="form-group" style="margin-bottom: 0.75rem;">
+                    <label style="display: block; margin-bottom: 0.3rem; font-weight: 500; font-size: 0.9rem;">{% lng "URL do Time no Github" "Team URL on Github" %}</label>
+                    <input type="url" 
+                          name="url_time_github" 
+                          class="form-control form-control-sm" 
+                          placeholder="https://github.com/orgs/capstone-insper/teams/..."
+                          {% if pedido.projeto.url_time_github %}value="{{pedido.projeto.url_time_github}}"{% endif %}
+                          style="border-radius: 6px;">
+                    <small class="text-muted" style="font-size: 0.8rem;">
+                      {% lng "URL do time/repositório do projeto no Github" "Project team/repository URL on Github" %}
+                    </small>
+                  </div>
+                {% elif pedido.tipo == 'overleaf' %}
+                  <div class="form-group" style="margin-bottom: 0.75rem;">
+                    <label style="display: block; margin-bottom: 0.3rem; font-weight: 500; font-size: 0.9rem;">{% lng "URL do LaTeX" "LaTeX URL" %}</label>
+                    <input type="url" 
+                          name="url_latex" 
+                          class="form-control form-control-sm" 
+                          placeholder="https://www.overleaf.com/..."
+                          {% if pedido.projeto.url_latex %}value="{{pedido.projeto.url_latex}}"{% endif %}
+                          style="border-radius: 6px;">
+                    <small class="text-muted" style="font-size: 0.8rem;">
+                      {% lng "URL do projeto em editor de LaTeX online" "Project URL in online LaTeX editor" %}
+                    </small>
+                  </div>
+                {% elif pedido.tipo == 'nuvem' %}
+                  <div class="form-group" style="margin-bottom: 0.75rem;">
+                    <label style="display: block; margin-bottom: 0.3rem; font-weight: 500; font-size: 0.9rem;">{% lng "Informações de Conta AWS" "AWS Account Information" %}</label>
+                    <input type="text" 
+                          name="conta_aws" 
+                          class="form-control form-control-sm" 
+                          placeholder="Informações de conta AWS para o projeto"
+                          {% if pedido.projeto.conta_aws %}value="{{pedido.projeto.conta_aws}}"{% endif %}
+                          style="border-radius: 6px;">
+                    <small class="text-muted" style="font-size: 0.8rem;">
+                      {% lng "Credenciais e informações de acesso à AWS" "AWS access credentials and information" %}
+                    </small>
+                  </div>
+                {% elif pedido.tipo == 'llm' %}
+                  <div class="form-group" style="margin-bottom: 0.75rem;">
+                    <label style="display: block; margin-bottom: 0.3rem; font-weight: 500; font-size: 0.9rem;">{% lng "Chave de Acesso LLM" "LLM Access Key" %}</label>
+                    <input type="text" 
+                          name="apontamento_llm" 
+                          class="form-control form-control-sm" 
+                          placeholder="Chave API e informações de acesso"
+                          {% if pedido.projeto.apontamento_llm %}value="{{pedido.projeto.apontamento_llm}}"{% endif %}
+                          style="border-radius: 6px;">
+                    <small class="text-muted" style="font-size: 0.8rem;">
+                      {% lng "Chave de API e informações de acesso ao LLM" "LLM API key and access information" %}
+                    </small>
+                  </div>
+                {% elif pedido.tipo == 'equipamento' %}
+                  <div class="form-group" style="margin-bottom: 0.75rem;">
+                    <label style="display: block; margin-bottom: 0.3rem; font-weight: 500; font-size: 0.9rem;">{% lng "Detalhes do Equipamento Aprovado" "Approved Equipment Details" %}</label>
+                    <textarea name="lista_equipamentos" 
+                              class="form-control form-control-sm" 
+                              rows="3" 
+                              placeholder="Liste os equipamentos aprovados com detalhes..."
+                              style="border-radius: 6px;">{% if pedido.projeto.lista_equipamentos %}{{pedido.projeto.lista_equipamentos}}{% endif %}</textarea>
+                    <small class="text-muted" style="font-size: 0.8rem;">
+                      {% lng "Equipamentos emprestados e suas condições" "Borrowed equipment and its conditions" %}
+                    </small>
+                  </div>
+                {% elif pedido.tipo == "compra" %}
+                  <div class="form-group" style="margin-bottom: 0.75rem;">
+                    <label style="display: block; margin-bottom: 0.3rem; font-weight: 500; font-size: 0.9rem;">{% lng "Detalhes da Compra Aprovada" "Approved Purchase Details" %}</label>
+                    <textarea name="lista_compras" 
+                              class="form-control form-control-sm" 
+                              rows="3" 
+                              placeholder="Detalhes da compra aprovada, valores, fornecedor..."
+                              style="border-radius: 6px;">{% if pedido.projeto.lista_compras %}{{pedido.projeto.lista_compras}}{% endif %}</textarea>
+                    <small class="text-muted" style="font-size: 0.8rem;">
+                      {% lng "Detalhes da compra realizada ou autorizada" "Details of purchase made or authorized" %}
+                    </small>
+                  </div>
+                {% elif pedido.tipo == "rede" %}
+                  <div class="form-group" style="margin-bottom: 0.75rem;">
+                    <label style="display: block; margin-bottom: 0.3rem; font-weight: 500; font-size: 0.9rem;">{% lng "Encaminhamento de Rede" "Network Handling" %}</label>
+                    <textarea name="apontamento_rede" 
+                              class="form-control form-control-sm" 
+                              rows="3" 
+                              placeholder="Ex: Porta 443 liberada para IP 200.10.1.15, válido até 30/03"
+                              style="border-radius: 6px;"></textarea>
+                    <small class="text-muted" style="font-size: 0.8rem;">
+                      {% lng "Informe o que foi liberado/bloqueado e qualquer restrição aplicada" "Describe what was allowed/blocked and any applied restrictions" %}
+                    </small>
+                  </div>
+                {% endif %}
+                
+                <div class="form-group" style="margin-bottom: 1rem;">
+                  <label style="display: block; margin-bottom: 0.3rem; font-weight: 500; font-size: 0.9rem;">{% lng "Resposta / Justificativa" "Response / Justification" %}</label>
+                  <textarea name="resposta" class="form-control form-control-sm" rows="3" style="width: 100%; border-radius: 6px; padding: 0.5rem;" placeholder="Opcionalmente, insira uma resposta..."></textarea>
+                </div>
+                
+              </div>
+          </div>
+      </div>
+    
+      {% comment %} pedido.processado {% endcomment %}
+    {% else %}  
+
+      <div id="card-{{ pedido.id }}">
+        <div class="pedido-grid">
+            <div>
+              <h4 style="margin-top: 0; color: #475569;">{% lng "Detalhes do Pedido" "Request Details" %}</h4>
+              <div style="background: #f8fafc; padding: 1rem; border-radius: 6px; border: 1px solid #e2e8f0;">
+                {{ pedido.get_detalhes_completos|safe }}
+              </div>
+            </div>
+            <div>
+              <h4 style="margin-top: 0; color: #475569;">{% lng "Histórico" "History" %}</h4>
+              <div style="margin-bottom: 0.5rem;">
+                <strong>{% lng "Status:" "Status:" %}</strong> 
+                <span class="badge {{ pedido.status }}">{% lng pedido.get_status|upper pedido.get_status_en|upper %}</span>
+              </div>
+              <div style="margin-bottom: 0.5rem;">
+                <strong>{% lng "Data da Resposta:" "Response Date:" %}</strong> {{ pedido.data_resposta|date:"d/m/Y H:i" }}
+              </div>
+              <div style="background: #fff; border: 1px solid #e2e8f0; padding: 1rem; border-radius: 6px;">
+                <strong>{% lng "Resposta:" "Response:" %}</strong><br>
+                {% if pedido.historico_respostas %}
+                  {{ pedido.historico_respostas|linebreaksbr }}
+                {% else %}
+                  <span style="color: #94a3b8;">{% lng "Nenhuma resposta registrada." "No response recorded." %}</span>
+                {% endif %}
+              </div>
+              
+                <input type="hidden" name="pedido_id" value="{{ pedido.id }}">
+                <div style="margin-bottom: 0.5rem; margin-top: 1rem;">
+                  <strong>{% lng "Mudar decisão:" "Change decision:" %}</strong>
+                </div>
+                
+                {# Campos específicos por tipo de pedido #}
+                {% if pedido.tipo == 'github' %}
+                  <div class="form-group" style="margin-bottom: 0.5rem;">
+                    <input type="url" 
+                          name="url_time_github" 
+                          class="form-control form-control-sm" 
+                          placeholder="URL do Time no Github"
+                          {% if pedido.projeto.url_time_github %}value="{{pedido.projeto.url_time_github}}"{% endif %}
+                          style="border-radius: 6px; font-size: 0.85rem;">
+                  </div>
+                {% elif pedido.tipo == 'overleaf' %}
+                  <div class="form-group" style="margin-bottom: 0.5rem;">
+                    <input type="url" 
+                          name="url_latex" 
+                          class="form-control form-control-sm" 
+                          placeholder="URL do LaTeX"
+                          {% if pedido.projeto.url_latex %}value="{{pedido.projeto.url_latex}}"{% endif %}
+                          style="border-radius: 6px; font-size: 0.85rem;">
+                  </div>
+                {% elif pedido.tipo == 'nuvem' %}
+                  <div class="form-group" style="margin-bottom: 0.5rem;">
+                    <input type="text" 
+                          name="conta_aws" 
+                          class="form-control form-control-sm" 
+                          placeholder="Informações de Conta AWS"
+                          {% if pedido.projeto.conta_aws %}value="{{pedido.projeto.conta_aws}}"{% endif %}
+                          style="border-radius: 6px; font-size: 0.85rem;">
+                  </div>
+                {% elif pedido.tipo == 'llm' %}
+                  <div class="form-group" style="margin-bottom: 0.5rem;">
+                    <input type="text" 
+                          name="apontamento_llm" 
+                          class="form-control form-control-sm" 
+                          placeholder="Chave de Acesso LLM"
+                          {% if pedido.projeto.apontamento_llm %}value="{{pedido.projeto.apontamento_llm}}"{% endif %}
+                          style="border-radius: 6px; font-size: 0.85rem;">
+                  </div>
+                {% elif pedido.tipo == 'equipamento' %}
+                  <div class="form-group" style="margin-bottom: 0.5rem;">
+                    <textarea name="lista_equipamentos" 
+                              class="form-control form-control-sm" 
+                              rows="2" 
+                              placeholder="Detalhes do equipamento"
+                              style="border-radius: 6px; font-size: 0.85rem;">{% if pedido.projeto.lista_equipamentos %}{{pedido.projeto.lista_equipamentos}}{% endif %}</textarea>
+                  </div>
+                {% elif pedido.tipo == 'compra' %}
+                  <div class="form-group" style="margin-bottom: 0.5rem;">
+                    <textarea name="lista_compras" 
+                              class="form-control form-control-sm" 
+                              rows="2" 
+                              placeholder="Detalhes da compra"
+                              style="border-radius: 6px; font-size: 0.85rem;">{% if pedido.projeto.lista_compras %}{{pedido.projeto.lista_compras}}{% endif %}</textarea>
+                  </div>
+                {% elif pedido.tipo == 'rede' %}
+                  <div class="form-group" style="margin-bottom: 0.5rem;">
+                    <textarea name="apontamento_rede" 
+                              class="form-control form-control-sm" 
+                              rows="2" 
+                              placeholder="Apontamento de rede (liberações/restrições)"
+                              style="border-radius: 6px; font-size: 0.85rem;"></textarea>
+                  </div>
+                {% endif %}
+                
+                <div class="troca-decisao">
+                  <textarea name="resposta" class="form-control form-control-sm" rows="1" style="flex:1; border-radius: 6px; padding: 0.5rem; font-size: 0.85rem;" placeholder="Nova resposta..."></textarea>
+                </div>
+              
+
+            </div>
+        </div>
+      </div>
+    {% endif %}
+
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" data-dismiss="modal">{% lng "Fechar" "Close" %}</button>
+    <div class="modal-footer-acoes">
+      {% if pedido.status != 'aprovado' %}
+        <button type="button" class="btn-action btn-approve acao-submit" data-acao="aprovar">
+          {% lng "Aprovar" "Approve" %}
+        </button>
+      {% endif %}
+      {% if pedido.status != 'reprovado' %}
+        <button type="button" class="btn-action btn-reject acao-submit" data-acao="reprovar">
+          {% lng "Reprovar" "Reject" %}
+        </button>
+      {% endif %}
+    </div>
+  </div>
+
+</form>
+
+<script>
+  $(document).ready(function() {
+    $(".acao-submit").on("click", function() {
+      $("#acao_pedido").val($(this).data("acao"));
+      $("form#pedidoform").trigger("submit");
+    });
+
+    $("form#pedidoform").submit(function(e) {
+      e.preventDefault();
+
+      if (!$("#acao_pedido").val()) {
+        alert("Selecione uma ação: Aprovar ou Reprovar.");
+        return false;
+      }
+
+      var form = $(this);
+      var formData = new FormData(form[0]);
+
+      $.ajax({
+        type: "POST",
+        url: form.attr("action"),
+        data: formData,
+        processData: false,
+        contentType: false,
+        headers: {"X-Requested-With": "XMLHttpRequest"},
+        success: function(response) {
+          if (response.atualizado) {
+            $("#popup").modal("hide");
+            if (typeof atualiza_pedidos_lista === "function") {
+              atualiza_pedidos_lista(response.pedido_id, response.mensagem);
+            }
+          }
+        },
+        error: function(xhr, status, error) {
+          alert("Erro ao salvar o pedido: " + error);
+        }
+      });
+
+      return false;
+    });
+  });
+</script>
