@@ -142,6 +142,21 @@ class EstiloComunicacao(models.Model):
 
 
 class FuncionalidadeGrupo(models.Model):
+
+    # REFERÊNCIA
+    # @book{lencioni2002five,
+    #   title     = {The Five Dysfunctions of a Team: A Leadership Fable},
+    #   author    = {Lencioni, Patrick M.},
+    #   year      = {2002},
+    #   publisher = {Jossey-Bass},
+    #   address   = {San Francisco},
+    #   edition   = {1},
+    #   isbn      = {978-0787960759},
+    #   pages     = {256},
+    #   language  = {English},
+    #   note      = {20th Anniversary Edition}
+    # }
+
     FAIXA_ESCOLHAS = [
         (1, '1'),
         (2, '2'),
