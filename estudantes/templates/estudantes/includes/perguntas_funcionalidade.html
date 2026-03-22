@@ -85,7 +85,7 @@
           <thead>
             <tr>
               <th scope="col"><small>{% lng "Disfunção" "Dysfunction" %}</small></th>
-              <th scope="col">
+              <th scope="col" colspan="2" style="text-align:center">
                 <i class="fa fa-users"></i>
                 <small>{% lng "Grupo" "Group" %}</small>
               </th>
@@ -104,7 +104,8 @@
             <tr>
               {% if funcionalidade_grupo|length > 1 %}
                 <th scope="row">{{ forloop.counter }}: {% lng disfuncao.pt disfuncao.en %}</th>
-                <td><span id="g{{ forloop.counter0 }}" class="badge badge-secondary text-washed">-</span></td>
+                <td><span id="m{{ forloop.counter0 }}" class="badge badge-primary text-washed">-</span></td>
+                <td><span id="g{{ forloop.counter0 }}" class="badge badge-secondary text-washed dis_txt">-</span></td>
               {% else %}
                 <th scope="row">{% lng "Disfunção" "Dysfunction" %} {{ forloop.counter }} - {% lng disfuncao.pt disfuncao.en %}</th>
               {% endif %}
@@ -121,10 +122,12 @@
           {% endfor %}
         </tbody>
         <caption>
-          {% lng "Legenda" "Caption" %}:
-          <span class="badge badge-danger" > (2-5) {% lng "Disfunção precisa ser trabalhada" "Dysfunction needs to be worked on" %}</span>
-          <span class="badge badge-warning"> (6-7) {% lng "Disfunção pode ser um problema" "Dysfunction may be a problem" %}</span>
-          <span class="badge badge-success"> (7-9) {% lng "Provavelmente não é um problema" "Probably not a problem" %}</span>
+          <div class="ml-1">
+            <span class="badge badge-danger" > (2-5) {% lng "Disfunção precisa ser trabalhada" "Dysfunction needs to be worked on" %}</span>
+            <span class="badge badge-warning"> (6-7) {% lng "Disfunção pode ser um problema" "Dysfunction may be a problem" %}</span>
+            <span class="badge badge-success"> (7-9) {% lng "Provavelmente não é um problema" "Probably not a problem" %}</span><br>
+            Porcentagem do grupo calculada apenas com quem respondeu a questão.
+          </div>
         </caption>
       </table>
 
@@ -162,19 +165,24 @@
           });
 
           for (var key = 0; key < scores.length; key++) {
+            var contagem = 0;
+            var media = 0;
             {% for usuario, funcionalidade in funcionalidade_grupo.items %}
               if (scores_usuarios["{{ usuario.id }}"][key] > 2 && scores_usuarios["{{ usuario.id }}"][key] < 6) {
                   messages_usuarios["pt"]["{{ usuario.id }}"] = "disfunção precisa ser trabalhada";
                   messages_usuarios["en"]["{{ usuario.id }}"] = "dysfunction needs to be worked on";
                   colors_usuarios["{{ usuario.id }}"] = "#ffcccc";
+                  contagem++;
               } else if (scores_usuarios["{{ usuario.id }}"][key] > 7) {
                   messages_usuarios["pt"]["{{ usuario.id }}"] = "provavelmente não é um problema";
                   messages_usuarios["en"]["{{ usuario.id }}"] = "probably not a problem";
                   colors_usuarios["{{ usuario.id }}"] = "#ccffcc";
+                  contagem++;
               } else if (scores_usuarios["{{ usuario.id }}"][key] > 5 && scores_usuarios["{{ usuario.id }}"][key] < 8) {
                   messages_usuarios["pt"]["{{ usuario.id }}"] = "disfunção pode ser um problema";
                   messages_usuarios["en"]["{{ usuario.id }}"] = "dysfunction may be a problem";
                   colors_usuarios["{{ usuario.id }}"] = "#ffffcc";
+                  contagem++;
               } else {
                   messages_usuarios["pt"]["{{ usuario.id }}"] = "";
                   messages_usuarios["en"]["{{ usuario.id }}"] = "";
@@ -185,17 +193,21 @@
               $("#o_en{{ usuario.id }}_" + key).text(messages_usuarios["en"]["{{ usuario.id }}"]);
               $(".r{{ usuario.id }}_" + key).css("background-color", colors_usuarios["{{ usuario.id }}"]);
             {% endfor %}
-          }
+          
 
-          var text_grupo = "";
-          for (var key = 0; key < scores.length; key++) {
-            {% if funcionalidade_grupo|length > 1 %}
-              var max = 9 * {{ funcionalidade_grupo|length }};
-              var min = 3 * {{ funcionalidade_grupo|length }};
+            {% comment %} Parte de Grupo {% endcomment %}
+            var media_grupo = "-";
+            var text_grupo = "-%";
+            {% comment %} Contando só quem preencheu {% endcomment %}
+            if (contagem > 0) {
+              var max = 9 * contagem;
+              var min = 3 * contagem;
               var res = ((scores[key] - min) / (max - min)) * 100;
               text_grupo = res.toFixed(0) + "%";
-            {% endif %}
+              media_grupo = (scores[key] / contagem).toFixed(2);
+            }
             $("#g" + key).text(text_grupo);
+            $("#m" + key).text(media_grupo);
           }
 
         };
