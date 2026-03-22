@@ -123,6 +123,7 @@ def projeto_infos(request, primarykey):
 
 
 @login_required
+@permission_required("users.altera_professor", raise_exception=True)
 def dinamicas_infos(request, primarykey):
     """Mostra as dinâmicas de grupo de um projeto."""
     projeto = get_object_or_404(Projeto, pk=primarykey)
@@ -164,6 +165,33 @@ def dinamicas_infos(request, primarykey):
             context["dinamica_conflitos"] = dinamica_conflitos
     
     return render(request, "projetos/dinamicas_infos.html", context=context)
+
+
+
+
+@login_required
+@permission_required("users.altera_professor", raise_exception=True)
+def funcionalidades_grupos(request):
+    """Mostra as funcionalidades de grupo de um projeto."""
+    # projeto = get_object_or_404(Projeto, pk=270)
+    alocacoes = Alocacao.objects.filter(projeto__ano=2025, projeto__semestre=2)
+    
+    context = {
+        "titulo": { "pt": "Funcionalidades dos Grupos", "en": "Groups Functionality"},
+        # "projeto": projeto,
+        "alocacoes": alocacoes,    
+    }
+
+    funcionalidade_grupo = {}
+    for alocacao in alocacoes:
+        funcionalidade_grupo[alocacao.aluno.user] = alocacao.aluno.user.funcionalidade_grupo
+    # if projeto.orientador:
+    #     funcionalidade_grupo[projeto.orientador.user] = projeto.orientador.user.funcionalidade_grupo
+    if funcionalidade_grupo:
+        context["questoes_funcionalidade"] = Estrutura.loads(nome="Questões de Funcionalidade")
+        context["funcionalidade_grupo"] = funcionalidade_grupo
+
+    return render(request, "projetos/funcionalidades_grupos.html", context=context)
 
 
 @login_required

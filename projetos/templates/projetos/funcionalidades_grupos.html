@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% comment %}
+  Desenvolvido para o Projeto Final de Engenharia
+  Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+  Data: 11 de Fevereiro de 2026
+{% endcomment %}
+
+{% load static %}
+{% load bleach %}
+{% load l10n %}
+{% load alocacoes %}
+{% load relatos %}
+{% load addhttp %}
+{% load linguas %}
+{% load get_notas %}
+{% load get_descontos %}
+{% load exibe_notas %}
+{% load documentos %}
+
+{% block head %}
+  {% include "reload.html" %}  {% comment %} Atualiza as conexões quando se da um back {% endcomment %}
+{% endblock %}
+
+{% block content %}
+  {% if user.eh_prof_a %}
+    {% include "estudantes/includes/perguntas_funcionalidade.html" with ver=True mostra_resultados=True %}
+  {% endif %}
+{% endblock %}
