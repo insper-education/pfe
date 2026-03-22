@@ -14,6 +14,9 @@
     table#disfuncoes td {padding: 2px 5px; text-align:center;}
     table#disfuncoes th {padding: 1px 4px; font-weight: normal;}
     table#questoes th {padding: 1px 6px;}
+    .text-washed {color: #fafafa;}
+    #disfuncoes.hide-dis-txt .dis_txt {display: none;}
+    .btn-xxs {padding: 0.05rem 0.35rem; font-size: 0.62rem; line-height: 1.1; border-radius: 0.2rem; vertical-align: middle;}
   </style>
 
   <form method="post" enctype="multipart/form-data" action="{% url 'funcionalidade_grupo' %}">{% csrf_token %}
@@ -71,7 +74,11 @@
 
     {% if mostra_resultados %}
     
-      <h5>{% lng "Disfunções de Equipe" "Team Dysfunctions" %}</h5>
+      <h5>{% lng "Disfunções de Equipe" "Team Dysfunctions" %}
+        <button id="toggleDisTxtBtn" type="button" class="btn btn-outline-secondary btn-xxs mb-2">
+          {% lng "Esconder comentários" "Hide comments" %}
+        </button>
+      </h5>
       <table id="disfuncoes" class="table-hover table-condensed table-responsive">
 
         {% if funcionalidade_grupo|length > 1 %}
@@ -97,14 +104,14 @@
             <tr>
               {% if funcionalidade_grupo|length > 1 %}
                 <th scope="row">{{ forloop.counter }}: {% lng disfuncao.pt disfuncao.en %}</th>
-                <td><span id="g{{ forloop.counter0 }}" class="badge badge-secondary">0</span></td>
+                <td><span id="g{{ forloop.counter0 }}" class="badge badge-secondary text-washed">-</span></td>
               {% else %}
                 <th scope="row">{% lng "Disfunção" "Dysfunction" %} {{ forloop.counter }} - {% lng disfuncao.pt disfuncao.en %}</th>
               {% endif %}
               {% with key="_"|concat:forloop.counter0|stringformat:"s" %}
               {% for usuario, funcionalidade in funcionalidade_grupo.items %}
-                <td class="r{{usuario.id}}{{ key }}"><span id="d{{usuario.id}}{{ key }}" class="badge badge-info">0</span></td>
-                <td class="r{{usuario.id}}{{ key }}">
+                <td class="r{{usuario.id}}{{ key }} dis_val"><span id="d{{usuario.id}}{{ key }}" class="badge badge-info text-washed">-</span></td>
+                <td class="r{{usuario.id}}{{ key }} dis_txt">
                   <span lang="pt" id="o_pt{{usuario.id}}{{ key }}"></span>
                   <span lang="en" style="display:none" id="o_en{{usuario.id}}{{ key }}"></span>
                 </td>
@@ -188,6 +195,17 @@
         };
 
         calc_grupo();
+
+        var disTxtHidden = false;
+        $("#toggleDisTxtBtn").on("click", function() {
+          disTxtHidden = !disTxtHidden;
+          $("#disfuncoes").toggleClass("hide-dis-txt", disTxtHidden);
+          if (disTxtHidden) {
+            $(this).html('{% lng "Mostrar comentários" "Show comments" %}');
+          } else {
+            $(this).html('{% lng "Esconder comentários" "Hide comments" %}');
+          }
+        });
       </script>
 
     {% else %}

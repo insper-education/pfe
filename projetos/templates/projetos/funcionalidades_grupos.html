@@ -22,7 +22,9 @@
 {% endblock %}
 
 {% block content %}
-  {% if user.eh_prof_a %}
+  {% include "edicoes.html" %}
+  <div id="atualizar">
     {% include "estudantes/includes/perguntas_funcionalidade.html" with ver=True mostra_resultados=True %}
-  {% endif %}
+  </div>
+  {% include "edicoes_ajax.html" %}
 {% endblock %}

@@ -173,23 +173,34 @@ def dinamicas_infos(request, primarykey):
 @permission_required("users.altera_professor", raise_exception=True)
 def funcionalidades_grupos(request):
     """Mostra as funcionalidades de grupo de um projeto."""
-    # projeto = get_object_or_404(Projeto, pk=270)
-    alocacoes = Alocacao.objects.filter(projeto__ano=2025, projeto__semestre=2)
-    
-    context = {
-        "titulo": { "pt": "Funcionalidades dos Grupos", "en": "Groups Functionality"},
-        # "projeto": projeto,
-        "alocacoes": alocacoes,    
-    }
 
-    funcionalidade_grupo = {}
-    for alocacao in alocacoes:
-        funcionalidade_grupo[alocacao.aluno.user] = alocacao.aluno.user.funcionalidade_grupo
-    # if projeto.orientador:
-    #     funcionalidade_grupo[projeto.orientador.user] = projeto.orientador.user.funcionalidade_grupo
-    if funcionalidade_grupo:
-        context["questoes_funcionalidade"] = Estrutura.loads(nome="Questões de Funcionalidade")
-        context["funcionalidade_grupo"] = funcionalidade_grupo
+    if request.method == "POST":
+        if "edicao" in request.POST:
+            edicao = request.POST["edicao"]
+            alocacoes = Alocacao.objects.all()
+            if edicao != "todas":
+                ano, semestre = map(int, edicao.split('.'))
+                alocacoes = Alocacao.objects.filter(projeto__ano=ano, projeto__semestre=semestre)
+        else:
+            return HttpResponse("Erro ao definir edição", status=401)
+
+        funcionalidade_grupo = {}
+        for alocacao in alocacoes:
+            if alocacao.aluno and alocacao.aluno.user and alocacao.aluno.user.funcionalidade_grupo:
+                funcionalidade_grupo[alocacao.aluno.user] = alocacao.aluno.user.funcionalidade_grupo
+        # if projeto.orientador:
+        #     funcionalidade_grupo[projeto.orientador.user] = projeto.orientador.user.funcionalidade_grupo
+        context = {
+            "alocacoes": alocacoes,
+            "questoes_funcionalidade": Estrutura.loads(nome="Questões de Funcionalidade"),
+            "funcionalidade_grupo": funcionalidade_grupo,
+        }
+
+    else:
+        context = {
+            "titulo": { "pt": "Funcionalidades dos Grupos", "en": "Groups Functionality"},
+            "edicoes": get_edicoes(Projeto)[0], 
+        }
 
     return render(request, "projetos/funcionalidades_grupos.html", context=context)
 
