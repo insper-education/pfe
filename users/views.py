@@ -612,7 +612,9 @@ def projetos_objetivos(request):
         
         individual = False
 
-        cabecalhos = [{"pt": "Projeto", "en": "Project"},]
+        cabecalhos = [
+            {"pt": "Projeto ID", "en": "Project ID", "esconder": True},
+            {"pt": "Projeto", "en": "Project"},]
         for objetivo in objetivos:
             cabecalhos.append({
                 "pt": objetivo.titulo + ("<br>(individual)" if individual else "<br>(grupo)"),
