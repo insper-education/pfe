@@ -146,12 +146,12 @@ def dinamicas_infos(request, primarykey):
         # Funcionalidade do Grupo
         funcionalidade_grupo = {}
         for alocacao in alocacoes:
-            funcionalidade_grupo[alocacao.aluno.user] = alocacao.aluno.user.funcionalidade_grupo
+            funcionalidade_grupo[alocacao.aluno.user] = alocacao.funcionalidade_grupo
         if projeto.orientador:
-            funcionalidade_grupo[projeto.orientador.user] = projeto.orientador.user.funcionalidade_grupo
+            funcionalidade_grupo[projeto.orientador.user] = projeto.funcionalidade_grupo
         if funcionalidade_grupo:
             context["questoes_funcionalidade"] = Estrutura.loads(nome="Questões de Funcionalidade")
-            context["funcionalidade_grupo"] = funcionalidade_grupo
+            context["funcionalidade_grupos"] = {projeto: funcionalidade_grupo}
 
 
         # Dinâmica de Conflitos do Grupo
@@ -177,23 +177,25 @@ def funcionalidades_grupos(request):
     if request.method == "POST":
         if "edicao" in request.POST:
             edicao = request.POST["edicao"]
-            alocacoes = Alocacao.objects.all()
+            projetos = Projeto.objects.all()
             if edicao != "todas":
                 ano, semestre = map(int, edicao.split('.'))
-                alocacoes = Alocacao.objects.filter(projeto__ano=ano, projeto__semestre=semestre)
+                projetos = projetos.filter(ano=ano, semestre=semestre)
         else:
             return HttpResponse("Erro ao definir edição", status=401)
 
-        funcionalidade_grupo = {}
-        for alocacao in alocacoes:
-            if alocacao.aluno and alocacao.aluno.user and alocacao.aluno.user.funcionalidade_grupo:
-                funcionalidade_grupo[alocacao.aluno.user] = alocacao.aluno.user.funcionalidade_grupo
-        # if projeto.orientador:
-        #     funcionalidade_grupo[projeto.orientador.user] = projeto.orientador.user.funcionalidade_grupo
+        funcionalidade_grupos = {}
+        for projeto in projetos:
+            funcionalidade_grupo = {}
+            for alocacao in Alocacao.objects.filter(projeto=projeto):
+                if alocacao.funcionalidade_grupo:
+                    funcionalidade_grupo[alocacao.aluno.user] = alocacao.funcionalidade_grupo
+            # if projeto.orientador and projeto.funcionalidade_grupo:
+            #     funcionalidade_grupo[projeto.orientador.user] = projeto.funcionalidade_grupo
+            funcionalidade_grupos[projeto] = funcionalidade_grupo
         context = {
-            "alocacoes": alocacoes,
             "questoes_funcionalidade": Estrutura.loads(nome="Questões de Funcionalidade"),
-            "funcionalidade_grupo": funcionalidade_grupo,
+            "funcionalidade_grupos": funcionalidade_grupos,
         }
 
     else:

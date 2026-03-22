@@ -16,10 +16,19 @@
     table#questoes th {padding: 1px 6px;}
     .text-washed {color: #fafafa;}
     #disfuncoes.hide-dis-txt .dis_txt {display: none;}
+    #questoes.hide-dis-txt .dis_txt {display: none;}
     .btn-xxs {padding: 0.05rem 0.35rem; font-size: 0.62rem; line-height: 1.1; border-radius: 0.2rem; vertical-align: middle;}
   </style>
 
   <form method="post" enctype="multipart/form-data" action="{% url 'funcionalidade_grupo' %}">{% csrf_token %}
+
+    {% if funcionalidade_grupos|length == 1 and not mostra_resultados %}
+      {% for projeto, funcionalidade_grupo in funcionalidade_grupos.items %}
+        {% if forloop.first %}
+          <h5>{% lng "Projeto" "Project" %}: {{ projeto }}</h5>
+        {% endif %}
+      {% endfor %}
+    {% endif %}
 
     <div class="table-responsive mb-1">
       <table id="questoes" class="tabela-padrao table-striped table-hover mb-4">
@@ -27,15 +36,30 @@
           <tr>
             <th class="hide-on-narrow" {% if mostra_resultados %}rowspan="2"{% endif %}>#</th>
             <th {% if mostra_resultados %}rowspan="2"{% endif %}>{% lng "Questão" "Question" %}</th>
-            <th colspan="{{ funcionalidade_grupo|length }}">{% lng "Frequência" "Frequency" %}</th>
+            {% if funcionalidade_grupos|length == 1 %}
+              {% for projeto, funcionalidade_grupo in funcionalidade_grupos.items %}
+                {% if forloop.first %}
+                  <th colspan="{{ funcionalidade_grupo|length }}">{% lng "Frequência" "Frequency" %}</th>
+                {% endif %}
+              {% endfor %}
+            {% else %}
+              {% for projeto, funcionalidade_grupo in funcionalidade_grupos.items %}
+                <th colspan="{{ funcionalidade_grupo|length }}">
+                    <i class="fa fa-users dis_txt"></i>
+                    <small>{{ projeto.id }}</small>
+                </th>
+              {% endfor %}
+            {% endif %}
           </tr>
           {% if mostra_resultados %}
             <tr>
-              {% for usuario, funcionalidade in funcionalidade_grupo.items %}
-                <th class="{% if usuario.eh_prof_a %}text-info{% else %}text-primary{% endif %}" style="text-align:center">
-                  {% if usuario.eh_prof_a %}<i class="fa fa-chalkboard-teacher"></i>{% else %}<i class="fa fa-user-graduate"></i>{% endif %}
-                  <small>{{ usuario.first_name }}</small>
-                </th>
+              {% for projeto, funcionalidade_grupo in funcionalidade_grupos.items %}
+                {% for objeto, funcionalidade in funcionalidade_grupo.items %}
+                  <th class="{% if objeto.eh_prof_a %}text-info{% else %}text-primary{% endif %}" style="text-align:center">
+                    {% if objeto.eh_prof_a %}<i class="fa fa-chalkboard-teacher"></i>{% else %}<i class="fa fa-user-graduate"></i>{% endif %}
+                    <small>{{ objeto.first_name }}</small>
+                  </th>
+                {% endfor %}
               {% endfor %}
             </tr>
           {% endif %}
@@ -48,20 +72,22 @@
                   <td class="hide-on-narrow" style="text-align:center">{{ q }}</td>
                   <td>{% lng linha.questao.pt linha.questao.en %}</td>
                   {% with question_key="question_"|concat:q|stringformat:"s" %}
-                    {% for usuario, funcionalidade in funcionalidade_grupo.items %}
-                      <td class="{% if usuario.eh_prof_a %}text-info{% else %}text-primary{% endif %}" style="text-align:center">
-                        {% with f=funcionalidade|get_attr:question_key %}
-                          {% if ver %}
-                            {% if f == 1 %}<input class="func_grupo" data-user_id="{{usuario.id}}" type="radio" name="{{ forloop.counter0 }}question_{{ q }}" value="1" checked style="display:none;">{% lng "Baixa" "Low" %}{% endif %}
-                            {% if f == 2 %}<input class="func_grupo" data-user_id="{{usuario.id}}" type="radio" name="{{ forloop.counter0 }}question_{{ q }}" value="2" checked style="display:none;">{% lng "Média" "Medium" %}{% endif %}
-                            {% if f == 3 %}<input class="func_grupo" data-user_id="{{usuario.id}}" type="radio" name="{{ forloop.counter0 }}question_{{ q }}" value="3" checked style="display:none;">{% lng "Alta" "High" %}{% endif %}
-                          {% else %}
-                            <label><input class="func_grupo" data-user_id="{{usuario.id}}" type="radio" name="question_{{ q }}" value="1" {% if f == 1 %}checked{% endif %}> {% lng "Baixa" "Low" %}</label><br>
-                            <label><input class="func_grupo" data-user_id="{{usuario.id}}" type="radio" name="question_{{ q }}" value="2" {% if f == 2 %}checked{% endif %}> {% lng "Média" "Medium" %}</label><br>
-                            <label><input class="func_grupo" data-user_id="{{usuario.id}}" type="radio" name="question_{{ q }}" value="3" {% if f == 3 %}checked{% endif %}> {% lng "Alta" "High" %}</label>
-                          {% endif %}
-                        {% endwith %}
-                      </td>
+                    {% for projeto, funcionalidade_grupo in funcionalidade_grupos.items %}
+                      {% for objeto, funcionalidade in funcionalidade_grupo.items %}
+                        <td class="{% if objeto.eh_prof_a %}text-info{% else %}text-primary{% endif %}" style="text-align:center">
+                          {% with f=funcionalidade|get_attr:question_key %}
+                            {% if ver %}
+                              {% if f == 1 %}<input class="func_grupo" data-user_id="{{objeto.id}}" data-projeto_id="{{projeto.id}}" type="radio" name="u{{objeto.id}}_question_{{ q }}" value="1" checked style="display:none;">{% lng "Baixa" "Low" %}{% endif %}
+                              {% if f == 2 %}<input class="func_grupo" data-user_id="{{objeto.id}}" data-projeto_id="{{projeto.id}}" type="radio" name="u{{objeto.id}}_question_{{ q }}" value="2" checked style="display:none;">{% lng "Média" "Medium" %}{% endif %}
+                              {% if f == 3 %}<input class="func_grupo" data-user_id="{{objeto.id}}" data-projeto_id="{{projeto.id}}" type="radio" name="u{{objeto.id}}_question_{{ q }}" value="3" checked style="display:none;">{% lng "Alta" "High" %}{% endif %}
+                            {% else %}
+                              <label><input class="func_grupo" data-user_id="{{objeto.id}}" data-projeto_id="{{projeto.id}}" type="radio" name="question_{{ q }}" value="1" {% if f == 1 %}checked{% endif %}> {% lng "Baixa" "Low" %}</label><br>
+                              <label><input class="func_grupo" data-user_id="{{objeto.id}}" data-projeto_id="{{projeto.id}}" type="radio" name="question_{{ q }}" value="2" {% if f == 2 %}checked{% endif %}> {% lng "Média" "Medium" %}</label><br>
+                              <label><input class="func_grupo" data-user_id="{{objeto.id}}" data-projeto_id="{{projeto.id}}" type="radio" name="question_{{ q }}" value="3" {% if f == 3 %}checked{% endif %}> {% lng "Alta" "High" %}</label>
+                            {% endif %}
+                          {% endwith %}
+                        </td>
+                      {% endfor %}
                     {% endfor %}
                   {% endwith %}
                 {% endwith %}
@@ -81,42 +107,49 @@
       </h5>
       <table id="disfuncoes" class="table-hover table-condensed table-responsive">
 
-        {% if funcionalidade_grupo|length > 1 %}
-          <thead>
-            <tr>
-              <th scope="col"><small>{% lng "Disfunção" "Dysfunction" %}</small></th>
-              <th scope="col" colspan="2" style="text-align:center">
-                <i class="fa fa-users"></i>
-                <small>{% lng "Grupo" "Group" %}</small>
-              </th>
-              {% for usuario, funcionalidade in funcionalidade_grupo.items %}
-                <th  scope="col" colspan="2" class="{% if usuario.eh_prof_a %}text-info{% else %}text-primary{% endif %}" style="text-align:center">
-                  {% if usuario.eh_prof_a %}<i class="fa fa-chalkboard-teacher"></i>{% else %}<i class="fa fa-user-graduate"></i>{% endif %}
-                  <small>{{ usuario.first_name }}</small>
+        <thead>
+          <tr>
+            <th scope="col"><small>{% lng "Disfunção" "Dysfunction" %}</small></th>
+            {% for projeto, funcionalidade_grupo in funcionalidade_grupos.items %}
+              {% if funcionalidade_grupos|length == 1 %}
+                <th scope="col" colspan="2" class="duplo_txt" style="text-align:center">
+                  <i class="fa fa-users"></i>
+                  <small>{% lng "Grupo" "Group" %}</small>
+                </th>
+              {% else %}
+                <th id="p{{ projeto.id }}" scope="col" colspan="2" class="duplo_txt" style="text-align:center">
+                  <i class="fa fa-users dis_txt"></i>
+                  <small>{{ projeto.id }}</small>
+                </th>
+              {% endif %}
+
+              {% for objeto, funcionalidade in funcionalidade_grupo.items %}
+                <th scope="col" colspan="2" class="duplo_txt {% if objeto.eh_prof_a %}text-info{% else %}text-primary{% endif %}" style="text-align:center">
+                  {% if objeto.eh_prof_a %}<i class="fa fa-chalkboard-teacher"></i>{% else %}<i class="fa fa-user-graduate"></i>{% endif %}
+                  <small>{{ objeto.first_name }}</small>
                 </th>
               {% endfor %}
-            </tr>
-          </thead>
-        {% endif %}
+            {% endfor %}
+          </tr>
+        </thead>
 
         <tbody>
           {% for disfuncao in questoes_funcionalidade.disfuncoes %}
             <tr>
-              {% if funcionalidade_grupo|length > 1 %}
-                <th scope="row">{{ forloop.counter }}: {% lng disfuncao.pt disfuncao.en %}</th>
-                <td><span id="m{{ forloop.counter0 }}" class="badge badge-primary text-washed">-</span></td>
-                <td><span id="g{{ forloop.counter0 }}" class="badge badge-secondary text-washed dis_txt">-</span></td>
-              {% else %}
-                <th scope="row">{% lng "Disfunção" "Dysfunction" %} {{ forloop.counter }} - {% lng disfuncao.pt disfuncao.en %}</th>
-              {% endif %}
+              {% comment %} {% if funcionalidade_grupos|length > 1 %} {% endcomment %}
+              <th scope="row">{{ forloop.counter }}: {% lng disfuncao.pt disfuncao.en %}</th>
               {% with key="_"|concat:forloop.counter0|stringformat:"s" %}
-              {% for usuario, funcionalidade in funcionalidade_grupo.items %}
-                <td class="r{{usuario.id}}{{ key }} dis_val"><span id="d{{usuario.id}}{{ key }}" class="badge badge-info text-washed">-</span></td>
-                <td class="r{{usuario.id}}{{ key }} dis_txt">
-                  <span lang="pt" id="o_pt{{usuario.id}}{{ key }}"></span>
-                  <span lang="en" style="display:none" id="o_en{{usuario.id}}{{ key }}"></span>
-                </td>
-              {% endfor %}
+                {% for projeto, funcionalidade_grupo in funcionalidade_grupos.items %}
+                  <td><span id="m{{ projeto.id }}_{{ forloop.parentloop.counter0 }}" class="badge badge-primary text-washed">-</span></td>
+                  <td class="dis_txt"><span id="g{{ projeto.id }}_{{ forloop.parentloop.counter0 }}" class="badge badge-secondary text-washed">-</span></td>
+                  {% for objeto, funcionalidade in funcionalidade_grupo.items %}
+                    <td class="r{{objeto.id}}{{ key }} dis_val"><span id="d{{objeto.id}}{{ key }}" class="badge badge-info text-washed">-</span></td>
+                    <td class="r{{objeto.id}}{{ key }} dis_txt">
+                      <span lang="pt" id="o_pt{{objeto.id}}{{ key }}"></span>
+                      <span lang="en" style="display:none" id="o_en{{objeto.id}}{{ key }}"></span>
+                    </td>
+                  {% endfor %}
+                {% endfor %}
               {% endwith %}
               </tr>
           {% endfor %}
@@ -134,16 +167,20 @@
       <script>
         function calc_grupo() {
 
-          var scores = [0, 0, 0, 0, 0];
+          var scores_projeto = {};
 
           var scores_usuarios = {};
           var messages_usuarios = {"pt": {}, "en": {}};
           var colors_usuarios = {};
-          {% for usuario, funcionalidade in funcionalidade_grupo.items %}
-            scores_usuarios["{{ usuario.id }}"] = [0, 0, 0, 0, 0];
-            messages_usuarios["pt"]["{{ usuario.id }}"] = "";
-            messages_usuarios["en"]["{{ usuario.id }}"] = "";
-            colors_usuarios["{{ usuario.id }}"] = ["#ffffff"];
+
+          {% for projeto, funcionalidade_grupo in funcionalidade_grupos.items %}
+            scores_projeto["{{ projeto.id }}"] = [0, 0, 0, 0, 0];
+            {% for objeto, funcionalidade in funcionalidade_grupo.items %}
+              scores_usuarios["{{ objeto.id }}"] = [0, 0, 0, 0, 0];
+              messages_usuarios["pt"]["{{ objeto.id }}"] = "";
+              messages_usuarios["en"]["{{ objeto.id }}"] = "";
+              colors_usuarios["{{ objeto.id }}"] = ["#ffffff"];
+            {% endfor %}
           {% endfor %}
 
           var questionMap = {
@@ -155,59 +192,61 @@
           };
 
           $("input.func_grupo[type=radio]:checked").each(function() {
-            var q = $(this).attr("name").split('_')[1];
+            var q = $(this).attr("name").split('_').pop();
             var v = parseInt($(this).val(), 10);
             var user_id = $(this).data("user_id");
+            var projeto_id = String($(this).data("projeto_id"));
             if (questionMap.hasOwnProperty(q)) {
               scores_usuarios[user_id][questionMap[q]] += v;
-              scores[questionMap[q]] += v;
+              if (scores_projeto[projeto_id]) {
+                scores_projeto[projeto_id][questionMap[q]] += v;
+              }
             }
           });
 
-          for (var key = 0; key < scores.length; key++) {
-            var contagem = 0;
-            var media = 0;
-            {% for usuario, funcionalidade in funcionalidade_grupo.items %}
-              if (scores_usuarios["{{ usuario.id }}"][key] > 2 && scores_usuarios["{{ usuario.id }}"][key] < 6) {
-                  messages_usuarios["pt"]["{{ usuario.id }}"] = "disfunção precisa ser trabalhada";
-                  messages_usuarios["en"]["{{ usuario.id }}"] = "dysfunction needs to be worked on";
-                  colors_usuarios["{{ usuario.id }}"] = "#ffcccc";
-                  contagem++;
-              } else if (scores_usuarios["{{ usuario.id }}"][key] > 7) {
-                  messages_usuarios["pt"]["{{ usuario.id }}"] = "provavelmente não é um problema";
-                  messages_usuarios["en"]["{{ usuario.id }}"] = "probably not a problem";
-                  colors_usuarios["{{ usuario.id }}"] = "#ccffcc";
-                  contagem++;
-              } else if (scores_usuarios["{{ usuario.id }}"][key] > 5 && scores_usuarios["{{ usuario.id }}"][key] < 8) {
-                  messages_usuarios["pt"]["{{ usuario.id }}"] = "disfunção pode ser um problema";
-                  messages_usuarios["en"]["{{ usuario.id }}"] = "dysfunction may be a problem";
-                  colors_usuarios["{{ usuario.id }}"] = "#ffffcc";
-                  contagem++;
-              } else {
-                  messages_usuarios["pt"]["{{ usuario.id }}"] = "";
-                  messages_usuarios["en"]["{{ usuario.id }}"] = "";
-                  colors_usuarios["{{ usuario.id }}"] = "#ffffff";
-              }
-              $("#d{{ usuario.id }}_" + key).text(scores_usuarios["{{ usuario.id }}"][key]);
-              $("#o_pt{{ usuario.id }}_" + key).text(messages_usuarios["pt"]["{{ usuario.id }}"]);
-              $("#o_en{{ usuario.id }}_" + key).text(messages_usuarios["en"]["{{ usuario.id }}"]);
-              $(".r{{ usuario.id }}_" + key).css("background-color", colors_usuarios["{{ usuario.id }}"]);
-            {% endfor %}
-          
+          for (var key = 0; key < 5; key++) {
+            {% for projeto, funcionalidade_grupo in funcionalidade_grupos.items %}
+              var contagem = 0;
+              {% for objeto, funcionalidade in funcionalidade_grupo.items %}
+                if (scores_usuarios["{{ objeto.id }}"][key] > 2 && scores_usuarios["{{ objeto.id }}"][key] < 6) {
+                    messages_usuarios["pt"]["{{ objeto.id }}"] = "disfunção precisa ser trabalhada";
+                    messages_usuarios["en"]["{{ objeto.id }}"] = "dysfunction needs to be worked on";
+                    colors_usuarios["{{ objeto.id }}"] = "#ffcccc";
+                    contagem++;
+                } else if (scores_usuarios["{{ objeto.id }}"][key] > 7) {
+                    messages_usuarios["pt"]["{{ objeto.id }}"] = "provavelmente não é um problema";
+                    messages_usuarios["en"]["{{ objeto.id }}"] = "probably not a problem";
+                    colors_usuarios["{{ objeto.id }}"] = "#ccffcc";
+                    contagem++;
+                } else if (scores_usuarios["{{ objeto.id }}"][key] > 5 && scores_usuarios["{{ objeto.id }}"][key] < 8) {
+                    messages_usuarios["pt"]["{{ objeto.id }}"] = "disfunção pode ser um problema";
+                    messages_usuarios["en"]["{{ objeto.id }}"] = "dysfunction may be a problem";
+                    colors_usuarios["{{ objeto.id }}"] = "#ffffcc";
+                    contagem++;
+                } else {
+                    messages_usuarios["pt"]["{{ objeto.id }}"] = "";
+                    messages_usuarios["en"]["{{ objeto.id }}"] = "";
+                    colors_usuarios["{{ objeto.id }}"] = "#ffffff";
+                }
+                $("#d{{ objeto.id }}_" + key).text(scores_usuarios["{{ objeto.id }}"][key]);
+                $("#o_pt{{ objeto.id }}_" + key).text(messages_usuarios["pt"]["{{ objeto.id }}"]);
+                $("#o_en{{ objeto.id }}_" + key).text(messages_usuarios["en"]["{{ objeto.id }}"]);
+                $(".r{{ objeto.id }}_" + key).css("background-color", colors_usuarios["{{ objeto.id }}"]);
+              {% endfor %}
 
-            {% comment %} Parte de Grupo {% endcomment %}
-            var media_grupo = "-";
-            var text_grupo = "-%";
-            {% comment %} Contando só quem preencheu {% endcomment %}
-            if (contagem > 0) {
-              var max = 9 * contagem;
-              var min = 3 * contagem;
-              var res = ((scores[key] - min) / (max - min)) * 100;
-              text_grupo = res.toFixed(0) + "%";
-              media_grupo = (scores[key] / contagem).toFixed(2);
-            }
-            $("#g" + key).text(text_grupo);
-            $("#m" + key).text(media_grupo);
+              var media_grupo = "-";
+              var text_grupo = "-%";
+              if (contagem > 0) {
+                var max = 9 * contagem;
+                var min = 3 * contagem;
+                var total_projeto = scores_projeto["{{ projeto.id }}"][key];
+                var res = ((total_projeto - min) / (max - min)) * 100;
+                text_grupo = res.toFixed(0) + "%";
+                media_grupo = (total_projeto / contagem).toFixed(2);
+              }
+              $("#g{{ projeto.id }}_" + key).text(text_grupo);
+              $("#m{{ projeto.id }}_" + key).text(media_grupo);
+            {% endfor %}
           }
 
         };
@@ -218,9 +257,12 @@
         $("#toggleDisTxtBtn").on("click", function() {
           disTxtHidden = !disTxtHidden;
           $("#disfuncoes").toggleClass("hide-dis-txt", disTxtHidden);
+          $("#questoes").toggleClass("hide-dis-txt", disTxtHidden);
           if (disTxtHidden) {
+            $(".duplo_txt").attr("colspan", "1");
             $(this).html('{% lng "Mostrar comentários" "Show comments" %}');
           } else {
+            $(".duplo_txt").attr("colspan", "2");
             $(this).html('{% lng "Esconder comentários" "Hide comments" %}');
           }
         });

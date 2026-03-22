@@ -117,10 +117,24 @@ def custom_400(request, exception):
     return HttpResponse(mensagem)
 
 
+from projetos.models import Projeto
+from users.models import Aluno, Alocacao
 
 @login_required
 @permission_required("users.view_administrador", raise_exception=True)
 def migracao(request):
     """temporário."""
     message = "Nada Feito"
+
+    alocacoes = Alocacao.objects.filter(projeto__ano=2025)
+    for alocacao in alocacoes:
+        alocacao.funcionalidade_grupo = alocacao.aluno.user.funcionalidade_grupo
+        alocacao.save()
+
+    projetos = Projeto.objects.filter(ano=2025, semestre=2)
+    for projeto in projetos:
+        projeto.funcionalidade_grupo = projeto.orientador.user.funcionalidade_grupo
+        projeto.save()
+    
+    message = "Feito"
     return HttpResponse(message)

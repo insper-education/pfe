@@ -93,8 +93,10 @@ class PFEUser(AbstractUser):
     conta_github = models.CharField(max_length=39, null=True, blank=True,
                                       help_text="Conta do GitHub")
 
+    ## REMOVER (FICA EM ALOCACAO E PROJETO_ORIENTADOR
     funcionalidade_grupo = models.ForeignKey("estudantes.FuncionalidadeGrupo", null=True, blank=True, on_delete=models.SET_NULL,
                                help_text="Resultados da Funcionalidade de Grupo")
+    #### 
 
     dinamica_conflitos = models.ForeignKey("estudantes.DinamicaConflitos", null=True, blank=True, on_delete=models.SET_NULL,
                                  help_text="Resultados da Dinâmica de Conflitos")
@@ -451,6 +453,9 @@ class Alocacao(models.Model):
     agendado_horarios = models.DateTimeField("Agendamento de Horários", default=None, blank=True, null=True,
                                              help_text="Data e hora do primeiro agendamento dos horários de trabalho no projeto")
     
+    funcionalidade_grupo = models.ForeignKey("estudantes.FuncionalidadeGrupo", null=True, blank=True, on_delete=models.SET_NULL,
+                               help_text="Resultados da Funcionalidade de Grupo para o estudante alocado")
+
     class Meta:
         """Meta para Alocacao."""
         verbose_name = "Alocação"

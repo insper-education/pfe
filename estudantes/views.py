@@ -445,35 +445,45 @@ def estilo_comunicacao(request):
 def funcionalidade_grupo(request):
     """Formulário para discutir funcionalidade de grupo dos estudantes."""
 
+    objeto = None
+    projeto = None
+    if request.user.eh_estud:
+        objeto = Alocacao.objects.filter(aluno=request.user.aluno).last()
+        projeto = objeto.projeto if objeto else None
+        if not objeto.funcionalidade_grupo:
+            objeto.funcionalidade_grupo = FuncionalidadeGrupo.objects.create()
+            objeto.save()
+    elif request.user.eh_prof_a:
+        objeto = Projeto.objects.filter(orientador=request.user.professor).last()
+        projeto = objeto if objeto else None
+        if not objeto.funcionalidade_grupo:
+            objeto.funcionalidade_grupo = FuncionalidadeGrupo.objects.create()
+            objeto.save()
+    else:
+        return JsonResponse({"atualizado": False}, status=401)
+        
     if request.headers.get("X-Requested-With") == "XMLHttpRequest" and request.method == 'POST': # Ajax check
 
-         # Trata uma questão por vez via Ajax
-        if not request.user.funcionalidade_grupo:
-            request.user.funcionalidade_grupo = FuncionalidadeGrupo.objects.create()
-            request.user.save()
-        
+        # Trata uma questão por vez via Ajax
         questao = request.POST.get("questao", None)
         if questao:
             valor = request.POST.get("valor", None)
             if valor:
-                setattr(request.user.funcionalidade_grupo, questao, valor)
-                request.user.funcionalidade_grupo.save()
+                setattr(objeto.funcionalidade_grupo, questao, valor)
+                objeto.funcionalidade_grupo.save()
                 return JsonResponse({"atualizado": True})
 
         return JsonResponse({"atualizado": False})
     
     elif request.method == "POST":  # Trata todas as questões de uma vez
 
-        if not request.user.funcionalidade_grupo:
-            request.user.funcionalidade_grupo = FuncionalidadeGrupo.objects.create()
-            request.user.save()
         for linha in Estrutura.loads(nome="Questões de Funcionalidade")["questoes"]:
             if request.user.tipo_de_usuario in linha["usuarios"]:
                 question_key = "question_{}".format(linha["numero"])
                 valor = request.POST.get(question_key, None)
                 if valor:
-                    setattr(request.user.funcionalidade_grupo, question_key, valor)
-        request.user.funcionalidade_grupo.save()
+                    setattr(objeto.funcionalidade_grupo, question_key, valor)
+        objeto.funcionalidade_grupo.save()
         context = {
             "area_principal": True,
             "mensagem": {"pt": "Dados salvos com sucesso!", "en": "Data saved successfully!"},
@@ -483,12 +493,10 @@ def funcionalidade_grupo(request):
     context = {
         "titulo": {"pt": "Funcionalidade de Grupo", "en": "Group Functionality"},
         "questoes_funcionalidade": Estrutura.loads(nome="Questões de Funcionalidade"),
-        "funcionalidade_grupo": {request.user: request.user.funcionalidade_grupo},
+        "funcionalidade_grupos": { projeto: {request.user: objeto.funcionalidade_grupo} },
     }
 
     return render(request, "estudantes/funcionalidade_grupo.html", context)
-
-
 
 
 

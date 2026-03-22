@@ -160,6 +160,11 @@ class Projeto(models.Model):
 
     # -------------------------- Fim da Pasta de Projeto -------------------------- #
 
+    # Funcionalidade de Grupo para o orientador do projeto
+    funcionalidade_grupo = models.ForeignKey("estudantes.FuncionalidadeGrupo", null=True, blank=True, on_delete=models.SET_NULL,
+                                                       help_text="Resultados da Funcionalidade de Grupo para o orientador do projeto")
+
+
     class Meta:
         ordering = [ "ano", "semestre", "proposta__organizacao" ]  # Não mudar a ordem
         permissions = (("altera_empresa", "Empresa altera valores"),
