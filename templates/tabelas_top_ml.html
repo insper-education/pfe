@@ -49,6 +49,7 @@
             {% if cabecalho.texto %}data-texto="{{cabecalho.texto}}"{% endif %}
             {% if cabecalho.icone %}data-icone="{{cabecalho.icone|safe}}"{% endif %}
             {% if cabecalho.ordenamento %}data-ordenamento="{{cabecalho.ordenamento}}"{% endif %}
+            {% if cabecalho.colspan %}colspan="{{cabecalho.colspan}}"{% endif %}
             data-lang-pt="{{cabecalho.pt|safe}}" data-lang-en="{{cabecalho.en|safe}}"
             ><span style="margin-right: 0.6ex;">{% lng cabecalho.pt|safe cabecalho.en|safe %}</span>
           </th>

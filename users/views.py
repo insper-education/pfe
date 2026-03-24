@@ -617,8 +617,12 @@ def projetos_objetivos(request):
             {"pt": "Projeto", "en": "Project"},]
         for objetivo in objetivos:
             cabecalhos.append({
-                "pt": objetivo.titulo + ("<br>(individual)" if individual else "<br>(grupo)"),
-                "en": objetivo.titulo_en + ("<br>(individual)" if individual else "<br>(group)"),
+                "pt": objetivo.titulo + ("<br>(individual)" if individual else "<br>(grupo)") + " L",
+                "en": objetivo.titulo_en + ("<br>(individual)" if individual else "<br>(group)") + " L"
+            })
+            cabecalhos.append({
+                "pt": objetivo.titulo + ("<br>(individual)" if individual else "<br>(grupo)") + " N",
+                "en": objetivo.titulo_en + ("<br>(individual)" if individual else "<br>(group)") + " N"
             })
 
         captions = []

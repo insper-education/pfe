@@ -24,9 +24,7 @@
     {% include "tabelas_top_ml.html" with tabela="Estudantes" cabecalhos=cabecalhos %}
       {% for projeto in projetos %} 
         <tr class="item">
-          <th scope="row">
-            {{ projeto.id }}
-          </th>
+          <th scope="row">{{ projeto.id }}</th>
           <th scope="row">
             [<a class="imprimir" href="{% url 'organizacao_completo' projeto.organizacao.id %}">{{ projeto.organizacao.nome }}</a>]
             <a class="imprimir" href="{% url 'projeto_infos' projeto.id %}">
@@ -54,22 +52,17 @@
 
           {% with oa=projeto|get_oas_g %}
             {% for objetivo in objetivos %}
-              <td style="text-align:right;">
-                {% if oa|get_value:objetivo %}
-                  {% comment %} <span data-toggle="tooltip" data-html="true" animation="true"
-                  title=" {% for c in oa|get_value:objetivo|get_value:'conceito' %}
-                            <span {% if c.2 < 5 %}style='color: red;'{% endif %}>
-                              {{ c.0.sigla }}: {{ c.1 }} ({{ c.2 }})
-                            </span><br>
-                          {% endfor %}"> {% endcomment %}
-                    {% with media=oa|get_value:objetivo|get_value:"media" %}
-                      <span style="color: {{ media.2 }};">
-                        {{ media.0 }} ({{ media.1|stringformat:".2f" }})
-                      </span>
-                    {% endwith %}
-                  {% comment %} </span> {% endcomment %}
+              {% with valor=oa|get_value:objetivo %}
+                {% if valor %}
+                  {% with media=valor|get_value:"media" %}
+                    <td style="text-align:center; color: {{ media.2 }};">{{ media.0 }}</td>
+                    <td style="text-align:right; color: {{ media.2 }};">{{ media.1|stringformat:".2f" }}</td>
+                  {% endwith %}
+                {% else %}
+                  <td style="text-align:center; color: #94a3b8;">-</td>
+                  <td style="text-align:right; color: #94a3b8;">-</td>
                 {% endif %}
-              </td>
+              {% endwith %}
             {% endfor %}
           {% endwith %} 
 
