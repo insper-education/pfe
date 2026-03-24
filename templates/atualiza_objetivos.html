@@ -20,6 +20,8 @@
 
   {% comment %} Mudas as cores conforme objetos são clicados {% endcomment %}
   function cores(e) {
+    console.log(e.target.classList[0]);
+    console.log(e.target.classList[1]);
     $("td").filter("."+e.target.classList[0]).css("backgroundColor", branco);
     $("td").filter("."+e.target.classList[1]+"").css("backgroundColor", azul);
     $("th").filter("."+e.target.classList[0]).css("backgroundColor", cinza);

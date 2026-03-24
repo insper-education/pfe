@@ -31,8 +31,10 @@ from .tipos import TIPO_EVENTO
 
 from academica.support_notas import converte_letra
 
-from users.models import PFEUser, Alocacao, Associado
+from users.models import PFEUser, Alocacao
 
+from academica.models import Composicao
+from academica.support5 import filtra_composicoes
 
 class Organizacao(models.Model):
     """Dados das organizações que propõe projetos."""
@@ -1454,6 +1456,17 @@ class Documento(models.Model):
     def delete(self, using=None, keep_parents=False):
         self.documento.delete()
         super().delete()
+
+    def atrasado(self):
+        """Checa se o documento está atrasado (após a data do evento relacionado)."""
+        if self.projeto:
+            composicoes = filtra_composicoes(Composicao.objects.all(), ano=self.projeto.ano, semestre=self.projeto.semestre)
+            composicao = composicoes.filter(tipo_documento=self.tipo_documento).last()
+            if composicao:
+                evento = Evento.get_evento(ano=self.projeto.ano, semestre=self.projeto.semestre, tipo=composicao.tipo_evento)
+                if evento and self.data and self.data.date() > evento.endDate:
+                    return True
+        return False
 
     class Meta:
         ordering = ["-data"]  # NÃO MUDAR

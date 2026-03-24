@@ -24,31 +24,34 @@
 {% if pesos %}
 
   {% with exame_sigla=banca.sigla %}
-    <br><h5>{% lng "Objetivos de Aprendizagem" "Learning Goals" %}</h5><br>
+    <div class="nav-side-wrapper" style="font-weight: bold; margin-bottom: 6px; font-size: 1.0em; color: #300;">
+      <u>{% lng "Objetivos de Aprendizagem" "Learning Goals" %}
+      {% if tipo_de_avaliacao %}{{ tipo_de_avaliacao }}{% endif %}</u>
+    </div>
     {% for peso in pesos %}
       <b>{% lng peso.objetivo.titulo peso.objetivo.titulo_en %}</b>:
       {% lng peso.objetivo.objetivo  peso.objetivo.objetivo_en %}
       
-      <div class="table-responsive">
+      <div class="table-responsive mb-1">
       <table style="width:100%;" class="tab_avaliacao">
 
         <tr>
           {% for nivel in niveis_objetivos %}
             {% if exame_sigla != nivel.esconde %}  {% comment %} Esconde em certas avaliações {% endcomment %}
-              <th class="nav-side-wrapper th_objetivos tabela{{peso.objetivo.id}} {% for s in nivel.siglas %}objetivo{{peso.objetivo.id}}{{s.escape}} {% endfor %} {% if atrasado and peso.bloqueio_atraso < nivel.nota %} vermelho_forte{% endif %} {% if nivel.nota > 0 and sem_documentos %} vermelho_forte{% endif %}" 
+              <th class="nav-side-wrapper th_objetivos {% if bindividual %}bindividual{{bindividual.id}}{% endif %}tabela{{peso.objetivo.id}} {% for s in nivel.siglas %}{% if bindividual %}bindividual{{bindividual.id}}{% endif %}objetivo{{peso.objetivo.id}}{{s.escape}} {% endfor %} {% if atrasado and peso.bloqueio_atraso < nivel.nota %} vermelho_forte{% endif %} {% if nivel.nota > 0 and sem_documentos %} vermelho_forte{% endif %}" 
               style="width:18%">
                 <div class="nav-side">
                   {% for s in nivel.siglas %}
                     {% if forloop.first or exame_sigla != "P" %}
-                      <label class="labels" for="objetivo{{peso.objetivo.id}}{{s.escape}}">
+                      <label class="labels" for="{% if bindividual %}bindividual.{{bindividual.id}}.{% endif %}objetivo{{peso.objetivo.id}}{{s.escape}}">
                         {% if forloop.first %}<span class="nivel">{% lng nivel.pt nivel.en %}&nbsp;</span>{% endif %}
                         ({{s.letra}})
-                        <input type="radio" class="tabela{{peso.objetivo.id}} objetivo{{peso.objetivo.id}}{{s.escape}} inputOA" 
-                          id="objetivo{{peso.objetivo.id}}{{s.escape}}" name="objetivo.{{peso.objetivo.id}}" value="{{peso.objetivo.id}}.{{s.letra}}" 
+                        <input type="radio" class="{% if bindividual %}bindividual{{bindividual.id}}{% endif %}tabela{{peso.objetivo.id}} {% if bindividual %}bindividual{{bindividual.id}}{% endif %}objetivo{{peso.objetivo.id}}{{s.escape}} inputOA" 
+                          id="{% if bindividual %}bindividual{{bindividual.id}}{% endif %}objetivo{{peso.objetivo.id}}{{s.escape}}"
+                          name="{% if bindividual %}bindividual.{{bindividual.id}}.{% endif %}objetivo.{{peso.objetivo.id}}"  
+                          value="{{peso.objetivo.id}}.{{s.letra}}"
                           required {% if not editor %}disabled {% endif %} {% if atrasado and peso.bloqueio_atraso < nivel.nota %}disabled{% endif %} {% if nivel.nota > 0 and sem_documentos %}disabled{% endif %}/>
                       </label>
-                      {% comment %} Não sei exatamento por que, mas o segundo conenceito (com +) também tinha a classe do objetivo sem o +, mas tirei no momento.
-                      <input type="radio" class="tabela{{peso.objetivo.id}} objetivo{{peso.objetivo.id}}C objetivo{{peso.objetivo.id}}CX inputOA"  {% endcomment %}
                     {% endif %}
                   {% endfor %}
                 </div>
@@ -62,19 +65,19 @@
 
             {% if individual %}
               {% with r=peso.objetivo.get_rubrica.intermediaria.individual %}
-                <td class="td_objetivos tabela{{peso.objetivo.id}} objetivo{{peso.objetivo.id}}I" ><label for="objetivo{{peso.objetivo.id}}I">{% lng r.I.pt r.I.en %}</label></td>
-                <td class="{% if atrasado and peso.bloqueio_atraso < 2 %} vermelho_medio{% endif %} {% if sem_documentos %} vermelho_medio{% endif %} td_objetivos tabela{{peso.objetivo.id}} objetivo{{peso.objetivo.id}}D" ><label for="objetivo{{peso.objetivo.id}}D">{% lng r.D.pt r.D.en %}</label></td>
-                <td class="{% if atrasado and peso.bloqueio_atraso < 5 %} vermelho_medio{% endif %} {% if sem_documentos %} vermelho_medio{% endif %} td_objetivos tabela{{peso.objetivo.id}} objetivo{{peso.objetivo.id}}C objetivo{{peso.objetivo.id}}CX"><label for="objetivo{{peso.objetivo.id}}C">{% lng r.C.pt r.C.en %}</label></td>
-                <td class="{% if atrasado and peso.bloqueio_atraso < 7 %} vermelho_medio{% endif %} {% if sem_documentos %} vermelho_medio{% endif %} td_objetivos tabela{{peso.objetivo.id}} objetivo{{peso.objetivo.id}}B objetivo{{peso.objetivo.id}}BX"><label for="objetivo{{peso.objetivo.id}}B">{% lng r.B.pt r.B.en %}</label></td>
-                <td class="{% if atrasado and peso.bloqueio_atraso < 9 %} vermelho_medio{% endif %} {% if sem_documentos %} vermelho_medio{% endif %} td_objetivos tabela{{peso.objetivo.id}} objetivo{{peso.objetivo.id}}A objetivo{{peso.objetivo.id}}AX"><label for="objetivo{{peso.objetivo.id}}A">{% lng r.A.pt r.A.en %}</label></td>
+                <td class="td_objetivos {% if bindividual %}bindividual{{bindividual.id}}{% endif %}tabela{{peso.objetivo.id}} {% if bindividual %}bindividual{{bindividual.id}}{% endif %}objetivo{{peso.objetivo.id}}I" ><label for="{% if bindividual %}bindividual{{bindividual.id}}{% endif %}objetivo{{peso.objetivo.id}}I">{% lng r.I.pt r.I.en %}</label></td>
+                <td class="{% if atrasado and peso.bloqueio_atraso < 2 %} vermelho_medio{% endif %} {% if sem_documentos %} vermelho_medio{% endif %} td_objetivos {% if bindividual %}bindividual{{bindividual.id}}{% endif %}tabela{{peso.objetivo.id}} {% if bindividual %}bindividual{{bindividual.id}}{% endif %}objetivo{{peso.objetivo.id}}D" ><label for="{% if bindividual %}bindividual{{bindividual.id}}{% endif %}objetivo{{peso.objetivo.id}}D">{% lng r.D.pt r.D.en %}</label></td>
+                <td class="{% if atrasado and peso.bloqueio_atraso < 5 %} vermelho_medio{% endif %} {% if sem_documentos %} vermelho_medio{% endif %} td_objetivos {% if bindividual %}bindividual{{bindividual.id}}{% endif %}tabela{{peso.objetivo.id}} {% if bindividual %}bindividual{{bindividual.id}}{% endif %}objetivo{{peso.objetivo.id}}C {% if bindividual %}bindividual{{bindividual.id}}{% endif %}objetivo{{peso.objetivo.id}}CX" ><label for="{% if bindividual %}bindividual{{bindividual.id}}{% endif %}objetivo{{peso.objetivo.id}}C">{% lng r.C.pt r.C.en %}</label></td>
+                <td class="{% if atrasado and peso.bloqueio_atraso < 7 %} vermelho_medio{% endif %} {% if sem_documentos %} vermelho_medio{% endif %} td_objetivos {% if bindividual %}bindividual{{bindividual.id}}{% endif %}tabela{{peso.objetivo.id}} {% if bindividual %}bindividual{{bindividual.id}}{% endif %}objetivo{{peso.objetivo.id}}B {% if bindividual %}bindividual{{bindividual.id}}{% endif %}objetivo{{peso.objetivo.id}}BX" ><label for="{% if bindividual %}bindividual{{bindividual.id}}{% endif %}objetivo{{peso.objetivo.id}}B">{% lng r.B.pt r.B.en %}</label></td>
+                <td class="{% if atrasado and peso.bloqueio_atraso < 9 %} vermelho_medio{% endif %} {% if sem_documentos %} vermelho_medio{% endif %} td_objetivos {% if bindividual %}bindividual{{bindividual.id}}{% endif %}tabela{{peso.objetivo.id}} {% if bindividual %}bindividual{{bindividual.id}}{% endif %}objetivo{{peso.objetivo.id}}A {% if bindividual %}bindividual{{bindividual.id}}{% endif %}objetivo{{peso.objetivo.id}}AX" ><label for="{% if bindividual %}bindividual{{bindividual.id}}{% endif %}objetivo{{peso.objetivo.id}}A">{% lng r.A.pt r.A.en %}</label></td>
               {% endwith %}
             {% else %}
               {% with r=peso.objetivo.get_rubrica.intermediaria.grupo %}
-                <td class="td_objetivos tabela{{peso.objetivo.id}} objetivo{{peso.objetivo.id}}I" ><label for="objetivo{{peso.objetivo.id}}I">{% lng r.I.pt r.I.en %}</label></td>
-                <td class="{% if atrasado and peso.bloqueio_atraso < 2 %} vermelho_medio{% endif %} {% if sem_documentos %} vermelho_medio{% endif %} td_objetivos tabela{{peso.objetivo.id}} objetivo{{peso.objetivo.id}}D" ><label for="objetivo{{peso.objetivo.id}}D">{% lng r.D.pt r.D.en %}</label></td>
-                <td class="{% if atrasado and peso.bloqueio_atraso < 5 %} vermelho_medio{% endif %} {% if sem_documentos %} vermelho_medio{% endif %} td_objetivos tabela{{peso.objetivo.id}} objetivo{{peso.objetivo.id}}C objetivo{{peso.objetivo.id}}CX" ><label for="objetivo{{peso.objetivo.id}}C">{% lng r.C.pt r.C.en %}</label></td>
-                <td class="{% if atrasado and peso.bloqueio_atraso < 7 %} vermelho_medio{% endif %} {% if sem_documentos %} vermelho_medio{% endif %} td_objetivos tabela{{peso.objetivo.id}} objetivo{{peso.objetivo.id}}B objetivo{{peso.objetivo.id}}BX" ><label for="objetivo{{peso.objetivo.id}}B">{% lng r.B.pt r.B.en %}</label></td>
-                <td class="{% if atrasado and peso.bloqueio_atraso < 9 %} vermelho_medio{% endif %} {% if sem_documentos %} vermelho_medio{% endif %} td_objetivos tabela{{peso.objetivo.id}} objetivo{{peso.objetivo.id}}A objetivo{{peso.objetivo.id}}AX" ><label for="objetivo{{peso.objetivo.id}}A">{% lng r.A.pt r.A.en %}</label></td>
+                <td class="td_objetivos {% if bindividual %}bindividual{{bindividual.id}}{% endif %}tabela{{peso.objetivo.id}} {% if bindividual %}bindividual{{bindividual.id}}{% endif %}objetivo{{peso.objetivo.id}}I" ><label for="{% if bindividual %}bindividual{{bindividual.id}}{% endif %}objetivo{{peso.objetivo.id}}I">{% lng r.I.pt r.I.en %}</label></td>
+                <td class="{% if atrasado and peso.bloqueio_atraso < 2 %} vermelho_medio{% endif %} {% if sem_documentos %} vermelho_medio{% endif %} td_objetivos {% if bindividual %}bindividual{{bindividual.id}}{% endif %}tabela{{peso.objetivo.id}} {% if bindividual %}bindividual{{bindividual.id}}{% endif %}objetivo{{peso.objetivo.id}}D" ><label for="{% if bindividual %}bindividual{{bindividual.id}}{% endif %}objetivo{{peso.objetivo.id}}D">{% lng r.D.pt r.D.en %}</label></td>
+                <td class="{% if atrasado and peso.bloqueio_atraso < 5 %} vermelho_medio{% endif %} {% if sem_documentos %} vermelho_medio{% endif %} td_objetivos {% if bindividual %}bindividual{{bindividual.id}}{% endif %}tabela{{peso.objetivo.id}} {% if bindividual %}bindividual{{bindividual.id}}{% endif %}objetivo{{peso.objetivo.id}}C {% if bindividual %}bindividual{{bindividual.id}}{% endif %}objetivo{{peso.objetivo.id}}CX" ><label for="{% if bindividual %}bindividual{{bindividual.id}}{% endif %}objetivo{{peso.objetivo.id}}C">{% lng r.C.pt r.C.en %}</label></td>
+                <td class="{% if atrasado and peso.bloqueio_atraso < 7 %} vermelho_medio{% endif %} {% if sem_documentos %} vermelho_medio{% endif %} td_objetivos {% if bindividual %}bindividual{{bindividual.id}}{% endif %}tabela{{peso.objetivo.id}} {% if bindividual %}bindividual{{bindividual.id}}{% endif %}objetivo{{peso.objetivo.id}}B {% if bindividual %}bindividual{{bindividual.id}}{% endif %}objetivo{{peso.objetivo.id}}BX" ><label for="{% if bindividual %}bindividual{{bindividual.id}}{% endif %}objetivo{{peso.objetivo.id}}B">{% lng r.B.pt r.B.en %}</label></td>
+                <td class="{% if atrasado and peso.bloqueio_atraso < 9 %} vermelho_medio{% endif %} {% if sem_documentos %} vermelho_medio{% endif %} td_objetivos {% if bindividual %}bindividual{{bindividual.id}}{% endif %}tabela{{peso.objetivo.id}} {% if bindividual %}bindividual{{bindividual.id}}{% endif %}objetivo{{peso.objetivo.id}}A {% if bindividual %}bindividual{{bindividual.id}}{% endif %}objetivo{{peso.objetivo.id}}AX" ><label for="{% if bindividual %}bindividual{{bindividual.id}}{% endif %}objetivo{{peso.objetivo.id}}A">{% lng r.A.pt r.A.en %}</label></td>
               {% endwith %}
             {% endif %}
 
@@ -83,22 +86,22 @@
             {% if individual %}
               {% with r=peso.objetivo.get_rubrica.final.individual %}
                 {% if banca.sigla != "P" %}{% comment %} Não é probation {% endcomment %}
-                  <td class="td_objetivos tabela{{peso.objetivo.id}} objetivo{{peso.objetivo.id}}I" ><label for="objetivo{{peso.objetivo.id}}I">{% lng r.I.pt r.I.en %}</label></td>
+                  <td class="td_objetivos {% if bindividual %}bindividual{{bindividual.id}}{% endif %}tabela{{peso.objetivo.id}} {% if bindividual %}bindividual{{bindividual.id}}{% endif %}objetivo{{peso.objetivo.id}}I" ><label for="{% if bindividual %}bindividual{{bindividual.id}}{% endif %}objetivo{{peso.objetivo.id}}I">{% lng r.I.pt r.I.en %}</label></td>
                 {% endif %}
-                <td class="{% if atrasado and peso.bloqueio_atraso < 2 %} vermelho_medio{% endif %} {% if sem_documentos %} vermelho_medio{% endif %} td_objetivos tabela{{peso.objetivo.id}} objetivo{{peso.objetivo.id}}D" ><label for="objetivo{{peso.objetivo.id}}D">{% lng r.D.pt r.D.en %}</label></td>
-                <td class="{% if atrasado and peso.bloqueio_atraso < 5 %} vermelho_medio{% endif %} {% if sem_documentos %} vermelho_medio{% endif %} td_objetivos tabela{{peso.objetivo.id}} objetivo{{peso.objetivo.id}}C objetivo{{peso.objetivo.id}}CX" ><label for="objetivo{{peso.objetivo.id}}C">{% lng r.C.pt r.C.en %}</label></td>
+                <td class="{% if atrasado and peso.bloqueio_atraso < 2 %} vermelho_medio{% endif %} {% if sem_documentos %} vermelho_medio{% endif %} td_objetivos {% if bindividual %}bindividual{{bindividual.id}}{% endif %}tabela{{peso.objetivo.id}} {% if bindividual %}bindividual{{bindividual.id}}{% endif %}objetivo{{peso.objetivo.id}}D" ><label for="{% if bindividual %}bindividual{{bindividual.id}}{% endif %}objetivo{{peso.objetivo.id}}D">{% lng r.D.pt r.D.en %}</label></td>
+                <td class="{% if atrasado and peso.bloqueio_atraso < 5 %} vermelho_medio{% endif %} {% if sem_documentos %} vermelho_medio{% endif %} td_objetivos {% if bindividual %}bindividual{{bindividual.id}}{% endif %}tabela{{peso.objetivo.id}} {% if bindividual %}bindividual{{bindividual.id}}{% endif %}objetivo{{peso.objetivo.id}}C {% if bindividual %}bindividual{{bindividual.id}}{% endif %}objetivo{{peso.objetivo.id}}CX" ><label for="{% if bindividual %}bindividual{{bindividual.id}}{% endif %}objetivo{{peso.objetivo.id}}C">{% lng r.C.pt r.C.en %}</label></td>
                 {% if banca.sigla != "P" %}{% comment %} Não é probation {% endcomment %}
-                  <td class="{% if atrasado and peso.bloqueio_atraso < 7 %} vermelho_medio{% endif %} {% if sem_documentos %} vermelho_medio{% endif %} td_objetivos tabela{{peso.objetivo.id}} objetivo{{peso.objetivo.id}}B objetivo{{peso.objetivo.id}}BX" ><label for="objetivo{{peso.objetivo.id}}B">{% lng r.B.pt r.B.en %}</label></td>
-                  <td class="{% if atrasado and peso.bloqueio_atraso < 9 %} vermelho_medio{% endif %} {% if sem_documentos %} vermelho_medio{% endif %} td_objetivos tabela{{peso.objetivo.id}} objetivo{{peso.objetivo.id}}A objetivo{{peso.objetivo.id}}AX" ><label for="objetivo{{peso.objetivo.id}}A">{% lng r.A.pt r.A.en %}</label></td>
+                  <td class="{% if atrasado and peso.bloqueio_atraso < 7 %} vermelho_medio{% endif %} {% if sem_documentos %} vermelho_medio{% endif %} td_objetivos {% if bindividual %}bindividual{{bindividual.id}}{% endif %}tabela{{peso.objetivo.id}} {% if bindividual %}bindividual{{bindividual.id}}{% endif %}objetivo{{peso.objetivo.id}}B {% if bindividual %}bindividual{{bindividual.id}}{% endif %}objetivo{{peso.objetivo.id}}BX" ><label for="{% if bindividual %}bindividual{{bindividual.id}}{% endif %}objetivo{{peso.objetivo.id}}B">{% lng r.B.pt r.B.en %}</label></td>
+                  <td class="{% if atrasado and peso.bloqueio_atraso < 9 %} vermelho_medio{% endif %} {% if sem_documentos %} vermelho_medio{% endif %} td_objetivos {% if bindividual %}bindividual{{bindividual.id}}{% endif %}tabela{{peso.objetivo.id}} {% if bindividual %}bindividual{{bindividual.id}}{% endif %}objetivo{{peso.objetivo.id}}A {% if bindividual %}bindividual{{bindividual.id}}{% endif %}objetivo{{peso.objetivo.id}}AX" ><label for="{% if bindividual %}bindividual{{bindividual.id}}{% endif %}objetivo{{peso.objetivo.id}}A">{% lng r.A.pt r.A.en %}</label></td>
                 {% endif %}
               {% endwith %}
             {% else %}
               {% with r=peso.objetivo.get_rubrica.final.grupo %}
-                <td class="td_objetivos tabela{{peso.objetivo.id}} objetivo{{peso.objetivo.id}}I" ><label for="objetivo{{peso.objetivo.id}}I">{% lng r.I.pt r.I.en %}</label></td>
-                <td class="{% if atrasado and peso.bloqueio_atraso < 2 %} vermelho_medio{% endif %} {% if sem_documentos %} vermelho_medio{% endif %} td_objetivos tabela{{peso.objetivo.id}} objetivo{{peso.objetivo.id}}D" ><label for="objetivo{{peso.objetivo.id}}D">{% lng r.D.pt r.D.en %}</label></td>
-                <td class="{% if atrasado and peso.bloqueio_atraso < 5 %} vermelho_medio{% endif %} {% if sem_documentos %} vermelho_medio{% endif %} td_objetivos tabela{{peso.objetivo.id}} objetivo{{peso.objetivo.id}}C objetivo{{peso.objetivo.id}}CX" ><label for="objetivo{{peso.objetivo.id}}C">{% lng r.C.pt r.C.en %}</label></td>
-                <td class="{% if atrasado and peso.bloqueio_atraso < 7 %} vermelho_medio{% endif %} {% if sem_documentos %} vermelho_medio{% endif %} td_objetivos tabela{{peso.objetivo.id}} objetivo{{peso.objetivo.id}}B objetivo{{peso.objetivo.id}}BX" ><label for="objetivo{{peso.objetivo.id}}B">{% lng r.B.pt r.B.en %}</label></td>
-                <td class="{% if atrasado and peso.bloqueio_atraso < 9 %} vermelho_medio{% endif %} {% if sem_documentos %} vermelho_medio{% endif %} td_objetivos tabela{{peso.objetivo.id}} objetivo{{peso.objetivo.id}}A objetivo{{peso.objetivo.id}}AX" ><label for="objetivo{{peso.objetivo.id}}A">{% lng r.A.pt r.A.en %}</label></td>
+                <td class="td_objetivos {% if bindividual %}bindividual{{bindividual.id}}{% endif %}tabela{{peso.objetivo.id}} objetivo{{peso.objetivo.id}}I" ><label for="{% if bindividual %}bindividual{{bindividual.id}}{% endif %}objetivo{{peso.objetivo.id}}I">{% lng r.I.pt r.I.en %}</label></td>
+                <td class="{% if atrasado and peso.bloqueio_atraso < 2 %} vermelho_medio{% endif %} {% if sem_documentos %} vermelho_medio{% endif %} td_objetivos {% if bindividual %}bindividual{{bindividual.id}}{% endif %}tabela{{peso.objetivo.id}} {% if bindividual %}bindividual{{bindividual.id}}{% endif %}objetivo{{peso.objetivo.id}}D" ><label for="{% if bindividual %}bindividual{{bindividual.id}}{% endif %}objetivo{{peso.objetivo.id}}D">{% lng r.D.pt r.D.en %}</label></td>
+                <td class="{% if atrasado and peso.bloqueio_atraso < 5 %} vermelho_medio{% endif %} {% if sem_documentos %} vermelho_medio{% endif %} td_objetivos {% if bindividual %}bindividual{{bindividual.id}}{% endif %}tabela{{peso.objetivo.id}} {% if bindividual %}bindividual{{bindividual.id}}{% endif %}objetivo{{peso.objetivo.id}}C {% if bindividual %}bindividual{{bindividual.id}}{% endif %}objetivo{{peso.objetivo.id}}CX" ><label for="{% if bindividual %}bindividual{{bindividual.id}}{% endif %}objetivo{{peso.objetivo.id}}C">{% lng r.C.pt r.C.en %}</label></td>
+                <td class="{% if atrasado and peso.bloqueio_atraso < 7 %} vermelho_medio{% endif %} {% if sem_documentos %} vermelho_medio{% endif %} td_objetivos {% if bindividual %}bindividual{{bindividual.id}}{% endif %}tabela{{peso.objetivo.id}} {% if bindividual %}bindividual{{bindividual.id}}{% endif %}objetivo{{peso.objetivo.id}}B {% if bindividual %}bindividual{{bindividual.id}}{% endif %}objetivo{{peso.objetivo.id}}BX" ><label for="{% if bindividual %}bindividual{{bindividual.id}}{% endif %}objetivo{{peso.objetivo.id}}B">{% lng r.B.pt r.B.en %}</label></td>
+                <td class="{% if atrasado and peso.bloqueio_atraso < 9 %} vermelho_medio{% endif %} {% if sem_documentos %} vermelho_medio{% endif %} td_objetivos {% if bindividual %}bindividual{{bindividual.id}}{% endif %}tabela{{peso.objetivo.id}} {% if bindividual %}bindividual{{bindividual.id}}{% endif %}objetivo{{peso.objetivo.id}}A {% if bindividual %}bindividual{{bindividual.id}}{% endif %}objetivo{{peso.objetivo.id}}AX" ><label for="{% if bindividual %}bindividual{{bindividual.id}}{% endif %}objetivo{{peso.objetivo.id}}A">{% lng r.A.pt r.A.en %}</label></td>
               {% endwith %}
             {% endif %}
 
@@ -111,10 +114,13 @@
       {% if not sem_NA %}
         <table style="width:100%;">
           <tr style="width:100%;">
-            <td class="nav-side-wrapper th_na tabela{{peso.objetivo.id}} objetivo{{peso.objetivo.id}}NA" 
+            <td class="nav-side-wrapper th_na {% if bindividual %}bindividual{{bindividual.id}}{% endif %}tabela{{peso.objetivo.id}} objetivo{{peso.objetivo.id}}NA" 
               colspan="{% if banca.sigla != "P" %}6{% else %}5{% endif %}">
-                <label style="margin-left: 8px;" for="objetivo{{peso.objetivo.id}}NA">
-                  <input style="padding-bottom:2px;" type="radio" class="tabela{{peso.objetivo.id}} objetivo{{peso.objetivo.id}}NA inputNA" id="objetivo{{peso.objetivo.id}}NA" name="objetivo.{{peso.objetivo.id}}" value="{{peso.objetivo.id}}.NA" required {% if not editor %}disabled {% endif %}/> 
+                <label style="margin-left: 8px;" for="{% if bindividual %}bindividual{{bindividual.id}}{% endif %}objetivo{{peso.objetivo.id}}NA">
+                  <input style="padding-bottom:2px;" type="radio" class="{% if bindividual %}bindividual{{bindividual.id}}{% endif %}tabela{{peso.objetivo.id}} objetivo{{peso.objetivo.id}}NA inputNA" 
+                  id="{% if bindividual %}bindividual{{bindividual.id}}{% endif %}objetivo{{peso.objetivo.id}}NA" 
+                  name="{% if bindividual %}bindividual.{{bindividual.id}}.{% endif %}objetivo.{{peso.objetivo.id}}" 
+                  value="{{peso.objetivo.id}}.NA" required {% if not editor %}disabled {% endif %}/> 
                   {% lng "Prefiro não avaliar este objetivo de aprendizagem" "I prefer not to evaluate this learning goal" %}
                 </label>
             </td>
@@ -123,12 +129,11 @@
       {% endif %}
 
       </div>
-      <br>
     {% endfor %}
   {% endwith %}
 
 {% else %}
-  <span class="red-bold">
+  <div class="red-bold">
     {% lng "Não foram definidos Objetivos de Aprendizagem para essa Avaliação." "No Learning Goals were defined for this Assessment." %}
-  </span><br>
+  </div>
 {% endif %}

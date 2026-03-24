@@ -14,38 +14,38 @@
         {% for documento in documentos %}
         <li style="list-style-type:'';">
             <span class="fa fa-file"></span>
-            {{documento.tipo_documento}}:
+            {{documento.tipo_documento}}{% if documento.tipo_documento.individual %} ({{documento.usuario.get_full_name}}){% endif %}:
             {% if documento.documento and documento.link %} 
-            {% lng "Entregue" "Submitted" %}
-            <span class="texto-longo">{{ documento.data|date:"DATETIME_FORMAT" }}</span>
-            <span class="texto-curto">{{ documento.data|date:"d/m/y H:i" }}</span>
-            <a 
-                {% if documento.usuario %} data-toggle="tooltip" data-html="true" animation="true" title="Entregue por {{documento.usuario.get_full_name}}"{% endif %}
-                href="{% url 'banca_avaliar' banca.slug %}/{{documento.id}}" target="_blank" rel="noopener noreferrer">(documento)</a>
-            <a 
-                {% if documento.usuario %} data-toggle="tooltip" data-html="true" animation="true" title="Entregue por {{documento.usuario.get_full_name}}"{% endif %}
-                href="{{documento.link}}" target="_blank" rel="noopener noreferrer">(link)</a>
-            {% else %}
-            {% if documento.documento %}
+                {% lng "Entregue" "Submitted" %}
+                <span class="texto-longo">{{ documento.data|date:"DATETIME_FORMAT" }}</span>
+                <span class="texto-curto">{{ documento.data|date:"d/m/y H:i" }}</span>
                 <a 
-                {% if documento.usuario %} data-toggle="tooltip" data-html="true" animation="true" title="Entregue por {{documento.usuario.get_full_name}}"{% endif %}
-                href="{% url 'banca_avaliar' banca.slug %}/{{documento.id}}" target="_blank" rel="noopener noreferrer">{% lng "Entregue" "Submitted" %}                <span class="texto-longo">{{ documento.data|date:"DATETIME_FORMAT" }}</span>
-                <span class="texto-curto">{{ documento.data|date:"d/m/y H:i" }}</span>
-                </a>
+                    {% if documento.usuario %} data-toggle="tooltip" data-html="true" animation="true" title="Entregue por {{documento.usuario.get_full_name}}"{% endif %}
+                    href="{% url 'banca_avaliar' banca.slug %}/{{documento.id}}" target="_blank" rel="noopener noreferrer">({% lng "Documento" "Document" %})</a>
+                <a 
+                    {% if documento.usuario %} data-toggle="tooltip" data-html="true" animation="true" title="Entregue por {{documento.usuario.get_full_name}}"{% endif %}
+                    href="{{documento.link}}" target="_blank" rel="noopener noreferrer">({% lng "Link" "Link" %})</a>
+            {% else %}
+                {% if documento.documento %}
+                    <a 
+                    {% if documento.usuario %} data-toggle="tooltip" data-html="true" animation="true" title="Entregue por {{documento.usuario.get_full_name}}"{% endif %}
+                    href="{% url 'banca_avaliar' banca.slug %}/{{documento.id}}" target="_blank" rel="noopener noreferrer">{% lng "Entregue" "Submitted" %}                <span class="texto-longo">{{ documento.data|date:"DATETIME_FORMAT" }}</span>
+                    <span class="texto-curto">{{ documento.data|date:"d/m/y H:i" }}</span>
+                    </a>
+                {% endif %}
+                {% if documento.link %}
+                    <a
+                    {% if documento.usuario %} data-toggle="tooltip" data-html="true" animation="true" title="Entregue por {{documento.usuario.get_full_name}}"{% endif %}
+                    href="{{documento.link}}" target="_blank" rel="noopener noreferrer">{% lng "Entregue" "Submitted" %}                <span class="texto-longo">{{ documento.data|date:"DATETIME_FORMAT" }}</span>
+                    <span class="texto-curto">{{ documento.data|date:"d/m/y H:i" }}</span>
+                    </a>
+                {% endif %}
             {% endif %}
-            {% if documento.link %}
-                <a
-                {% if documento.usuario %} data-toggle="tooltip" data-html="true" animation="true" title="Entregue por {{documento.usuario.get_full_name}}"{% endif %}
-                href="{{documento.link}}" target="_blank" rel="noopener noreferrer">{% lng "Entregue" "Submitted" %}                <span class="texto-longo">{{ documento.data|date:"DATETIME_FORMAT" }}</span>
-                <span class="texto-curto">{{ documento.data|date:"d/m/y H:i" }}</span>
-                </a>
-            {% endif %}
-            {% endif %}
-            {% if documento.data|diff_days:evento.endDate > 0 %}<span style="color: red;">[FORA DO PRAZO]</span>{% endif %}
-            {% ifchanged documento.tipo_documento %}{% else %}(Versão desatualizada){% endifchanged %}
+            {% if documento.atrasado %}<span style="color: red;">[{% lng "FORA DO PRAZO" "OUT OF DEADLINE" %}]</span>{% endif %}
+            {% ifchanged documento.tipo_documento documento.usuario %}{% else %}({% lng "Versão desatualizada" "Outdated version" %}){% endifchanged %}
         </li>
         {% empty %}
-        Não entregue
+            {% lng "Não entregue" "Not submitted" %}
         {% endfor %} 
     </ul>
 {% endif %}

@@ -43,9 +43,9 @@ createdb pfe
 psql -U pfe -h localhost < backup.sql
 
 # Backup pelo Django (para windows soh consegui assim)
-PUXAR (servidor)> python3 manage.py dumpdata --natural-primary --natural-foreign > dump.json
-SUBIR (cliente)> python3 manage.py flush --no-input
-SUBIR (cliente)> python3 manage.py loaddata dump.json
+PUXAR (servidor)> python manage.py dumpdata --natural-primary --natural-foreign > dump.json
+SUBIR (cliente)> python manage.py flush --no-input
+SUBIR (cliente)> python manage.py loaddata dump.json
 
 # Virtual environment
 source ./env/bin/activate

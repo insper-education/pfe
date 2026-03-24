@@ -12,6 +12,7 @@
 
   <link rel="stylesheet" href="{% static 'css/form_aval.css' %}">
   <script src="{% static 'js/aviso_perda_edicao.js' %}"></script>
+  <link rel="stylesheet" href="{% static 'css/div_arrend.css' %}">
 
   <style>
     .borientacoes {
@@ -22,6 +23,74 @@
       border-radius: 8px;
       background-color: #ffffdd;
     }
+
+    .banca-info-card {
+      background-color: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 12px 16px;
+      margin-bottom: 20px;
+      line-height: 1.8;
+    }
+
+    .banca-info-card b {
+      color: #475569;
+      font-size: 0.85em;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    .avaliador-section {
+      background-color: #f0f4ff;
+      border: 1px solid #c7d2fe;
+      border-radius: 8px;
+      padding: 12px 16px;
+      margin-bottom: 20px;
+    }
+
+    .avaliador-section select {
+      margin-top: 4px;
+      padding: 6px 10px;
+      border: 1px solid #a5b4fc;
+      border-radius: 6px;
+      font-size: 0.95em;
+      min-width: 280px;
+    }
+
+    .observacoes-section {
+      border: 1px solid #bfdbfe;
+      background-color: #f0f9ff;
+      padding: 14px 16px;
+      border-radius: 8px;
+      margin-bottom: 8px;
+      margin-top: 16px;
+    }
+
+    .observacoes-section textarea {
+      width: 100%;
+      max-width: 100%;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      padding: 8px;
+      font-size: 0.9em;
+      margin-top: 4px;
+      box-sizing: border-box;
+    }
+
+    .btn-submit-avaliacao {
+      padding: 10px 32px;
+      font-size: 1.05em;
+      border-radius: 8px;
+      margin-top: 8px;
+    }
+
+    .destaque-section {
+      border: 1px solid #d1d5db;
+      background-color: #fafafa;
+      padding: 12px 16px;
+      border-radius: 8px;
+      margin-bottom: 16px;
+    }
   </style>
 
 {% endblock %}
@@ -29,42 +98,41 @@
 {% block content %}
 
   {% if banca %}
+
+    <div class="div_arredondado_100">
     <form method="post" enctype="multipart/form-data">{% csrf_token %}
 
       {% include "cabecalho_projeto.html" with projeto=projeto com_grupo=True %}
 
-      {% if banca.tipo_evento is not None %}
-        <b>{% lng "Tipo de Banca" "Presentation" %}:</b>
-        {{ banca.tipo_evento.nome }}
-        <br>
-      {% endif %}
+      <div class="banca-info-card">
+        {% if banca.tipo_evento is not None %}
+          <b>{% lng "Tipo de Banca" "Presentation" %}:</b>
+          {{ banca.tipo_evento.nome }}<br>
+        {% endif %}
 
-      {% if estudante %}
-        <b>{% lng "Estudante em Probatório" "Student in Probation" %}:</b>
-        <a href="{% url 'estudante_detail' estudante.id %}">{{ estudante.user.get_full_name }}</a>
-        [{% lng estudante.curso2.nome estudante.curso2.nome_en %}]
-        <a href="mailto:{{estudante.user.email}}">
-          <span class="texto-longo">&lt;{{estudante.user.email}}&gt;</span>
-          <span class="texto-curto"><i class="far fa-envelope"></i></span>
-        </a>
-        <br>
-      {% endif %}
+        {% if estudante %}
+          <b>{% lng "Estudante em Probatório" "Student in Probation" %}:</b>
+          <a href="{% url 'estudante_detail' estudante.id %}">{{ estudante.user.get_full_name }}</a>
+          [{% lng estudante.curso2.nome estudante.curso2.nome_en %}]
+          <a href="mailto:{{estudante.user.email}}">
+            <span class="texto-longo">&lt;{{estudante.user.email}}&gt;</span>
+            <span class="texto-curto"><i class="far fa-envelope"></i></span>
+          </a><br>
+        {% endif %}
 
-      <br>
-      <b>{% lng "Data da Banca" "Date of Presentation" %}:</b>
-      {% include "professores/includes/ver_datas_evento.html" with evento_p_data=banca %}
+        <b>{% lng "Data da Banca" "Date of Presentation" %}:</b>
+        {% include "professores/includes/ver_datas_evento.html" with evento_p_data=banca %}
 
-      <br>
-      {% if banca.location %}
-        <b>{% lng "Local" "Location" %}:</b> {{banca.location}}<br>
-      {% endif %}  
-      {% if banca.link %}
-        <b>Link:</b> <a href="{{banca.link}}">{{banca.link}}</a><br>
-      {% endif %}
-      
-      <br>
-      <div class="mb-4">
-        <b><label style="margin: 0px;" for="avaliador">{% lng "Avaliador(a)" "Evaluator" %}:</label></b>
+        {% if banca.location %}
+          <b>{% lng "Local" "Location" %}:</b> {{banca.location}}<br>
+        {% endif %}
+        {% if banca.link %}
+          <b>Link:</b> <a href="{{banca.link}}">{{banca.link}}</a><br>
+        {% endif %}
+      </div>
+      <div class="avaliador-section">  
+
+        <b><label style="margin: 0px;" for="avaliador">{% lng "Avaliador(a)" "Evaluator" %}:</label></b><br>
         <select name="avaliador" id="avaliador" title="Selecione avaliador da banca" required
           oninvalid="this.setCustomValidity('Selecione seu nome para o controle das avaliações')"
           oninput="this.setCustomValidity('')">
@@ -73,9 +141,9 @@
 
             <optgroup id="MembBanca" label="Membros da Banca">
               {% for pessoa in membros %}
-                <option value="{{pessoa.id}}" {% if pessoa.id == avaliador %}selected{% endif %}>
+                <option value="{{pessoa.id}}">
                   {{pessoa.get_full_name}}
-                </option>
+                  </option>
               {% endfor %}
             </optgroup>
 
@@ -86,9 +154,38 @@
                 </option>
               {% endfor %}
             </optgroup>
-
         </select>
+
+        <div id="warn_not_in_memebros"></div>
+
+        <script>
+          $(document).ready(function() {
+            $("#avaliador").on("change", function() {
+              var selectedId = $(this).val();
+              var isInMembros = $("#MembBanca option[value='" + selectedId + "']").length > 0;
+
+              if (!isInMembros) {
+                $("#warn_not_in_memebros").html(
+                  '<div style="margin-top: 8px; padding: 10px; border: 1px solid #f87171; background-color: #fee2e2; border-radius: 6px; color: #b91c1c; font-size: 0.9em;">' +
+                  '{% lng "Atenção: O avaliador selecionado não é um membro da banca. Certifique-se de que o avaliador escolhido tem permissão para avaliar esta banca." "Warning: The selected evaluator is not a member of the board. Make sure the chosen evaluator has permission to evaluate this board." %}' +
+                  '</div>'
+                );
+              } else {
+                $("#warn_not_in_memebros").html('');
+              }
+            });
+
+            avaliador_id = "{{avaliador}}";
+            if(avaliador_id) {
+              $("#avaliador").val(avaliador_id).change();
+            }
+
+          });
+        </script>
+
       </div>
+
+
 
       {% include "ver_documentos.html" %}
       {% include "professores/includes/ver_site.html" %}
@@ -104,44 +201,63 @@
         </div>
       {% endif %}
 
-      {% include "tabela_avaliacao_objetivos.html" with editor=True %}
-      {% include "atualiza_objetivos.html" %}
-
-      {% if banca.sigla != "P" and banca.sigla != "F" %}{% comment %} Não é probation {% endcomment %}
-        {% comment %} Observações somente para leitura dos estudantes {% endcomment %}
-        <div class="mb-3">
-          <label for="observacoes_estudantes"><b data-toggle="tooltip" data-html="true" animation="true"
-                title="Insira qualquer observação que achar relavante para o grupo de estudantes.">
-            {% lng "Observações Estudantes (enviada para todo o grupo)" "Evaluation Observations for Students (will be sent to all students)" %}:
-          </b></label><br>
-          <textarea id="observacoes_estudantes" name="observacoes_estudantes" rows="8" cols="100" maxlength="2048">{{observacoes_estudantes}}</textarea>
-
-          <div style="background: #eefdfe; border: 1.5px dashed #1976d2; border-radius: 7px; padding: 2px 7px; margin-top: 1px; margin-bottom: 4px; display: flex; align-items: center; gap: 2px;">
-            <span style="font-size: 1.0em; color: #1976d2; margin: 5px;">
-              <i class="fas fa-paperclip" aria-hidden="true"></i>
-            </span>
-            <div style="flex: 1;">
-              <label for="arquivo" style="font-size: 0.88em; color: #1976d2;">
-                {% lng "Envio de relatório com anotações do membro da banca para revisão do grupo (opcional e será enviado automaticamente para o grupo)" "Submission of report with notes from the board member for group review (optional and will be automatically sent to the group)" %}
-              </label>
-              <input id="arquivo" type="file" name="arquivo" style="font-size: 0.8em; margin: 5px;" {% include "formatos_suportados.html" %}>
-            </div>
-          </div>
-
+      <div style="border: 4px solid #cfc; padding: 8px; border-radius: 8px; margin-bottom: 16px; background-color: #fafffa;">
+        <div class="nav-side-wrapper" style="font-weight: bold; margin-bottom: 6px; font-size: 1.1em; color: #300;">
+          {% lng "Avaliação de Grupo" "Group Evaluation" %}
         </div>
-      {% endif %}
-
-      {% comment %} Observações somente para leitura de orientador/coordenador {% endcomment %}
-      <div class="mb-3">
-        <label for="observacoes_orientador"><b data-toggle="tooltip" data-html="true" animation="true"
-              title="Insira qualquer observação que achar relavante. O texto será encaminhado para os orientadores do projeto.">
-          {% lng "Observações Orientador (somente enviada para orientador)" "Evaluation Observations (will only be sent to advisor)" %}:
-        </b></label><br>
-        <textarea id="observacoes_orientador" name="observacoes_orientador" rows="8" cols="100" maxlength="2048">{{observacoes_orientador}}</textarea>
+        {% include "tabela_avaliacao_objetivos.html" with editor=True tipo_de_avaliacao="de Grupo" %}
       </div>
       
+      {% for alocacao in alocacoes %}
+        <div style="border: 4px solid #ccf; padding: 8px; border-radius: 8px; margin-bottom: 16px; background-color: #fafaff;">
+          <h5 style="margin-top: 2px; margin-bottom: 2px;">
+            {% lng "Avaliação Individual para" "Individual Evaluation for" %} <strong style="color: #1a3a8f;">{{ alocacao.aluno.user.get_full_name }}</strong>
+          </h5>
+          {% include "tabela_avaliacao_objetivos.html" with editor=True tipo_de_avaliacao="Individual" pesos=pesos_individuais bindividual=alocacao individual=True %}
+        </div>
+      {% endfor %}
+
+
+      {% include "atualiza_objetivos.html" %}
+
+      <div class="observacoes-section">
+        {% if banca.sigla != "P" and banca.sigla != "F" %}{% comment %} Não é probation {% endcomment %}
+          {% comment %} Observações somente para leitura dos estudantes {% endcomment %}
+          <div class="mb-1">
+            <label for="observacoes_estudantes"><b data-toggle="tooltip" data-html="true" animation="true"
+                  title="Insira qualquer observação que achar relavante para o grupo de estudantes.">
+              {% lng "Observações Estudantes (enviada para todo o grupo)" "Evaluation Observations for Students (will be sent to all students)" %}:
+            </b></label><br>
+            <textarea id="observacoes_estudantes" name="observacoes_estudantes" rows="8" cols="100" maxlength="2048" style="width:100%;box-sizing:border-box;">{{observacoes_estudantes}}</textarea>
+
+            <div style="background: #eefdfe; border: 1.5px dashed #1976d2; border-radius: 7px; padding: 2px 7px; margin-top: 1px; margin-bottom: 4px; display: flex; align-items: center; gap: 2px;">
+              <span style="font-size: 1.0em; color: #1976d2; margin: 5px;">
+                <i class="fas fa-paperclip" aria-hidden="true"></i>
+              </span>
+              <div style="flex: 1;">
+                <label for="arquivo" style="font-size: 0.88em; color: #1976d2;">
+                  {% lng "Envio de relatório com anotações do membro da banca para revisão do grupo (opcional e será enviado automaticamente para o grupo)" "Submission of report with notes from the board member for group review (optional and will be automatically sent to the group)" %}
+                </label>
+                <input id="arquivo" type="file" name="arquivo" style="font-size: 0.8em; margin: 5px;" {% include "formatos_suportados.html" %}>
+              </div>
+            </div>
+
+          </div>
+        {% endif %}
+      
+        {% comment %} Observações somente para leitura de orientador/coordenador {% endcomment %}
+        <div class="mb-1">
+          <label for="observacoes_orientador"><b data-toggle="tooltip" data-html="true" animation="true"
+                title="Insira qualquer observação que achar relavante. O texto será encaminhado para os orientadores do projeto.">
+            {% lng "Observações Orientador (somente enviada para orientador)" "Evaluation Observations (will only be sent to advisor)" %}:
+          </b></label><br>
+          <textarea id="observacoes_orientador" name="observacoes_orientador" rows="8" cols="100" maxlength="2048" style="width:100%;box-sizing:border-box;">{{observacoes_orientador}}</textarea>
+        </div>
+
+      </div>
+
       {% if banca.sigla == "BI" or banca.sigla == "BF" %}
-        <div style="border: 2px solid #ccc; padding: 8px; border-radius: 8px; margin-bottom: 16px;">
+        <div class="destaque-section">
           <label for="destaque">
             <b>{% lng "Projeto Destaque" "Highlight Project" %}:</b>&nbsp;
             <input type="radio" name="destaque" value="true" required {% if destaque == True %}checked{% endif %}>
@@ -163,7 +279,7 @@
           </span>
         </div>
 
-        <div style="border: 2px solid #ccc; padding: 8px; border-radius: 8px; margin-bottom: 16px;">
+        <div class="destaque-section">
           {% include "professores/includes/design_signature.html" %}
         </div>
 
@@ -183,11 +299,12 @@
         </div><br>
       {% endif %}
 
-      <button class="btn btn-primary mb-1" type="submit">{% lng "Enviar Avaliação" "Submit Evaluation" %}</button>
+      <button class="btn btn-primary mb-1 btn-submit-avaliacao" type="submit">{% lng "Enviar Avaliação" "Submit Evaluation" %}</button>
 
     </form>
+    </div>
   {% else %}
-    <p>{% lng "Não existe projeto disponível para avaliar." "There is no project available to evaluate." %}</p>
+    <p>{% lng "Não existe banca disponível para avaliar." "There is no evaluation board available to evaluate." %}</p>
   {% endif %}
 
   <script>

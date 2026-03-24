@@ -465,6 +465,16 @@ def banca_avaliar(request, slug, documento_id=None):
     composicao = Composicao.objects.filter(exame=exame, data_inicial__lte=banca.startDate).order_by("-data_inicial").first()
     objetivos = composicao.pesos.all()
     pesos = Peso.objects.filter(composicao=composicao)
+
+    alocacoes = Alocacao.objects.filter(projeto=projeto)
+
+    pesos_individuais = None
+    if banca.sigla == "BI":
+        composicao_individual = Composicao.objects.filter(exame__sigla="BII", data_inicial__lte=banca.startDate).order_by("-data_inicial").first()
+        pesos_individuais = Peso.objects.filter(composicao=composicao_individual)
+    elif banca.sigla == "BF":
+        composicao_individual = Composicao.objects.filter(exame__sigla="BFI", data_inicial__lte=banca.startDate).order_by("-data_inicial").first()
+        pesos_individuais = Peso.objects.filter(composicao=composicao_individual)
     
     if request.method == "POST":
         if "avaliador" in request.POST:
@@ -472,11 +482,12 @@ def banca_avaliar(request, slug, documento_id=None):
             avaliador = get_object_or_404(PFEUser, pk=int(request.POST["avaliador"]))
 
             # Identifica que uma avaliação/observação já foi realizada anteriormente
-            avaliacoes_anteriores = Avaliacao2.objects.filter(projeto=projeto, avaliador=avaliador, exame=exame)
-            observacoes_anteriores = Observacao.objects.filter(projeto=projeto, avaliador=avaliador, exame=exame)
             if banca.alocacao:
                 avaliacoes_anteriores = avaliacoes_anteriores.filter(alocacao=banca.alocacao)
                 observacoes_anteriores = observacoes_anteriores.filter(alocacao=banca.alocacao)
+            else:
+                avaliacoes_anteriores = Avaliacao2.objects.filter(projeto=projeto, avaliador=avaliador, exame=exame)
+                observacoes_anteriores = Observacao.objects.filter(projeto=projeto, avaliador=avaliador, exame=exame)
             
             realizada = avaliacoes_anteriores.exists()
 
@@ -487,7 +498,6 @@ def banca_avaliar(request, slug, documento_id=None):
             julgamento = [None]*objetivos_possiveis
             
             avaliacoes = dict(filter(lambda elem: elem[0][:9] == "objetivo.", request.POST.items()))
-
             for i, aval in enumerate(avaliacoes):
 
                 pk_objetivo, conceito = request.POST[aval].split('.')
@@ -506,6 +516,8 @@ def banca_avaliar(request, slug, documento_id=None):
                         julgamento[i].peso = 0.0 
 
                 julgamento[i].save()
+
+            avaliacoes_individuais = dict(filter(lambda elem: elem[0][:12] == "bindividual.", request.POST.items()))
 
             julgamento_observacoes = None
             if ("observacoes_orientador" in request.POST and request.POST["observacoes_orientador"] != "") or \
@@ -622,13 +634,16 @@ def banca_avaliar(request, slug, documento_id=None):
             conceitos[i] = (tmp_objetivo, tmp_conceito)
 
         map_tipo_documento = {
-            "BF": TipoDocumento.objects.filter(nome__in=["Apresentação da Banca Final", "Relatório Final de Grupo"]),
-            "BI": TipoDocumento.objects.filter(nome__in=["Apresentação da Banca Intermediária", "Relatório Intermediário de Grupo"]),
+            "BF": TipoDocumento.objects.filter(nome__in=["Apresentação da Banca Final", "Relatório Final de Grupo", "Relatório Final Individual"]),
+            "BI": TipoDocumento.objects.filter(nome__in=["Apresentação da Banca Intermediária", "Relatório Intermediário de Grupo", "Relatório Intermediário Individual"]),
             "F": TipoDocumento.objects.filter(nome__in=["Apresentação da Banca Final", "Relatório Final de Grupo"]),
             "P": TipoDocumento.objects.filter(nome__in=["Parecer para Probation", "Apresentação da Banca Final", "Relatório Final de Grupo"]),
         }
 
         tipo_documento = map_tipo_documento.get(exame.sigla)
+
+        evento = Evento.get_evento(tipo=composicao.tipo_evento, ano=projeto.ano, semestre=projeto.semestre)
+
 
         documentos = None
         if tipo_documento:
@@ -668,10 +683,12 @@ def banca_avaliar(request, slug, documento_id=None):
             "titulo": {"pt": "Formulário de Avaliação de Bancas", "en": "Examination Board Evaluation Form"},
             "projeto": projeto,
             "estudante": banca.alocacao.aluno if banca.alocacao else None,
+            "alocacoes": alocacoes,
             "individual": True if banca.alocacao else False,
             "pessoas": pessoas,
             "membros": membros,
             "pesos": pesos,
+            "pesos_individuais": pesos_individuais,
             "banca": banca,
             "composicao": composicao,
             "avaliador": avaliador_id,
@@ -689,6 +706,7 @@ def banca_avaliar(request, slug, documento_id=None):
             "prototipar": prototipar,
             "testar": testar,
             "implementar": implementar,
+            "evento": evento,
         }
 
         if mensagem:
