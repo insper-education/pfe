@@ -126,8 +126,6 @@ def calcula_objetivos(alocacoes, usuario=None):
 
     for nota2 in notas_lista:
         for nota in nota2:
-
-            print(f"Processando nota: {nota}")  # DEBUG
             avaliacao = nota[0].lower()
             if avaliacao in notas:
                 for k, val in nota[1].items():
