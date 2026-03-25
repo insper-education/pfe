@@ -590,7 +590,7 @@ def banca_avaliar(request, slug, documento_id=None):
                         </div>
                     </div>
                     """
-                    return HttpResponse(mensagem_anot)  # Retorna a mensagem formatada para o frontend exibir
+
                     recipient_list = [alocacao.aluno.user.email for alocacao in projeto.alocacao_set.all()]
                     recipient_list.append(avaliador.email)
                     recipient_list.append(projeto.orientador.user.email)
