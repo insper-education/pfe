@@ -105,31 +105,41 @@
       {% include "cabecalho_projeto.html" with projeto=projeto com_grupo=True %}
 
       <div class="banca-info-card">
+
         {% if banca.tipo_evento is not None %}
-          <b>{% lng "Tipo de Banca" "Presentation" %}:</b>
-          {% lng banca.tipo_evento.nome  banca.tipo_evento.nome_en %}<br>
+          <div>
+            <b>{% lng "Tipo de Banca" "Presentation" %}:</b>
+            {% lng banca.tipo_evento.nome  banca.tipo_evento.nome_en %}
+          </div>
         {% endif %}
 
         {% if estudante %}
-          <b>{% lng "Estudante em Probatório" "Student in Probation" %}:</b>
-          <a href="{% url 'estudante_detail' estudante.id %}">{{ estudante.user.get_full_name }}</a>
-          [{% lng estudante.curso2.nome estudante.curso2.nome_en %}]
-          <a href="mailto:{{estudante.user.email}}">
-            <span class="texto-longo">&lt;{{estudante.user.email}}&gt;</span>
-            <span class="texto-curto"><i class="far fa-envelope"></i></span>
-          </a><br>
+          <div>
+            <b>{% lng "Estudante em Probatório" "Student in Probation" %}:</b>
+            <a href="{% url 'estudante_detail' estudante.id %}">{{ estudante.user.get_full_name }}</a>
+            [{% lng estudante.curso2.nome estudante.curso2.nome_en %}]
+            <a href="mailto:{{estudante.user.email}}">
+              <span class="texto-longo">&lt;{{estudante.user.email}}&gt;</span>
+              <span class="texto-curto"><i class="far fa-envelope"></i></span>
+            </a>
+          </div>
         {% endif %}
 
-        <b>{% lng "Data da Banca" "Date of Presentation" %}:</b>
-        {% include "professores/includes/ver_datas_evento.html" with evento_p_data=banca %}
+        <div>
+          <b>{% lng "Data da Banca" "Date of Presentation" %}:</b>
+          {% include "professores/includes/ver_datas_evento.html" with evento_p_data=banca %}
+        </div>
 
         {% if banca.location %}
-          <b>{% lng "Local" "Location" %}:</b> {{banca.location}}<br>
+          <div><b>{% lng "Local" "Location" %}:</b> {{banca.location}}</div>
         {% endif %}
+
         {% if banca.link %}
-          <b>Link:</b> <a href="{{banca.link}}">{{banca.link}}</a><br>
+          <div><b>Link:</b> <a href="{{banca.link}}">{{banca.link}}</a></div>
         {% endif %}
+
       </div>
+
       <div class="avaliador-section">  
 
         <b><label style="margin: 0px;" for="avaliador">{% lng "Avaliador(a)" "Evaluator" %}:</label></b><br>
@@ -141,17 +151,13 @@
 
             <optgroup id="MembBanca" label="Membros da Banca">
               {% for pessoa in membros %}
-                <option value="{{pessoa.id}}">
-                  {{pessoa.get_full_name}}
-                  </option>
+                <option value="{{pessoa.id}}">{{pessoa.get_full_name}}</option>
               {% endfor %}
             </optgroup>
 
             <optgroup id="ListaComp" label="Lista Completa">
               {% for pessoa in pessoas %}
-                <option value="{{pessoa.id}}">
-                  {{pessoa.get_full_name}}
-                </option>
+                <option value="{{pessoa.id}}">{{pessoa.get_full_name}}</option>
               {% endfor %}
             </optgroup>
         </select>

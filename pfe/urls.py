@@ -45,6 +45,7 @@ urlpatterns = [
     path("doc/<str:tipo>", arquivos.doc, name="doc"),
     path("manutencao/", views.manutencao, name="manutencao"),
     path("migracao/", views.migracao, name="migracao"),
+    path("tmp/", views.tmp, name="tmp"),
     path("upload_site_e_pastas/<int:projeto_id>", sites.upload_site_e_pastas, name="upload_site_e_pastas"),
     re_path(r'^sites/(?P<projeto_id>\d+)/(?P<path>.*)$', sites.sites, name="sites"),
 
