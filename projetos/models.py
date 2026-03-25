@@ -1102,7 +1102,8 @@ class Banca(models.Model):
         return f"#{self.tipo_evento.cor}"
 
     def get_avaliadores(self, avaliadores={}):
-        objetivos = ObjetivosDeAprendizagem.objects.all()
+        composicao = Composicao.objects.filter(exame__sigla=self.sigla, data_inicial__lte=self.startDate).order_by("-data_inicial").first()
+        objetivos = composicao.pesos.all()
         projeto = self.get_projeto()
         sigla=self.tipo_evento.sigla
 
@@ -1113,12 +1114,41 @@ class Banca(models.Model):
             else:
                 avaliacoes = Avaliacao2.objects.filter(projeto=projeto, objetivo=objetivo, exame__sigla=sigla).order_by("avaliador", "-momento")
 
-            for banca in avaliacoes:
-                if banca.avaliador not in avaliadores:
-                    avaliadores[banca.avaliador] = {}
-                if objetivo not in avaliadores[banca.avaliador]:
-                    avaliadores[banca.avaliador][objetivo] = banca
-                    avaliadores[banca.avaliador]["momento"] = banca.momento
+            for aval_banca in avaliacoes:
+                if aval_banca.avaliador not in avaliadores:
+                    avaliadores[aval_banca.avaliador] = {}
+                if objetivo not in avaliadores[aval_banca.avaliador]:
+                    avaliadores[aval_banca.avaliador][objetivo] = aval_banca
+                    avaliadores[aval_banca.avaliador]["momento"] = aval_banca.momento
+
+        # Para BI/BF, agrega também os conceitos individuais por alocação.
+        if (not self.alocacao) and sigla in ["BI", "BF"]:
+            if sigla == "BI":
+                sigla_individual = "BII"
+            elif sigla == "BF":
+                sigla_individual = "BFI"
+
+            avaliacoes_individuais = Avaliacao2.objects.filter(
+                projeto=projeto,
+                exame__sigla=sigla_individual,
+                alocacao__isnull=False,
+                objetivo__isnull=False,
+            ).order_by("avaliador", "alocacao", "objetivo", "-momento")
+
+            for aval_ind in avaliacoes_individuais:
+                if aval_ind.avaliador not in avaliadores:
+                    avaliadores[aval_ind.avaliador] = {}
+
+                if "avaliacoes_individuais" not in avaliadores[aval_ind.avaliador]:
+                    avaliadores[aval_ind.avaliador]["avaliacoes_individuais"] = {}
+
+                por_alocacao = avaliadores[aval_ind.avaliador]["avaliacoes_individuais"]
+                if aval_ind.alocacao not in por_alocacao:
+                    por_alocacao[aval_ind.alocacao] = {}
+
+                # Mantém a avaliação mais recente por objetivo/alocação.
+                if aval_ind.objetivo not in por_alocacao[aval_ind.alocacao]:
+                    por_alocacao[aval_ind.alocacao][aval_ind.objetivo] = aval_ind
         
         if self.alocacao:
             observacoes = Observacao.objects.filter(alocacao=self.alocacao, exame__sigla=sigla).order_by("avaliador", "-momento")

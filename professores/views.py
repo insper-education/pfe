@@ -470,10 +470,14 @@ def banca_avaliar(request, slug, documento_id=None):
 
     pesos_individuais = None
     if banca.sigla == "BI":
-        composicao_individual = Composicao.objects.filter(exame__sigla="BII", data_inicial__lte=banca.startDate).order_by("-data_inicial").first()
+        exame_individual = get_object_or_404(Exame, sigla="BII")
+        composicao_individual = Composicao.objects.filter(exame=exame_individual, data_inicial__lte=banca.startDate).order_by("-data_inicial").first()
+        objetivos_individuais = composicao_individual.pesos.all()
         pesos_individuais = Peso.objects.filter(composicao=composicao_individual)
     elif banca.sigla == "BF":
-        composicao_individual = Composicao.objects.filter(exame__sigla="BFI", data_inicial__lte=banca.startDate).order_by("-data_inicial").first()
+        exame_individual = get_object_or_404(Exame, sigla="BFI")
+        composicao_individual = Composicao.objects.filter(exame=exame_individual, data_inicial__lte=banca.startDate).order_by("-data_inicial").first()
+        objetivos_individuais = composicao_individual.pesos.all()
         pesos_individuais = Peso.objects.filter(composicao=composicao_individual)
     
     if request.method == "POST":
@@ -482,12 +486,11 @@ def banca_avaliar(request, slug, documento_id=None):
             avaliador = get_object_or_404(PFEUser, pk=int(request.POST["avaliador"]))
 
             # Identifica que uma avaliação/observação já foi realizada anteriormente
+            avaliacoes_anteriores = Avaliacao2.objects.filter(projeto=projeto, avaliador=avaliador, exame=exame)
+            observacoes_anteriores = Observacao.objects.filter(projeto=projeto, avaliador=avaliador, exame=exame)
             if banca.alocacao:
                 avaliacoes_anteriores = avaliacoes_anteriores.filter(alocacao=banca.alocacao)
                 observacoes_anteriores = observacoes_anteriores.filter(alocacao=banca.alocacao)
-            else:
-                avaliacoes_anteriores = Avaliacao2.objects.filter(projeto=projeto, avaliador=avaliador, exame=exame)
-                observacoes_anteriores = Observacao.objects.filter(projeto=projeto, avaliador=avaliador, exame=exame)
             
             realizada = avaliacoes_anteriores.exists()
 
@@ -516,8 +519,6 @@ def banca_avaliar(request, slug, documento_id=None):
                         julgamento[i].peso = 0.0 
 
                 julgamento[i].save()
-
-            avaliacoes_individuais = dict(filter(lambda elem: elem[0][:12] == "bindividual.", request.POST.items()))
 
             julgamento_observacoes = None
             if ("observacoes_orientador" in request.POST and request.POST["observacoes_orientador"] != "") or \
@@ -565,6 +566,42 @@ def banca_avaliar(request, slug, documento_id=None):
                     #recipient_list.append(configuracao.coordenacao.user.email)
                     email(subject, recipient_list, mensagem_anot)
 
+
+            # Julgmamentos individuais para estudantes em Bancas Intermediárias e Finais
+            julgamentos_individuais = {}
+            if banca.sigla in ["BI", "BF"]:  # Intermediária e Final
+                
+                avaliacoes_individuais = dict(filter(lambda elem: elem[0][:12] == "bindividual.", request.POST.items()))
+                objetivos_individuais_possiveis = len(objetivos_individuais) 
+
+                for alocacao in alocacoes:
+                    julgamentos_individuais[alocacao] = [None]*objetivos_individuais_possiveis
+                    idx_alocacao = 0
+                    for aval in avaliacoes_individuais:
+                        prefix = "bindividual.{0}.".format(alocacao.id)
+                        if aval.startswith(prefix):
+                            if idx_alocacao >= objetivos_individuais_possiveis:
+                                continue
+                            pk_objetivo, conceito = request.POST[aval].split('.')
+                            julgamentos_individuais[alocacao][idx_alocacao] = Avaliacao2.objects.create(projeto=projeto, exame=exame_individual, avaliador=avaliador)
+                            julgamentos_individuais[alocacao][idx_alocacao].alocacao = alocacao
+                            julgamentos_individuais[alocacao][idx_alocacao].objetivo = get_object_or_404(ObjetivosDeAprendizagem, pk=pk_objetivo)
+
+                            if conceito == "NA":
+                                julgamentos_individuais[alocacao][idx_alocacao].na = True
+                            else:
+                                julgamentos_individuais[alocacao][idx_alocacao].na = False
+                                julgamentos_individuais[alocacao][idx_alocacao].nota = converte_conceito(conceito)
+                                if exame_individual.titulo == "Banca Intermediária Individual" or exame_individual.titulo == "Banca Final Individual":
+                                    julgamentos_individuais[alocacao][idx_alocacao].peso = pesos_individuais.get(objetivo=julgamentos_individuais[alocacao][idx_alocacao].objetivo).peso
+                                else:
+                                    julgamentos_individuais[alocacao][idx_alocacao].peso = 0.0 
+
+                            julgamentos_individuais[alocacao][idx_alocacao].save()
+                            idx_alocacao += 1
+
+
+
             subject = "Capstone | Avaliação de Banca - " + exame.titulo + " "
             if exame.sigla == "P":
                 subject += banca.alocacao.aluno.user.get_full_name() + " "
@@ -579,6 +616,7 @@ def banca_avaliar(request, slug, documento_id=None):
                 "periodo_para_rubricas": exame.periodo_para_rubricas,
                 "julgamento": julgamento,
                 "julgamento_observacoes": julgamento_observacoes,
+                "julgamentos_individuais": julgamentos_individuais,
                 "destaque": True if request.POST.get("destaque") == "true" else False,
             }
             message = render_message("Resultado Avaliador", context_carta, urlize=False)
@@ -594,7 +632,7 @@ def banca_avaliar(request, slug, documento_id=None):
             else:  # Falconi ou Probation
                 recipient_list = [configuracao.coordenacao.user.email, ]
             email(subject, recipient_list, message)
-            
+
             resposta = {"pt": "Avaliação submetida e enviada para:<br>", "en": "Evaluation submitted and sent to:<br>"}
             for recipient in recipient_list:
                 resposta["pt"] += "&bull; {0}<br>".format(recipient)

@@ -15,6 +15,69 @@
 {% block head %}
   <link rel="stylesheet" href="{% static 'css/tab_arrend.css' %}">
   <link rel="stylesheet" href="{% static 'css/div_arrend.css' %}">
+  <style>
+    .resultado-bancas {
+      max-width: 980px;
+    }
+
+    .resultado-bancas .banca-group {
+      background: linear-gradient(180deg, #ffffff, #f8fafc);
+      padding: 8px 12px 12px;
+      margin-bottom: 1em;
+      width: 860px;
+      max-width: 100%;
+      border: 1px solid #d1d9e6;
+      border-radius: 12px;
+      box-shadow: 0 6px 16px rgba(15, 23, 42, 0.05);
+    }
+
+    .resultado-bancas .banca-group-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      line-height: 1.2;
+      font-size: 1.15rem;
+      padding: 8px 10px;
+      font-weight: 700;
+      margin-bottom: 0.7em;
+      border-radius: 10px;
+      border: 1px solid #dbe4f0;
+      background: #f1f5f9;
+      color: #0f172a;
+    }
+
+    .resultado-bancas .banca-group-toggle {
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      width: 32px;
+      height: 28px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      background: #ffffff;
+    }
+
+    .resultado-bancas .banca-item {
+      margin-top: 1rem;
+    }
+
+    .resultado-bancas .bancas-note {
+      margin-top: 12px;
+      border: 1px solid #bfdbfe;
+      border-left: 4px solid #2563eb;
+      border-radius: 10px;
+      background: #eff6ff;
+      padding: 10px 12px;
+    }
+
+    .resultado-bancas .bancas-note-text {
+      font-size: 0.88rem;
+      line-height: 1.55;
+      color: #1e3a8a;
+    }
+  </style>
   {% include "converte_notas.html" %}
   {% include "avalia_objetivos.html" %}
 {% endblock %}
@@ -23,33 +86,22 @@
   {% if edicoes %}
     {% include "edicoes.html" %}<br>
   {% endif %}
-  <div id="atualizar">
+  <div id="atualizar" class="resultado-bancas">
     {% for banca in bancas %}
       {% with lprojeto=banca.get_projeto %}
-        {% if not projeto %}
-          {% ifchanged banca.sigla %}
-            {% if not forloop.first %}
-              </div>
-            {% endif %}
-            <div style="background-color: {{banca.get_cor}}26; padding: 4px 10px; margin-bottom: 1em; width: 820px; max-width: 100%; border: 1px solid {{banca.get_cor}};">
-              <div style="line-height: 1; font-size: 1.25rem; padding: 4px; font-weight: bold; margin-bottom: 0.5em; border-bottom: 1px solid #ccc;">
-                {% lng banca.tipo_evento.nome banca.tipo_evento.nome_en %}
-                <i class="bancas" style="float:right;"><span class="seta seta-cima"></span></i>
-              </div>
-          {% endifchanged %}
-        {% endif %}
-        <div style="margin-top: 1.1em;">
-          {% ifchanged lprojeto %}
-            {% include "cabecalho_projeto.html" with projeto=lprojeto com_tit_original=True com_semestre=True com_grupo=True %}
-          {% endifchanged %}
+      <div class="banca-group" style="border-color: {{banca.get_cor}}; background-color: {{banca.get_cor}}10;">
+        <div class="banca-group-header">
+          {% lng banca.tipo_evento.nome banca.tipo_evento.nome_en %}
+          <i class="bancas banca-group-toggle"><span class="seta seta-cima"></span></i>
+        </div>
+        <div class="banca-item">
+          {% include "cabecalho_projeto.html" with projeto=lprojeto com_tit_original=True com_semestre=True com_grupo=True %}
           {% include "dado_banca.html" %}
         </div>
+      </div>
       {% endwith %}
     {% endfor %}
-    {% if not projeto %}
-     </div>
-    {% endif %}
-
+    
     <script>
       $(document).ready(function(){
         $(".bancas").on("click", function() {
@@ -61,11 +113,11 @@
 
   </div>
 
-  <div class="col d-flex align-items-center mr-3">
-    <div class="alert mb-0 info_simples">
+  <div class="col d-flex align-items-center mr-3 resultado-bancas">
+    <div class="alert mb-0 info_simples bancas-note">
       <div class="d-flex align-items-start">
         <i class="fas fa-info-circle text-primary mr-2 mt-1"></i>
-        <div style="font-size:.85rem; line-height:1.5;">
+        <div class="bancas-note-text">
           {% lng "Observação: As notas das bancas só serão fechadas quando todos os avaliadores tiverem avaliado (incluindo o orientador nas bancas intermediárias e finais)" "Note: The grades of the examining boards will only be closed when all evaluators have evaluated (including the advisor in the intermediate and final boards)" %}
           {% lng "e depois de 24 horas (bancas regulares) ou 2 horas (bancas probatório) que a última avaliação foi feita." "and after 24 hours (regular examinations) or 2 hours (probation examinations) that the last evaluation was made." %}
         </div>

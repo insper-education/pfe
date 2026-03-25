@@ -9,12 +9,13 @@
 
 {% if evento_p_data.startDate %}
 <span class="texto-longo">
-  {{evento_p_data.startDate.date}}
   <span lang="pt" >{% language "pt-br" %}
+    {{evento_p_data.startDate.date}}
     ({{evento_p_data.startDate|date:"l"}})
     das{% endlanguage %}
   </span>
   <span lang="en" style="display: none;">{% language "en" %}
+    {{evento_p_data.startDate.date}}
     ({{evento_p_data.startDate|date:"l"}})
     from{% endlanguage %}
   </span>

@@ -110,7 +110,7 @@ def projeto_infos(request, primarykey):
 
     if request.user.eh_prof_a:  # Se usuário é professor ou administrador
         context["documentos"] = Documento.objects.filter(projeto=projeto)
-        context["medias_oo"] = get_medias_oa(alocacoes)
+        context["medias_oo"] = get_medias_oa(alocacoes, usuario=request.user)
         context["horarios"] = Estrutura.loads(nome="Horarios Semanais")
 
     context["conexoes"] = Conexao.objects.filter(projeto=projeto)
@@ -1769,7 +1769,7 @@ def analise_objetivos(request):
         else:
             return HttpResponse("Algum erro não identificado.", status=401)
 
-        context = calcula_objetivos(alocacoes)
+        context = calcula_objetivos(alocacoes, usuario=request.user)
         context["edicoes"] = edicoes
         context["total_geral"] = len(alocacoes)
 

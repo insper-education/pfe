@@ -20,7 +20,7 @@ from django.utils import timezone
 
 from administracao.models import TipoEvento
 
-from .support2 import calcula_media_notas_bancas, calcula_notas_bancas
+from .support2 import coleta_resumo_notas_bancas
 
 from academica.models import Exame, Composicao
 from academica.support import filtra_entregas
@@ -825,16 +825,36 @@ def mensagem_edicao_banca(banca, atualizada=False, excluida=False, enviar=False)
 
 # Mensagem preparada para o orientador/coordenador
 def mensagem_orientador(banca, geral=False):
-    objetivos = ObjetivosDeAprendizagem.objects.all()
+
     exame = get_object_or_404(Exame, sigla=banca.sigla)
+    composicao = Composicao.objects.filter(exame=exame, data_inicial__lte=banca.startDate).order_by("-data_inicial").first()
+    objetivos = composicao.pesos.all()
+    objetivos_individuais = []
+    if not banca.alocacao and banca.sigla == "BI":
+        exame_individual = get_object_or_404(Exame, sigla="BII")
+        composicao_individual = Composicao.objects.filter(exame=exame_individual, data_inicial__lte=banca.startDate).order_by("-data_inicial").first()
+        if composicao_individual:
+            objetivos_individuais = composicao_individual.pesos.all()
+    elif not banca.alocacao and banca.sigla == "BF":
+        exame_individual = get_object_or_404(Exame, sigla="BFI")
+        composicao_individual = Composicao.objects.filter(exame=exame_individual, data_inicial__lte=banca.startDate).order_by("-data_inicial").first()
+        if composicao_individual:
+            objetivos_individuais = composicao_individual.pesos.all()
+    # pesos = Peso.objects.filter(composicao=composicao)
+    
     projeto = banca.get_projeto()
 
     # Buscando Avaliadores e Avaliações
     avaliadores = {}
     for objetivo in objetivos:
-        avaliacoes = Avaliacao2.objects.filter(projeto=projeto, objetivo=objetivo, exame=exame).order_by("avaliador", "-momento")
+        avaliacoes = Avaliacao2.objects.filter(projeto=projeto, objetivo=objetivo, exame=exame)
         if banca.alocacao:  # Caso de probation
             avaliacoes = avaliacoes.filter(alocacao=banca.alocacao)
+        else:
+            # Para BI/BF/F sem alocacao, este bloco representa conceitos gerais do grupo.
+            avaliacoes = avaliacoes.filter(alocacao__isnull=True)
+
+        avaliacoes = avaliacoes.order_by("avaliador", "-momento")
 
         for avaliacao in avaliacoes:
             if avaliacao.avaliador not in avaliadores:
@@ -842,6 +862,26 @@ def mensagem_orientador(banca, geral=False):
             if objetivo not in avaliadores[avaliacao.avaliador]:
                 avaliadores[avaliacao.avaliador][objetivo] = avaliacao
                 avaliadores[avaliacao.avaliador]["momento"] = avaliacao.momento
+
+    # Para BI/BF, adiciona as avaliacoes individuais separadas por estudante.
+    if not banca.alocacao and banca.sigla in ["BI", "BF"] and objetivos_individuais:
+        for objetivo_individual in objetivos_individuais:
+            avaliacoes_individuais = Avaliacao2.objects.filter(
+                projeto=projeto,
+                objetivo=objetivo_individual,
+                exame=exame_individual,
+                alocacao__isnull=False,
+            ).order_by("avaliador", "alocacao", "-momento")
+
+            for avaliacao in avaliacoes_individuais:
+                if avaliacao.avaliador not in avaliadores:
+                    avaliadores[avaliacao.avaliador] = {}
+                if "avaliacoes_individuais" not in avaliadores[avaliacao.avaliador]:
+                    avaliadores[avaliacao.avaliador]["avaliacoes_individuais"] = {}
+                if avaliacao.alocacao not in avaliadores[avaliacao.avaliador]["avaliacoes_individuais"]:
+                    avaliadores[avaliacao.avaliador]["avaliacoes_individuais"][avaliacao.alocacao] = {}
+                if objetivo_individual not in avaliadores[avaliacao.avaliador]["avaliacoes_individuais"][avaliacao.alocacao]:
+                    avaliadores[avaliacao.avaliador]["avaliacoes_individuais"][avaliacao.alocacao][objetivo_individual] = avaliacao
 
     observacoes = Observacao.objects.filter(projeto=projeto, exame=exame).order_by("avaliador", "-momento")
     if banca.alocacao:
@@ -855,20 +895,20 @@ def mensagem_orientador(banca, geral=False):
         if "observacoes_estudantes" not in avaliadores[observacao.avaliador]:
             avaliadores[observacao.avaliador]["observacoes_estudantes"] = observacao.observacoes_estudantes
 
-    message3, obj_avaliados = calcula_notas_bancas(avaliadores)
-    message2 = calcula_media_notas_bancas(obj_avaliados)
+    resumo_banca = coleta_resumo_notas_bancas(avaliadores)
 
     context_carta = {
         "banca": banca,
         "objetivos": objetivos,
         "projeto": projeto,
+        "resumo_banca": resumo_banca,
     }
     if geral:
         message = render_message("Informe Geral de Avaliação de Banca", context_carta)
     else:
         message = render_message("Informe de Avaliação de Banca", context_carta)
     
-    return message+message2+message3
+    return message
 
 
 def get_edicoes_orientador(orientador, configuracao_ate):

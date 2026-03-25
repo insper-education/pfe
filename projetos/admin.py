@@ -152,7 +152,7 @@ class FeedbackAdmin(admin.ModelAdmin):
 
 
 @admin.register(FeedbackEstudante)
-class FeedbackAdmin(admin.ModelAdmin):
+class FeedbackEstudanteAdmin(admin.ModelAdmin):
     """Para ser preenchido com feedbacks dos estudantes."""
 
     list_display = ("momento", "estudante", "projeto", )
@@ -195,6 +195,7 @@ class Avaliacao2Admin(admin.ModelAdmin):
     list_filter = ("exame", "objetivo", "projeto__ano", "projeto__semestre")
     search_fields = ["projeto__titulo_final", "projeto__proposta__titulo",
                      "alocacao__aluno__user__username", "projeto__proposta__organizacao__sigla"]
+    actions = [dup_entrada,]
 
 
 @admin.register(Avaliacao_Velha)

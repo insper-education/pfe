@@ -57,7 +57,7 @@ def get_notas_estudante(estudante, request=None, ano=None, semestre=None, checa_
     """Recuper as notas do Estudante."""
 
     if ano and semestre:
-        alocacoes = Alocacao.objects.filter(aluno=estudante.pk, projeto__ano=ano,projeto__semestre=semestre).select_related("projeto")
+        alocacoes = Alocacao.objects.filter(aluno=estudante.pk, projeto__ano=ano, projeto__semestre=semestre).select_related("projeto")
     else:
         alocacoes = Alocacao.objects.filter(aluno=estudante.pk).select_related("projeto")
     
@@ -89,13 +89,20 @@ def get_notas_estudante(estudante, request=None, ano=None, semestre=None, checa_
                 if exame.grupo:  # Grupo - Intermediária/Final
                     banca = Banca.objects.filter(projeto=alocacao.projeto, tipo_evento__sigla=exame.sigla).last()
                 else:  # Individual - Probation
-                    banca = Banca.objects.filter(alocacao=alocacao, tipo_evento__sigla=exame.sigla).last()
+                    if exame.sigla == "BII":  # Banca Individual Intermediária
+                        banca = Banca.objects.filter(projeto=alocacao.projeto, tipo_evento__sigla="BI").last()
+                    elif exame.sigla == "BFI":  # Banca Individual Final
+                        banca = Banca.objects.filter(projeto=alocacao.projeto, tipo_evento__sigla="BF").last()
+                    elif exame.sigla == "P":  # Probation
+                        banca = Banca.objects.filter(alocacao=alocacao, tipo_evento__sigla=exame.sigla).last()
+                    else:
+                        logger.error(f"Erro, exame com banca mas sem banca registrada: {exame.sigla} => {alocacao.projeto.get_titulo_org_periodo()}")
+                    
             try:
                 if exame.grupo:  # GRUPO
                     paval = Avaliacao2.objects.filter(projeto=alocacao.projeto, exame=exame)
                 else:  # INDIVIDUAL
                     paval = Avaliacao2.objects.filter(alocacao=alocacao, exame=exame)
-
                 if not paval:
                     continue 
 

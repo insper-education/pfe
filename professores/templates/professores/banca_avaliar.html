@@ -107,7 +107,7 @@
       <div class="banca-info-card">
         {% if banca.tipo_evento is not None %}
           <b>{% lng "Tipo de Banca" "Presentation" %}:</b>
-          {{ banca.tipo_evento.nome }}<br>
+          {% lng banca.tipo_evento.nome  banca.tipo_evento.nome_en %}<br>
         {% endif %}
 
         {% if estudante %}

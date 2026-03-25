@@ -19,10 +19,10 @@ class Carta(models.Model):
     sigla = models.CharField("Sigla", max_length=4, null=True, blank=True, unique=True,
                             help_text="Sigla do template")
 
-    texto = models.TextField("Texto", max_length=18000, null=True, blank=True,
+    texto = models.TextField("Texto", max_length=50000, null=True, blank=True,
                              help_text="Texto em português para ser usado em comunicações")
     
-    texto_en = models.TextField("Texto EN", max_length=18000, null=True, blank=True,
+    texto_en = models.TextField("Texto EN", max_length=50000, null=True, blank=True,
                                 help_text="Texto em inglês para ser usado em comunicações")
     
     class Meta:

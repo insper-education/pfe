@@ -8,23 +8,320 @@
 {% load linguas %}
 {% load date_extras %}
 
+<style>
+  .banca-modern {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 14px;
+  }
+
+  .banca-modern .banca-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    background: linear-gradient(135deg, #0f172a, #1e293b);
+    color: #f8fafc;
+    border-radius: 10px;
+    padding: 10px 12px;
+    margin-bottom: 10px;
+  }
+
+  .banca-modern .banca-title a {
+    color: #f8fafc;
+    font-weight: 700;
+    text-decoration: none;
+  }
+
+  .banca-modern .banca-form-link {
+    font-size: 13px;
+    padding: 6px 10px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: 8px;
+    line-height: 1.4;
+  }
+
+  .banca-modern .banca-form-link a {
+    color: #bfdbfe;
+    word-break: break-all;
+  }
+
+  .banca-modern .avaliador-card {
+    margin-top: 10px;
+    border: 1px solid #dbe4f0;
+    border-radius: 10px;
+    background: #ffffff;
+    overflow: hidden;
+  }
+
+  .banca-modern .avaliador-card summary {
+    cursor: pointer;
+    list-style: none;
+    padding: 10px 12px;
+    background: #f1f5f9;
+    border-bottom: 1px solid #e2e8f0;
+    font-size: 14px;
+    line-height: 1.45;
+  }
+
+  .banca-modern .avaliador-card summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .banca-modern .avaliador-body {
+    padding: 10px 12px;
+    font-size: 13px;
+  }
+
+  .banca-modern .sec-title {
+    font-weight: 700;
+    color: #1e293b;
+    margin-top: 8px;
+    margin-bottom: 4px;
+  }
+
+  .banca-modern .sec-list {
+    margin: 0 0 8px 0;
+    padding-left: 18px;
+  }
+
+  .banca-modern .sec-list li {
+    margin-bottom: 3px;
+  }
+
+  .banca-modern .student-chip {
+    display: inline-block;
+    margin-top: 2px;
+    padding: 2px 8px;
+    border: 3px solid #bfdbfe;
+    border-radius: 3px;
+    background: #eff6ff;
+    font-size: 12px;
+    font-weight: 700;
+    color: #1d4ed8;
+  }
+
+  .banca-modern .conceitos-geral {
+    margin-top: 6px;
+    border: 3px solid #dbeafe;
+    border-radius: 10px;
+    background: #f8fbff;
+    padding: 8px 10px;
+  }
+
+  .banca-modern .conceitos-individuais {
+    margin-top: 8px;
+    border: 3px solid #fef3c7;
+    border-radius: 10px;
+    background: #fffbeb;
+    padding: 8px 10px;
+  }
+
+  .banca-modern .student-block {
+    margin: 6px 0;
+    border: 3px solid #c7d2fe;
+    border-radius: 10px;
+    background: #eef2ff;
+    padding: 6px 8px;
+  }
+
+  .banca-modern .summary-box {
+    margin-top: 12px;
+    border: 2px solid #cbd5e1;
+    border-radius: 12px;
+    background: linear-gradient(180deg, #ffffff, #f8fafc);
+    padding: 12px;
+    color: #334155;
+  }
+
+  .banca-modern .summary-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 10px;
+    padding: 8px 10px;
+    border: 1px solid #dbeafe;
+    border-radius: 10px;
+    background: #eff6ff;
+  }
+
+  .banca-modern .summary-title {
+    font-size: 14px;
+    font-weight: 800;
+    color: #1e293b;
+    line-height: 1.35;
+  }
+
+  .banca-modern .summary-main-score {
+    min-width: 120px;
+    text-align: center;
+    padding: 6px 10px;
+    border-radius: 999px;
+    border: 1px solid #bfdbfe;
+    background: #ffffff;
+    font-weight: 800;
+    color: #1d4ed8;
+  }
+
+  .banca-modern .summary-panels {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .banca-modern .summary-panel {
+    border: 1px solid #dbe4f0;
+    border-left-width: 4px;
+    border-radius: 10px;
+    background: #ffffff;
+    padding: 8px 10px;
+  }
+
+  .banca-modern .summary-panel.geral {
+    border-left-color: #2563eb;
+  }
+
+  .banca-modern .summary-panel.individual {
+    border-left-color: #d97706;
+  }
+
+  .banca-modern .summary-panel.recomendacao {
+    border-left-color: #0f766e;
+  }
+
+  .banca-modern .summary-panel-title {
+    margin-bottom: 4px;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: #334155;
+  }
+
+  .banca-modern .summary-list {
+    margin: 0;
+    padding-left: 18px;
+  }
+
+  .banca-modern .summary-list li {
+    margin-bottom: 3px;
+  }
+
+  .banca-modern .summary-muted {
+    color: #64748b;
+    font-style: italic;
+  }
+
+  .banca-modern .observacoes-box {
+    margin-top: 8px;
+    border: 2px solid #dbe4f0;
+    border-radius: 10px;
+    background: #f8fafc;
+    padding: 8px;
+  }
+
+  .banca-modern .obs-item {
+    margin-bottom: 8px;
+    border: 1px solid #e2e8f0;
+    border-left-width: 4px;
+    border-radius: 8px;
+    background: #ffffff;
+    padding: 8px 10px;
+  }
+
+  .banca-modern .obs-item:last-child {
+    margin-bottom: 0;
+  }
+
+  .banca-modern .obs-item.obs-student {
+    border-left-color: #2563eb;
+  }
+
+  .banca-modern .obs-item.obs-advisor {
+    border-left-color: #0f766e;
+  }
+
+  .banca-modern .obs-label {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: #334155;
+    margin-bottom: 4px;
+  }
+
+  .banca-modern .obs-text {
+    color: #0f172a;
+    line-height: 1.45;
+    word-break: break-word;
+  }
+
+  .banca-modern .obs-report-link {
+    display: inline-block;
+    margin-top: 2px;
+    padding: 6px 10px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    background: #f8fafc;
+    color: #1e293b;
+    text-decoration: none;
+    font-weight: 600;
+  }
+
+  .banca-modern .obs-report-link:hover {
+    background: #eef2ff;
+    border-color: #a5b4fc;
+    color: #1e1b4b;
+  }
+</style>
+
 <script>
   banca = new Banca();
+  bancas_individuais = {};
+
+  function add_nota_individual(alocacaoId, alunoNome, objetivoTitulo, nota) {
+    if (!(alocacaoId in bancas_individuais)) {
+      bancas_individuais[alocacaoId] = {
+        nome: alunoNome,
+        banca: new Banca(),
+      };
+    }
+
+    if (nota === null || isNaN(nota)) {
+      return;
+    }
+
+    objetivo_tmp = new Objetivo();
+    objetivo_tmp.titulo = objetivoTitulo;
+    bancas_individuais[alocacaoId].banca.add_objetivo(objetivo_tmp);
+    bancas_individuais[alocacaoId].banca.dict[objetivoTitulo].soma_nota(nota);
+  }
 </script>
 
 <div class="div_arredondado">
-  <div style="line-height: 1; font-size: 1.15rem;">
-    <div>
-      <a style="margin-right: 1em;" href="{% url 'banca_ver' banca.id %}">
-        {% lng banca.tipo_evento.nome banca.tipo_evento.nome_en %}
-        {% lng "agendada para" "scheduled for" %}
-        {{banca.startDate|date:"d/m/y"}}
-      </a>
+  <div class="banca-modern">
+    <div class="banca-header">
+      <div class="banca-title">
+        <a href="{% url 'banca_ver' banca.id %}">
+          {% lng banca.tipo_evento.nome banca.tipo_evento.nome_en %}
+          {% lng "agendada para" "scheduled for" %}
+          {{banca.startDate|date:"d/m/y"}}
+        </a>
+      </div>
+      <div id="banca{{banca.id}}_status" class="banca-form-link {% if banca.endDate|dias:2 < hoje %}redish{% elif banca.endDate < hoje %}yellowish{% else %}whitish{% endif %}">
+        ★ {% lng "Formulário" "Form" %}:
+        <a href="{{request.scheme}}://{{ request.get_host }}{% url "banca_avaliar" banca.slug %}">{{request.scheme}}://{{ request.get_host }}{% url "banca_avaliar" banca.slug %}</a>
+      </div>
     </div>
 
     {% if banca.alocacao %}
-      <div style="margin: 0.4em;">
-        <span style="font-size: 13px; margin-top: 3.4em; border: 2px solid #f00; padding: 0.3em;">
+      <div style="margin: 0 0 10px 0; background:#fff; border:1px solid #e2e8f0; border-radius:10px; padding:8px 10px;">
+        <span style="font-size: 13px;">
           <b>{% lng "Estudante" "Student" %}:</b>
           <u>
             <a class="imprimir" href="{% url 'estudante_detail' banca.alocacao.aluno.id %}">{{banca.alocacao.aluno.user.get_full_name}}</a>  
@@ -36,48 +333,41 @@
         </span>
       </div>
     {% endif %}
-    
-    <div id="banca{{banca.id}}_status" 
-      style="font-size: 14px; line-height: 2; overflow-x: auto; width: 100%; margin: 0.4em 0.4em 0.4em 0.2em; padding: 0.0em 0.4em;"    
-      class="{% if banca.endDate|dias:2 < hoje %}redish{% elif banca.endDate < hoje %}yellowish{% else %}whitish{% endif %}"
-    >★
-      {% lng "Formulário" "Form" %}:
-      <a href="{{request.scheme}}://{{ request.get_host }}{% url "banca_avaliar" banca.slug %}">{{request.scheme}}://{{ request.get_host }}{% url "banca_avaliar" banca.slug %}</a>
-    </div>
-  </div>
-  {% comment %} {% include "membros_da_banca.html" %} {% endcomment %}
 
-  <table class="table table-bordered table-striped" style="margin-bottom: 2px;">
+    {% comment %} {% include "membros_da_banca.html" %} {% endcomment %}
+
+    <div>
     {% for avaliador, objs in banca.get_avaliadores_todos.items %}
 
       {% if avaliador == user %}
         {% comment %} Quer dizer que o usuário preencheu a avaliação {% endcomment %}
         <script>
-          $("#banca{{banca.id}}_status").attr("class", "whitish");
+          $("#banca{{banca.id}}_status").removeClass("redish yellowish").addClass("whitish");
         </script>  
       {% endif %}
 
-      <tr><td>
-        <b>{% lng_g avaliador.genero "Avaliador" "Avaliadora" "Evaluator" %}:</b>
-        <a href="{% url 'user_detail' avaliador.id %}">
-          {{avaliador.get_full_name}}
-        </a>
-        {% if banca.projeto.orientador.user == avaliador %}
-          <span class="badge badge-info">{% lng "Orientador" "Advisor" %}</span>
-        {% endif %}
-        <a href="mailto:{{avaliador.email}}">&lt;{{avaliador.email}}&gt;</a>
-        <br>
+      <details class="avaliador-card" open>
+        <summary>
+          <b>{% lng_g avaliador.genero "Avaliador" "Avaliadora" "Evaluator" %}:</b>
+          <a href="{% url 'user_detail' avaliador.id %}">{{avaliador.get_full_name}}</a>
+          {% if banca.projeto.orientador.user == avaliador %}
+            <span class="badge badge-info">{% lng "Orientador" "Advisor" %}</span>
+          {% endif %}
+          <span style="margin-left:6px;"><a href="mailto:{{avaliador.email}}">&lt;{{avaliador.email}}&gt;</a></span>
+        </summary>
+        <div class="avaliador-body">
 
         {% if objs %}
 
           {% if objs.momento %}
-            <b>{% lng "Avaliado em" "Evaluated on" %}:</b>
+            <div class="sec-title">{% lng "Avaliado em" "Evaluated on" %}:</div>
             {{objs.momento}}<br>
           {% endif %}
           {% if objs.items %}
-            <b>{% lng "Conceitos" "Grades" %}:</b><br>
-            <ul style="list-style-type: '&#x21A3; ';">
-              {% for objetivo, conceito in objs.items %}{% if objetivo != "momento" and objetivo|slice:11 != "observacoes" %}
+            <div class="sec-title">{% lng "Conceitos" "Grades" %}:</div>
+            <div class="conceitos-geral">
+            <ul class="sec-list" style="list-style-type: '&#x21A3; '; margin-bottom: 0;">
+              {% for objetivo, conceito in objs.items %}{% if objetivo != "momento" and objetivo != "avaliacoes_individuais" and objetivo|slice:11 != "observacoes" %}
                 <li>
                   <span style="font-weight: 500;">{{objetivo.titulo}}</span>: 
                   <span data-toggle="tooltip" data-html="true" animation="true" title=
@@ -92,7 +382,7 @@
                     {% if conceito.nota is not None %}converteN({{conceito.nota}}){% else %}"N/A"{% endif %}
                   );
                   objetivo_tmp = new Objetivo();
-                  objetivo_tmp.titulo = "{{objetivo.titulo}}"
+                  objetivo_tmp.titulo = "{{objetivo.titulo|escapejs}}"
                   banca.add_objetivo(objetivo_tmp)
                   {% if conceito.nota is not None %}
                     banca.dict[objetivo_tmp.titulo].soma_nota({{conceito.nota}});
@@ -101,71 +391,166 @@
 
               {% endif %}{% endfor %}
             </ul>
+            </div>
           {% endif %}
-          {% if objs.observacoes_estudantes %}  
-            &nbsp;<u><span style="font-weight: 500;">
-              {% lng "Observações para Estudantes" "Observations for Students" %}:
-            </span></u> {{objs.observacoes_estudantes}}<br>
-            {% if objs.observacoes_orientador %}<br>{% endif %}
-          {% endif %}
-          {% if user.eh_prof_a %}
-            {% if objs.observacoes_orientador %}
-              &nbsp;<u><span style="font-weight: 500;">
-                {% lng "Observações para Orientador" "Observations for Advisor" %}:
-              </span></u> {{objs.observacoes_orientador}}<br>
-            {% endif %}
-
-            {% with anotacoes=objs.observacoes_anotacoes %}
-              {% if anotacoes %}
-                <div style="margin-top: 6px; border: 1px solid #ccc; background-color: #f9f9f9;">
-                  <a href="{{request.scheme}}://{{request.get_host}}{{anotacoes.last.documento.url}}" target="_blank" rel="noopener noreferrer">
-                    &#128196;
-                    {% lng "Relatório com anotações" "Report with annotations" %}
-                    ({{ anotacoes.last.data }})
-                  </a>
+          {% if objs.observacoes_estudantes or user.eh_prof_a and objs.observacoes_orientador or user.eh_prof_a and objs.observacoes_anotacoes %}
+            <div class="sec-title" style="margin-top: 10px;">{% lng "Observações" "Observations" %}:</div>
+            <div class="observacoes-box">
+              {% if objs.observacoes_estudantes %}
+                <div class="obs-item obs-student">
+                  <div class="obs-label">{% lng "Para Estudantes" "For Students" %}</div>
+                  <div class="obs-text">{{ objs.observacoes_estudantes|linebreaksbr }}</div>
                 </div>
               {% endif %}
-            {% endwith %}
-          
 
+              {% if user.eh_prof_a %}
+                {% if objs.observacoes_orientador %}
+                  <div class="obs-item obs-advisor">
+                    <div class="obs-label">{% lng "Para Orientador" "For Advisor" %}</div>
+                    <div class="obs-text">{{ objs.observacoes_orientador|linebreaksbr }}</div>
+                  </div>
+                {% endif %}
+
+                {% with anotacoes=objs.observacoes_anotacoes %}
+                  {% if anotacoes %}
+                    <a class="obs-report-link" href="{{request.scheme}}://{{request.get_host}}{{anotacoes.last.documento.url}}" target="_blank" rel="noopener noreferrer">
+                      &#128196; {% lng "Relatório com anotações" "Report with annotations" %} ({{ anotacoes.last.data }})
+                    </a>
+                  {% endif %}
+                {% endwith %}
+              {% endif %}
+            </div>
           {% endif %}
-          
+
+          {% if objs.avaliacoes_individuais %}
+            <div class="sec-title">{% lng "Conceitos Individuais" "Individual Grades" %}:</div>
+            <div class="conceitos-individuais">
+            {% for alocacao, objetivos_ind in objs.avaliacoes_individuais.items %}
+              <div class="student-block">
+              <div style="margin: 2px 0 4px 0;">
+                {% lng "Estudante" "Student" %}:
+                <a class="imprimir student-chip" href="{% url 'estudante_detail' alocacao.aluno.id %}">{{ alocacao.aluno.user.get_full_name }}</a>
+              </div>
+              <ul class="sec-list" style="list-style-type: '&#x21A3; '; margin-bottom: 0;">
+                {% for objetivo_ind, conceito_ind in objetivos_ind.items %}
+                  <li>
+                    <span style="font-weight: 500;">{{ objetivo_ind.titulo }}</span>:
+                    {% if conceito_ind.na %}
+                      N/A
+                    {% else %}
+                      {{ conceito_ind.get_conceito }}
+                    {% endif %}
+                  </li>
+                  <script>
+                    add_nota_individual(
+                      "{{ alocacao.id }}",
+                      "{{ alocacao.aluno.user.get_full_name|escapejs }}",
+                      "{{ objetivo_ind.titulo|escapejs }}",
+                      {% if conceito_ind.na or conceito_ind.nota is None %}null{% else %}{{ conceito_ind.nota }}{% endif %}
+                    );
+                  </script>
+                {% endfor %}
+              </ul>
+              </div>
+            {% endfor %}
+            </div>
+          {% endif %}
+
 
         {% else %}
           <span class="text-muted">{% lng "Ainda não avaliou." "Has not evaluated yet." %}</span>
-
         {% endif %}
 
-      </td></tr>
+        </div>
+      </details>
     {% endfor %}
+    </div>
 
-    <tr style="background-color: {{banca.get_cor}}; color: darkslategrey"><td>
-      <b>
-        {% lng "Média das Avaliações da Banca" "Average of the Examining Board" %}
-        {% lng banca.tipo_evento.nome banca.tipo_evento.nome_en %}:
-        <ul id="banca{{banca.id}}_med_aval" style="list-style-type: '&#x21A3; ';"></ul>
-      </b>
-      <span id="banca{{banca.id}}"></span>
+    <div class="summary-box" style="background-color: {{banca.get_cor}}20;">
+      <div class="summary-header">
+        <div class="summary-title">
+          {% lng "Médias da Banca" "Board Averages" %}:
+          {% lng banca.tipo_evento.nome banca.tipo_evento.nome_en %}
+        </div>
+      </div>
+
+      <div class="summary-panels">
+        <div class="summary-panel geral">
+          <div class="summary-panel-title">
+            {% lng "Média Geral por Objetivo" "Overall Average by Objective" %}
+          </div>
+          <ul id="banca{{banca.id}}_med_aval" class="summary-list"></ul>
+          <div class="summary-main-score" id="banca{{banca.id}}"></div>
+        </div>
+
+        {% if banca.sigla == "BI" or banca.sigla == "BF" %}
+          <div class="summary-panel individual">
+            <div class="summary-panel-title">
+              {% lng "Médias Individuais por Estudante" "Individual Averages by Student" %}
+            </div>
+            <ul id="banca{{banca.id}}_med_aval_ind" class="summary-list"></ul>
+          </div>
+        {% endif %}
+
+        {% if banca.sigla == "BI" or banca.sigla == "BF" %}
+          {% with recomendacao=banca.get_recomendacao_destaque %}
+            {% if recomendacao %}
+              <div class="summary-panel recomendacao">
+                <div class="summary-panel-title">
+                  {% lng "Recomendações" "Recommendations" %}
+                </div>
+                <div>
+                  {% include "professores/includes/mostra_destaque.html" with recomendacao=recomendacao %}
+                </div>
+              </div>
+            {% endif %}
+          {% endwith %}
+        {% endif %}
+      </div>
+
       <script>
+        var lista_geral = $("#banca{{banca.id}}_med_aval");
+        var tem_geral = false;
         for (var key in banca.dict) {
-          if(banca.dict[key].avaliacoes>0) 
-            $("#banca{{banca.id}}_med_aval").append(banca.dict[key].nota_texto());
+          if (banca.dict[key].avaliacoes > 0) {
+            tem_geral = true;
+            lista_geral.append(banca.dict[key].nota_texto());
+          }
         }
-        $("#banca{{banca.id}}").html(banca.media_calculada());
+        if (!tem_geral) {
+          lista_geral.append('<li class="summary-muted">{% lng "Sem médias registradas." "No averages registered." %}</li>');
+        }
+
+        var media_banca = banca.media_calculada();
+        if (media_banca === "") {
+          $("#banca{{banca.id}}").html('{% lng "Sem média" "No average" %}');
+        } else {
+          $("#banca{{banca.id}}").html(media_banca);
+        }
       </script>
 
       {% if banca.sigla == "BI" or banca.sigla == "BF" %}
-        {% with recomendacao=banca.get_recomendacao_destaque %}
-          {% if recomendacao %}
-            <span style="white-space: nowrap;">
-              <br>&#10149; {% lng "Recomendações" "Recommendations" %}:
-              {% include "professores/includes/mostra_destaque.html" with recomendacao=recomendacao %}
-            </span>
-          {% endif %}
-        {% endwith %}
+        <script>
+          var lista_ind = $("#banca{{banca.id}}_med_aval_ind");
+          var tem_individual = false;
+          for (var alocacao_id in bancas_individuais) {
+            var item = bancas_individuais[alocacao_id];
+            var media_geral = item.banca.media_geral();
+            if (!(media_geral === "" || isNaN(media_geral))) {
+              tem_individual = true;
+              lista_ind.append(
+                "<li><span style='font-weight:500; color:#7c2d12;'>" + item.nome + "</span>: " +
+                media_geral + " (" + converteN(media_geral) + ")</li>"
+              );
+            }
+          }
+          if (!tem_individual) {
+            lista_ind.append('<li class="summary-muted">{% lng "Sem avaliações individuais registradas." "No individual evaluations recorded." %}</li>');
+          }
+        </script>
       {% endif %}
 
-    </td></tr>
-  </table>
+    </div>
 
+  </div>
 </div>

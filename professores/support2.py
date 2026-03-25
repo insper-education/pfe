@@ -9,6 +9,124 @@ Data: 8 de Janeiro de 2024
 from academica.support_notas import converte_letra
 
 
+def _conceito_email(avaliacao):
+    """Retorna conceito no mesmo padrão usado nas telas de avaliação."""
+    if getattr(avaliacao, "na", False):
+        return "N/A"
+
+    if hasattr(avaliacao, "get_conceito"):
+        try:
+            conceito = avaliacao.get_conceito
+            if callable(conceito):
+                conceito = conceito()
+            if conceito:
+                return str(conceito)
+        except Exception:
+            pass
+
+    if getattr(avaliacao, "nota", None) is not None:
+        return converte_letra(avaliacao.nota)
+
+    return "N/A"
+
+
+def coleta_resumo_notas_bancas(avaliadores):
+    """Organiza dados de avaliações para renderização em template (sem HTML por concatenação)."""
+    obj_avaliados = {}
+    agregacao_individual_alunos = {}
+    avaliadores_detalhes = []
+
+    for avaliador, objs in avaliadores.items():
+        detalhe = {
+            "avaliador": avaliador,
+            "momento": objs.get("momento"),
+            "conceitos_gerais": [],
+            "conceitos_individuais": [],
+            "observacoes_estudantes": objs.get("observacoes_estudantes"),
+            "observacoes_orientador": objs.get("observacoes_orientador"),
+        }
+
+        for objetivo, conceito in objs.items():
+            if objetivo in ["momento", "observacoes_estudantes", "observacoes_orientador", "avaliacoes_individuais"]:
+                continue
+
+            conceito_txt = _conceito_email(conceito)
+            detalhe["conceitos_gerais"].append({
+                "objetivo": objetivo,
+                "conceito": conceito_txt,
+                "nota": conceito.nota,
+                "na": getattr(conceito, "na", False),
+            })
+
+            if conceito.nota is not None:
+                if objetivo.titulo in obj_avaliados:
+                    obj_avaliados[objetivo.titulo]["nota"] += conceito.nota
+                    obj_avaliados[objetivo.titulo]["qtd"] += 1
+                else:
+                    obj_avaliados[objetivo.titulo] = {"nota": conceito.nota, "qtd": 1}
+
+        if "avaliacoes_individuais" in objs and objs["avaliacoes_individuais"]:
+            for alocacao, objetivos_ind in objs["avaliacoes_individuais"].items():
+                aluno_info = {
+                    "alocacao": alocacao,
+                    "conceitos": [],
+                }
+                for objetivo_ind, conceito_ind in objetivos_ind.items():
+                    conceito_txt = _conceito_email(conceito_ind)
+                    aluno_info["conceitos"].append({
+                        "objetivo": objetivo_ind,
+                        "conceito": conceito_txt,
+                        "nota": conceito_ind.nota,
+                        "na": getattr(conceito_ind, "na", False),
+                    })
+
+                    if (not getattr(conceito_ind, "na", False)) and conceito_ind.nota is not None:
+                        if alocacao not in agregacao_individual_alunos:
+                            agregacao_individual_alunos[alocacao] = {"soma": 0, "qtd": 0}
+                        agregacao_individual_alunos[alocacao]["soma"] += conceito_ind.nota
+                        agregacao_individual_alunos[alocacao]["qtd"] += 1
+                detalhe["conceitos_individuais"].append(aluno_info)
+
+        avaliadores_detalhes.append(detalhe)
+
+    medias_objetivos = []
+    # Mantem compatibilidade com Decimal vindo do banco.
+    soma_medias = 0
+    for titulo, obj in obj_avaliados.items():
+        if obj["qtd"] > 0:
+            media = obj["nota"] / obj["qtd"]
+            soma_medias += media
+            medias_objetivos.append({
+                "titulo": titulo,
+                "media_numerica": media,
+                "media_conceito": converte_letra(media),
+            })
+
+    media_final = None
+    if medias_objetivos:
+        media_final = soma_medias / len(medias_objetivos)
+
+    medias_individuais_alunos = []
+    for alocacao, dados in agregacao_individual_alunos.items():
+        if dados["qtd"] > 0:
+            media_aluno = dados["soma"] / dados["qtd"]
+            medias_individuais_alunos.append({
+                "alocacao": alocacao,
+                "media_numerica": media_aluno,
+                "media_conceito": converte_letra(media_aluno),
+                "qtd_notas": dados["qtd"],
+            })
+
+    medias_individuais_alunos.sort(key=lambda x: x["alocacao"].aluno.user.get_full_name())
+
+    return {
+        "avaliadores": avaliadores_detalhes,
+        "medias_objetivos": medias_objetivos,
+        "media_final": media_final,
+        "medias_individuais_alunos": medias_individuais_alunos,
+    }
+
+
 def calcula_media_notas_bancas(obj_avaliados):
     message = ""
     message += "<div style='color: red; border-width:3px; border-style:solid; border-color:#ff0000; display: inline-block; padding: 10px;'>"
@@ -66,7 +184,7 @@ def calcula_notas_bancas(avaliadores):
         message2 += "<ul style='margin-top: 0px;'>"
 
         for objetivo, conceito in objs.items():
-            if objetivo != "momento" and objetivo != "observacoes_estudantes" and objetivo != "observacoes_orientador":
+            if objetivo != "momento" and objetivo != "observacoes_estudantes" and objetivo != "observacoes_orientador" and objetivo != "avaliacoes_individuais":
                 message2 += "<li>"
                 message2 += objetivo.titulo
                 message2 += " : "
@@ -89,6 +207,25 @@ def calcula_notas_bancas(avaliadores):
             message2 += "<li>Observações Orientador: " + objs["observacoes_orientador"] + "</li>"
         
         message2 += "</ul>"
+
+        if "avaliacoes_individuais" in objs and objs["avaliacoes_individuais"]:
+            message2 += "<strong>Conceitos Individuais (BI/BF):</strong><br>"
+            for alocacao, objetivos_ind in objs["avaliacoes_individuais"].items():
+                message2 += "<div style='margin: 6px 0 8px 0; border:1px solid #ddd; padding:6px 8px;'>"
+                message2 += "<strong>Estudante:</strong> " + alocacao.aluno.user.get_full_name()
+                message2 += "<ul style='margin-top: 4px;'>"
+                for objetivo_ind, conceito_ind in objetivos_ind.items():
+                    message2 += "<li>"
+                    message2 += objetivo_ind.titulo
+                    message2 += " : "
+                    if conceito_ind.nota is not None:
+                        message2 += converte_letra(conceito_ind.nota)
+                    else:
+                        message2 += "N/A"
+                    message2 += "</li>"
+                message2 += "</ul>"
+                message2 += "</div>"
+
         message2 += "</td></tr>"
 
 

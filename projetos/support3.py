@@ -45,7 +45,9 @@ def get_edicoes_aluno(estudante):
 
     siglas = [
         ("BI", "O"),
+        ("BII", "O"),
         ("BF", "O"), 
+        ("BFI", "O"), 
         ("RP", "N"), 
         ("RIG", "O"), 
         ("RFG", "O"), 
@@ -58,7 +60,6 @@ def get_edicoes_aluno(estudante):
         ("APG", "O"), 
         ("AFG", "O"),
         ]
-    exame = {}
 
     exame = {sigla: Exame.objects.get(sigla=sigla) for sigla, _ in siglas}
 
@@ -111,7 +112,7 @@ def get_edicoes_alocacao(self):
     return None
 
 # EVITAR USAR POIS MISTURA SEMESTRES (VER GET_OAS)
-def calcula_objetivos(alocacoes):
+def calcula_objetivos(alocacoes, usuario=None):
     """Calcula notas/conceitos por Objetivo de Aprendizagem."""
 
     avaliacoes = ["rii", "rig", "bi", "rfi", "rfg", "bf", "api", "apg", "afi", "afg"]
@@ -125,6 +126,8 @@ def calcula_objetivos(alocacoes):
 
     for nota2 in notas_lista:
         for nota in nota2:
+
+            print(f"Processando nota: {nota}")  # DEBUG
             avaliacao = nota[0].lower()
             if avaliacao in notas:
                 for k, val in nota[1].items():
@@ -281,10 +284,10 @@ def is_projeto_liberado(projeto):
     return liberado
 
 
-def get_medias_oa(alocacoes):
+def get_medias_oa(alocacoes, usuario=None):
     medias_oa = None
     if alocacoes:
-        medias_oa = calcula_objetivos([alocacoes.first()])
+        medias_oa = calcula_objetivos([alocacoes.first()], usuario=usuario)
         if (medias_oa is None) or \
           ("medias_apg" not in medias_oa or "medias_afg" not in medias_oa or "medias_rig" not in medias_oa or "medias_bi" not in medias_oa or "medias_rfg" not in medias_oa or "medias_bf" not in medias_oa) or \
           (not (medias_oa["medias_apg"] or medias_oa["medias_afg"] or medias_oa["medias_rig"] or medias_oa["medias_bi"] or medias_oa["medias_rfg"] or medias_oa["medias_bf"])):
