@@ -298,6 +298,31 @@ class Aluno(models.Model):
     
     trabalhara = models.CharField("Trabalhará durante o Capstone", max_length=1, null=True, blank=True,
                                  help_text="Está trabalhando ou pretende trabalhar (estágio ou emprego) no próximo semestre? Y/N/M")
+    
+
+
+    ###### CAMPOS BEM TEMPORÁRIOS PARA PESQUISA RÁPIDA
+    TIPO_HORARIO_GRUPO = (
+        ("S", "Segundas e quartas de manhã (7:30 as 9:45)"),
+        ("T", "De segunda a quinta de manhã cedo (7:30 as 9:30)"),
+        ("I", "Indiferente")
+    )
+    TIPO_RESPOSTA_BINARIA = (
+        ("S", "Sim"),
+        ("N", "Não"),
+    )
+    escolha_horario_trab_grupo = models.CharField("Escolha de Horário de Trabalho", max_length=1, choices=TIPO_HORARIO_GRUPO,
+                            null=True, blank=True,
+                            help_text="escolha para horário de trabalho do grupo na semana")
+    aulas_mudando_meio_semestre = models.CharField("Aulas Trocando no Meio do Semestre", max_length=1,
+                            choices=TIPO_RESPOSTA_BINARIA, null=True, blank=True,
+                            help_text="As aulas de sexta-feira inverterão no meio do semestre (7:30 para 9:45 e vice-versa)")
+    aula_de_cybersec_no_mesmo_dia = models.CharField("Cybersec no mesmo dia do Capstone (as 14:00)", max_length=1,
+                            choices=TIPO_RESPOSTA_BINARIA, null=True, blank=True,
+                            help_text="Quero que se procure concentrar as aulas de Cybersegurança (obrigatória) no mesmo dia  (14h para permitir um intervalo) ou não assim aulas de segurança sejam em outros dias pela manhã ")
+    #######################################################
+
+    
 
     # https://bradmontgomery.net/blog/django-hack-help-text-modal-instance/
     def _get_help_text(self, field_name):

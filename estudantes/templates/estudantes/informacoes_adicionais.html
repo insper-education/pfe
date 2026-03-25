@@ -45,6 +45,102 @@
           </div>
         </div>
       </div>
+
+
+      {% comment %} PERGUNTAS TEMPORÁRIAS PARA COLETAR INFORMAÇÕES ADICIONAIS DOS ESTUDANTES (TESTE) {% endcomment %}
+      {% if novo %}
+      <div id="perguntas_temporarias" class="mb-3" style="background: linear-gradient(180deg, #eef7ff 0%, #f8fbff 100%); border: 1px solid #c8dff4; border-radius: 14px; padding: 18px 20px; box-shadow: inset 0 1px 0 rgba(255,255,255,.7);">
+        <div style="display: flex; align-items: flex-start; gap: 12px; margin-bottom: 14px;">
+          <div style="min-width: 34px; height: 34px; border-radius: 999px; background: #d9ecff; color: #1d5f91; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px;">i</div>
+          <div>
+            <div style="font-weight: 700; color: #18476b; margin-bottom: 4px;">
+              {% lng "Perguntas temporárias para planejamento" "Temporary planning questions" %}
+            </div>
+            <div style="font-size: .95rem; line-height: 1.5; color: #35556f;">
+              {% lng "Por favor, indique como prefere que encaminhemos os encontros do Capstone no próximo semestre." "Please indicate how you prefer we communicate the Capstone meetings next semester." %}
+              {% lng "As informações coletadas aqui serão usadas para orientar a organização dos encontros e outras atividades. Agradecemos sua colaboração." "The information collected here will help guide the organization of meetings and other activities. Thank you for your collaboration." %}
+            </div>
+          </div>
+        </div>
+
+        <div style="background: #ffffff; border: 1px solid #d7e7f5; border-radius: 12px; padding: 16px; margin-top: 12px;">
+          <label style="display: block; font-weight: 600; color: #163a59; margin-bottom: 6px;">
+            {% lng "Qual horário de trabalho em grupo na semana para o próximo semestre você teria mais interesse?" "Which weekly group work schedule would interest you most next semester?" %}
+          </label>
+          <div style="font-size: .84rem; color: #5a7186; margin-bottom: 12px; line-height: 1.45;">
+            {% lng "Escolha a opção que melhor representa sua preferência para os encontros do grupo durante a semana." "Choose the option that best represents your preference for group meetings during the week." %}
+          </div>
+
+          <div>
+            {% for radio in form.escolha_horario_trab_grupo %}
+              <label for="{{ radio.id_for_label }}" style="display: flex; align-items: flex-start; gap: 10px; padding: 10px 12px; border: 1px solid #dbe7f2; border-radius: 10px; background: #f9fcff; margin-bottom: 8px; cursor: pointer; color: #29485f; line-height: 1.4;">
+                <span style="padding-top: 2px;">{{ radio.tag }}</span>
+                <span>{{ radio.choice_label }}</span>
+              </label>
+            {% endfor %}
+          </div>
+
+          {% if form.escolha_horario_trab_grupo.errors %}
+            <div class="alert alert-danger mt-2 mb-0">
+              {{ form.escolha_horario_trab_grupo.errors }}
+            </div>
+          {% endif %}
+        </div>
+
+        <div style="background: #ffffff; border: 1px solid #d7e7f5; border-radius: 12px; padding: 16px; margin-top: 12px;">
+          <label style="display: block; font-weight: 600; color: #163a59; margin-bottom: 6px;">
+            {% lng "As aulas de sexta-feira trocarão de horário no meio do semestre?" "Will Friday classes switch schedules halfway through the semester?" %}
+          </label>
+          <div style="font-size: .84rem; color: #5a7186; line-height: 1.45; margin-bottom: 12px;">
+            {% lng "Responda apenas se quiser opinar sobre a troca entre 7h30 e 9h45 no meio do semestre." "Answer only if you want to express a preference about the switch between 7:30am and 9:45am halfway through the semester." %}
+            {% lng "Se você deixar em branco, registraremos como não respondido." "If you leave it blank, it will be recorded as unanswered." %}
+          </div>
+          <div>
+            {% for radio in form.aulas_mudando_meio_semestre %}
+              <label for="{{ radio.id_for_label }}" style="display: flex; align-items: flex-start; gap: 10px; padding: 10px 12px; border: 1px solid #dbe7f2; border-radius: 10px; background: #f9fcff; margin-bottom: 8px; cursor: pointer; color: #29485f; line-height: 1.4;">
+                <span style="padding-top: 2px;">{{ radio.tag }}</span>
+                <span>{{ radio.choice_label }}</span>
+              </label>
+            {% endfor %}
+          </div>
+          {% if form.aulas_mudando_meio_semestre.errors %}
+            <div class="alert alert-danger mt-2 mb-0">
+              {{ form.aulas_mudando_meio_semestre.errors }}
+            </div>
+          {% endif %}
+        </div>
+
+        {% if user.aluno.curso2 and user.aluno.curso2.sigla == "GRCIECOMP" %}
+          <div style="background: #ffffff; border: 1px solid #d7e7f5; border-radius: 12px; padding: 16px; margin-top: 12px;">
+            <label style="display: block; font-weight: 600; color: #163a59; margin-bottom: 6px;">
+              {% lng "Você prefere concentrar Cybersegurança no mesmo dia do Capstone, às 14h?" "Do you prefer to concentrate Cybersecurity on the same day as Capstone, at 2pm?" %}
+            </label>
+            <div style="font-size: .84rem; color: #5a7186; line-height: 1.45; margin-bottom: 12px;">
+              {% lng "Responda apenas se quiser indicar essa preferência de organização." "Answer only if you want to indicate this organizational preference." %}
+              {% lng "Se você deixar em branco, registraremos como não respondido." "If you leave it blank, it will be recorded as unanswered." %}
+            </div>
+            <div>
+              {% for radio in form.aula_de_cybersec_no_mesmo_dia %}
+                <label for="{{ radio.id_for_label }}" style="display: flex; align-items: flex-start; gap: 10px; padding: 10px 12px; border: 1px solid #dbe7f2; border-radius: 10px; background: #f9fcff; margin-bottom: 8px; cursor: pointer; color: #29485f; line-height: 1.4;">
+                  <span style="padding-top: 2px;">{{ radio.tag }}</span>
+                  <span>{{ radio.choice_label }}</span>
+                </label>
+              {% endfor %}
+            </div>
+            {% if form.aula_de_cybersec_no_mesmo_dia.errors %}
+              <div class="alert alert-danger mt-2 mb-0">
+                {{ form.aula_de_cybersec_no_mesmo_dia.errors }}
+              </div>
+            {% endif %}
+          </div>
+        {% endif %}
+
+      </div>
+      {% endif %}
+      {% comment %} FIM DAS PERGUNTAS TEMPORÁRIAS {% endcomment %}
+
+
+      <br>
       <span style="display: inline-block; margin-left: 4px; margin-bottom: 1px;">
         {% lng "Selecionar suas áreas de interesse" "Select your areas of interest" %}:</span><br>
       {% if form.non_field_errors %}
