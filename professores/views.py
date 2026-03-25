@@ -552,14 +552,45 @@ def banca_avaliar(request, slug, documento_id=None):
                     documento.save()
                     subject = "Capstone | Documento com anotações - " + exame.titulo + " "
                     subject += projeto.get_titulo_org()
-                    mensagem_anot = "Anotações em Relatório de Banca<br>\n<br>\n"
-                    mensagem_anot += "Anotações realizadas por: " + avaliador.get_full_name() + "<br>\n"
-                    mensagem_anot += "Banca: " + exame.titulo + "<br>\n"
-                    mensagem_anot += "Projeto: " + projeto.get_titulo_org() + "<br>\n"
-                    mensagem_anot += "Data: " + str(datetime.datetime.now()) + "<br>\n<br>\n<br>\n"
-                    mensagem_anot += "Documento com Anotações: "
-                    mensagem_anot += "<a href='" + request.scheme + "://" + request.get_host() + documento.documento.url + "' target='_blank' rel='noopener noreferrer'>"
-                    mensagem_anot += request.scheme + "://" + request.get_host() + documento.documento.url + "</a><br>\n<br>\n<br>\n"
+                    doc_url = request.scheme + "://" + request.get_host() + documento.documento.url
+                    data_envio = datetime.datetime.now().strftime("%d/%m/%Y %H:%M")
+
+                    # mensagem_anot = "Anotações em Relatório de Banca<br>\n<br>\n"
+                    # mensagem_anot += "Anotações realizadas por: " + avaliador.get_full_name() + "<br>\n"
+                    # mensagem_anot += "Banca: " + exame.titulo + "<br>\n"
+                    # mensagem_anot += "Projeto: " + projeto.get_titulo_org() + "<br>\n"
+                    # mensagem_anot += "Data: " + str(datetime.datetime.now()) + "<br>\n<br>\n<br>\n"
+                    # mensagem_anot += "Documento com Anotações: "
+                    # mensagem_anot += "<a href='" + request.scheme + "://" + request.get_host() + documento.documento.url + "' target='_blank' rel='noopener noreferrer'>"
+                    # mensagem_anot += request.scheme + "://" + request.get_host() + documento.documento.url + "</a><br>\n<br>\n<br>\n"
+
+                    mensagem_anot = f"""
+                    <div style='font-family: Arial, sans-serif; color:#1f2937; line-height:1.5;'>
+                        <div style='font-size:16px; font-weight:700; color:#0f172a; margin-bottom:10px;'>
+                            Anotações em Relatório de Banca Capstone
+                        </div>
+
+                        <div style='border:1px solid #e2e8f0; border-radius:8px; background:#f8fafc; padding:12px 14px;'>
+                            <div><strong>Anotações realizadas por:</strong> {avaliador.get_full_name()}</div>
+                            <div><strong>Banca:</strong> {exame.titulo}</div>
+                            <div><strong>Projeto:</strong> {projeto.get_titulo_org()}</div>
+                            <div><strong>Data:</strong> {data_envio}</div>
+                        </div>
+
+                        <div style='margin-top:14px; border:2px solid #f59e0b; border-radius:10px; background:#fffbeb; padding:12px 14px;'>
+                            <div style='font-size:13px; font-weight:700; color:#92400e; margin-bottom:4px;'>
+                                Importante: revise este documento com atenção
+                            </div>
+                            <div style='font-size:13px; color:#78350f; margin-bottom:10px;'>
+                                Este relatório revisado contém anotações relevantes da banca para orientar ajustes do projeto e no relatório.
+                            </div>
+                            <a href='{doc_url}' target='_blank' rel='noopener noreferrer' style='color:#b45309; font-weight:700; font-size:13px;'>
+                                {doc_url}
+                            </a>
+                        </div>
+                    </div>
+                    """
+                    return HttpResponse(mensagem_anot)  # Retorna a mensagem formatada para o frontend exibir
                     recipient_list = [alocacao.aluno.user.email for alocacao in projeto.alocacao_set.all()]
                     recipient_list.append(avaliador.email)
                     recipient_list.append(projeto.orientador.user.email)
