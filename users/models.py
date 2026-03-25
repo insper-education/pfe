@@ -303,7 +303,7 @@ class Aluno(models.Model):
 
     ###### CAMPOS BEM TEMPORÁRIOS PARA PESQUISA RÁPIDA
     TIPO_HORARIO_GRUPO = (
-        ("S", "Segundas e quartas de manhã (7:30 as 9:45)"),
+        ("S", "Segundas e quartas de manhã (7:30 as 11:45)"),
         ("T", "De segunda a quinta de manhã cedo (7:30 as 9:30)"),
         ("I", "Indiferente")
     )
