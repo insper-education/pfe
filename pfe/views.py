@@ -128,7 +128,7 @@ def migracao(request):
 from users.models import Aluno
 
 @login_required
-@permission_required("users.view_administrador", raise_exception=True)
+@permission_required("users.altera_professor", raise_exception=True)
 def tmp(request):
     """temporário."""
     def texto_resposta_binaria(aluno, campo):
