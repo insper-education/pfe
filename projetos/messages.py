@@ -6,9 +6,10 @@ Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
 Data: 18 de Outubro de 2019
 """
 
-from celery import shared_task
-#from datetime import datetime, timedelta
 import logging
+from smtplib import SMTPAuthenticationError, SMTPConnectError, SMTPDataError, SMTPException, SMTPHeloError, SMTPResponseException, SMTPServerDisconnected
+
+from celery import shared_task
 from email.utils import parseaddr
 
 from django.conf import settings
@@ -28,6 +29,33 @@ from .models import AreaDeInteresse
 from administracao.models import Carta
 
 logger = logging.getLogger("django")  # Para marcar mensagens de log
+
+SMTP_RETRYABLE_CODES = {421, 450, 451, 452, 454}
+DEFAULT_EMAIL_TIMEOUT = 30
+MAX_EMAIL_RETRIES = 4
+
+
+def _retry_delay_seconds(retry_count):
+    """Calcula atraso com backoff exponencial e teto para retries SMTP."""
+    return min(15 * (2 ** retry_count), 300)
+
+
+def _is_retryable_smtp_error(exc):
+    """Identifica falhas SMTP transitorias que valem nova tentativa."""
+    if isinstance(exc, (SMTPServerDisconnected, SMTPConnectError, SMTPHeloError)):
+        return True
+
+    if isinstance(exc, SMTPDataError):
+        return getattr(exc, "smtp_code", None) in SMTP_RETRYABLE_CODES
+
+    if isinstance(exc, SMTPAuthenticationError):
+        # 454 pode ocorrer de forma temporaria no provedor.
+        return getattr(exc, "smtp_code", None) in SMTP_RETRYABLE_CODES
+
+    if isinstance(exc, SMTPResponseException):
+        return getattr(exc, "smtp_code", None) in SMTP_RETRYABLE_CODES
+
+    return isinstance(exc, SMTPException)
 
 def render_message(template, context, urlize=True):
     """Recebe o nome da Carta a renderizar como texto."""
@@ -101,8 +129,8 @@ def _split_valid_addresses(addresses):
 
     return valid, invalid
 
-@shared_task
-def send_mail_task(subject, message, from_email, recipient_list, **kwargs):
+@shared_task(bind=True, max_retries=MAX_EMAIL_RETRIES)
+def send_mail_task(self, subject, message, from_email, recipient_list, **kwargs):
     calendar_invite = kwargs.pop("calendar_invite", None)
     reply_to = kwargs.pop("reply_to", None)
 
@@ -136,12 +164,41 @@ def send_mail_task(subject, message, from_email, recipient_list, **kwargs):
     if invalid_reply_to:
         logger.warning("Reply-To invalido ignorado: %s", invalid_reply_to)
 
+    email_timeout = kwargs.pop("email_timeout", None)
+    if email_timeout is None:
+        email_timeout = getattr(settings, "EMAIL_TIMEOUT", None) or DEFAULT_EMAIL_TIMEOUT
+
     try:
         if auth_user:
-            connection = get_connection(username=auth_user, password=settings.EMAIL_HOST_PASSWORD)
+            connection = get_connection(
+                username=auth_user,
+                password=settings.EMAIL_HOST_PASSWORD,
+                timeout=email_timeout,
+            )
         else:
-            connection = get_connection()
+            connection = get_connection(timeout=email_timeout)
     except Exception as e:
+        if _is_retryable_smtp_error(e) and self.request.retries < self.max_retries:
+            countdown = _retry_delay_seconds(self.request.retries)
+            logger.warning(
+                "Falha transitoria ao criar conexao SMTP. subject=%s, tentativa=%s/%s, retry_em=%ss, error=%s",
+                subject,
+                self.request.retries + 1,
+                self.max_retries,
+                countdown,
+                str(e),
+            )
+            raise self.retry(exc=e, countdown=countdown)
+
+        if _is_retryable_smtp_error(e):
+            logger.error(
+                "Falha transitoria ao criar conexao SMTP na tentativa %s/%s (ultima). Mensagem nao sera mais reenviada. subject=%s, error=%s",
+                self.request.retries + 1,
+                self.max_retries + 1,
+                subject,
+                str(e),
+            )
+
         logger.exception("Falha ao criar conexao de e-mail. subject=%s, error=%s", subject, str(e))
         if fail_silently:
             return {
@@ -185,6 +242,27 @@ def send_mail_task(subject, message, from_email, recipient_list, **kwargs):
         }
 
     except Exception as e:
+        if _is_retryable_smtp_error(e) and self.request.retries < self.max_retries:
+            countdown = _retry_delay_seconds(self.request.retries)
+            logger.warning(
+                "Falha transitoria no envio SMTP. subject=%s, tentativa=%s/%s, retry_em=%ss, error=%s",
+                subject,
+                self.request.retries + 1,
+                self.max_retries,
+                countdown,
+                str(e),
+            )
+            raise self.retry(exc=e, countdown=countdown)
+
+        if _is_retryable_smtp_error(e):
+            logger.error(
+                "Falha transitoria no envio SMTP na tentativa %s/%s (ultima). Mensagem nao sera mais enviada. subject=%s, error=%s",
+                self.request.retries + 1,
+                self.max_retries + 1,
+                subject,
+                str(e),
+            )
+
         logger.exception("Falha no envio de e-mail. subject=%s, error=%s", subject, str(e))
         if fail_silently:
             return {
