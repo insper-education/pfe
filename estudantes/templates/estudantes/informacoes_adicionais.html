@@ -54,11 +54,13 @@
           <div style="min-width: 34px; height: 34px; border-radius: 999px; background: #d9ecff; color: #1d5f91; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px;">i</div>
           <div>
             <div style="font-weight: 700; color: #18476b; margin-bottom: 4px;">
-              {% lng "Perguntas temporárias para planejamento" "Temporary planning questions" %}
+              {% lng "Perguntas para planejamento do próximo semestre" "Questions for planning the next semester" %}
             </div>
             <div style="font-size: .95rem; line-height: 1.5; color: #35556f;">
               {% lng "Por favor, indique como prefere que encaminhemos os encontros do Capstone no próximo semestre." "Please indicate how you prefer we communicate the Capstone meetings next semester." %}
-              {% lng "As informações coletadas aqui serão usadas para orientar a organização dos encontros e outras atividades. Agradecemos sua colaboração." "The information collected here will help guide the organization of meetings and other activities. Thank you for your collaboration." %}
+              {% lng "As informações coletadas aqui serão usadas para orientar a organização dos encontros e outras atividades." "The information collected here will help guide the organization of meetings and other activities." %}
+              {% lng "Como vocês são a primeira turma que esse controle será feito dessa forma, estamos consultando suas preferências." "Since you are the first cohort to have this control done this way, we are consulting your preferences." %}
+              {% lng "Caso a proposta funcione bem, usaremos as escolhas aqui feitas para as próximas turmas, sem consultá-las." "If the proposal works well, we will use the choices made here for the next classes, without consulting them." %}
               <b style="color: #b45309;">
                 {% lng "Faremos o possível para acomodar as preferências da maioria. Condições de contorno ou imprevistos podem fazer com que haja alterações após a consulta." "We will do our best to accommodate the majority's preferences. Boundary conditions or unforeseen events may lead to changes after the consultation." %}
               </b>
@@ -72,6 +74,10 @@
           </label>
           <div style="font-size: .84rem; color: #5a7186; margin-bottom: 12px; line-height: 1.45;">
             {% lng "Escolha a opção que melhor representa sua preferência para os encontros do grupo durante a semana." "Choose the option that best represents your preference for group meetings during the week." %}
+            {% lng "Lembrando que haverá controle de presença nesses horários e a proposta é controlar da chegada a saída de vocês" "Remember that there will be attendance control during these times and the proposal is to monitor your arrival and departure" %}.
+            {% lng "Casos especiais, como trabalho em outros laboratórios serão tratados à parte." "Special cases, such as working in other laboratories, will be treated separately." %}
+            {% lng "Esse horário poderá ser usado para reuniões com orientador e empresa, contudo caso não seja viável para orientadores ou empresas, reuniões poderão ser agendadas fora desses horários." "This schedule can be used for meetings with advisors and companies, however if it is not feasible for advisors or companies, meetings may be scheduled outside of these times." %}
+            {% lng "Outras atividades poderão ocorrer fora desse horário, como as mentorias, que devido a quantidade são feitas em dias e horários alternativos." "Other activities may occur outside of this schedule, such as mentoring sessions, which due to their quantity are held on alternative days and times." %}
           </div>
 
           <div>
@@ -95,8 +101,9 @@
             {% lng "As aulas de sexta-feira trocarão de horário no meio do semestre?" "Will Friday classes switch schedules halfway through the semester?" %}
           </label>
           <div style="font-size: .84rem; color: #5a7186; line-height: 1.45; margin-bottom: 12px;">
-            {% lng "Responda apenas se quiser opinar sobre a troca entre 7h30 e 9h45 no meio do semestre." "Answer only if you want to express a preference about the switch between 7:30am and 9:45am halfway through the semester." %}
-            {% lng "Se você deixar em branco, registraremos como não respondido." "If you leave it blank, it will be recorded as unanswered." %}
+            {% lng "Não será possível escolher o horário da sua turma nem trocar de turma com colegas. A escolha entre 7:30-9:30 e 9:45-11:45 será consequência do seu projeto" "You will not be able to choose your class schedule or switch classes with colleagues. The choice between 7:30-9:30 and 9:45-11:45 will be a consequence of your project" %}.
+            {% lng "Escolhendo SIM você indica que prefere o modelo onde até o meio do semestre tem aulas em um horário e depois as aulas mudam para o outro horário." "By choosing YES you indicate that you prefer the model where until the middle of the semester there are classes at one time and then the classes change to the other time." %}
+            {% lng "Escolhendo NÃO você indica que prefere o modelo onde as aulas de sexta-feira são sempre no mesmo horário durante todo o semestre, e aceita que poderão ser ou as 7:30 ou as 9:45" "By choosing NO you indicate that you prefer the model where Friday classes are always at the same time throughout the semester, and you accept that they may be either 7:30 or 9:45" %}.
           </div>
           <div>
             {% for radio in form.aulas_mudando_meio_semestre %}
@@ -116,11 +123,11 @@
         {% if user.aluno.curso2 and user.aluno.curso2.sigla == "GRCIECOMP" %}
           <div style="background: #ffffff; border: 1px solid #d7e7f5; border-radius: 12px; padding: 16px; margin-top: 12px;">
             <label style="display: block; font-weight: 600; color: #163a59; margin-bottom: 6px;">
-              {% lng "Você prefere concentrar Cybersegurança no mesmo dia do Capstone, às 14h?" "Do you prefer to concentrate Cybersecurity on the same day as Capstone, at 2pm?" %}
+              {% lng "Você prefere concentrar Cybersegurança no mesmo dia do Capstone, às 14h, por exemplo?" "Do you prefer to concentrate Cybersecurity on the same day as Capstone, at 2pm, for example?" %}
             </label>
             <div style="font-size: .84rem; color: #5a7186; line-height: 1.45; margin-bottom: 12px;">
-              {% lng "Responda apenas se quiser indicar essa preferência de organização." "Answer only if you want to indicate this organizational preference." %}
-              {% lng "Se você deixar em branco, registraremos como não respondido." "If you leave it blank, it will be recorded as unanswered." %}
+              {% lng "Escolhendo SIM você indica que prefere ter as aulas de Cybersegurança no mesmo dia do Capstone, por exemplo às 14h para ter um intervalo." "By choosing YES you indicate that you prefer to have Cybersecurity classes on the same day as Capstone, for example at 2pm to have a break." %}
+              {% lng "Escolhendo NÃO você indica que prefere ter as aulas de Cybersegurança em dias diferentes do Capstone, por exemplo pelas manhãs." "By choosing NO you indicate that you prefer to have Cybersecurity classes on different days from Capstone, for example in the mornings." %}
             </div>
             <div>
               {% for radio in form.aula_de_cybersec_no_mesmo_dia %}
