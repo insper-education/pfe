@@ -378,7 +378,7 @@
         {% exclude_by_periodo aluno.opcao_set.all aluno.ano aluno.semestre as opcoes_outros %}
 
         {% if opcoes_regulares %}
-          <div class="propostas-list mt-2">
+          <div class="propostas-list mt-2 mb-1">
             {% for opcao in opcoes_regulares %}
               <div class="proposta-linha">
                 <a href="{% url 'proposta_completa' opcao.proposta.id %}">
@@ -399,10 +399,8 @@
         {% endif %}
 
         {% if opcoes_outros %}
-          <div class="proposta-divisor">
-            <span>{% lng "Outros Semestres" "Other Semesters" %}</span>
-          </div>
-          <div class="propostas-list">
+          <details class="propostas-list">
+            <summary style="cursor: pointer; font-weight: 600; padding: 0 0.4rem 0.35rem 0.4rem;"><small>{% lng "Outros Semestres" "Other Semesters" %}</small></summary>
             {% for opcao in opcoes_outros %}
               <div class="proposta-linha">
                 <a href="{% url 'proposta_completa' opcao.proposta.id %}">
@@ -414,7 +412,7 @@
                 </a>
               </div>
             {% endfor %}
-          </div>
+          </details>
         {% endif %}
       {% endif %}
 
