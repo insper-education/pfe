@@ -1099,10 +1099,15 @@ def reuniao(request, reuniao_id_g=None):  # Id da reunião para editar, None par
             return render(request, "generic_ml.html", context=context)
 
     elif request.user.eh_prof_a:  # Professor
-        if request.user.eh_admin and reuniao_id_g == "todos":
-            projetos = Projeto.objects.filter(ano=configuracao.ano, semestre=configuracao.semestre)
+
+        if reuniao:
+            projetos = [reuniao.projeto]
+
         else:
-            projetos = Projeto.objects.filter(orientador=request.user.professor, ano=configuracao.ano, semestre=configuracao.semestre)
+            if request.user.eh_admin and reuniao_id_g == "todos":
+                projetos = Projeto.objects.filter(ano=configuracao.ano, semestre=configuracao.semestre)
+            else:
+                projetos = Projeto.objects.filter(orientador=request.user.professor, ano=configuracao.ano, semestre=configuracao.semestre)
 
         if not projetos:
             context["mensagem"] = {"pt": "Você não tem projetos para registrar reuniões nesse semestre.", "en": "You do not have projects to register meetings this semester."}

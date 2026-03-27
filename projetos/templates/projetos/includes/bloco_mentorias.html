@@ -1,0 +1,104 @@
+{% comment %}
+  Desenvolvido para o Projeto Final de Engenharia
+  Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+  Data: 27 de Março de 2026
+{% endcomment %}
+
+{% load static %}
+{% load linguas %}
+
+<ul class="mentoria-timeline">
+  {% for dinamica in projeto.encontro_set.all %}
+    <li class="mentoria-item">
+      
+      <div class="mentoria-card">
+        <div class="mentoria-header">
+          <div class="mentoria-when">
+            <i class="far fa-calendar-alt"></i>
+            {{dinamica.startDate|date:'j \\d\\e F \\d\\e Y'}}
+            <span class="ml-1">
+              <i class="far fa-clock"></i>
+              {{dinamica.startDate|date:'H:i'}}–{{dinamica.endDate|date:'H:i'}}
+            </span>
+          </div>
+          <div class="mentoria-chips">
+            {% if dinamica.tematica %}
+              <span class="badge badge-pill badge-light border" title="Tem">  
+                {% comment %} {% lng 'Temática' 'Theme' %} {% endcomment %}
+                <i class="fas fa-tags"></i> {{dinamica.tematica.nome}}
+              </span>
+            {% endif %}
+            {% if dinamica.location %}
+              {% if dinamica.url_location %}
+                <a class="badge badge-pill badge-light border" href="{{dinamica.location}}" title="Link de videoconferência">
+                  {% comment %} {% lng 'Link de vídeo' 'Video link' %} {% endcomment %}
+                  <i class="fas fa-video"></i> {% lng "videoconferência" "videoconference" %}
+                </a>
+              {% else %}
+                <span class="badge badge-pill badge-light border" title="Localização">
+                  {% comment %} {% lng 'Local' 'Location' %} {% endcomment %}
+                  <i class="fas fa-map-marker-alt"></i> {{dinamica.location}}
+                </span>
+              {% endif %}
+            {% endif %}
+            {% if dinamica.facilitador %}
+              <a class="badge badge-pill badge-light border" href="{% url 'user_detail' dinamica.facilitador.id %}" title="Facilitador(a)">
+                {% comment %} {% lng 'Facilitador(a)' 'Facilitator' %} {% endcomment %}
+                <i class="fas fa-user"></i> {{dinamica.facilitador}}
+              </a>
+            {% endif %}
+            {% if dinamica.documento %}
+              <a class="badge badge-pill badge-light border" href="{{dinamica.documento.url}}">
+                <i class="fas fa-file-alt"></i> {% lng "Documento" "Document" %}
+              </a>
+            {% endif %}
+            {% if dinamica.link %}
+              <a class="badge badge-pill badge-light border" href="{{dinamica.link}}">
+                <i class="fas fa-link"></i> {% lng "Link" "Link" %}
+              </a>
+            {% endif %}
+          </div>
+        </div>
+
+        <div class="mentoria-body">
+          {% if dinamica.observacoes_estudantes %}
+            <div class="section">
+              <span class="title"><i class="fas fa-user-graduate"></i> {% lng "Observações para Estudantes" "Observations for Students" %}</span>
+              <div class="content">{{dinamica.observacoes_estudantes|safe|linebreaks}}</div>
+            </div>
+          {% endif %}
+
+          {% if dinamica.observacoes_orientador %}
+            <div class="section">
+              <span class="title"><i class="fas fa-chalkboard-teacher"></i> {% lng "Observações para Orientador" "Observations for Advisor" %}</span>
+              <div class="content">{{dinamica.observacoes_orientador|safe|linebreaks}}</div>
+            </div>
+          {% endif %}
+
+          {% if dinamica.feedback %}
+            <div class="section">
+              <span class="title"><i class="far fa-comment-dots"></i> {% lng "Feedback" "Feedback" %}</span>
+              <div class="content">{{dinamica.feedback|linebreaks}}</div>
+            </div>
+          {% endif %}
+
+          {% if dinamica.feedback_estudantes %}
+            <div class="section">
+              <span class="title"><i class="far fa-comments"></i> {% lng "Feedback dos Estudantes" "Students Feedback" %}</span>
+              <div class="content">{{dinamica.feedback_estudantes|linebreaks}}</div>
+            </div>
+          {% endif %}
+
+          {% if dinamica.feedback_orientador %}
+            <div class="section">
+              <span class="title"><i class="far fa-comment"></i> {% lng "Feedback do Orientador" "Advisor Feedback" %}</span>
+              <div class="content">{{dinamica.feedback_orientador|linebreaks}}</div>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    </li>
+  {% empty %}
+    <p>{% lng "Nenhuma mentoria agendada ou realizada" "No mentorship scheduled or held" %}</p>
+  {% endfor %}
+</ul>

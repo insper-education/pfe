@@ -6,17 +6,21 @@ Data: 24 de Novembro de 2025
 """
 
 from django import template
-from projetos.models import Reuniao, ReuniaoParticipante
+from projetos.models import Reuniao, ReuniaoParticipante, Projeto
+from users.models import Alocacao
 
 register = template.Library()
 
 @register.filter()
-def get_reunioes(alocacao):
+def get_reunioes(objeto):
     """Retorna as reuniões que o projeto do estudante teve."""
-    if not alocacao:
+    if not objeto:
         return []
     try:
-        return Reuniao.objects.filter(projeto=alocacao.projeto).order_by("data_hora")
+        if isinstance(objeto, Projeto):
+            return Reuniao.objects.filter(projeto=objeto).order_by("data_hora")
+        elif isinstance(objeto, Alocacao) and objeto.projeto:
+            return Reuniao.objects.filter(projeto=objeto.projeto).order_by("data_hora")
     except Exception as e:
         return []
 
@@ -31,3 +35,13 @@ def get_participacao(reuniao, user):
         return None
     except Exception as e:
         return None
+
+@register.filter(name="get_participantes")
+def get_participantes(reuniao):
+    """Retorna os participantes de uma reunião."""
+    if not reuniao:
+        return []
+    try:
+        return ReuniaoParticipante.objects.filter(reuniao=reuniao).select_related("participante").order_by("participante__first_name", "participante__last_name")
+    except Exception as e:
+        return []

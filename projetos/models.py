@@ -1226,23 +1226,31 @@ class Banca(models.Model):
 
 class Participante(models.Model):
     """ Base abstrata para participantes em reuniões e encontros."""
-    TIPO_PARTICIPANTE = (
-        (0, "Não Convocado"),
-        (1, "Presente"),
-        (2, "Faltou"),
-        (3, "Falta Justificada"),
-    )
+
     participante = models.ForeignKey("users.PFEUser", on_delete=models.CASCADE, related_name="%(class)s_participante")
-    situacao = models.PositiveSmallIntegerField(choices=TIPO_PARTICIPANTE, null=True, blank=True,
+
+    TIPO_PARTICIPANTE = (
+        (0, "Não Convocado", "Not Invited", "#808080"),
+        (1, "Presente", "Present", "#28a745"),
+        (2, "Faltou", "Absent", "#dc3545"),
+        (3, "Falta Justificada", "Excused", "#e6a000"),
+    )
+
+    situacao = models.PositiveSmallIntegerField(choices=[subl[:2] for subl in TIPO_PARTICIPANTE], null=True, blank=True,
                                                     help_text="Situação do participante.")
 
     class Meta:
         abstract = True
+
+    @classmethod
+    def get_situacao_info(cls, situacao):
+        num = situacao if situacao is not None else 0
+        return {"pt": cls.TIPO_PARTICIPANTE[num][1], "en": cls.TIPO_PARTICIPANTE[num][2], "cor": cls.TIPO_PARTICIPANTE[num][3]}
     
     @property
     def situacao_display(self):
-        return self.get_situacao_display()
-    
+        return self.get_situacao_info(self.situacao)
+
     def __str__(self):
         return self.participante.get_full_name()
 

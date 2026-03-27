@@ -1,0 +1,124 @@
+{% comment %}
+  Desenvolvido para o Projeto Final de Engenharia
+  Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+  Data: 27 de Março de 2026
+{% endcomment %}
+
+{% load static %}
+{% load linguas %}
+{% load reunioes %}
+
+
+<style>
+
+    .reunioes-list {
+      background: #f8f9fa;
+      border-radius: 6px;
+      padding: 0.15rem;
+      width: fit-content;
+      min-width: min(750px, 100%);
+      max-width: 100%;
+      margin-left: 0.5em;
+    }
+    
+    .reuniao-linha {
+      display: flex;
+      align-items: center;
+      gap: 0.15rem;
+      padding: 0.05rem 0.1rem;
+      border-bottom: 1px solid #e9ecef;
+      font-size: 0.9rem;
+      transition: background 0.15s;
+    }
+    .reuniao-linha:last-child {border-bottom: none;}
+    .reuniao-linha:hover {background: #fff;}
+
+    .mostra-data-hora {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: #6c757d;
+      font-size: 0.85rem;
+      flex-shrink: 0;
+    }
+
+    .mostra-data {
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+      white-space: nowrap;
+      width: 86px;
+    }
+    .mostra-hora {
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+      white-space: nowrap;
+      width: 70px;
+    }
+
+    .reuniao-titulo-compacto {
+      flex: 1;
+      color: #2c3e50;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .badge-mini {
+      padding: 0.25em 0.5em;
+      font-size: 0.7rem;
+      font-weight: 600;
+      border-radius: 4px;
+      white-space: nowrap;
+    }
+</style>
+
+<div class="reunioes-list mt-2">
+  {% for reuniao in reunioes %}
+    <div class="reuniao-linha">
+      <div class="mostra-data-hora">
+        <div class="mostra-data">
+          <i class="far fa-calendar"></i>
+          <span class="texto-longo">{{ reuniao.data_hora|date:"d/m/Y" }}</span>
+          <span class="texto-curto">{{ reuniao.data_hora|date:"d/m/y" }}</span>
+        </div>
+        <div class="mostra-hora">
+          <i class="far fa-clock ml-2"></i>
+          {{ reuniao.data_hora|date:"H:i" }}
+        </div>
+      </div>
+      {% if alocacao %}
+        {% with participacao=reuniao|get_participacao:alocacao.aluno.user %}
+          <div class="reuniao-titulo-compacto" title="{{ reuniao.titulo }}{% if participacao.observacoes %} - {{ participacao.observacoes }}{% endif %}">
+            {{ reuniao.titulo }}
+          </div>
+          {% with situacao=participacao.situacao_display %}
+            <span class="badge badge-mini" style="background-color: {{ situacao.cor }}; color:#FFFFFF">{% lng situacao.pt situacao.en %}</span>
+          {% endwith %}
+        {% endwith %}
+      {% else %}
+        <div class="reuniao-titulo-compacto" title="{{ reuniao.titulo }}">
+          {{ reuniao.titulo }}
+        </div>
+        <div class="reuniao-participantes">
+          {% with participantes=reuniao|get_participantes %}
+            {% for participante in participantes %}
+              {% with situacao=participante.situacao_display %}
+                <span class="badge badge-mini" style="background-color: {{ situacao.cor }}; color:#FFFFFF">
+                  {% if participante.participante.eh_estud %}
+                    <i class="fa fa-user-graduate"></i>
+                  {% elif participante.participante.eh_prof_a %}
+                    <i class="fas fa-chalkboard-teacher"></i>
+                  {% elif participante.participante.eh_parc %}
+                    <i class="fas fa-user-tie"></i>
+                  {% endif %}
+                  {{ participante.participante.get_full_name }}
+                </span>
+              {% endwith %}
+            {% endfor %}
+          {% endwith %}
+        </div>
+      {% endif %}
+    </div>
+  {% endfor %}
+</div>
