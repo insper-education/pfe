@@ -134,13 +134,13 @@ def tmp(request):
     def texto_resposta_binaria(aluno, campo):
         valor = getattr(aluno, campo)
         if not valor:
-            return "Não respondeu"
+            return ""
         metodo_display = getattr(aluno, f"get_{campo}_display")
         return metodo_display()
 
     def texto_resposta_horario(aluno):
         if not aluno.escolha_horario_trab_grupo:
-            return "Não respondeu"
+            return ""
         return aluno.get_escolha_horario_trab_grupo_display()
 
     alunos = Aluno.objects.filter(

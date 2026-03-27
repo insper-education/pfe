@@ -257,7 +257,7 @@
 
           {% with externo=usuario.aluno.externo %}
             <div class="col-md-10 campo-com-label inline-check-group" style="padding-top: 2rem;">
-              <label for="externo_check">
+              <label for="externo_check" style="display: inline-flex; align-items: center; gap: 0.35rem; width: fit-content;">
                 <input type="checkbox" id="externo_check" name="externo_check" value="True" {% if externo %}checked{% endif %}>
                 {% lng "Estudante Externo" "External Student" %}
               </label>
