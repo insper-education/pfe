@@ -453,12 +453,31 @@ def banca_avaliar(request, slug, documento_id=None):
 
     # Usado para pegar o relatório de avaliação de banca para usuários não cadastrados
     if documento_id:
-        documento = Documento.objects.get(id=documento_id, projeto=projeto)
+        try:
+            documento = Documento.objects.get(id=documento_id, projeto=projeto)
+        except Documento.DoesNotExist:
+            mensagem = {
+                "pt": "<b>Documento não encontrado!</b><br><small>Verifique se o link está correto ou se o documento ainda está disponível para visualização.</small>",
+                "en": "<b>Document not found!</b><br><small> Please check if the link is correct or if the document is still available for viewing.</small>",
+            }
+            context = {
+                "area_principal": True,
+                "mensagem": mensagem,
+            }
+            return render(request, "generic_ml.html", context=context)
         path = str(documento.documento).split('/')[-1]
         local_path = os.path.join(settings.MEDIA_ROOT, "{0}".format(documento.documento))
         diferenca = (datetime.date.today() - banca.endDate.date()).days
         if diferenca > 2 * configuracao.prazo_avaliar_banca:
-            return HttpResponseNotFound("<h1>Link expirado!<br> Documentos só podem ser visualizados até " + str(2 * configuracao.prazo_avaliar_banca) + " dias após a data da banca!</h1>")
+            mensagem = {
+                "pt": "<h3><b>Link expirado!</b><br> Documentos só podem ser visualizados até " + str(2 * configuracao.prazo_avaliar_banca) + " dias após a data da banca!</h3>",
+                "en": "<h3><b>Expired link!</b><br> Documents can only be viewed up to " + str(2 * configuracao.prazo_avaliar_banca) + " days after the date of the examination board!</h3>",
+            }
+            context = {
+                "area_principal": True,
+                "mensagem": mensagem,
+            }
+            return render(request, "generic_ml.html", context=context)
         return le_arquivo(request, local_path, path, bypass_confidencial=True)
 
     exame = get_object_or_404(Exame, sigla=banca.sigla)
