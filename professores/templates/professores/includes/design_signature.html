@@ -27,6 +27,21 @@
     color: #94a3b8;
     margin-left: 4px;
     vertical-align: middle;
+    cursor: pointer;
+  }
+
+  .simple-info-tooltip {
+    position: fixed;
+    z-index: 2000;
+    max-width: min(360px, 85vw);
+    background: #0f172a;
+    color: #f8fafc;
+    border-radius: 8px;
+    padding: 8px 10px;
+    font-size: 0.75rem;
+    line-height: 1.35;
+    box-shadow: 0 8px 24px rgba(2, 6, 23, 0.22);
+    display: none;
   }
   
   .design-sig-table td {
@@ -217,13 +232,103 @@
     });
     document.getElementById("signatureRow").replaceChildren(...cells);
   }
+
+  let activeTooltipIcon = null;
+
+  function closeInfoTooltip() {
+    const tooltip = document.getElementById('simpleInfoTooltip');
+    if (tooltip) {
+      tooltip.style.display = 'none';
+      tooltip.textContent = '';
+    }
+    if (activeTooltipIcon) {
+      activeTooltipIcon.setAttribute('aria-expanded', 'false');
+      activeTooltipIcon = null;
+    }
+  }
+
+  function openInfoTooltip(icon, text) {
+    const tooltip = document.getElementById('simpleInfoTooltip');
+    if (!tooltip || !text) {
+      return;
+    }
+
+    tooltip.textContent = text;
+    tooltip.style.display = 'block';
+
+    const iconRect = icon.getBoundingClientRect();
+    const tooltipRect = tooltip.getBoundingClientRect();
+
+    let top = iconRect.top - tooltipRect.height - 10;
+    if (top < 8) {
+      top = iconRect.bottom + 10;
+    }
+
+    let left = iconRect.left + (iconRect.width / 2) - (tooltipRect.width / 2);
+    if (left < 8) {
+      left = 8;
+    }
+    if (left + tooltipRect.width > window.innerWidth - 8) {
+      left = window.innerWidth - tooltipRect.width - 8;
+    }
+
+    tooltip.style.top = top + 'px';
+    tooltip.style.left = left + 'px';
+  }
+
+  function initInfoTooltips() {
+    document.querySelectorAll('.design-sig-table th span[title] .th-info-icon').forEach((icon) => {
+      const parentWithTitle = icon.closest('span[title]');
+      if (!parentWithTitle || icon.dataset.tooltipBound === '1') {
+        return;
+      }
+
+      icon.setAttribute('tabindex', '0');
+      icon.setAttribute('role', 'button');
+      icon.setAttribute('aria-expanded', 'false');
+
+      icon.addEventListener('click', (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+
+        if (activeTooltipIcon === icon) {
+          closeInfoTooltip();
+          return;
+        }
+
+        closeInfoTooltip();
+        openInfoTooltip(icon, parentWithTitle.getAttribute('title'));
+        icon.setAttribute('aria-expanded', 'true');
+        activeTooltipIcon = icon;
+      });
+
+      icon.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          icon.click();
+        }
+        if (event.key === 'Escape') {
+          closeInfoTooltip();
+        }
+      });
+
+      icon.dataset.tooltipBound = '1';
+    });
+  }
+
+  document.addEventListener('click', closeInfoTooltip);
+  window.addEventListener('resize', closeInfoTooltip);
+  window.addEventListener('scroll', closeInfoTooltip, true);
   
   document.addEventListener("languageChanged", monta_linha);
 
   function carrega_pagina() {     
     monta_linha();
+    initInfoTooltips();
   }
 
   window.onload = carrega_pagina
 
 </script>
+
+<div id="simpleInfoTooltip" class="simple-info-tooltip" role="tooltip" aria-live="polite"></div>
