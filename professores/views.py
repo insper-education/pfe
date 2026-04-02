@@ -1636,7 +1636,7 @@ def informe_bancas(request, sigla):
     ano = configuracao.ano
     semestre = configuracao.semestre
 
-    bancas = Banca.objects.filter(projeto__ano=ano, projeto__semestre=semestre, composicao__exame__sigla=sigla)
+    bancas = Banca.objects.filter(projeto__ano=ano, projeto__semestre=semestre, tipo_evento__sigla=sigla)
     administracao = request.user.eh_admin
 
     if administracao and request.method == "POST":
