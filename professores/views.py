@@ -487,17 +487,21 @@ def banca_avaliar(request, slug, documento_id=None):
 
     alocacoes = Alocacao.objects.filter(projeto=projeto)
 
+    exame_individual = None
+    objetivos_individuais = []
     pesos_individuais = None
     if banca.sigla == "BI":
         exame_individual = get_object_or_404(Exame, sigla="BII")
         composicao_individual = Composicao.objects.filter(exame=exame_individual, data_inicial__lte=banca.startDate).order_by("-data_inicial").first()
-        objetivos_individuais = composicao_individual.pesos.all()
-        pesos_individuais = Peso.objects.filter(composicao=composicao_individual)
+        if composicao_individual:
+            objetivos_individuais = composicao_individual.pesos.all()
+            pesos_individuais = Peso.objects.filter(composicao=composicao_individual)
     elif banca.sigla == "BF":
         exame_individual = get_object_or_404(Exame, sigla="BFI")
         composicao_individual = Composicao.objects.filter(exame=exame_individual, data_inicial__lte=banca.startDate).order_by("-data_inicial").first()
-        objetivos_individuais = composicao_individual.pesos.all()
-        pesos_individuais = Peso.objects.filter(composicao=composicao_individual)
+        if composicao_individual:
+            objetivos_individuais = composicao_individual.pesos.all()
+            pesos_individuais = Peso.objects.filter(composicao=composicao_individual)
     
     if request.method == "POST":
         if "avaliador" in request.POST:
@@ -603,13 +607,14 @@ def banca_avaliar(request, slug, documento_id=None):
                             <div style='font-size:13px; color:#78350f; margin-bottom:10px;'>
                                 Este relatório revisado contém anotações relevantes da banca para orientar ajustes do projeto e no relatório.
                             </div>
+                            &#128196; 
                             <a href='{doc_url}' target='_blank' rel='noopener noreferrer' style='color:#b45309; font-weight:700; font-size:13px;'>
                                 {doc_url}
                             </a>
                         </div>
                     </div>
                     """
-
+                    
                     recipient_list = [alocacao.aluno.user.email for alocacao in projeto.alocacao_set.all()]
                     recipient_list.append(avaliador.email)
                     recipient_list.append(projeto.orientador.user.email)
