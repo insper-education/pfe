@@ -216,6 +216,9 @@
       <span style="display: inline-block; margin-bottom: 8px;">
         <b>{% lng "Tipo de Banca" "Presentation" %}:</b>
       </span>
+      <script>
+        var minutos_tipo = [];
+      </script>
       {% for tipo in bancas.values %}
         {% with tipo_evento=tipo.last.tipo_evento %}
         <div style="margin-left: 0.3em; margin-bottom: 0.3em;" class="radio">
@@ -226,6 +229,11 @@
             {% lng "(duração padrão" "(standard duration" %}:
             {{tipo_evento.duracao}} min)</label>
         </div>
+        <script>
+          {% if tipo_evento.duracao %}
+            minutos_tipo["{{tipo_evento.sigla}}"] = {{tipo_evento.duracao}};
+          {% endif %}
+        </script>
         {% endwith %}
       {% endfor %}
     </div>
@@ -243,7 +251,12 @@
                 document.getElementById("fim").min = "{{bancas.F.first.startDate|date:'Y-m-d'}}T00:00:00";
                 document.getElementById("fim").max = "{{bancas.F.last.endDate|date:'Y-m-d'}}T23:59:59";
               {% endif %}
-              minutos=30;
+              //minutos=30;
+              if("F" in minutos_tipo) {
+                minutos = minutos_tipo["F"];
+              } else {
+                minutos = 30;
+              }
             } else if(tipo == "P") {  // Banca Probation
               {% if not user.eh_admin %} // Coordenador pode alocar fora dos horários
                 document.getElementById("inicio").min = "{{bancas.P.first.startDate|date:'Y-m-d'}}T00:00:00";
@@ -251,7 +264,12 @@
                 document.getElementById("fim").min = "{{bancas.P.first.startDate|date:'Y-m-d'}}T00:00:00";
                 document.getElementById("fim").max = "{{bancas.P.last.endDate|date:'Y-m-d'}}T23:59:59";
               {% endif %}
-              minutos=60;
+              //minutos=60;
+              if("P" in minutos_tipo) {
+                minutos = minutos_tipo["P"];
+              } else {
+                minutos = 60;
+              }
             } else if(tipo == "BI") {  // Banca Intermediária
               {% if not user.eh_admin %} // Coordenador pode alocar fora dos horários
                 document.getElementById("inicio").min = "{{bancas.BI.first.startDate|date:'Y-m-d'}}T00:00:00";
@@ -259,7 +277,12 @@
                 document.getElementById("fim").min = "{{bancas.BI.first.startDate|date:'Y-m-d'}}T00:00:00";
                 document.getElementById("fim").max = "{{bancas.BI.last.endDate|date:'Y-m-d'}}T23:59:59";
               {% endif %}
-              minutos=120;
+              //minutos=180;
+              if("BI" in minutos_tipo) {
+                minutos = minutos_tipo["BI"];
+              } else {
+                minutos = 180;
+              }
             } else {  // Banca Final
               {% if not user.eh_admin %} // Coordenador pode alocar fora dos horários
                 document.getElementById("inicio").min = "{{bancas.BF.first.startDate|date:'Y-m-d'}}T00:00:00";
@@ -267,41 +290,54 @@
                 document.getElementById("fim").min = "{{bancas.BF.first.startDate|date:'Y-m-d'}}T00:00:00";
                 document.getElementById("fim").max = "{{bancas.BF.last.endDate|date:'Y-m-d'}}T23:59:59";
               {% endif %}
-              minutos=120;
+              //minutos=180;
+              if("BF" in minutos_tipo) {
+                minutos = minutos_tipo["BF"];
+              } else {
+                minutos = 180;
+              }
             }
         });
+
+        // Inicializa minutos e limites de data ao abrir o modal
+        var tipo_inicial = $("input[name='tipo']:checked");
+        if (tipo_inicial.length) {
+          tipo_inicial.trigger("change");
+        }
     });
     </script>
 
     <div class="mb-3">
-        <label for="inicio" style="white-space: nowrap; display:inline-block; margin-bottom: 3px;">
-        <span style="display:inline-block; width:5.5ex; text-align:right;">
-          {% lng "Início:" "Start:" %}
-        </span>
-        <input id="inicio" type="datetime-local" name="inicio" class="horario_banca" min="2018-08-01T00:00"
-        {% if banca and banca.projeto.orientador.user != request.user and request.user.tipo_de_usuario != 4 %}disabled{% endif %}
-        {% if banca %}
-          value="{{banca.startDate|date:'Y-m-d\TH:i:s'}}"
-        {% elif data %}
-          value="{{data}}T00:00"
-        {% endif %} 
-        required>
-        &nbsp;&nbsp;&nbsp;&nbsp;
+        <label for="inicio" style="white-space: nowrap; display:inline-block; margin-bottom: 3px; margin-right: 18px;">
+          <span style="display:inline-block; width:5.5ex; text-align:right;">
+            {% lng "Início:" "Start:" %}
+          </span>
+          <input id="inicio" type="datetime-local" name="inicio" class="horario_banca" min="2018-08-01T00:00"
+          {% if banca and banca.projeto.orientador.user != request.user and request.user.tipo_de_usuario != 4 %}disabled{% endif %}
+          {% if banca %}
+            value="{{banca.startDate|date:'Y-m-d\TH:i:s'}}"
+          {% elif data %}
+            value="{{data}}T00:00"
+          {% endif %} 
+          required>
         </label>
       
         <label for="fim" style="white-space: nowrap; display:inline-block; margin-bottom: 3px;">
-        <span style="display:inline-block; width:5.5ex; text-align:right">
-          {% lng "Fim:" "End:" %}
-        </span>
-        <input id="fim" type="datetime-local" name="fim" class="horario_banca" min="2018-08-01T00:00"
-        {% if banca and banca.projeto.orientador.user != request.user and request.user.tipo_de_usuario != 4 %}disabled{% endif %}
-        {% if banca %}
-          value="{{banca.endDate|date:'Y-m-d\TH:i:s'}}"
-        {% elif data %}
-          value="{{data}}T00:00"
-        {% endif %} 
-        required>
+          <span style="display:inline-block; width:5.5ex; text-align:right">
+            {% lng "Fim:" "End:" %}
+          </span>
+          <input id="fim" type="datetime-local" name="fim" class="horario_banca" min="2018-08-01T00:00"
+          {% if banca and banca.projeto.orientador.user != request.user and request.user.tipo_de_usuario != 4 %}disabled{% endif %}
+          {% if banca %}
+            value="{{banca.endDate|date:'Y-m-d\TH:i:s'}}"
+          {% elif data %}
+            value="{{data}}T00:00"
+          {% endif %} 
+          required>
         </label>
+
+        <span id="aviso_horario" style="color: red; font-weight: bold; display: block;"></span>
+
     </div>
 
     <script>
@@ -330,6 +366,20 @@
         data.setMinutes(data.getMinutes() + minutos);
         $("#fim").val(data.toDatetimeLocal());
       });
+
+      $("#fim").change(function() {
+        // AVISO DE HORÁRIO FORA DO PADRÃO
+        var data_inicio = new Date($("#inicio").val());
+        var data_fim = new Date($(this).val());
+        var diff = (data_fim - data_inicio) / 60000; // diferença em minutos
+
+        if (diff < minutos) {
+          $("#aviso_horario").html("Duração do bloco menor que o padrão de " + minutos + " minutos");
+        } else {
+          $("#aviso_horario").html("");
+        }
+      });
+
     </script>
 
     <div class="mb-3">

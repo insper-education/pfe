@@ -178,9 +178,9 @@ def _calendar_invite_banca(banca, subject, recipient_list, mensagem, atualizada=
         "content": "\r\n".join(lines) + "\r\n",
     }
 
-def calcula_interseccao_bancas(banca, startDate, endDate):
+def calcula_interseccao_bancas(banca, startDate, endDate, limite_salas_bancas):
     """Calcula se a banca intersecta com outras bancas (e trata se for criada ou editada)."""
-    configuracao = get_object_or_404(Configuracao)
+    
     intersecta = 0
 
     intersectadas = Banca.objects.filter(Q(endDate__gt=startDate) & Q(startDate__lt=endDate))
@@ -202,7 +202,7 @@ def calcula_interseccao_bancas(banca, startDate, endDate):
         
         intersecta = max(intersecta, c_start, c_end)
 
-    return intersecta >= configuracao.limite_salas_bancas
+    return intersecta >= limite_salas_bancas
 
 
 def editar_banca(banca, request):
@@ -216,29 +216,19 @@ def editar_banca(banca, request):
         if "inicio" in request.POST and "fim" in request.POST:
             startDate = dateutil.parser.parse(request.POST["inicio"])
             endDate = dateutil.parser.parse(request.POST["fim"])
-            if calcula_interseccao_bancas(banca, startDate, endDate):
-                return "Mais de duas bancas agendadas para o mesmo horário! Agendamento não realizado.", None
+            configuracao = get_object_or_404(Configuracao)
+            if calcula_interseccao_bancas(banca, startDate, endDate, configuracao.limite_salas_bancas):
+                return f"Mais de {configuracao.limite_salas_bancas} bancas agendadas para o mesmo horário! Agendamento não realizado.", None
         else:
             return "Data de início ou fim não informada!", None
 
     if banca is None:
         banca = Banca()
 
-    ### OBSOLETO
-    # exame = get_object_or_404(Exame, sigla=request.POST["tipo"])
-    # composicao = Composicao.objects.filter(exame=exame, data_inicial__lte=banca.startDate).order_by("-data_inicial").first()
-    # banca.composicao = composicao
-    ### NOVO
     try:
         banca.tipo_evento = get_object_or_404(TipoEvento, sigla=request.POST["tipo"])
     except Http404:
         return "Tipo de evento não encontrado!", None
-    ########
-    
-    
-    # if not banca.tipo_evento.banca:
-    #     return "Tipo de evento não é do tipo Banca!", None
-
     
     if "projeto" in request.POST and request.POST["projeto"] != "":
         try:
@@ -758,10 +748,10 @@ def mensagem_edicao_banca(banca, atualizada=False, excluida=False, enviar=False)
     configuracao = get_object_or_404(Configuracao)
     interseccao = False
     if not excluida:
-        if calcula_interseccao_bancas(banca, banca.startDate, banca.endDate):
+        if calcula_interseccao_bancas(banca, banca.startDate, banca.endDate, configuracao.limite_salas_bancas):
             interseccao = True
             if BLOQUEAR:
-                return "Mais de duas bancas agendadas para o mesmo horário! Agendamento não realizado."
+                return f"Mais de {configuracao.limite_salas_bancas} bancas agendadas para o mesmo horário! Agendamento não realizado."
 
     recipient_list = []
     membros = banca.membros()
