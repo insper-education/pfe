@@ -145,11 +145,16 @@
         {% for alocacao in projeto.alocacao_set.all %}
           <li style="margin-bottom: 0px;">
             {{alocacao.aluno.user.get_full_name}}
+
             <span class="curso">
-              <span class="texto-longo">[{{ alocacao.aluno.curso2 }}]</span>
+              <span class="texto-longo">[{% lng alocacao.aluno.curso2.nome alocacao.aluno.curso2.nome_en %}]</span>
               <span class="texto-curto">[{{ alocacao.aluno.curso2.sigla_curta }}]</span>
             </span>
             {% if alocacao.aluno.externo %}<span class="red-normal">[{{alocacao.aluno.externo}}]</span>{% endif %}
+            {% comment %} <span class="emails">
+              <span class="texto-longo"><a href="mailto:{{alocacao.aluno.user.email}}">&lt;{{alocacao.aluno.user.email}}&gt;</a></span>
+              <span class="texto-curto"><a href="mailto:{{alocacao.aluno.user.email}}"><i class="far fa-envelope"></i></a></span>
+            </span> {% endcomment %}
           </li>
         {% endfor %}
       </ul>

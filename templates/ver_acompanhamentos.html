@@ -1,0 +1,70 @@
+{% comment %}
+  Desenvolvido para o Projeto Final de Engenharia
+  Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+  Data: 11 de Abril de 2026
+{% endcomment %}
+
+{% load static %}
+{% load linguas %}
+
+<style>
+    .acompanhamentos-card {
+        margin-top: 10px;
+        padding: 12px 14px;
+        border: 1px solid #dbeafe;
+        border-radius: 10px;
+        background: linear-gradient(180deg, #f8fbff 0%, #f4f8ff 100%);
+    }
+
+    .acompanhamentos-titulo {
+        margin-bottom: 10px;
+        color: #1e3a8a;
+        font-size: 1.02em;
+        letter-spacing: 0.01em;
+    }
+
+    .acompanhamento-item {
+        padding: 9px 10px;
+        margin-bottom: 8px;
+        border-left: 4px solid #93c5fd;
+        border-radius: 6px;
+        background-color: #ffffff;
+        box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06);
+    }
+
+    .acompanhamento-item:last-child {
+        margin-bottom: 0;
+    }
+
+    .acompanhamento-data {
+        display: inline-block;
+        margin-bottom: 4px;
+        color: #1d4ed8;
+        font-size: 0.9em;
+    }
+
+    .acompanhamento-texto {
+        color: #1f2937;
+        line-height: 1.45;
+        margin: 0;
+    }
+
+    .acompanhamento-texto p:last-child {
+        margin-bottom: 0;
+    }
+</style>
+
+{% if acompanhamentos %}
+    <div class="acompanhamentos-card">
+        <div class="acompanhamentos-titulo">
+            <b>{% lng "Acompanhamentos Intermediários com as Organizações Parceiras" "Intermediate Follow-ups with Partner Organizations" %}</b><br>
+            <small>{% lng "Cuidado que as observações são por empresas e as vezes se referem a outros projetos" "Be careful that the observations are by companies and sometimes refer to other projects" %}</small>
+        </div>
+        {% for acompanhamento in acompanhamentos %}
+            <div class="acompanhamento-item">
+                <div class="acompanhamento-data"><b>{{ acompanhamento.data|date:"d/m/Y" }}</b></div>
+                <div class="acompanhamento-texto">{{ acompanhamento.texto|linebreaks }}</div>
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}

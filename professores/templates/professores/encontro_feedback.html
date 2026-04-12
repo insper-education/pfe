@@ -16,7 +16,7 @@
   <link rel="stylesheet" href="{% static 'css/form_aval.css' %}">
   <script src="{% static 'js/aviso_perda_edicao.js' %}"></script>
   <link rel="stylesheet" href="{% static 'css/div_arrend.css' %}">
-  
+
   <style>
     .borientacoes {
       border: 1px solid #ccc;
@@ -119,6 +119,17 @@
 
       {% include "ver_documentos.html" %}
       {% include "professores/includes/ver_site.html" %}
+
+      {% include "ver_acompanhamentos.html" %}
+
+      {% if orientacoes.pt %}
+        <div class="borientacoes">
+          <b>{% lng "Orientações para Feedbacks" "Guidelines for Feedbacks" %}:</b><br>
+          <p class="texto-alinhado">
+            {% lng orientacoes.pt|safe orientacoes.en|safe %}
+          </p>
+        </div>
+      {% endif %}
 
       <div class="feedback-section">
         {% comment %} Observações somente para leitura dos estudantes {% endcomment %}

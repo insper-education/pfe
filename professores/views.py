@@ -50,7 +50,7 @@ from professores.support3 import get_banca_incompleta
 
 from projetos.models import Coorientador, ObjetivosDeAprendizagem, Avaliacao2, Observacao
 from projetos.models import Banca, Evento, Encontro, Documento, TematicaEncontro
-from projetos.models import Projeto, Configuracao
+from projetos.models import Projeto, Configuracao, Acompanhamento
 from projetos.support4 import get_objetivos_atuais
 from projetos.support2 import get_pares_colegas, recupera_envolvidos, anota_participacao
 from projetos.messages import email, render_message, htmlizar, message_agendamento_dinamica, prepara_mensagem_email
@@ -354,7 +354,7 @@ def banca(request, slug):
 
 
 # Qualquer um consegue acessar, mesmo não logado
-def encontro_feedback(request, pk):
+def encontro_feedback(request, pk): 
     """Cria uma tela para preencher feedbacks das mentorias."""
     encontro = get_object_or_404(Encontro, pk=pk)
     if not encontro.projeto:
@@ -413,8 +413,43 @@ def encontro_feedback(request, pk):
     }
     form = EncontroFeedbackForm(initial=initial_data)
 
+    orientacoes = {"pt": "", "en": ""}
+ 
+    if encontro.tematica.nome == "Mentoria Profissional":
+        orientacoes["pt"] = """
+            Os estudantes foram instruídos a realizar uma apresentação de 10 a 15 minutos, 
+            com foco nos principais desafios do projeto, explorando aspectos relacionados a um plano de negócios.
+            Por favor, se possível, registre breves observações sobre como foi a apresentação.
+            Além disso, por favor, indique quais membros do grupo estavam presentes.
+        """
+        orientacoes["en"] = """
+            The students were instructed to make a 10 to 15 minute presentation,
+            focusing on the main challenges of the project, exploring aspects related to a business plan.
+            Please, if possible, record brief observations about how the presentation was.
+            In addition, please indicate which members of the group were present.
+        """
+
+    acompanhamentos = []
+    if encontro.tematica.nome[:14] == "Apoio a Grupos":
+        configuracao = get_object_or_404(Configuracao)
+        if configuracao.ano == encontro.projeto.ano and configuracao.semestre == encontro.projeto.semestre:
+            if encontro.projeto.semestre == 1:
+                acompanhamentos = Acompanhamento.objects.filter(
+                    data__year=encontro.projeto.ano,
+                    data__month__lte=7,
+                    autor__parceiro__organizacao=encontro.projeto.organizacao
+                )
+            else:
+                acompanhamentos = Acompanhamento.objects.filter(
+                    data__year=encontro.projeto.ano,
+                    data__month__gt=7,
+                    autor__parceiro__organizacao=encontro.projeto.organizacao
+                )
+
     context = {
         "titulo": {"pt": "Feedback de Mentoria", "en": "Mentoring Feedback"},
+        "orientacoes": orientacoes,
+        "acompanhamentos": acompanhamentos,
         "encontro": encontro,
         "envolvidos": {encontro.projeto.id: envolvidos},
         "form": form,
