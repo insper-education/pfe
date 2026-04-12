@@ -5,9 +5,11 @@
   Data: 11 de Fevereiro de 2026
 {% endcomment %}
 
+{% load static %}
 {% load linguas %}
 
 {% block head %}
+  <script src="{% static 'js/aviso_perda_edicao.js' %}"></script>
   <style>
     .explanatory-text {
       max-width: 1050px;

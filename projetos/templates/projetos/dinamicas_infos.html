@@ -18,31 +18,16 @@
 {% load documentos %}
 
 {% block head %}
-
   <link rel="stylesheet" href="{% static 'css/tab_arrend.css' %}"> {% comment %} SETAS {% endcomment %}
   <link rel="stylesheet" href="{% static 'css/div_arrend.css' %}">
-
   {% include "reload.html" %}  {% comment %} Atualiza as conexões quando se da um back {% endcomment %}
-
-  <style>
-    
-  </style>
-
 {% endblock %}
-{% block content %}
 
+{% block content %}
     {% if user.eh_prof_a %}
       {% include "estudantes/includes/conduta_respostas.html" with grupo=True %}
       {% include "estudantes/includes/funcionalidade_respostas.html" with mostra_resultados=True %}
       {% include "estudantes/includes/pares_respostas.html" %}
       {% include "estudantes/includes/dinamica_conflitos_respostas.html" with mostra_resultados=True %}
-      
     {% endif %}
-
-  </div>
-
-  {% comment %} {% if user.eh_prof_a %}
-    {% include "base-modal.html" %}
-  {% endif %} {% endcomment %}
-
 {% endblock %}

@@ -186,11 +186,11 @@
         {% lng "Código de Conduta do Grupo (grupo)" "Group Code of Conduct (group)" %}
       </a>
     </div>
-    <div class="item_lista"><span class="return">&#x21B3;</span>
+    {% comment %} <div class="item_lista"><span class="return">&#x21B3;</span>
       <a {% if user.eh_estud and not semestre_alocado %}class="disabled" onclick="showMessage('periodo')" {% else %}href="{% url 'funcionalidade_grupo' %}"{% endif %}>
         {% lng "Funcionalidade de Grupo (individual)" "Group Functionality (individual)" %}
       </a>
-    </div>
+    </div> {% endcomment %}
     <div class="item_lista"><span class="return">&#x21B3;</span>
       <a {% if user.eh_estud and not semestre_alocado %}class="disabled" onclick="showMessage('periodo')" {% else %}href="{% url 'dinamica_conflitos' %}"{% endif %}>
         {% lng "Dinâmica de Conflitos (individual)" "Conflict Dynamics (individual)" %}

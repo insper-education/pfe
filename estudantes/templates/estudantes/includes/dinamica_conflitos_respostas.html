@@ -8,6 +8,7 @@
 {% load linguas %}
 
 {% if questoes_dinamica_conflitos and dinamica_conflitos %}
+
   <h4>
     {% lng "Dinâmica de Conflitos" "Conflict Dynamics" %}
     <span id="dinamica_conflitos_com" class="seta-baixo"></span>
@@ -16,6 +17,7 @@
   <div id="bloco_dinamica_conflitos" style="display: none;">
     {% include "estudantes/includes/perguntas_dinamica_conflitos.html" with ver=True %}<br>
   </div>
+
   <script>
     $("#dinamica_conflitos_com").on("click", function() {
       $("#bloco_dinamica_conflitos").toggle(200);

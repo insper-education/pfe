@@ -449,16 +449,30 @@ def funcionalidade_grupo(request):
     projeto = None
     if request.user.eh_estud:
         objeto = Alocacao.objects.filter(aluno=request.user.aluno).last()
-        projeto = objeto.projeto if objeto else None
-        if not objeto.funcionalidade_grupo:
-            objeto.funcionalidade_grupo = FuncionalidadeGrupo.objects.create()
-            objeto.save()
+        if objeto:
+            projeto = objeto.projeto
+            if not objeto.funcionalidade_grupo:
+                objeto.funcionalidade_grupo = FuncionalidadeGrupo.objects.create()
+                objeto.save()
+        else:
+            context = {
+                "area_principal": True,
+                "mensagem_erro": {"pt": "Você não está alocado em um projeto esse semestre!", "en": "You are not allocated in a project this semester!"},
+            }
+            return render(request, "generic_ml.html", context=context)
     elif request.user.eh_prof_a:
         objeto = Projeto.objects.filter(orientador=request.user.professor).last()
-        projeto = objeto if objeto else None
-        if not objeto.funcionalidade_grupo:
-            objeto.funcionalidade_grupo = FuncionalidadeGrupo.objects.create()
-            objeto.save()
+        if objeto:
+            projeto = objeto
+            if not objeto.funcionalidade_grupo:
+                objeto.funcionalidade_grupo = FuncionalidadeGrupo.objects.create()
+                objeto.save()
+            else:
+                context = {
+                    "area_principal": True,
+                    "mensagem_erro": {"pt": "Nenhum projeto encontrado para o professor nesse semestre!", "en": "No project found for the professor this semester!"},
+                }
+                return render(request, "generic_ml.html", context=context)
     else:
         return JsonResponse({"atualizado": False}, status=401)
         
