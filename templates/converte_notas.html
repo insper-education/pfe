@@ -7,6 +7,7 @@
 <script>
 
   function converteN(nota) {
+    if(nota=="") return "";
     if(nota>=9.5) return "A+"
     if(nota>=9.0) return "A"
     if(nota>=8.0) return "B+"
@@ -31,6 +32,7 @@
     if(conceito=="D"||conceito=="D ") return(3);
     if(conceito=="D-"||conceito=="D- ") return(2);
     if(conceito=="I"||conceito=="I ") return(0);
+    if(conceito=="") return("");
     return(0); 
   }
 

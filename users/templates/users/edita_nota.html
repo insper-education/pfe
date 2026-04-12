@@ -93,6 +93,7 @@
                               {% with "A+ A B+ B C+ C D+ D D- I" as conceitos %}{% for x in conceitos.split %}
                                 <option value="{{x}}">{{x}}</option>
                               {% endfor %}{% endwith %}
+                              <option value=""></option>
                         </select>
                       </div>
 
@@ -178,19 +179,27 @@
           {% with avaliacoes=avaliacoes|pega_tipo:composicao.exame|pega_avaliador:aval_id %}
             soma = 0.0;
             total = 0.0;
+            peso_redistribuido = false;
             {% for peso in composicao.peso_set.all %}
               {% with objetivo=avaliacoes|pega_objetivo:peso.objetivo %}
                 nota = parseFloat($("#a{{composicao.exame.id}}_nota_{{peso.objetivo.id}}_p{{aval_id}}").val());
                 peso = parseFloat($("#a{{composicao.exame.id}}_peso_{{peso.objetivo.id}}_p{{aval_id}}").val());
-                if( !isNaN(peso)) {
-                  if( !isNaN(nota) ) {soma += ( peso * nota );}
-                  total += peso;
+                if( !isNaN(peso) ) {
+                  if( !isNaN(nota) ) {
+                    soma += ( peso * nota );
+                    total += peso;
+                  } else {
+                    peso_redistribuido = true;
+                  }
                 }
               {% endwith %}
             {% endfor %}
-            if(total > 0) { media = soma/total; }
-            else { media = 0; }
-            $("#a{{composicao.exame.id}}_media_p{{aval_id}}").text(media.toFixed(2));
+            if(total > 0) { 
+              media = (soma/total).toFixed(2); 
+              if(peso_redistribuido) { media += " (peso redistribuído)"; }
+            }
+            else { media = "0.00"; }
+            $("#a{{composicao.exame.id}}_media_p{{aval_id}}").text(media);
           {% endwith %}
           {% endfor %}
           {% endwith %}
