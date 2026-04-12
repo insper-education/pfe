@@ -15,6 +15,8 @@
 {% block head %}  
   <link rel="stylesheet" href="{% static 'css/form_aval.css' %}">
   <script src="{% static 'js/aviso_perda_edicao.js' %}"></script>
+  <link rel="stylesheet" href="{% static 'css/div_arrend.css' %}">
+  
   <style>
     .borientacoes {
       border: 1px solid #ccc;
@@ -24,94 +26,154 @@
       border-radius: 8px;
       background-color: #ffffdd;
     }
+
+    .encontro-info-card {
+      background-color: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 12px 16px;
+      margin-bottom: 20px;
+      line-height: 1.8;
+    }
+
+    .encontro-info-card b {
+      color: #475569;
+      font-size: 0.85em;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    .feedback-section {
+      border: 1px solid #bfdbfe;
+      background-color: #f0f9ff;
+      padding: 14px 16px;
+      border-radius: 8px;
+      margin-bottom: 14px;
+    }
+
+    .feedback-section textarea {
+      width: 100%;
+      max-width: 100%;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      padding: 8px;
+      font-size: 0.9em;
+      margin-top: 4px;
+      box-sizing: border-box;
+    }
+
+    .participantes-section {
+      border: 1px solid #d1d5db;
+      background-color: #fafafa;
+      padding: 12px 16px;
+      border-radius: 8px;
+      margin-top: 12px;
+      margin-bottom: 10px;
+    }
+
+    .btn-submit-feedback {
+      padding: 10px 32px;
+      font-size: 1.05em;
+      border-radius: 8px;
+      margin-top: 8px;
+    }
   </style>
 {% endblock %}
 
 {% block content %}
-  
-  <form method="post" enctype="multipart/form-data">{% csrf_token %}
 
-    {% include "cabecalho_projeto.html" with projeto=encontro.projeto com_grupo=True %}<br>
+  <div class="div_arredondado_100">
+    <form method="post" enctype="multipart/form-data">{% csrf_token %}
 
-    <b>{% lng "Data da Mentoria" "Mentoring Date" %}:</b>
-    {% include "professores/includes/ver_datas_evento.html" with evento_p_data=encontro %}<br>
+      {% include "cabecalho_projeto.html" with projeto=encontro.projeto com_grupo=True %}
 
-    {% if encontro.location %}
-      <b>{% lng "Local" "Location" %}:</b> {{encontro.location|bleach_urlize|safe}}<br>
-    {% endif %}  
-    {% if encontro.link %}
-      <b>Link:</b> <a href="{{encontro.link}}">{{encontro.link|bleach_urlize|safe}}</a><br>
-    {% endif %}
-    
-    <b>{% lng "Facilitação" "Facilitation" %}:</b>
-    {% if encontro.facilitador %}
-      <a class="imprimir" href="{% url 'user_detail' encontro.facilitador.id %}">{{ encontro.facilitador.get_full_name }}</a>
-      <a class="email" href="mailto:{{encontro.facilitador.email}}">&lt;{{encontro.facilitador.email}}&gt;</a>
-      {% if not request.user.is_authenticated %}
-        <span class="badge badge-warning">{% lng "NÃO LOGADO, MAS OBSERVAÇOES SERÃO ENVIADAS NORMALMENTE" "NOT LOGGED IN, BUT OBSERVATIONS WILL BE SENT NORMALLY" %}</span>
-      {% elif request.user != encontro.facilitador %}
-        <span class="badge badge-warning">{% lng "NÃO É VOCÊ" "IT IS NOT YOU" %}</span>
+      <div class="encontro-info-card">
+        <div>
+          <b>{% lng "Data da Mentoria" "Mentoring Date" %}:</b>
+          {% include "professores/includes/ver_datas_evento.html" with evento_p_data=encontro %}
+        </div>
+
+        {% if encontro.location %}
+          <div><b>{% lng "Local" "Location" %}:</b> {{encontro.location|bleach_urlize|safe}}</div>
+        {% endif %}
+
+        {% if encontro.link %}
+          <div><b>Link:</b> <a href="{{encontro.link}}">{{encontro.link|bleach_urlize|safe}}</a></div>
+        {% endif %}
+
+        <div>
+          <b>{% lng "Facilitação" "Facilitation" %}:</b>
+          {% if encontro.facilitador %}
+            <a class="imprimir" href="{% url 'user_detail' encontro.facilitador.id %}">{{ encontro.facilitador.get_full_name }}</a>
+            <a class="email" href="mailto:{{encontro.facilitador.email}}">&lt;{{encontro.facilitador.email}}&gt;</a>
+            {% if not request.user.is_authenticated %}
+              <span class="badge badge-warning">{% lng "NÃO LOGADO, MAS OBSERVAÇOES SERÃO ENVIADAS NORMALMENTE" "NOT LOGGED IN, BUT OBSERVATIONS WILL BE SENT NORMALLY" %}</span>
+            {% elif request.user != encontro.facilitador %}
+              <span class="badge badge-warning">{% lng "NÃO É VOCÊ" "IT IS NOT YOU" %}</span>
+            {% endif %}
+          {% else %}
+            {% lng "Não definido" "Not defined" %}
+          {% endif %}
+        </div>
+      </div>
+
+      {% include "ver_documentos.html" %}
+      {% include "professores/includes/ver_site.html" %}
+
+      <div class="feedback-section">
+        {% comment %} Observações somente para leitura dos estudantes {% endcomment %}
+        <div class="mb-3">
+          <label for="{{ form.observacoes_estudantes.id_for_label }}">
+            <b data-toggle="tooltip" data-html="true" animation="true"
+                title="Insira qualquer observação que achar relavante para o grupo de estudantes.">
+              {% lng "Observações Estudantes (enviada para todo o grupo)" "Evaluation Observations for Students (will be sent to all students)" %}:
+            </b>
+          </label><br>
+          {{ form.observacoes_estudantes }}
+          {% if form.observacoes_estudantes.errors %}
+            <div class="alert alert-danger mt-2 mb-0">{{ form.observacoes_estudantes.errors }}</div>
+          {% endif %}
+        </div>
+
+        {% comment %} Observações somente para leitura de orientador/coordenador {% endcomment %}
+        <div class="mb-1">
+          <label for="{{ form.observacoes_orientador.id_for_label }}">
+            <b data-toggle="tooltip" data-html="true" animation="true"
+                title="Insira qualquer observação que achar relavante. O texto será encaminhado para os orientadores do projeto.">
+              {% lng "Observações Orientador (somente enviada para orientador)" "Evaluation Observations (will only be sent to advisor)" %}:
+            </b>
+          </label><br>
+          {{ form.observacoes_orientador }}
+          {% if form.observacoes_orientador.errors %}
+            <div class="alert alert-danger mt-2 mb-0">{{ form.observacoes_orientador.errors }}</div>
+          {% endif %}
+        </div>
+      </div>
+
+      {% if evento.startDate.date > today.date %}
+        <div style="display: inline-block; border:2px solid red; margin-bottom: 8px; padding: 6px 8px; border-radius: 6px;">
+          <span class="red-bold">
+            {% lng "Você está acessado o formulário antes da data agendada da mentoria." "You have accessed the form before the scheduled mentoring date." %}
+          </span><br>
+          <span class="red-bold">
+            {% lng "Tem certeza que deseja enviar os feedbacks agora!!" "Are you sure you want to submit your feedbacks now!!" %}
+          </span><br>
+        </div><br>
       {% endif %}
-    {% else %}
-      {% lng "Não definido" "Not defined" %}
-    {% endif %}
-    <br>
 
-    <br>
-    {% include "ver_documentos.html" %}
-    {% include "professores/includes/ver_site.html" %}
+      <div class="participantes-section">
+        <label for="participantes">
+          <b data-toggle="tooltip" data-html="true" animation="true" title="Indique os estudantes presentes no encontro">
+            {% lng "Participantes" "Participants" %}:
+          </b>
+        </label><br>
+        {% include "participantes.html" with nao_convocado=False %}
+      </div>
 
-    {% comment %} Observações somente para leitura dos estudantes {% endcomment %}
-    <label for="{{ form.observacoes_estudantes.id_for_label }}">
-      <b data-toggle="tooltip" data-html="true" animation="true"
-          title="Insira qualquer observação que achar relavante para o grupo de estudantes.">
-        {% lng "Observações Estudantes (enviada para todo o grupo)" "Evaluation Observations for Students (will be sent to all students)" %}:
-      </b>
-    </label><br>
-    {{ form.observacoes_estudantes }}
-    {% if form.observacoes_estudantes.errors %}
-      <div class="alert alert-danger">{{ form.observacoes_estudantes.errors }}</div>
-    {% endif %}
-    <br><br>
-  
-    {% comment %} Observações somente para leitura de orientador/coordenador {% endcomment %}
-    <label for="{{ form.observacoes_orientador.id_for_label }}">
-      <b data-toggle="tooltip" data-html="true" animation="true"
-          title="Insira qualquer observação que achar relavante. O texto será encaminhado para os orientadores do projeto.">
-        {% lng "Observações Orientador (somente enviada para orientador)" "Evaluation Observations (will only be sent to advisor)" %}:
-      </b>
-    </label><br>
-    {{ form.observacoes_orientador }}
-    {% if form.observacoes_orientador.errors %}
-      <div class="alert alert-danger">{{ form.observacoes_orientador.errors }}</div>
-    {% endif %}
-    <br><br>
-    
-    {% if evento.startDate.date > today.date %}
-      <div style="display: inline-block; border:2px solid red; margin-bottom: 4px; padding: 4px;">
-        <span class="red-bold">
-          {% lng "Você está acessado o formulário antes da data agendada da mentoria." "You have accessed the form before the scheduled mentoring date." %}
-        </span><br>
-        <span class="red-bold">
-          {% lng "Tem certeza que deseja enviar os feedbacks agora!!" "Are you sure you want to submit your feedbacks now!!" %}
-        </span><br>
-      </div><br>
-    {% endif %}
+      <button class="btn btn-primary mb-1 btn-submit-feedback" type="submit">{% lng "Enviar Feedbacks" "Submit Feedbacks" %}</button>
 
-
-    <div class="form-floating mb-2">
-      <label for="participantes">
-        <b data-toggle="tooltip" data-html="true" animation="true" title="Indique os estudantes presentes no encontro">
-          {% lng "Participantes" "Participants" %}:
-        </b>
-    </label><br>
-      {% include "participantes.html" with nao_convocado=False %}
-    </div>
-
-
-    <button class="btn btn-primary mb-1 mt-2" type="submit">{% lng "Enviar Feedbacks" "Submit Feedbacks" %}</button>
-
-  </form>
+    </form>
+  </div>
 
   <script>
     $(document).ready(function() {
