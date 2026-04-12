@@ -4,10 +4,16 @@
   Data: 11 de Novembro de 2023
 {% endcomment %}
 
+
+{% comment %} NÃO USAR MAIS, USAR SÓ A VERSÃO EM JAVASCRIPT  {% endcomment %}
+
+{% comment %} 
+
 <script>
 
+  // Função para converter nota numérica em conceito
   function converteN(nota) {
-    if(nota=="") return "";
+    if(nota=="") return ""; // Para não mostrar "I" quando o campo está vazio
     if(nota>=9.5) return "A+"
     if(nota>=9.0) return "A"
     if(nota>=8.0) return "B+"
@@ -21,6 +27,7 @@
     return "inválida"
   }
 
+  // Função para converter conceito em nota numérica
   function converteC(conceito) {
     if(conceito=="A+"||conceito=="A+ ") return(10);
     if(conceito=="A"||conceito=="A ") return(9);
@@ -32,8 +39,9 @@
     if(conceito=="D"||conceito=="D ") return(3);
     if(conceito=="D-"||conceito=="D- ") return(2);
     if(conceito=="I"||conceito=="I ") return(0);
-    if(conceito=="") return("");
+    if(conceito=="") return(""); // Para permitir limpar o campo de conceito
     return(0); 
   }
 
 </script>
+ {% endcomment %}

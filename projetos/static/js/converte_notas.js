@@ -1,0 +1,37 @@
+/*
+  Desenvolvido para o Projeto Final de Engenharia
+  Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+  Data: 11 de Novembro de 2023 (convertido de converte_notas.html para converte_notas.js)
+*/
+
+// Função para converter nota numérica em conceito
+function converteN(nota) {
+  if(nota=="") return ""; // Para não mostrar "I" quando o campo está vazio
+  if(nota>=9.5) return "A+"
+  if(nota>=9.0) return "A"
+  if(nota>=8.0) return "B+"
+  if(nota>=7.0) return "B"
+  if(nota>=6.0) return "C+"
+  if(nota>=5.0) return "C"
+  if(nota>=4.0) return "D+"
+  if(nota>=3.0) return "D"
+  if(nota>=2.0) return "D-"
+  if(nota>=0.0) return "I"
+  return "inválida"
+}
+
+// Função para converter conceito em nota numérica
+function converteC(conceito) {
+  if(conceito=="A+"||conceito=="A+ ") return(10);
+  if(conceito=="A"||conceito=="A ") return(9);
+  if(conceito=="B+"||conceito=="B+ ") return(8);
+  if(conceito=="B"||conceito=="B ") return(7);
+  if(conceito=="C+"||conceito=="C+ ") return(6);
+  if(conceito=="C"||conceito=="C ") return(5);
+  if(conceito=="D+"||conceito=="D+ ") return(4);
+  if(conceito=="D"||conceito=="D ") return(3);
+  if(conceito=="D-"||conceito=="D- ") return(2);
+  if(conceito=="I"||conceito=="I ") return(0);
+  if(conceito=="") return(""); // Para permitir limpar o campo de conceito
+  return(0); 
+}

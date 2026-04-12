@@ -15,6 +15,8 @@
 {% block head %}
   <link rel="stylesheet" href="{% static 'css/tab_arrend.css' %}">
   <link rel="stylesheet" href="{% static 'css/div_arrend.css' %}">
+  <script src="{% static 'js/converte_notas.js' %}"></script>
+  
   <style>
     .resultado-bancas {
       max-width: 980px;
@@ -78,7 +80,7 @@
       color: #1e3a8a;
     }
   </style>
-  {% include "converte_notas.html" %}
+  
   {% include "avalia_objetivos.html" %}
 {% endblock %}
 

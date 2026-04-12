@@ -36,12 +36,9 @@
   </style>
 
   {% include "cores_bancas_mentorias.html" %}
-
-  {% comment %} Converte notas para conceitos e vice-versa {% endcomment %}
-  {% include "converte_notas.html" %}
-  
   {% include "avalia_objetivos.html" %}
   
+  <script src="{% static 'js/converte_notas.js' %}"></script>
   <script src="{% static 'js/Chart.min.js' %}"></script>
   <script src="{% static 'js/chartjs-plugin-datalabels.js' %}"></script>
 
