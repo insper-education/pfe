@@ -163,6 +163,17 @@ def migracao(request):
     #         "areas": areas,
     #     })
 
+    # professores = Professor.objects.all()
+    # for professor in professores:
+    #     areas = []
+    #     for areadeinteresse in professor.user.areadeinteresse_set.all():
+    #         if areadeinteresse.area:
+    #             areas.append(areadeinteresse.area.titulo_en)
+    #     dados.append({
+    #         "professor": professor.id,
+    #         "areas": areas,
+    #     })
+
     # return JsonResponse(
     #     dados,
     #     safe=False,
