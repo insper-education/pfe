@@ -10,6 +10,31 @@
 
 {% block head %}
   {% include "tabelas_includes.html" %}
+  <style>
+    .areas-interesse {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px 6px;
+      max-width: 340px;
+    }
+
+    .area-chip {
+      display: inline-block;
+      padding: 2px 8px;
+      border: 1px solid #cbd5e1;
+      border-radius: 999px;
+      background-color: #f8fafc;
+      color: #1f2937;
+      font-size: 0.85em;
+      line-height: 1.35;
+      white-space: nowrap;
+    }
+
+    .area-vazia {
+      color: #9ca3af;
+      font-style: italic;
+    }
+  </style>
 {% endblock %}
 
 {% block content %}
@@ -35,7 +60,23 @@
           </a>
         </td>
 
-        <td>{% if professor.areas %}{{ professor.areas }}{% endif %}</td>
+        <td>
+          {% with areas=professor.user.areadeinteresse_set.all %}
+            {% if areas %}
+              <div class="areas-interesse">
+                {% for areadeinteresse in areas %}
+                  {% if areadeinteresse.area %}
+                    <span class="area-chip">
+                      {% lng areadeinteresse.area.titulo areadeinteresse.area.titulo_en %}
+                    </span>
+                  {% else %}
+                    {{areadeinteresse.outras}}
+                  {% endif %}
+                {% endfor %}
+              </div>
+            {% endif %}
+          {% endwith %}
+        </td>
 
         <td class="text-center">
           {{ professor.user|bancas_com_membro|length|stringformat:"02d" }}
