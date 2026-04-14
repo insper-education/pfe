@@ -16,23 +16,23 @@ from users.models import PFEUser, Aluno
 class EstudanteInformacoesForm(forms.Form):
     """Form para informações adicionais do estudante."""
 
-    escolha_horario_trab_grupo = forms.ChoiceField(
-        required=False,
-        choices=Aluno.TIPO_HORARIO_GRUPO,
-        widget=forms.RadioSelect(attrs={"class": "radio-horario-grupo"})
-    )
+    # escolha_horario_trab_grupo = forms.ChoiceField(
+    #     required=False,
+    #     choices=Aluno.TIPO_HORARIO_GRUPO,
+    #     widget=forms.RadioSelect(attrs={"class": "radio-horario-grupo"})
+    # )
 
-    aulas_mudando_meio_semestre = forms.ChoiceField(
-        required=False,
-        choices=Aluno.TIPO_RESPOSTA_BINARIA,
-        widget=forms.RadioSelect(attrs={"class": "radio-aulas-mudando"})
-    )
+    # aulas_mudando_meio_semestre = forms.ChoiceField(
+    #     required=False,
+    #     choices=Aluno.TIPO_RESPOSTA_BINARIA,
+    #     widget=forms.RadioSelect(attrs={"class": "radio-aulas-mudando"})
+    # )
 
-    aula_de_cybersec_no_mesmo_dia = forms.ChoiceField(
-        required=False,
-        choices=Aluno.TIPO_RESPOSTA_BINARIA,
-        widget=forms.RadioSelect(attrs={"class": "radio-cybersec"})
-    )
+    # aula_de_cybersec_no_mesmo_dia = forms.ChoiceField(
+    #     required=False,
+    #     choices=Aluno.TIPO_RESPOSTA_BINARIA,
+    #     widget=forms.RadioSelect(attrs={"class": "radio-cybersec"})
+    # )
     
     trabalhou = forms.CharField(
         required=False,
@@ -178,7 +178,8 @@ class EstudanteInformacoesForm(forms.Form):
         cleaned = super().clean()
         # Normalize empties
         for key in [
-            "escolha_horario_trab_grupo", "trabalhou", "atividades", "familia", "trabalhara",
+            # "escolha_horario_trab_grupo", 
+            "trabalhou", "atividades", "familia", "trabalhara",
             "celular", "conta_github",
         ]:
             val = cleaned.get(key)

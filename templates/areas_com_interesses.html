@@ -116,7 +116,7 @@
   <div class="areas-ranked">
     <div class="area-rank-row">
       <label class="area-rank-label" for="area_prioridade_1">{% lng "Muito Interesse" "High Interest" %}</label>
-      <select class="area-rank-select area-prioridade-select" id="area_prioridade_1" name="area_prioridade_1" {% if vencido %}disabled{% else %}required{% endif %}>
+      <select class="area-rank-select area-prioridade-select" id="area_prioridade_1" name="area_prioridade_1" {% if not vencido %}required{% endif %}>
         <option value="" class="troca_lingua" data-pt="Selecione uma área" data-en="Select an area"
         >Selecione uma área</option>
         {% for area in areas_de_interesse_possiveis %}
@@ -132,7 +132,7 @@
 
     <div class="area-rank-row">
       <label class="area-rank-label" for="area_prioridade_2">{% lng "Interesse Médio" "Medium Interest" %}</label>
-      <select class="area-rank-select area-prioridade-select" id="area_prioridade_2" name="area_prioridade_2" {% if vencido %}disabled{% else %}required{% endif %}>
+      <select class="area-rank-select area-prioridade-select" id="area_prioridade_2" name="area_prioridade_2" {% if not vencido %}required{% endif %}>
         <option value="" class="troca_lingua" data-pt="Selecione uma área" data-en="Select an area"
         >Selecione uma área</option>
         {% for area in areas_de_interesse_possiveis %}
@@ -148,7 +148,7 @@
 
     <div class="area-rank-row">
       <label class="area-rank-label" for="area_prioridade_3">{% lng "Interesse Complementar" "Complementary Interest" %}</label>
-      <select class="area-rank-select area-prioridade-select" id="area_prioridade_3" name="area_prioridade_3" {% if vencido %}disabled{% else %}required{% endif %}>
+      <select class="area-rank-select area-prioridade-select" id="area_prioridade_3" name="area_prioridade_3" {% if not vencido %}required{% endif %}>
         <option value="" class="troca_lingua" data-pt="Selecione uma área" data-en="Select an area"
         >Selecione uma área</option>
         {% for area in areas_de_interesse_possiveis %}

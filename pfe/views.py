@@ -131,62 +131,6 @@ from users.models import Aluno
 @permission_required("users.altera_professor", raise_exception=True)
 def tmp(request):
     """temporário."""
-    def texto_resposta_binaria(aluno, campo):
-        valor = getattr(aluno, campo)
-        if not valor:
-            return ""
-        metodo_display = getattr(aluno, f"get_{campo}_display")
-        return metodo_display()
-
-    def texto_resposta_horario(aluno):
-        if not aluno.escolha_horario_trab_grupo:
-            return ""
-        return aluno.get_escolha_horario_trab_grupo_display()
-
-    alunos = Aluno.objects.filter(
-        Q(ano__gte=2027) | Q(ano=2026, semestre=2)
-    ).select_related("user", "curso2").order_by("ano", "semestre", "user__first_name", "user__last_name")
-
-    linhas = []
-    for aluno in alunos:
-        curso = aluno.curso2.sigla if aluno.curso2 and aluno.curso2.sigla else "-"
-        linhas.append(
-            "<tr>"
-            f"<td style='border:1px solid #d0d7de; padding:8px;'>{escape(aluno.user.get_full_name())}</td>"
-            f"<td style='border:1px solid #d0d7de; padding:8px; text-align:center;'>{aluno.ano}/{aluno.semestre}</td>"
-            f"<td style='border:1px solid #d0d7de; padding:8px; text-align:center;'>{escape(curso)}</td>"
-            f"<td style='border:1px solid #d0d7de; padding:8px;'>{escape(texto_resposta_horario(aluno))}</td>"
-            f"<td style='border:1px solid #d0d7de; padding:8px; text-align:center;'>{texto_resposta_binaria(aluno, 'aulas_mudando_meio_semestre')}</td>"
-            f"<td style='border:1px solid #d0d7de; padding:8px; text-align:center;'>{texto_resposta_binaria(aluno, 'aula_de_cybersec_no_mesmo_dia')}</td>"
-            "</tr>"
-        )
-
-    if not linhas:
-        linhas.append(
-            "<tr><td colspan='6' style='border:1px solid #d0d7de; padding:12px; text-align:center;'>Nenhum aluno encontrado.</td></tr>"
-        )
-
-    html = (
-        "<html><head><meta charset='utf-8'><title>Respostas Temporárias</title></head><body "
-        "style='font-family: Arial, sans-serif; margin: 24px;'>"
-        "<h2 style='margin-bottom:16px;'>Respostas das perguntas temporárias</h2>"
-        f"<div style='margin-bottom:12px; color:#57606a;'>Total de alunos: {alunos.count()}</div>"
-        "<table style='border-collapse: collapse; width: 100%; font-size: 14px;'>"
-        "<thead>"
-        "<tr style='background:#f6f8fa;'>"
-        "<th style='border:1px solid #d0d7de; padding:8px; text-align:left;'>Aluno</th>"
-        "<th style='border:1px solid #d0d7de; padding:8px; text-align:center;'>Período</th>"
-        "<th style='border:1px solid #d0d7de; padding:8px; text-align:center;'>Curso</th>"
-        "<th style='border:1px solid #d0d7de; padding:8px; text-align:left;'>Horário de grupo</th>"
-        "<th style='border:1px solid #d0d7de; padding:8px; text-align:center;'>Troca no meio</th>"
-        "<th style='border:1px solid #d0d7de; padding:8px; text-align:center;'>Cybersec mesmo dia</th>"
-        "</tr>"
-        "</thead>"
-        f"<tbody>{''.join(linhas)}</tbody>"
-        "</table>"
-        "</body></html>"
-    )
-
-    return HttpResponse(html)
+    return HttpResponse("temporário")
 
 

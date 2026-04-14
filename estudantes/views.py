@@ -810,9 +810,9 @@ def informacoes_adicionais(request):
 
                     cd = form.cleaned_data
                     # Campos em Aluno
-                    request.user.aluno.escolha_horario_trab_grupo = cd.get("escolha_horario_trab_grupo")
-                    request.user.aluno.aulas_mudando_meio_semestre = cd.get("aulas_mudando_meio_semestre")
-                    request.user.aluno.aula_de_cybersec_no_mesmo_dia = cd.get("aula_de_cybersec_no_mesmo_dia")
+                    # request.user.aluno.escolha_horario_trab_grupo = cd.get("escolha_horario_trab_grupo")
+                    # request.user.aluno.aulas_mudando_meio_semestre = cd.get("aulas_mudando_meio_semestre")
+                    # request.user.aluno.aula_de_cybersec_no_mesmo_dia = cd.get("aula_de_cybersec_no_mesmo_dia")
                     request.user.aluno.trabalhou = cd.get("trabalhou")
                     request.user.aluno.atividades = cd.get("atividades")
                     request.user.aluno.familia = cd.get("familia")
@@ -838,9 +838,9 @@ def informacoes_adicionais(request):
 
         # Inicializa o form com dados atuais em GET ou em POST inválido
         initial = {
-            "escolha_horario_trab_grupo": estudante.escolha_horario_trab_grupo,
-            "aulas_mudando_meio_semestre": estudante.aulas_mudando_meio_semestre,
-            "aula_de_cybersec_no_mesmo_dia": estudante.aula_de_cybersec_no_mesmo_dia,
+            # "escolha_horario_trab_grupo": estudante.escolha_horario_trab_grupo,
+            # "aulas_mudando_meio_semestre": estudante.aulas_mudando_meio_semestre,
+            # "aula_de_cybersec_no_mesmo_dia": estudante.aula_de_cybersec_no_mesmo_dia,
             "trabalhou": estudante.trabalhou,
             "atividades": estudante.atividades,
             "familia": estudante.familia,
