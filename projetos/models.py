@@ -2290,7 +2290,7 @@ class AreaDeInteresse(models.Model):
                                  help_text="área de interesse da proposta")
 
     # Campo para especificar uma outra área que não a da lista de áreas controladas
-    outras = models.CharField("Outras", max_length=128, null=True, blank=True,
+    outras = models.CharField("Outras", max_length=256, null=True, blank=True,
                               help_text="Outras áreas de interesse")
 
     area = models.ForeignKey(Area, null=True, blank=True, on_delete=models.SET_NULL,

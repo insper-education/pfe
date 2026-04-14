@@ -65,7 +65,7 @@ def areas_propostas(check_values, outras, proposta):
 
 def cria_area_proposta(request, proposta):
     """Cria um objeto Areas e preenche ele."""
-    check_values = request.POST.getlist('selection')
+    check_values = request.POST.getlist("selection")
     outras = request.POST.get("outras", "")
     areas_propostas(check_values, outras, proposta)
     return check_values

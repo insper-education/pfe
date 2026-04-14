@@ -25,7 +25,7 @@ from django.utils.datastructures import MultiValueDictKeyError
 
 from projetos.messages import email, render_message
 from projetos.models import Organizacao, Evento
-from projetos.models import Configuracao
+from projetos.models import Configuracao, Area, AreaDeInteresse
 from projetos.support import get_upload_path, simple_upload
 
 from operacional.models import Curso
@@ -33,6 +33,7 @@ from operacional.models import Curso
 from organizacoes.models import Segmento
 
 from users.models import PFEUser, Aluno, Professor, Parceiro
+
 
 # Get an instance of a logger
 logger = logging.getLogger("django")
@@ -42,6 +43,37 @@ def limpa_texto(texto):
     if texto is not None and isinstance(texto, str):
         return texto.replace("\x00", "\uFFFD") if texto else None
     return None
+
+
+def areas_usuario(check_values, outras, usuario):
+    todas_areas = Area.objects.filter(ativa=True)
+    for area in todas_areas:
+        if area.titulo in check_values:
+            if not AreaDeInteresse.objects.filter(area=area, usuario=usuario).exists():
+                area = AreaDeInteresse.objects.create(usuario=usuario, area=area)
+                area.save()
+        else:
+            if AreaDeInteresse.objects.filter(area=area, usuario=usuario).exists():
+                for a_dell in AreaDeInteresse.objects.filter(area=area, usuario=usuario):
+                    a_dell.delete()
+
+    if outras and outras != "":
+        outra, _ = AreaDeInteresse.objects.get_or_create(area=None, usuario=usuario)
+        outra.outras = outras
+        outra.save()
+    else:
+        if AreaDeInteresse.objects.filter(area=None, usuario=usuario).exists():
+            for a_dell in AreaDeInteresse.objects.filter(area=None, usuario=usuario):
+                a_dell.delete()
+
+
+def cria_area_usuario(request, usuario):
+    """Cria um objeto Areas e preenche ele."""
+    check_values = request.POST.getlist("selection")
+    outras = request.POST.get("outras", "")
+    areas_usuario(check_values, outras, usuario)
+    return check_values
+
 
 def get_limite_propostas(configuracao):
     evento = Evento.get_evento(sigla="IIPE", configuracao=configuracao)
@@ -184,6 +216,8 @@ def registro_usuario(request, user=None):
     usuario.tipo_lingua = limpa_texto(request.POST.get("lingua", None))
     usuario.conta_github = limpa_texto(request.POST.get("conta_github", None))
     usuario.observacoes = limpa_texto(request.POST.get("observacao", None))
+
+    cria_area_usuario(request, usuario)
 
     if "ativo" in request.POST:
         if request.POST["ativo"] == '1':

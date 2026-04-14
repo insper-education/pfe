@@ -24,45 +24,49 @@
     <div class="user-info">
       {% include "usuario.html" with user=professor.user %}
     
-    <div class="user-info-row">
-      <label>{% lng "Tipo" "Type" %}:</label>
-      <span>
-        {% if professor.dedicacao %}
-          {{ professor.get_dedicacao_display }}
-        {% else %}
-          &lt;&lt;{% lng "Não Definido" "Not Defined" %}&gt;&gt;
-        {% endif %}
-      </span>
-    </div>
-
-    {% if professor.lattes %}
       <div class="user-info-row">
-        <label>Lattes:</label>
+        <label>{% lng "Tipo" "Type" %}:</label>
         <span>
-          <a href="{{ professor.lattes }}" target="_blank">{{ professor.lattes }}</a>
+          {% if professor.dedicacao %}
+            {{ professor.get_dedicacao_display }}
+          {% else %}
+            &lt;&lt;{% lng "Não Definido" "Not Defined" %}&gt;&gt;
+          {% endif %}
         </span>
       </div>
-    {% endif %}
 
-    {% if professor.website %}
-      <div class="user-info-row">
-        <label>Website:</label>
-        <span>
-          <a href="{{ professor.website|add_http }}" target="_blank">{{ professor.website }}</a>
-        </span>
-      </div>
-    {% endif %}
+      {% if professor.lattes %}
+        <div class="user-info-row">
+          <label>Lattes:</label>
+          <span>
+            <a href="{{ professor.lattes }}" target="_blank">{{ professor.lattes }}</a>
+          </span>
+        </div>
+      {% endif %}
 
-    {% if professor.areas %}
-      <div class="user-info-row">
-        <label>{% lng "Áreas de Interesse" "Areas of Interest" %}:</label>
-        <span>{{ professor.areas }}</span>
-      </div>
-    {% endif %}
+      {% if professor.website %}
+        <div class="user-info-row">
+          <label>Website:</label>
+          <span>
+            <a href="{{ professor.website|add_http }}" target="_blank">{{ professor.website }}</a>
+          </span>
+        </div>
+      {% endif %}
+
+      {% if professor.areas %}
+        <div class="user-info-row">
+          <label>{% lng "Áreas de Interesse" "Areas of Interest" %}:</label>
+          <span>{{ professor.areas }}</span>
+        </div>
+      {% endif %}
     
       {% include "dados_usuario.html" with user=professor.user %}
 
     </div>
+
+    {% with areas_de_interesse_selecionadas=professor.user.areadeinteresse_set.all vencido=True com_borda=True %}
+      {% include "areas.html" %}
+    {% endwith %}
 
     {% if projetos %}
       <div class="user-section">

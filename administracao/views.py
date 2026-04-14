@@ -371,6 +371,7 @@ def edita_usuario(request, primarykey):
         "usuario": user,
         "organizacoes": Organizacao.objects.all().order_by(Lower("nome")),
         "cursos": Curso.objects.all().order_by("id"),
+        "areas_de_interesse_possiveis": Area.objects.filter(ativa=True),
         "PFEUser": PFEUser,
         "Professor": Professor,
         "Parceiro": Parceiro,

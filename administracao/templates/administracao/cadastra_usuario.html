@@ -202,7 +202,7 @@
           </div>
         </div>
 
-        <div class="row">
+        <div class="row mb-2">
           <div class="col-md-6 campo-com-label">
             <label for="linkedin">LinkedIn</label>
             <input class="form-control" type="text" maxlength="{% max_length PFEUser "linkedin" %}" id="linkedin" name="linkedin" {% if usuario.linkedin %}value="{{usuario.linkedin}}"{% endif %} placeholder="https://www.linkedin.com/">
@@ -213,6 +213,10 @@
           </div>
         </div>
 
+        {% with areas_de_interesse_selecionadas=usuario.areadeinteresse_set.all com_borda=True %}
+          {% include "areas.html" %}
+        {% endwith %}
+        
         <div class="row">
           <div class="col-md-12 campo-com-label">
             <label for="observacao">{% lng "Observações:" "Observations:" %}</label>

@@ -935,6 +935,7 @@ def professor_detail(request, primarykey):
             "professor": professor,
             "projetos": Projeto.objects.filter(orientador=professor, proposta__intercambio=False),
             "responsavel": Projeto.objects.filter(orientador=professor, proposta__intercambio=True),
+            "areas_de_interesse_possiveis": Area.objects.filter(ativa=True),
         }
     return render(request, "users/professor_detail.html", context=context)
 
