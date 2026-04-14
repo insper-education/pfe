@@ -462,9 +462,9 @@
       }
 
       // Para não validar o que está escondido
-      $(".row_tipo:hidden :input").attr("disabled", true);
+      $(".row_tipo:hidden :input").prop("disabled", true);
       // Para validar o que está visível
-      $(".row_tipo:visible :input").attr("disabled", false);
+      $(".row_tipo:visible :input").prop("disabled", false);
 
       if($("#ativo_div").is(":hidden")) {
         $("#ativo_div :input").attr("disabled", true);
@@ -472,9 +472,13 @@
         $("#ativo_div :input").attr("disabled", false);
       }
 
-      // para a busca do nome (bootstrap-select)
-      $("input[type=search]").attr("disabled", false);
-      $("#parceiro_div").children("select").attr("disabled", false);
+      // Garante estado correto do select de organização e atualiza o bootstrap-select
+      $("#organizacao").prop("disabled", filterValue != "parceiro");
+      $("#organizacao").selectpicker("refresh");
+
+      // Para a busca do bootstrap-select
+      $("input[type=search]").prop("disabled", false);
+      
     }
 
     $(".tipo").change(function() {
