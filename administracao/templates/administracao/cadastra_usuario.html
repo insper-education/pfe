@@ -298,10 +298,12 @@
           </div>
         </div>
 
+        {% comment %}
+        Não Mais Usado, agora em AreaDeInteresse:
         <div class="campo-com-label">
           <label for="areas">{% lng "Áreas de interesse:" "Areas of interest:" %}</label>
           <input class="form-control" type="text" maxlength="{% max_length Professor "areas" %}" id="areas" name="areas" {% if usuario.professor.areas %} value="{{usuario.professor.areas}}" {% endif %}>
-        </div>
+        </div> {% endcomment %}
 
         <div class="row">
           <div class="col-md-6 campo-com-label">

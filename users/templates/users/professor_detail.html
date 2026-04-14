@@ -53,12 +53,14 @@
         </div>
       {% endif %}
 
+      {% comment %}
+      NÃO MAIS USADO, AGORA EM AreaDeInteresse.
       {% if professor.areas %}
         <div class="user-info-row">
           <label>{% lng "Áreas de Interesse" "Areas of Interest" %}:</label>
           <span>{{ professor.areas }}</span>
         </div>
-      {% endif %}
+      {% endif %} {% endcomment %}
     
       {% include "dados_usuario.html" with user=professor.user %}
 

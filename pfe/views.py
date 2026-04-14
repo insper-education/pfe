@@ -129,15 +129,6 @@ from projetos.models import Area, AreaDeInteresse
 def migracao(request):
     """temporário."""
     message = "Nada Feito"
-    message = ""
-
-    for professor in Professor.objects.all():
-        if professor.areas:
-            outra, _ = AreaDeInteresse.objects.get_or_create(area=None, usuario=professor.user)
-            outra.outras = professor.areas
-            outra.save()
-            message += f"Professor {professor.user.get_full_name()} migrado com sucesso!<br>"
-
     return HttpResponse(message)
 
     # Imprimir em JSON dados de Avaliacao2
@@ -183,5 +174,3 @@ def migracao(request):
 def tmp(request):
     """temporário."""
     return HttpResponse("temporário")
-
-

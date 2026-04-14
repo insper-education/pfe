@@ -293,7 +293,7 @@ def registro_usuario(request, user=None):
                 mensagem["pt"] += "Erro na identificação de tipo de dedicação do professor.<br>"
                 mensagem["en"] += "Error identifying type of professor dedication.<br>"
 
-            professor.areas = limpa_texto(request.POST.get("areas", None))
+            # professor.areas = limpa_texto(request.POST.get("areas", None))  # NAO MAIS USADO, AGORA EM AreaDeInteresse
             professor.website = limpa_texto(request.POST.get("website", None))
             professor.lattes = limpa_texto(request.POST.get("lattes", None))
 
