@@ -23,37 +23,45 @@
           </div>
           <div class="mentoria-chips">
             {% if dinamica.tematica %}
-              <span class="badge badge-pill badge-light border" title="Tem">  
-                {% comment %} {% lng 'Temática' 'Theme' %} {% endcomment %}
+              <span class="badge badge-pill badge-light border troca_lingua_title"
+                data-title_pt="Temática" data-title_en="Theme" title="Temática">  
                 <i class="fas fa-tags"></i> {{dinamica.tematica.nome}}
               </span>
             {% endif %}
             {% if dinamica.location %}
               {% if dinamica.url_location %}
-                <a class="badge badge-pill badge-light border" href="{{dinamica.location}}" title="Link de videoconferência">
-                  {% comment %} {% lng 'Link de vídeo' 'Video link' %} {% endcomment %}
+                <a class="badge badge-pill badge-light border troca_lingua_title" href="{{dinamica.location}}" 
+                 data-title_pt="Link de videoconferência" data-title_en="Videoconference link"
+                 title="Link de videoconferência">
                   <i class="fas fa-video"></i> {% lng "videoconferência" "videoconference" %}
                 </a>
               {% else %}
-                <span class="badge badge-pill badge-light border" title="Localização">
-                  {% comment %} {% lng 'Local' 'Location' %} {% endcomment %}
+                <span class="badge badge-pill badge-light border troca_lingua_title" 
+                 data-title_pt="Localização" data-title_en="Location"
+                 title="Localização">
                   <i class="fas fa-map-marker-alt"></i> {{dinamica.location}}
                 </span>
               {% endif %}
             {% endif %}
             {% if dinamica.facilitador %}
-              <a class="badge badge-pill badge-light border" href="{% url 'user_detail' dinamica.facilitador.id %}" title="Facilitador(a)">
-                {% comment %} {% lng 'Facilitador(a)' 'Facilitator' %} {% endcomment %}
+              <a class="badge badge-pill badge-light border troca_lingua_title" href="{% url 'user_detail' dinamica.facilitador.id %}" 
+               data-title_pt="Facilitador(a)" data-title_en="Facilitator"
+               title="Facilitador(a)">
                 <i class="fas fa-user"></i> {{dinamica.facilitador}}
               </a>
             {% endif %}
             {% if dinamica.documento %}
-              <a class="badge badge-pill badge-light border" href="{{dinamica.documento.url}}">
+              <a class="badge badge-pill badge-light border troca_lingua_title" href="{{dinamica.documento.url}}" 
+               data-title_pt="Documento" data-title_en="Document"
+               title="Documento">
                 <i class="fas fa-file-alt"></i> {% lng "Documento" "Document" %}
               </a>
             {% endif %}
             {% if dinamica.link %}
-              <a class="badge badge-pill badge-light border" href="{{dinamica.link}}">
+              <a class="badge badge-pill badge-light border troca_lingua_title" href="{{dinamica.link}}" 
+               data-title_pt="Link" data-title_en="Link"
+               title="Link">
+
                 <i class="fas fa-link"></i> {% lng "Link" "Link" %}
               </a>
             {% endif %}

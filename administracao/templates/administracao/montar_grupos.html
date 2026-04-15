@@ -316,19 +316,25 @@
   <form action="" method="post" class="esconder"> {% csrf_token %}
     <div class="form-group mb-2">
 
-      <button type="submit" class="btn btn-primary mb-1" name="limpar"
+      <button type="submit" class="btn btn-primary mb-1 troca_lingua_title" name="limpar"
         data-toggle="tooltip" data-html="true" animation="true"
-        title="Remove todos os movimentos de estudantes já realizadas e coloca todos de volta em suas primeiras opções.{% if not user.eh_admin %}<br><b>Você não tem privilégios suficientes.</b>{% endif %}">
+        data-title_pt="Remove todos os movimentos de estudantes já realizadas e coloca todos de volta em suas primeiras opções.{% if not user.eh_admin %} Você não tem privilégios suficientes.{% endif %}"
+        data-title_en="Removes all student movements already made and puts everyone back to their first options.{% if not user.eh_admin %} You do not have sufficient privileges.{% endif %}" 
+        title="Remove todos os movimentos de estudantes já realizadas e coloca todos de volta em suas primeiras opções.{% if not user.eh_admin %} Você não tem privilégios suficientes. {% endif %}">
         {% lng "Resetar Pré Alocações" "Reset Pre Allocations" %}</button>
   
-      <button type="button" class="btn btn-primary mb-1" id="propor" name="propor"
+      <button type="button" class="btn btn-primary mb-1 troca_lingua_title" id="propor" name="propor"
         data-toggle="tooltip" data-html="true" animation="true"
-        title="Sistema propõe uma montagem de grupos em função das opções, cursos, CR e interesses.{% if not user.eh_admin %}<br><b>Você não tem privilégios suficientes.</b>{% endif %}">
+        data-title_pt="Sistema propõe uma montagem de grupos em função das opções, cursos, CR e interesses.{% if not user.eh_admin %} Você não tem privilégios suficientes.{% endif %}"
+        data-title_en="System proposes a group formation based on options, courses, CGPA, and interests.{% if not user.eh_admin %} You do not have sufficient privileges. {% endif %}"
+        title="Sistema propõe uma montagem de grupos em função das opções, cursos, CR e interesses.{% if not user.eh_admin %} Você não tem privilégios suficientes.{% endif %}">
         {% lng "Montar Grupos Automaticamente" "Build Groups Automatically" %}</button>
 
-      <button type="submit" class="btn btn-primary mb-1" name="fechar"
+      <button type="submit" class="btn btn-primary mb-1 troca_lingua_title" name="fechar"
         data-toggle="tooltip" data-html="true" animation="true"
-        title="Cria efetivamente os projetos na base de dados e avança para a seleção de orientadores.{% if not user.eh_admin %}<br><b>Você não tem privilégios suficientes.</b>{% endif %}">
+        data-title_pt="Cria efetivamente os projetos na base de dados e avança para a seleção de orientadores.{% if not user.eh_admin %} Você não tem privilégios suficientes.{% endif %}"
+        data-title_en="Effectively creates the projects in the database and advances to the advisor selection.{% if not user.eh_admin %} You do not have sufficient privileges.{% endif %}"
+        title="Cria efetivamente os projetos na base de dados e avança para a seleção de orientadores.{% if not user.eh_admin %} Você não tem privilégios suficientes.{% endif %}">
         {% lng "Fechar Projetos" "Close Projects" %}</button>
 
     </div>

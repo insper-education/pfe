@@ -23,3 +23,9 @@ $(".troca_lingua").each(function() {
     objeto.attr("placeholder", texto);
   }
 });
+
+$(".troca_lingua_title").each(function() {
+  var objeto = $(this);
+  var texto = objeto.data("title_" + lingua_atual); // title_pt ou title_en
+  objeto.attr("title", texto);
+});

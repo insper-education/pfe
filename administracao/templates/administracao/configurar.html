@@ -354,7 +354,9 @@
       <div class="config-card-body">
         <div class="field">
           <label for="coordenacao">{% lng "Coordenador Capstone" "Capstone Coordinator" %}</label>
-          <select name="coordenacao" id="coordenacao" title="Selecione o coordenador do Capstone" required>
+          <select name="coordenacao" id="coordenacao" class="troca_lingua_title" 
+            data-title_pt="Coordenador Capstone" data-title_en="Capstone Coordinator"
+           title="Coordenador Capstone" required>
             {% for administrador in administradores %}
               <option value="{{administrador.id}}"
                 data-nome_para_certificados="{% if administrador.nome_para_certificados %}{{administrador.nome_para_certificados}}{% endif %}"
@@ -394,7 +396,10 @@
       <div class="config-card-body config-grid-2">
         <div class="field">
           <label for="operacao">{% lng "Responsável Operação Capstone" "Capstone Operation Responsible" %}</label>
-          <select name="operacao" id="operacao" title="Selecione operacional do Capstone" required>
+          <select name="operacao" id="operacao"
+           class="troca_lingua_title" 
+           data-title_pt="Responsável Operação Capstone" data-title_en="Capstone Operation Responsible"
+           title="Selecione operacional do Capstone" required>
             {% for oper in operacionalizadores %}
               <option value="{{oper.id}}" {% if oper.id == configuracao.operacao.id %}selected{% endif %}>
                 {{oper.get_full_name}}
@@ -406,7 +411,9 @@
 
         <div class="field">
           <label for="tecnico">{% lng "Responsável Técnico Capstone" "Capstone Technical Responsible" %}</label>
-          <select name="tecnico" id="tecnico" title="Selecione técnico do Capstone" required>
+          <select name="tecnico" id="tecnico" class="troca_lingua_title" 
+           data-title_pt="Responsável Técnico Capstone" data-title_en="Capstone Technical Responsible"
+           title="Selecione técnico do Capstone" required>
             {% for oper in operacionalizadores %}
               <option value="{{oper.id}}" {% if oper.id == configuracao.tecnico.id %}selected{% endif %}>
                 {{oper.get_full_name}}

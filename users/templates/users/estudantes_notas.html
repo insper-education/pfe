@@ -278,7 +278,10 @@
 
                   {% if media.probation and user == alocacao.projeto.orientador.user %}
                     {% with parecer=alocacao.projeto|get_parecer_de_probatorio %}
-                      <a class="open-modal" title="O parecer de probatório é único para o projeto e deve explicar a situação dos estudantes"
+                      <a class="open-modal troca_lingua_title" 
+                      data-title_pt="O parecer de probatório é único para o projeto e deve explicar a situação dos estudantes"
+                      data-title_en="The probation report is unique to the project and should explain the students' situation"
+                      title="O parecer de probatório é único para o projeto e deve explicar a situação dos estudantes"
                       data-toggle="tooltip" data-html="true" animation="true" style="cursor: pointer;"
                       {% if not parecer %}
                         data-url="{% url 'adiciona_documento' alocacao.projeto.organizacao.id alocacao.projeto.id 'PPP' %}">
@@ -296,17 +299,23 @@
                   {% endif %}
 
                   <a href="{% url 'edita_notas' alocacao.id %}" target="_blank" rel="noopener noreferrer"
-                   data-toggle="tooltip" data-html="true" animation="true"
+                   data-toggle="tooltip" data-html="true" animation="true" class="troca_lingua_title"
      
                   {% if media.probation %}
                     style="color:#e6a10f;"
+                    data-title_pt="Estudante em Probatório"
+                    data-title_en="Student on Probation"
                     title="Estudante em Probatório"><b>P:&nbsp;</b>
                   {% elif alocacao.projeto_alocado_reprovacao.all %}
                     style="color:red;"
+                    data-title_pt="Reprovação por alguma falha de objetivo de aprendizado ou não obtida média individual suficiente"
+                    data-title_en="Failure to meet learning objectives or insufficient individual average"
                     title="Reprovação por alguma falha de objetivo de aprendizado ou não obtida média individual suficiente">
                   {% else %}
                     {% if media.pesos < 0.999 %}
                       style="color:orange;"
+                        data-title_pt="Pesos da média diferente de 100% ({{ media.pesos|floatformat:2 }}%)"
+                        data-title_en="Average weights different from 100% ({{ media.pesos|floatformat:2 }}%)"
                       title="Pesos da média diferente de 100% ({% widthratio media.pesos 1 100 %}%)">
                     {% elif media.media < 5 %}
                       style="color:red;">

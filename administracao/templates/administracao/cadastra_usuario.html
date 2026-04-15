@@ -195,7 +195,8 @@
           </div>
           <div class="col-md-4 campo-com-label">
             <label for="lingua">{% lng "Língua:" "Language:" %}</label>
-            <select class="form-control" name="lingua" id="lingua" title="Linguagem">
+            <select class="form-control troca_lingua_title" name="lingua" id="lingua" 
+              data-title_pt="Língua" data-title_en="Language" title="Língua">
               <option value="1" selected>Português</option>
               <option value="2">Inglês</option>
             </select>
@@ -236,7 +237,8 @@
           </div>
           <div class="col-md-5 campo-com-label">
             <label for="curso">{% lng "Curso:" "Program:" %}</label>
-            <select class="form-control" id="curso" name="curso" title="Curso">
+            <select class="form-control troca_lingua_title" id="curso" name="curso" 
+              data-title_pt="Curso" data-title_en="Program" title="Curso">
               <option disabled selected value class="troca_lingua" data-pt="-- selecione curso --" data-en="-- select program --">-- selecione curso --</option>
               {% for curso in cursos %}
                 <option value="{{curso.sigla}}" {% if usuario.aluno.curso2.sigla == curso.sigla %}selected{% endif %}>{{curso.nome}}</option>
@@ -331,13 +333,17 @@
         <div class="campo-com-label">
           <label for="organizacao">{% lng "Organização" "Organization" %}</label>
           <div class="d-flex align-items-center" style="gap: 0.5rem;">
-            <select name="organizacao" id="organizacao" class="selectpicker" title="Selecione organização" data-live-search="true" data-width="90%" data-size="10">
+            <select name="organizacao" id="organizacao" class="selectpicker form-control troca_lingua_title" 
+              data-title_pt="Organização" data-title_en="Organization"
+            title="Organização" data-live-search="true" data-width="90%" data-size="10">
               <option disabled value="" class="troca_lingua" data-pt="-- selecione uma organização --" data-en="-- select an organization --">-- selecione uma organização --</option>
               {% for organizacao in organizacoes %}
                 <option value="{{organizacao.id}}" {% if organizacao_selecionada.id == organizacao.id %}selected="selected"{% endif %}>{{organizacao.nome}} ({{organizacao.sigla}})</option>
               {% endfor %}
             </select>
-            <a class="btn btn-light btn-sm" href="{% url 'cadastrar_organizacao' %}" title="Cadastrar organização">&#10133;</a>
+            <a class="btn btn-light btn-sm troca_lingua_title" href="{% url 'cadastrar_organizacao' %}" 
+             data-title_pt="Cadastrar organização" data-title_en="Register organization"
+             title="Cadastrar organização">&#10133;</a>
           </div>
         </div>
 

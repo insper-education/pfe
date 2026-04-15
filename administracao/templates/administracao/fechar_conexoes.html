@@ -71,10 +71,6 @@
               <td class="nomes_conec" style="width: 97%;  vertical-align: middle;">
                 <a href="{% url 'parceiro_detail' parceiro.id %}">{{ parceiro.user.get_full_name }}</a>
                 <a href="mailto:{{parceiro.user.email}}"> &lt;{{parceiro.user.email}}&gt;</a>
-                {% comment %} {% for papel in parceiro.get_papeis %} CREIO NAO ESTAR SENDO USADO
-                  <span class="texto-longo">[{{papel.sigla}}]</span>
-                  <span class="texto-curto" data-toggle="tooltip" data-html="true" animation="true" title="{{papel.sigla}}">[{{papel.nome}}]</span>
-                {% endfor %} {% endcomment %}
                 {% if parceiro..user.observacoes %}&nbsp;&nbsp;obs: {{parceiro..user.observacoes}}{% endif %}
               </td>
               {% with conexao=conexoes|get_conexao:parceiro %}
