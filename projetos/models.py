@@ -1356,7 +1356,11 @@ class Encontro(models.Model):
         return self.projeto
 
     def __str__(self):
-        return "Encontro/Mentoria: " + self.startDate.strftime('%d/%m/%Y %H:%M')
+        return "Encontro/Mentoria: " + \
+               (f" [{self.tematica.nome}] " if self.tematica else "") + \
+               self.startDate.strftime('%d/%m/%Y %H:%M') + \
+               (f" - {self.facilitador.get_full_name()}" if self.facilitador else "")
+    
 
     def get_data(self):
         """Retorna a data do encontro/mentoria."""
@@ -1371,6 +1375,7 @@ class Encontro(models.Model):
     class Meta:
         verbose_name = "Encontro/Mentoria"
         verbose_name_plural = "Encontros/Mentorias"
+        ordering = ["-startDate", "facilitador__first_name", "facilitador__last_name"]
 
 
 class TipoRetorno(models.Model):
