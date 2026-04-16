@@ -8,6 +8,7 @@ Data: 15 de Dezembro de 2020
 
 import os
 import re
+import shutil
 import zipfile
 import tempfile
 import random
@@ -41,6 +42,40 @@ from professores.support import recupera_avaliadores_bancas
 from projetos.models import Documento, Configuracao, Projeto, Certificado, Coorientador, Encontro, Conexao
 from projetos.messages import email, prepara_mensagem_email
 from users.support import get_edicoes
+
+
+def _duplicate_document_storage_entry(document_field, suffix="_pub"):
+    """Cria uma nova entrada física para o arquivo, preferindo links para economizar espaço."""
+    if not document_field:
+        return None
+
+    storage = document_field.storage
+    source_name = document_field.name
+    source_path = storage.path(source_name)
+
+    if not os.path.exists(source_path):
+        raise FileNotFoundError(source_path)
+
+    directory, filename = os.path.split(source_name)
+    stem, extension = os.path.splitext(filename)
+    max_length = getattr(document_field.field, "max_length", None)
+    duplicated_name = os.path.join(directory, f"{stem}{suffix}{extension}")
+    duplicated_name = storage.get_available_name(duplicated_name, max_length=max_length)
+    duplicated_path = storage.path(duplicated_name)
+
+    duplicated_directory = os.path.dirname(duplicated_path)
+    if duplicated_directory:
+        os.makedirs(duplicated_directory, exist_ok=True)
+
+    try:
+        os.link(source_path, duplicated_path)
+    except OSError:
+        try:
+            os.symlink(source_path, duplicated_path)
+        except (AttributeError, NotImplementedError, OSError):
+            shutil.copy2(source_path, duplicated_path)
+
+    return duplicated_name
 
 
 #@login_required
@@ -636,7 +671,12 @@ def duplicar_publicar(request, relatorio_id):
     novo_relatorio.data = datetime.now().date()
     novo_relatorio.anotacao = "Duplicado de " + str(relatorio.tipo_documento) +  ( (" - " + relatorio.anotacao ) if relatorio.anotacao else "")
     if relatorio.documento:
-        novo_relatorio.documento = relatorio.documento
+        try:
+            novo_relatorio.documento = _duplicate_document_storage_entry(relatorio.documento)
+        except FileNotFoundError:
+            return HttpResponse("Arquivo original não encontrado no servidor.", status=404)
+
+        
     if relatorio.link:
         novo_relatorio.link = relatorio.link
     novo_relatorio.save()

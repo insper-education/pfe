@@ -65,7 +65,7 @@
 
           {% if documento.tipo_documento.sigla == "RFR" %}
             {% comment %} Relatório Final Revisado - pode duplicar e publicar? {% endcomment %}
-            <a href="{% url 'duplicar_publicar' documento.id %}" 
+            <a href="{% url 'duplicar_publicar' documento.id %}"
               data-toggle="tooltip" data-html="true" animation="true" title="duplicar e tornar público"
               onClick="return confirm('Tem certeza que deseja duplicar o documento e deixar ele público?')" 
               >&nbsp;<span>

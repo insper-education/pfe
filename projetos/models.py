@@ -15,6 +15,7 @@ import json
 from itertools import chain
 
 from django.db import models
+from django.db.models import Q
 from django.conf import settings
 
 from django.urls import reverse  # To generate URLS by reversing URL patterns
@@ -1495,6 +1496,22 @@ class Documento(models.Model):
             return "en"
         return "pt"
 
+    def validate_unique(self, exclude=None):
+        super().validate_unique(exclude=exclude)
+
+        document_name = self.documento.name if self.documento else None
+        if not document_name:
+            return
+
+        duplicate_queryset = Documento.objects.filter(documento=document_name)
+        if self.pk:
+            duplicate_queryset = duplicate_queryset.exclude(pk=self.pk)
+
+        if duplicate_queryset.exists():
+            raise ValidationError({
+                "documento": "Já existe outro Documento usando este mesmo arquivo no servidor.",
+            })
+
     # Remove o arquivo apontado pelo documento se o documento for deletado
     def delete(self, using=None, keep_parents=False):
         self.documento.delete()
@@ -1513,6 +1530,13 @@ class Documento(models.Model):
 
     class Meta:
         ordering = ["-data"]  # NÃO MUDAR
+        # constraints = [   # Isso evita que haja dois documentos diferentes apontando para o mesmo arquivo no servidor, mas permite que haja documentos sem arquivo (link ou documento em branco)
+        #     models.UniqueConstraint(
+        #         fields=["documento"],
+        #         condition=Q(documento__isnull=False) & ~Q(documento=""),
+        #         name="unique_documento_non_empty_path",
+        #     ),
+        # ]
 
 
 class Banco(models.Model):

@@ -10,6 +10,7 @@ import logging
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required, permission_required
+from django.db.models import Count
 from django.db.models import Q
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse, JsonResponse
@@ -184,4 +185,28 @@ def migracao(request):
 @permission_required("users.altera_professor", raise_exception=True)
 def tmp(request):
     """temporário."""
-    return HttpResponse("temporário")
+    duplicados = (
+        Documento.objects.exclude(documento="")
+        .filter(documento__isnull=False)
+        .values("documento")
+        .annotate(total=Count("id"))
+        .filter(total__gt=1)
+        .order_by("documento")
+    )
+
+    if not duplicados:
+        return HttpResponse("Nenhum caminho de arquivo duplicado encontrado em Documento.")
+
+    problemas = []
+    for duplicado in duplicados:
+        ids = list(
+            Documento.objects.filter(documento=duplicado["documento"])
+            .order_by("id")
+            .values_list("id", flat=True)
+        )
+        problemas.append(
+            f"{duplicado['documento']} ({duplicado['total']} registros) - ids: {', '.join(str(item_id) for item_id in ids)}"
+        )
+
+    mensagem = "Problemas encontrados:<br>" + "<br>".join(problemas)
+    return HttpResponse(mensagem)
