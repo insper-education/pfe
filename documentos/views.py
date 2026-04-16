@@ -665,6 +665,7 @@ def duplicar_publicar(request, relatorio_id):
 
     novo_relatorio = Documento()
     novo_relatorio.projeto = relatorio.projeto
+    novo_relatorio.organizacao = relatorio.organizacao
     novo_relatorio.tipo_documento = get_object_or_404(TipoDocumento, sigla="RPU")  # Relatório Público
     novo_relatorio.usuario = relatorio.usuario
     novo_relatorio.confidencial = False
@@ -675,8 +676,6 @@ def duplicar_publicar(request, relatorio_id):
             novo_relatorio.documento = _duplicate_document_storage_entry(relatorio.documento)
         except FileNotFoundError:
             return HttpResponse("Arquivo original não encontrado no servidor.", status=404)
-
-        
     if relatorio.link:
         novo_relatorio.link = relatorio.link
     novo_relatorio.save()
