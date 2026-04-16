@@ -1530,13 +1530,13 @@ class Documento(models.Model):
 
     class Meta:
         ordering = ["-data"]  # NÃO MUDAR
-        # constraints = [   # Isso evita que haja dois documentos diferentes apontando para o mesmo arquivo no servidor, mas permite que haja documentos sem arquivo (link ou documento em branco)
-        #     models.UniqueConstraint(
-        #         fields=["documento"],
-        #         condition=Q(documento__isnull=False) & ~Q(documento=""),
-        #         name="unique_documento_non_empty_path",
-        #     ),
-        # ]
+        constraints = [   # Isso evita que haja dois documentos diferentes apontando para o mesmo arquivo no servidor, mas permite que haja documentos sem arquivo (link ou documento em branco)
+            models.UniqueConstraint(
+                fields=["documento"],
+                condition=Q(documento__isnull=False) & ~Q(documento=""),
+                name="unique_documento_non_empty_path",
+            ),
+        ]
 
 
 class Banco(models.Model):
