@@ -120,10 +120,10 @@ def custom_400(request, exception):
     return HttpResponse(mensagem)
 
 from academica.models import Exame, ExibeNota
-from projetos.models import Documento, Evento, Avaliacao2, Observacao
+from projetos.models import Documento, Evento, Avaliacao2, Observacao, Banca
 from users.models import PFEUser, Professor
 from projetos.models import Area, AreaDeInteresse
-
+from academica.templatetags.coeficiente_rendimento import media_crs
 
 @login_required
 @permission_required("users.view_administrador", raise_exception=True)
@@ -133,10 +133,10 @@ def migracao(request):
     return HttpResponse(message)
 
     # Imprimir em JSON dados de Avaliacao2
-    dados = []
+    # dados = []
 
     # exames = Exame.objects.filter(titulo__in=["Banca Final", "Banca Intermediária",])
-    # avaliacoes = Avaliacao2.objects.filter(exame__in=exames).order_by("-momento")[1:10]
+    # avaliacoes = Avaliacao2.objects.filter(exame__in=exames).order_by("-momento")
     # for avaliacao in avaliacoes:
     #     dados.append({
     #         "exam_type": avaliacao.exame.titulo_en,
@@ -146,34 +146,57 @@ def migracao(request):
     #         "evaluator": avaliacao.avaliador.id,
     #         "advisor": avaliacao.projeto.orientador.user.id == avaliacao.avaliador.id,
     #         "project": avaliacao.projeto.id,
+    #         "year": avaliacao.projeto.ano,
+    #         "semester": avaliacao.projeto.semestre,
     #         "learning_goal": avaliacao.objetivo.titulo_en if avaliacao.objetivo else None,
     #         "not_evaluated": avaliacao.na is None,
     #     })
 
-    # projetos = Projeto.objects.filter(ano__isnull=False).order_by("-ano", "-semestre")[:10]
+    # projetos = Projeto.objects.filter(ano__isnull=False).order_by("-ano", "-semestre")
     # for projeto in projetos:
     #     areas = []
     #     for areadeinteresse in projeto.proposta.areadeinteresse_set.all():
     #         if areadeinteresse.area:
     #             areas.append(areadeinteresse.area.titulo_en)
+    #     estudantes=projeto.alocacao_set.all()
+    #     val=media_crs(estudantes)
+    #     data_tmp = []
+    #     for alocacao in estudantes:
+    #         if alocacao.aluno and alocacao.aluno.cr is not None and alocacao.aluno.externo is None:
+    #             data_tmp.append({
+    #                 "student": alocacao.aluno.user.id,
+    #                 "gpa": f"{alocacao.aluno.cr:.2f}",
+    #                 "areas_student": [areadeinteresse.area.titulo_en for areadeinteresse in alocacao.aluno.user.areadeinteresse_set.all() if areadeinteresse.area],
+    #             })
     #     dados.append({
     #         "project": projeto.id,
     #         "year": projeto.ano,
     #         "semester": projeto.semestre,
     #         "advisor": projeto.orientador.user.id if projeto.orientador else None,
     #         "areas": areas,
+    #         "gpa": f"{val[0]:.2f}",
+    #         "gpa_stddev": f"{val[1]:.2f}",
+    #         "students_count": estudantes.count(),
+    #         "students": data_tmp,
     #     })
 
     # professores = Professor.objects.all()
     # for professor in professores:
     #     areas = []
+    #     outras_areas = ""
     #     for areadeinteresse in professor.user.areadeinteresse_set.all():
     #         if areadeinteresse.area:
     #             areas.append(areadeinteresse.area.titulo_en)
-    #     dados.append({
-    #         "professor": professor.id,
-    #         "areas": areas,
-    #     })
+    #         else:
+    #             outras_areas += escape(areadeinteresse.outras) + "; "
+    #     bancas = Banca.get_bancas_com_membro(professor.user).count()
+    #     if bancas > 0:
+    #         dados.append({
+    #             "professor": professor.user.id,
+    #             "bancas": bancas,
+    #             "areas": areas,
+    #             "outras_areas": outras_areas
+    #         })
 
     # return JsonResponse(
     #     dados,
