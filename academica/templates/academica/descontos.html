@@ -19,12 +19,14 @@
   {% include "edicoes.html" with n_todas=True  %}
 
   <div class="alert alert-info mt-3 mb-4" role="alert">
-    <h5 class="mb-2">Lançamento de descontos</h5>
+    <h5 class="mb-2">
+      {% lng "Lançamento de descontos" "Discounts Launch" %}
+    </h5>
     <p class="mb-1">
-      Os descontos são lançados automaticamente em horários programados ao longo do dia.
+      {% lng "Os descontos são lançados automaticamente em horários programados ao longo do dia." "Discounts are launched automatically at scheduled times throughout the day." %}
     </p>
     <p class="mb-0">
-      Esta página permite lançar manualmente os descontos de estudantes com critérios ativos, caso ainda não tenham sido processados.
+      {% lng "Esta página lança automaticamente os descontos de estudantes com critérios ativos, caso ainda não tenham sido processados." "On this page, discounts for students with active criteria are automatically launched if they have not yet been processed." %}
     </p>
   </div>
 
@@ -45,11 +47,51 @@
           <td data-order="{% if desconto.nota %}{{ desconto.nota|unlocalize }}{% else %}0{% endif %}">
             {{ desconto.nota|floatformat:2}}
           </td>
+          {% if perms.users.altera_desconto %}
+            <td>
+              <button type="button" class="btn btn-sm btn-danger remove-desconto" data-id="{{ desconto.id }}">
+                {% lng "Remover" "Remove" %}
+              </button>
+            </td>
+          {% endif %}
         </tr>
       {% endfor %}
     {% include "tabelas_bottom.html" %}
 
   </div>
+
+  <script>
+    function carrega_pagina() {
+      $(document).off('click', '.remove-desconto').on('click', '.remove-desconto', function() {
+        var descontoId = $(this).data('id');
+        if (confirm("Tem certeza que deseja remover este desconto?")) {
+          $.ajax({
+            url: "{% url 'remove_desconto' %}",
+            method: "POST",
+            data: {
+              'desconto_id': descontoId,
+              'csrfmiddlewaretoken': '{{ csrf_token }}'
+            },
+            success: function(response) {
+              if (response.success) {
+                location.reload();  // Recarrega a página para atualizar a tabela
+              } else {
+                alert("Erro ao remover o desconto.");
+              }
+            },
+            error: function() {
+              alert("Erro na requisição.");
+            }
+          });
+        }
+      });
+    }
+
+    $(document).ready(function() {
+      carrega_pagina();
+    });
+
+  </script>
 
   {% include "edicoes_ajax.html" with tabela="Descontos" %}
 

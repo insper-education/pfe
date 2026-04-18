@@ -78,6 +78,22 @@
 
           if (seqNumber === xhrCount) { // Processando resposta
             $("#atualizar").replaceWith($("#atualizar", response));
+
+            // Adiciona a nova mensagem sem apagar uma existente
+            var novaMensagemAviso = $("#mensagem_aviso", response);
+            var mensagemAvisoAtual = $("#mensagem_aviso");
+            if (novaMensagemAviso.length) {
+              if (mensagemAvisoAtual.length) {
+                var novoTextoAviso = $("span", novaMensagemAviso).html();
+                if (novoTextoAviso) {
+                  var textoAtualAviso = $("span", mensagemAvisoAtual).html();
+                  $("span", mensagemAvisoAtual).html(textoAtualAviso ? textoAtualAviso + "<br>" + novoTextoAviso : novoTextoAviso);
+                }
+              } else {
+                $("#main-content").prepend(novaMensagemAviso);
+              }
+            }
+
             $(".tooltip-inner").remove();
             $(".tooltip-arrow").remove();
             {% if tabela %}

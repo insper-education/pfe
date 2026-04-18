@@ -17,4 +17,5 @@ urlpatterns = [
     path("descontos", views.descontos, name="descontos"),
     path("dinamicas_grupos", views.dinamicas_grupos, name="dinamicas_grupos"),
     path("lista_areas_interesse", views.lista_areas_interesse, name="lista_areas_interesse"),
+    path("remove_desconto", views.remove_desconto, name="remove_desconto"),
 ]

@@ -13,7 +13,7 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.core.exceptions import PermissionDenied
 from django.db.models import Q
 from django.shortcuts import render, get_object_or_404
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 
 from academica.support import lanca_descontos
 
@@ -178,7 +178,15 @@ def descontos(request):
     if request.method == "POST":
 
         # Lança os descontos para estudantes com algum critério de desconto, caso ainda não tenham sido lançados
-        lanca_descontos()
+        descontos_lacados = lanca_descontos()
+
+        if descontos_lacados:
+            mensagem_aviso = { "pt": "", "en": ""}
+            for desc in descontos_lacados:
+                mensagem_aviso["pt"] += f" {desc};"
+                mensagem_aviso["en"] += f" {desc};"
+        else:
+            mensagem_aviso = None
 
         if "edicao" not in request.POST:
             return HttpResponse("Algum erro não identificado.", status=401)
@@ -190,10 +198,14 @@ def descontos(request):
                         {"pt": "Data", "en": "Date", "tipo": "data_hora"},
                         {"pt": "Nota", "en": "Grade", "tipo": "numeral"},
         ]
+
+        if request.user.has_perm("users.altera_desconto"):
+            cabecalhos.append({"pt": "Ações", "en": "Actions"})
         
         context = {
             "descontos": descontos,
             "cabecalhos": cabecalhos,
+            "mensagem_aviso": mensagem_aviso,
         }
         
     else:
@@ -205,3 +217,15 @@ def descontos(request):
 
     return render(request, "academica/descontos.html", context)
 
+@login_required
+@permission_required("users.view_administrador", raise_exception=True)
+def remove_desconto(request):
+    """Remove um desconto específico."""
+    if request.headers.get("X-Requested-With") != "XMLHttpRequest" or request.method != "POST": # Ajax check
+        return HttpResponseNotFound("Requisição inválida.")
+    desconto_id = request.POST.get("desconto_id")
+    desconto = get_object_or_404(Desconto, id=desconto_id)
+    if not request.user.has_perm("users.altera_desconto"):
+        raise PermissionDenied
+    desconto.delete()
+    return JsonResponse({"success": True})

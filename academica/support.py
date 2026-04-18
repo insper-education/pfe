@@ -246,10 +246,11 @@ def lanca_descontos(ano=None, semestre=None):
     descontos = []
 
     def add_desconto(obj, evento, nota):
-        desconto, _ = Desconto.objects.get_or_create(**obj, evento=evento)
-        desconto.nota = nota
-        desconto.save()
-        descontos.append(desconto)
+        desconto, criado = Desconto.objects.get_or_create(**obj, evento=evento)
+        if criado:
+            desconto.nota = nota
+            desconto.save()
+            descontos.append(desconto)
 
     for projeto in projetos:
 
