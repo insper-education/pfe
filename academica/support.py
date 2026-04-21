@@ -13,6 +13,8 @@ from datetime import date
 
 from django.shortcuts import get_object_or_404
 
+from operacional.templatetags import eventos
+
 from .models import Exame
 
 from academica.support3 import get_media_alocacao_i
@@ -234,13 +236,14 @@ def lanca_descontos(ano=None, semestre=None):
     hoje = datetime.date.today()
     projetos = Projeto.objects.filter(ano=ano, semestre=semestre)
     eventos = {
-        "erp": Evento.get_evento(sigla="ERP", ano=ano, semestre=semestre),  # Entrega de Relatório Preliminar (Grupo)
-        "api": Evento.get_evento(sigla="API", ano=ano, semestre=semestre),  # Avaliação de Pares Intermediária
-        "apf": Evento.get_evento(sigla="APF", ano=ano, semestre=semestre),  # Avaliação de Pares Final
-        "rqs": Evento.get_eventos(sigla="RQ", ano=ano, semestre=semestre),  # Relatos Quinzenais
-        "pas": Evento.get_evento(sigla="PAS", ano=ano, semestre=semestre),  # Preenchimento de Alocação Semanal
-        "mas": Evento.get_eventos(sigla="MA", ano=ano, semestre=semestre),  # Mentorias Acadêmicas
-        "mps": Evento.get_eventos(sigla="MP", ano=ano, semestre=semestre),  # Mentorias Profissionais
+        "erp": Evento.get_evento(sigla="ERP", ano=ano, semestre=semestre),   # Entrega de Relatório Preliminar (Grupo)
+        "api": Evento.get_evento(sigla="API", ano=ano, semestre=semestre),   # Avaliação de Pares Intermediária
+        "apf": Evento.get_evento(sigla="APF", ano=ano, semestre=semestre),   # Avaliação de Pares Final
+        "rqs": Evento.get_eventos(sigla="RQ", ano=ano, semestre=semestre),   # Relatos Quinzenais
+        "pas": Evento.get_evento(sigla="PAS", ano=ano, semestre=semestre),   # Preenchimento de Alocação Semanal
+        "mas": Evento.get_eventos(sigla="MA", ano=ano, semestre=semestre),   # Mentorias Acadêmicas
+        "mps": Evento.get_eventos(sigla="MP", ano=ano, semestre=semestre),   # Mentorias Profissionais
+        "espn": Evento.get_evento(sigla="ESPN", ano=ano, semestre=semestre), # Entrega de Slides de Plano de Negócios (Grupo)
     }
 
     descontos = []
@@ -262,6 +265,11 @@ def lanca_descontos(ano=None, semestre=None):
             semanas_atraso = math.ceil(atraso_dias / 7)
             if semanas_atraso > 0:
                 add_desconto({"projeto": projeto}, eventos["erp"], 0.5 * semanas_atraso)
+
+        # Entrega de Slides de Plano de Negócios
+        if hoje > eventos["espn"].endDate:
+            if not Documento.objects.filter(projeto=projeto, tipo_documento__sigla="PN").exists():
+                add_desconto({"projeto": projeto}, eventos["espn"], 0.25)
 
         # Verificar se grupo agendou mentoria acadêmica e profissional
         for evento in eventos["mas"]:
