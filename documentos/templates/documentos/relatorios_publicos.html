@@ -35,7 +35,7 @@
               <td>{% include "academica/includes/bloco_banca.html" with membros=projeto.get_banca_final.membros projeto=projeto pequeno=True %}</td>
               <td style="text-align:center">{{projeto.get_edicao}}</td>
 
-              <td style="text-align:center"> {% comment %} Documento {% endcomment %}
+              <td style="text-align:center"> {% comment %} Documentos {% endcomment %}
                 <span id="p{{relatorio.pk}}">
                   {% for tipo, documento in publicos.items %}
                     {% if tipo == "RPU" %}
@@ -90,6 +90,12 @@
                       </a><br>
                     {% endif %}
                   {% endfor %}
+                  {% if projeto.site_publico %}
+                    <a href="{{request.scheme}}://{{request.get_host}}{{projeto.site}}" target="_blank" rel="noopener noreferrer" class="btn btn-light btn-outline-info btn-sm mt-1">
+                      <span class="texto-curto" style="width: 6em;">{% lng "Site" "Site" %}</span>
+                      <span class="texto-longo" style="width: 13em;">{% lng "Site do projeto" "Project site" %}</span>
+                    </a><br>
+                  {% endif %}
                 </span>
               </td>
             </tr>
