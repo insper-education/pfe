@@ -68,12 +68,16 @@
       <small>
         {% lng "Ao final do semestre, inserir/atualizar o resumo, abstract e palavras-chave para indexação do relatório. Copie diretamente do seu relatório." "At the end of the semester, insert/update the summary, abstract and keywords for indexing the report. Copy directly from your report." %}
       </small>
-      <div class="text-right mt-2">
-        <button class="btn btn-primary btn-sm" type="submit" name="Salvar"
-          {% if not alocacao and projeto.orientador.user != user and not user.eh_admin %}disabled{% endif %}>
-          {% lng "Salvar" "Save" %}
-        </button>
-      </div>
+
+      {% if user.eh_admin or projeto.orientador.user == user or configuracao.ano == projeto.ano and configuracao.semestre == projeto.semestre %}
+        <div class="text-right mt-2">
+          <button class="btn btn-primary btn-sm" type="submit" name="Salvar"
+            {% if not alocacao and projeto.orientador.user != user and not user.eh_admin %}disabled{% endif %}>
+            {% lng "Salvar" "Save" %}
+          </button>
+        </div>
+      {% endif %}
+
     </div>
     
   </form>

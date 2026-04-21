@@ -50,14 +50,14 @@
           <div class="col-md-6">
 
             <div class="custom-file mb-2">
-              <input type="file" id="zipsite" name="zipsite" accept=".zip" {% if not alocacao and projeto.orientador.user != user and not user.eh_admin %}disabled{% endif %}>
+              <input type="file" id="zipsite{{projeto.id}}" name="zipsite" accept=".zip" {% if not alocacao and projeto.orientador.user != user and not user.eh_admin %}disabled{% endif %}>
     
               <div class="btn-group btn-group-sm" role="group">
                 <button class="btn btn-info" 
                         type="submit" 
-                        id="Carregar" 
+                        id="Carregar{{projeto.id}}"
                         name="Carregar" 
-                        {% if not alocacao %}disabled{% endif %}
+                        disabled {% comment %} É habilitado quando um arquivo é selecionado {% endcomment %}
                         >
                   {% lng "Carregar" "Upload" %}
                 </button>
@@ -77,16 +77,12 @@
 
             {% if projeto %}
               <script>
-                document.getElementById("zipsite").addEventListener("change", function() {
-                  const carregarBtn = document.getElementById("Carregar");
-                  const label = this.nextElementSibling;
-                  
+                document.getElementById("zipsite{{projeto.id}}").addEventListener("change", function() {
+                  var carregarBtn = document.getElementById("Carregar{{projeto.id}}");
                   if (this.files.length > 0) {
                     carregarBtn.disabled = false;
-                    label.textContent = this.files[0].name;
                   } else {
                     carregarBtn.disabled = true;
-                    label.textContent = "{% lng 'Escolher arquivo .zip' 'Choose .zip file' %}";
                   }
                 });
               </script>
@@ -224,14 +220,16 @@
     </div>
 
     {# Botão Salvar #}
-    <div class="text-right mt-2">
-      <button class="btn btn-primary btn-sm" 
-              type="submit" 
-              name="Salvar" 
-              {% if not alocacao and projeto.orientador.user != user and not user.eh_admin %}disabled{% endif %}>
-        <i class="fas fa-save mr-1"></i>
-        {% lng "Salvar Pasta do Projeto" "Save Project Folder" %}
-      </button>
-    </div>
+    {% if user.eh_admin or projeto.orientador.user == user or configuracao.ano == projeto.ano and configuracao.semestre == projeto.semestre %}
+      <div class="text-right mt-2">
+        <button class="btn btn-primary btn-sm" 
+                type="submit" 
+                name="Salvar" 
+                {% if not alocacao and projeto.orientador.user != user and not user.eh_admin %}disabled{% endif %}>
+          <i class="fas fa-save mr-1"></i>
+          {% lng "Salvar Pasta do Projeto" "Save Project Folder" %}
+        </button>
+      </div>
+    {% endif %}
   </form>
 </div>

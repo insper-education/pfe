@@ -76,6 +76,14 @@ def upload_site_e_pastas(request, projeto_id):
                 configuracao = get_object_or_404(Configuracao)
                 MAX_SIZE = configuracao.maxMB_filesize * 1048576
                 with zipfile.ZipFile(zip_file, 'r') as zip_ref:
+                    has_root_index = any(
+                        info.filename.replace("\\", "/").strip("/").lower() == "index.html"
+                        for info in zip_ref.infolist()
+                        if not info.is_dir()
+                    )
+                    if not has_root_index:
+                        return HttpResponse("O arquivo ZIP deve conter um index.html na raiz.")
+
                     total_size = sum((file.file_size for file in zip_ref.infolist()))
                     if total_size > MAX_SIZE and request.user.tipo_de_usuario != 4:
                         return HttpResponse("Arquivo descomprimido maior que o limite: " + str(configuracao.maxMB_filesize) + "MB.")
