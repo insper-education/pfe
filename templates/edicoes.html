@@ -429,13 +429,57 @@
               {% endif %}
               value="en" data-pt="Inglês" data-en="English">Inglês</option>
             </select>
+        </div>
+      {% endif %}
 
+      {% if tipos_documentos_filtro %}
+        <div class="input-group input-group-sm mt-1 mr-4">
+          <div class="input-group-prepend">
+            <label class="to_label input-group-text" for="filterTipoDocumento"><span class="to_hide">{% lng "Tipos de Documento" "Document Types" %}</span></label>
+          </div>
+          <select id="filterTipoDocumento" class="selectpicker form-control form-control-sm" data-style="mr-sm border" data-width="10em" title="Nada selecionado" multiple>
+            {% for tipo in tipos_documentos_filtro %}
+              <option {% if not sel_tipos_documentos or tipo.id in sel_tipos_documentos %}selected="selected"{% endif %} 
+              class="troca_lingua" data-pt="{{ tipo.nome }}" data-en="{{ tipo.nome_en }}"
+              value="td{{ tipo.id }}"  title="{{ tipo.nome }}">{{ tipo.nome }}</option>
+            {% endfor %}
+          </select>
+          <script>
+            {% comment %} <span class="td{{documento.tipo_documento.id}}"> {% endcomment %}
+            document.addEventListener("DOMContentLoaded", () => {
+              const filterTipoDocumento = document.getElementById("filterTipoDocumento");
+              if (!filterTipoDocumento) {
+                return;
+              }
 
+              const aplicarFiltroTipoDocumento = () => {
+                const selectedOptions = Array.from(filterTipoDocumento.selectedOptions).map((option) => option.value);
+                const allDocumentTypes = document.querySelectorAll("[class*='td']");
 
-                      
-                      
+                allDocumentTypes.forEach((element) => {
+                  const elementClasses = Array.from(element.classList);
+                  const classesTipoDocumento = elementClasses.filter((cls) => /^td\d+$/.test(cls));
 
+                  // Se não houver classe de tipo no elemento, mantém visível.
+                  if (!classesTipoDocumento.length) {
+                    element.style.display = "";
+                    return;
+                  }
 
+                  const hasMatchingClass = classesTipoDocumento.some((cls) => selectedOptions.includes(cls));
+                  element.style.display = hasMatchingClass ? "" : "none";
+                });
+              };
+
+              filterTipoDocumento.addEventListener("change", aplicarFiltroTipoDocumento);
+
+              // DataTables recria linhas ao paginar/ordenar/buscar; reaplica o filtro a cada redraw.
+              $(document).on("draw.dt", aplicarFiltroTipoDocumento);
+
+              aplicarFiltroTipoDocumento();
+            });
+          </script>
+            
         </div>
       {% endif %}
 

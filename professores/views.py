@@ -1633,8 +1633,7 @@ def entrega_avaliar(request, composicao_id, projeto_id, estudante_id=None):
                     atrasado = False
             else:
                 sem_documentos = True  # Documentos já deveriam ter sido entregues
-            
-        
+
         niveis_objetivos = Estrutura.loads(nome="Níveis de Objetivos")
 
         relatorio_revisado_orientador = Documento.objects.filter(projeto=projeto, tipo_documento__sigla="RAO").last()

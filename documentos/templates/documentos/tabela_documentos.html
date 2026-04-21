@@ -9,6 +9,8 @@
 {% load linguas %}
 
 {% block head %}
+  <link rel="stylesheet" href="{% static 'bootstrap-select-1.13.14/dist/css/bootstrap-select.min.css' %}">
+  <script src="{% static 'bootstrap-select-1.13.14/dist/js/bootstrap-select.min.js' %}"></script>
   {% include "tabelas_includes.html" %}
 
   <style>
@@ -34,6 +36,7 @@
 {% block content %}
 
   {% include "edicoes.html" with com_cursos=True %}
+
   {% include "informacoes_ml.html" %}
   <br>
 
@@ -58,10 +61,10 @@
             <small>
               {% for documento in projeto.documento_set.all %} 
                 {% if documento.confidencial %}
-                  <span class="confidencial">
+                  <span class="td{{documento.tipo_documento.id}} confidencial ">
                     <i style="font-size: 0.8em;" data-toggle="tooltip" data-html="true" animation="true" title="confidencial" class="fa fa-lock" style="color: #500000;"></i>
                 {% else %}
-                  <span class="publico">
+                  <span class="td{{documento.tipo_documento.id}} publico">
                   <i style="font-size: 0.8em;" data-toggle="tooltip" data-html="true" animation="true" title="público" class="fa fa-unlock" style="color: #005000;"></i>
                 {% endif %}
                 {% if documento.documento and documento.link %}

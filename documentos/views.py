@@ -394,6 +394,7 @@ def tabela_documentos(request):
             "informacoes": informacoes,
             "cursos": cursos_insper,
             "cursos_externos": cursos_externos,
+            "tipos_documentos_filtro": TipoDocumento.objects.filter(projeto=True),
         }
 
     return render(request, "documentos/tabela_documentos.html", context)
