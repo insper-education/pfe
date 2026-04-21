@@ -95,6 +95,10 @@ def upload_site_e_pastas(request, projeto_id):
                     projeto.save()
             else:
                 return HttpResponse("Não é arquivo.")
+            
+        if "site_publico_present" in request.POST:
+            projeto.site_publico = "site_publico" in request.POST
+            projeto.save()
         
         if "Remover" in request.POST:
             site_root = settings.MEDIA_ROOT + "/" + get_upload_path(projeto, "") + "pagina/"

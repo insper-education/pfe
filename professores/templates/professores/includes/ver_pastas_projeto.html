@@ -12,8 +12,17 @@
   <div class="mt-2">
     <b>{% lng "Site do projeto" "Project site" %}:</b>
     <div style="display: flex; align-items: flex-start; padding-left: 18px;">
+      <div class="mr-1">
+        {% if projeto.site_publico %}
+          <i data-toggle="tooltip" data-html="true" animation="true" class="fa fa-unlock" title="público" style="color: #005000;"></i>
+        {% else %}
+          <i data-toggle="tooltip" data-html="true" animation="true" class="fa fa-lock" title="confidencial" style="color: #500000;"></i>
+        {% endif %}
+      </div>
       <div>&#127760;&nbsp;</div>
-      <div style="overflow-wrap: anywhere; word-break: break-word;"><a href="{{request.scheme}}://{{request.get_host}}{{projeto.site}}" target="_blank" rel="noopener noreferrer">{{request.scheme}}://{{request.get_host}}{{projeto.site}}</a></div>
+      <div style="overflow-wrap: anywhere; word-break: break-word;">
+        <a href="{{request.scheme}}://{{request.get_host}}{{projeto.site}}" target="_blank" rel="noopener noreferrer">{{request.scheme}}://{{request.get_host}}{{projeto.site}}</a>
+      </div>
     </div>
   </div>
 {% endif %}

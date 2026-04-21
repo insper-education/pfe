@@ -24,7 +24,7 @@
       </label>
       {% with site=projeto.get_site %}
         <div class="row">
-          <div class="col-md-6">
+          <div class="col-md-5">
             {% if site %}
               <div class="alert alert-info py-2 px-3">
                 <i>{% lng "site estático:" "static site:" %}</i>
@@ -47,7 +47,7 @@
               </small>
             {% endif %}
           </div>
-          <div class="col-md-6">
+          <div class="col-md-5">
 
             <div class="custom-file mb-2">
               <input type="file" id="zipsite{{projeto.id}}" name="zipsite" accept=".zip" {% if not alocacao and projeto.orientador.user != user and not user.eh_admin %}disabled{% endif %}>
@@ -88,6 +88,21 @@
               </script>
             {% endif %}
           </div>
+
+          {% if user.eh_admin %}
+            <div class="col-md-2 d-flex align-items-start">
+              <div class="border rounded bg-light px-1 py-2">
+                <input type="hidden" name="site_publico_present" value="1">
+                <div class="custom-control custom-switch mb-0">
+                  <input type="checkbox" class="custom-control-input" id="site_publico" name="site_publico" {% if projeto.site_publico %}checked{% endif %}>
+                  <label class="custom-control-label font-weight-bold" for="site_publico">
+                    {% lng "Público" "Public" %}
+                  </label>
+                </div>
+              </div>
+            </div>
+          {% endif %}
+
         </div>
       {% endwith %}
     </div>
