@@ -26,21 +26,21 @@ from users.models import Alocacao
 
 def sites(request, projeto_id, path):
     """Redireciona para páginas de desenvolvimento dos projetos."""
-    
-    if not request.user.is_authenticated:
-        raise Http404
-    
     projeto = get_object_or_404(Projeto, id=projeto_id)
-    if request.user.tipo_de_usuario == 1 : # Estudante
-        if not Alocacao.objects.filter(projeto=projeto, aluno=request.user.aluno).exists():
+
+    if not projeto.site_publico:
+        if not request.user.is_authenticated:
             raise Http404
-    elif request.user.tipo_de_usuario == 2: # Professor
-        pass
-    elif request.user.tipo_de_usuario == 3: # Organização
-        if request.user.parceiro.organizacao != projeto.organizacao:
+        if request.user.tipo_de_usuario == 1 : # Estudante
+            if not Alocacao.objects.filter(projeto=projeto, aluno=request.user.aluno).exists():
+                raise Http404
+        elif request.user.tipo_de_usuario == 2: # Professor
+            pass
+        elif request.user.tipo_de_usuario == 3: # Organização
+            if request.user.parceiro.organizacao != projeto.organizacao:
+                raise Http404
+        elif request.user.tipo_de_usuario != 4: # Administrador
             raise Http404
-    elif request.user.tipo_de_usuario != 4: # Administrador
-        raise Http404
     
     site_root = settings.MEDIA_ROOT + "/" + get_upload_path(projeto, "") + "pagina/"
     if not os.path.exists(site_root):

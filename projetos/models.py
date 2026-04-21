@@ -140,6 +140,9 @@ class Projeto(models.Model):
     site = models.CharField("site", max_length=300, null=True, blank=True,
                            help_text="site do projeto desenvolvido pelos estudantes")
     
+    site_publico = models.BooleanField("Site Público", default=False,
+                                     help_text="Se visivel por qualquer um")
+
     pastas_do_projeto = models.TextField("Pastas do Projeto", max_length=2000, null=True, blank=True,
                                 help_text="Outras informações armazenadas externamente relavantes para o projeto")
     
