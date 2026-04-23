@@ -38,7 +38,7 @@
 
     {% if projeto.orientador %}
       <div class="orientacao">
-        {% if banca.projeto.proposta.intercambio %}
+        {% if projeto.proposta.intercambio %}
           <b>{% lng_g projeto.orientador.user.genero "Professor Responsável" "Professora Responsável" "Responsible Professor" %}:</b>
         {% else %}
           <b>{% lng_g projeto.orientador.user.genero "Orientador" "Orientadora" "Advisor" %}:</b>
@@ -53,7 +53,7 @@
       <div class="orientacao">{% lng "Orientador: Não definido" "Advisor: Not defined" %}</div>
     {% endif %}
 
-    {% with coorientadores=banca.get_projeto.coorientador_set.all %}
+    {% with coorientadores=projeto.coorientador_set.all %}
       {% if coorientadores %}
         <b>{% lng "Coorientação" "Co-advisoring" %}:</b>
         {% for coorientador in coorientadores %}
@@ -123,7 +123,7 @@
     {% endif %}<br>
 
     {% if projeto.orientador %}
-      {% if banca.projeto.proposta.intercambio %}
+      {% if projeto.proposta.intercambio %}
         <b>{% lng_g projeto.orientador.user.genero "Professor Responsável" "Professora Responsável" "Responsible Professor" %}:</b>
       {% else %}
         <b>{% lng_g projeto.orientador.user.genero "Orientador" "Orientadora" "Advisor" %}:</b>
