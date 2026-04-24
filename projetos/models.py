@@ -2443,12 +2443,16 @@ class Desconto(models.Model):
             horario = "Data Não Definida"
         return f"[{self.nota}] " + self.get_referencia() + f" - {horario}"
 
-    def __str__(self):
+    def get_afetado(self):
         if self.projeto:
-            return f"{str(self.projeto)[:36]} [{self.get_referencia()}] > {str(self.nota)}"
-        else:
-            return f"{str(self.alocacao)[:36]} [{self.get_referencia()}] > {str(self.nota)}"
+            return self.projeto.get_titulo_org()
+        elif self.alocacao:
+            return self.alocacao.__str__()
+        return "NÃO DEFINIDO"
 
+    def __str__(self):    
+        return f"{str(self.get_afetado())[:36]} [{self.get_referencia()}] > {str(self.nota)}"
+        
     class Meta:
         verbose_name = "Desconto"
         verbose_name_plural = "Descontos"
