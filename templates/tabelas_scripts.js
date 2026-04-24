@@ -316,6 +316,26 @@ function buildTypedColumnDefs(lang, tableId) {
     });
 
     var numericColumnIndices = getNumericColumnIndices(tableId);
+    var dateColumnIndices = getDateHourColumnIndices(tableId);
+
+    // Se uma coluna foi marcada como numérica/data, não pode usar ordenação chinese-string.
+    // Isso evita conflito de tipo (localeCompare em números/timestamps).
+    baseDefs = baseDefs.filter(function(def) {
+        if (def.type !== "chinese-string") return true;
+        var targets = def.targets;
+        if (targets === "_all") return false;
+
+        var targetList = [];
+        if (Array.isArray(targets)) targetList = targets;
+        else if (typeof targets === "number") targetList = [targets];
+        else return true;
+
+        var hasTypedTarget = targetList.some(function(idx) {
+            return numericColumnIndices.indexOf(idx) !== -1 || dateColumnIndices.indexOf(idx) !== -1;
+        });
+        return !hasTypedTarget;
+    });
+
     if (numericColumnIndices.length) {
         baseDefs.push({
             name: "numeric-render",
@@ -375,17 +395,6 @@ function buildTypedColumnDefs(lang, tableId) {
                         $(td).attr("data-order", numValue);
                     }
                 }
-
-
-                {% comment %}                 
-                VERSÃO ANTIGA EM CASO DE PROBLEMAS:
-                var html = $(td).html();
-                var text = $(td).text();
-                var formatted = convertNotation(text || "", "display", rowData, { row: row, col: col }, lang);
-                var m = text.match(/-?\d+(?:[.,]\d+)?/);
-                if (m) {
-                    $(td).html(html.replace(m[0], formatted));
-                } {% endcomment %}
             },
             // Sort fallback when data-order is missing
             render: function(data, type, row, meta) {
@@ -408,7 +417,6 @@ function buildTypedColumnDefs(lang, tableId) {
         });
     }
 
-    var dateColumnIndices = getDateHourColumnIndices(tableId);
     if (dateColumnIndices.length) {
         baseDefs.push({
             name: "date-render",

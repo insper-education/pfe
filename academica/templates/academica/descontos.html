@@ -35,6 +35,7 @@
     {% include "tabelas_top_ml.html" with tabela="Descontos" cabecalhos=cabecalhos %}
       {% for desconto in descontos %}
         <tr>
+          <td>{{ desconto.get_data|date:"SHORT_DATE_FORMAT" }}</td>
           <td>
             {% if desconto.projeto %}
               {% lng "Projeto" "Project" %}: {{ desconto.projeto }}
@@ -43,7 +44,6 @@
             {% endif %}
           </td>
           <td>{{ desconto.get_referencia }}</td>
-          <td>{{ desconto.get_data|date:"SHORT_DATE_FORMAT" }}</td>
           <td data-order="{% if desconto.nota %}{{ desconto.nota|unlocalize }}{% else %}0{% endif %}">
             {{ desconto.nota|floatformat:2}}
           </td>

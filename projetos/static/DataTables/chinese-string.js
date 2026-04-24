@@ -21,10 +21,14 @@
 
 jQuery.extend( jQuery.fn.dataTableExt.oSort, {
 	"chinese-string-asc" : function (s1, s2) {
-		return s1.localeCompare(s2);
+		var a = (s1 == null) ? "" : String(s1);
+		var b = (s2 == null) ? "" : String(s2);
+		return a.localeCompare(b);
 	},
 
 	"chinese-string-desc" : function (s1, s2) {
-		return s2.localeCompare(s1);
+		var a = (s1 == null) ? "" : String(s1);
+		var b = (s2 == null) ? "" : String(s2);
+		return b.localeCompare(a);
 	}
 } );

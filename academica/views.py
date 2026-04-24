@@ -193,11 +193,10 @@ def descontos(request):
         
         ano, semestre = request.POST["edicao"].split('.')
         descontos = Desconto.objects.filter(Q(alocacao__projeto__ano=ano, alocacao__projeto__semestre=semestre) | Q(projeto__ano=ano, projeto__semestre=semestre))
-        cabecalhos = [{"pt": "Alocação/Projeto", "en": "Allocation/Project"},
-                        {"pt": "Referência", "en": "Reference"},
-                        {"pt": "Data", "en": "Date", "tipo": "data_hora"},
-                        {"pt": "Nota", "en": "Grade", "tipo": "numeral"},
-        ]
+        cabecalhos = [{"pt": "Data", "en": "Date", "tipo": "data_hora"},
+                      {"pt": "Alocação/Projeto", "en": "Allocation/Project"},
+                      {"pt": "Referência", "en": "Reference"},
+                      {"pt": "Nota", "en": "Grade", "tipo": "numeral"},]
 
         if request.user.has_perm("users.altera_desconto"):
             cabecalhos.append({"pt": "Ações", "en": "Actions"})
