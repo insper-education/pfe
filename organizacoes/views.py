@@ -689,14 +689,13 @@ def organizacao_completo(request, org=None):  # acertar isso para pk
     if not org:
         return HttpResponseNotFound("<h1>Organização não encontrada!</h1>")
     organizacao = get_object_or_404(Organizacao, id=org)
-    feedbacks_estudantes = FeedbackEstudante.objects.filter(projeto__proposta__organizacao=organizacao)
-    #feedbacks_organizacao = Feedback.objects.filter()
     context = {
         "titulo": {"pt": "Organização Parceira", "en": "Partnership Organization"},
         "organizacao": organizacao,
         "projetos": Projeto.objects.filter(proposta__organizacao=organizacao),
         "cursos": Curso.objects.all().order_by("id"),
-        "feedbacks_estudantes": feedbacks_estudantes,
+        "feedbacks_estudantes": FeedbackEstudante.objects.filter(projeto__proposta__organizacao=organizacao),
+        "cooperacoes": Conexao.objects.filter(parceiro__organizacao=organizacao, colaboracao=True),
     }
     return render(request, "organizacoes/organizacao_completo.html", context=context)
 

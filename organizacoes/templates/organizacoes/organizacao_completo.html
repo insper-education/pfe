@@ -183,23 +183,41 @@
   {% endif %}
   {% endwith %}
 
+  {% if cooperacoes %}
+    <hr>
+    <h3>{% lng "Cooperações" "Cooperations" %}</h3>
+    <div class="caixa_rolante">
+      <ul>
+        {% for cooperacao in cooperacoes %}
+          <a href="{% url 'projeto_infos' cooperacao.projeto.id %}">
+            <li>
+              [{{cooperacao.projeto.organizacao.nome}}]
+              {{cooperacao.projeto.get_titulo}} ({{cooperacao.projeto.ano}}.{{cooperacao.projeto.semestre}})
+              {% if cooperacao.projeto.orientador %}
+                { {{cooperacao.projeto.orientador.user.get_full_name}} }
+              {% endif %}
+            </li>
+          </a>
+        {% endfor %}
+      </ul>
+    </div>
+  {% endif %}
+
   {% if projetos %}
     <hr>
     <h3>{% lng "Projetos" "Projects" %}</h3>
     <div class="caixa_rolante">
     <ol reversed>
       {% for projeto in projetos reversed %}
-        {% if projeto.alocacao_set.count %}
-          <a href="{% url 'projeto_infos' projeto.id %}">
-            <li>
-              {{projeto.get_titulo}} ({{projeto.ano}}.{{projeto.semestre}})
-              {% include "tipo_projeto.html" %}
-              {% if projeto.orientador %}
-                { {{projeto.orientador.user.get_full_name}} }
-              {% endif %}
-            </li>
-          </a>
-        {% endif %}
+        <a href="{% url 'projeto_infos' projeto.id %}">
+          <li>
+            {{projeto.get_titulo}} ({{projeto.ano}}.{{projeto.semestre}})
+            {% include "tipo_projeto.html" %}
+            {% if projeto.orientador %}
+              { {{projeto.orientador.user.get_full_name}} }
+            {% endif %}
+          </li>
+        </a>
       {% endfor %}
     </ol>
     </div>
