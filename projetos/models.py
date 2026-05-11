@@ -1211,7 +1211,8 @@ class Banca(models.Model):
                     observacoes = Observacao.objects.filter(projeto=self.projeto, exame__sigla=self.tipo_evento.sigla)
                     tb = len(self.membros()) != len(observacoes)
                     sb = " ".join(["&#x1F44D;" if o.destaque else "&#x1F44E;" for o in observacoes])
-                return {"destaque_texto": sb, "destaque_incompleta": tb}
+                    tudo_destaque = all([o.destaque for o in observacoes])
+                return {"destaque_texto": sb, "destaque_incompleta": tb, "tudo_destaque": tudo_destaque}
 
             elif self.projeto and self.projeto.ano >= 2023:
                 if self.tipo_evento.sigla == "BI":

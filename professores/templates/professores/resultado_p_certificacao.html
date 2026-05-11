@@ -124,6 +124,15 @@
           <tbody>
             {% for projeto, recomendacao_bi, recomendacao_bf, notas_falconi in tabela %} 
               <tr class="item
+                {% if recomendacao_bi and recomendacao_bi.tudo_destaque %}
+                  {% if recomendacao_bf %}
+                    {% if recomendacao_bf.tudo_destaque %}
+                      tudo_destaque
+                    {% endif %}
+                  {% else %}
+                    tudo_destaque
+                  {% endif %}
+                {% endif %}
                 {% if notas_falconi.certificacao == "E" %}
                   certificacao_excelencia
                 {% elif notas_falconi.certificacao == "D" %}
@@ -238,7 +247,7 @@
       </table>
       
       <br>
-      <span id="todos_projetos" style="cursor:pointer;">
+      <div id="todos_projetos" style="cursor:pointer;">
         &nbsp;<b>{% lng "Total de Projetos" "Total of Projects" %}:</b>
         <span id="total_projetos"></span>
         <span id="filtrados" style="display:none;">
@@ -246,28 +255,31 @@
           {% lng "Filtrados (visíveis)" "Filtered (visible)" %}:
           <span id="visibleRowsCount">0</span>
         </span>
-      </span>
-      <br>
+      </div>
 
-      <span id="certificacoes" style="cursor:pointer;">
+      <div id="todos_destaque" style="cursor:pointer;">
+        &nbsp;<i>{% lng "Total de Projetos com Destaque por Todos os Avaliadores" "Total of Projects with Highlight by All Evaluators" %}:</i>
+        <span id="total_projetos_destaque"></span>
+      </div>
+
+      <div id="certificacoes" style="cursor:pointer; margin-top: 10px;">
         &nbsp;<b>{% lng "Certificações" "Certifications" %}:</b>
-      </span><br>
-      <span id="certificacao_excelencia_label" style="cursor:pointer;">
+      </div>
+      <div id="certificacao_excelencia_label" style="cursor:pointer;">
         &nbsp;<span style="background-color:lightgreen">&nbsp;&nbsp;&nbsp;&nbsp;</span>
         {% lng "Certificação Excelência FALCONI-INSPER" "FALCONI-INSPER Excellence Certification" %}
         (<span id="certificacao_excelencia"></span>)
-      </span>
-      <br>
+      </div>
 
-      <span id="certificacao_destaque_label" style="cursor:pointer;">
+      <div id="certificacao_destaque_label" style="cursor:pointer;">
         &nbsp;<span style="background-color:lemonchiffon">&nbsp;&nbsp;&nbsp;&nbsp;</span>
         {% lng "Certificação Destaque FALCONI-INSPER" "FALCONI-INSPER Highlight Certification" %}
         (<span id="certificacao_destaque"></span>)
-      </span>
-      <br>
-    
+      </div>
+
       <script>
         $("#total_projetos").html($(".item").length);
+        $("#total_projetos_destaque").html($(".tudo_destaque").length);
         $("#certificacao_excelencia").html($(".certificacao_excelencia").length);
         $("#certificacao_destaque").html($(".certificacao_destaque").length);
 
@@ -313,9 +325,6 @@
       {% else %}
         $("#info_"+"Período").prop("checked", true);
       {% endif %}
-    </script>
-
-    <script>
 
       function updateVisibleRowsCount() {
         var rows = document.querySelectorAll("#ProjetosTable .item");

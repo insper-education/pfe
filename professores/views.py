@@ -2632,9 +2632,9 @@ def resultado_p_certificacao(request):
         notas = {nome: [] for nome in ["Falconi"]}
 
         for projeto in projetos:
-            bi = Banca.objects.filter(projeto=projeto, composicao__exame__sigla="BI").last()
+            bi = Banca.objects.filter(projeto=projeto, tipo_evento__sigla="BI").last() 
             recomendacoes["Banca Intermediária"].append(bi.get_recomendacao_destaque() if bi else None)
-            bf = Banca.objects.filter(projeto=projeto, composicao__exame__sigla="BF").last()
+            bf = Banca.objects.filter(projeto=projeto, tipo_evento__sigla="BF").last()
             recomendacoes["Banca Final"].append(bf.get_recomendacao_destaque() if bf else None)
 
             # Banca Intermediária
