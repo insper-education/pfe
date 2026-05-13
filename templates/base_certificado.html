@@ -4,78 +4,284 @@
   Data: 27 de Dezembro de 2024
 {% endcomment %}
 
+
 <!DOCTYPE html>
-<html lang="pt-br">
-<meta charset="UTF-8">
-<meta http-equiv="Content-type" content="text/html; charset=UTF-8">
-<head>  
-  <style>
-    @page {
-      size: a4 portrait;
-      margin: 5.0cm  1.3cm  1.3cm  1.5cm;
-      background-image: url("{{papel_timbrado}}");
-    }
-  </style>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Certificado{% endblock %}</title>
 
   <style>
-    .titulo_certificado { 
-      font-family: Verdana;
-      font-weight: bold;
-      font-size: 24px;
-      text-align: center;
-      display:block;
-      margin-left: 1.3cm;
-      margin-right: 1.3cm;
-    }
+  @page {
+    size: A4 portrait;
+    margin: 68mm 16mm 22mm 16mm;
+    background-image: url("{{papel_timbrado}}");
+  }
 
-    .corpo_certificado { 
-      font-family: Verdana;
-      font-size: 17px;
-      text-align: left;
-      display:block;
-      margin-left: 1.3cm;
-      margin-right: 1.3cm;
-    }
+  html, body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    color: #111111;
+  }
 
-    .data_certificado { 
-      font-family: Verdana;
-      font-size: 17px;
-      text-align: right;
-      display:block;
-      margin-left: 1.3cm;
-      margin-right: 1.3cm;
-    }
+  body {
+    font-size: 11pt;
+  }
 
-    .signature {
-      width: 250px;
-      border-bottom: 2px solid #000;
-    }
+  .page {
+    width: 100%;
+  }
 
-  </style>
+  .main {
+    padding: 0;
+  }
 
-  {% block head %}
-  {% endblock %}
+  .heading {
+    margin: 0 0 5mm 0;
+  }
 
-</head>
+  .eyebrow {
+    margin: 0 0 1.2mm 0;
+    text-align: center;
+    font-size: 14pt;
+    font-weight: bold;
+    letter-spacing: 1pt;
+    text-transform: uppercase;
+    color: #7c1523;
+  }
+
+  .title {
+    margin: 0;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 20pt;
+    font-weight: bold;
+    line-height: 1.02;
+    text-align: center;
+    color: #1f1f1f;
+  }
+
+  .subtitle {
+    margin: 1.2mm 0 0 0;
+    text-align: center;
+    font-size: 9pt;
+    font-style: italic;
+    color: #6a6a6a;
+  }
+
+  .heading-rule {
+    width: 38mm;
+    height: 0;
+    margin: 3.2mm auto 0 auto;
+    border-top: 1.1pt solid #9f1d2b;
+  }
+
+  .content {
+    font-size: 10.8pt;
+    line-height: 1.06;
+    color: #1c1c1c;
+  }
+
+  .content p {
+    margin: 0 0 4.2mm 0;
+    text-indent: 0;
+  }
+
+  .bilingual {
+    margin-top: 2mm;
+  }
+
+  .bilingual-stack {
+    width: 100%;
+  }
+
+  .block-spacer,
+  .section-spacer {
+    display: block;
+    margin: 0;
+    padding: 0;
+    color: transparent;
+  }
+
+  .block-spacer {
+    line-height: 8mm;
+    font-size: 8mm;
+  }
+
+  .section-spacer {
+    line-height: 12mm;
+    font-size: 12mm;
+  }
+
+  .lang-block {
+    margin: 0;
+    padding: 3.2mm 4mm 3.6mm 4mm;
+    border: 0.8pt solid #d9d2cc;
+    background-color: transparent;
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  .lang-block-secondary {
+    padding-top: 3.2mm;
+  }
+
+  .lang-label {
+    margin: 0 0 1.6mm 0;
+    font-size: 8pt;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.8pt;
+    color: #7c1523;
+  }
+
+  .lang-text {
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 10.2pt;
+    line-height: 1.16;
+    text-align: left;
+  }
+
+  .lang-text p {
+    margin: 0.9mm 0 0.9mm 0;
+    text-indent: 7mm;
+  }
+
+  .titulo_certificado {
+    display: block;
+    margin: 0 0 7mm 0;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 19pt;
+    font-weight: bold;
+    line-height: 1.08;
+    text-align: center;
+  }
+
+  .corpo_certificado {
+    display: block;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 12.2pt;
+    line-height: 1.16;
+    text-align: left;
+  }
+
+  .data_certificado {
+    display: block;
+    margin: 0 0 8mm 0;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 11.5pt;
+    text-align: right;
+  }
+
+  .signature-area {
+    padding-top: 0;
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  .signature-panel {
+    width: 74mm;
+    margin-left: auto;
+    text-align: center;
+    font-size: 8.1pt;
+    line-height: 1.09;
+  }
+
+  .signature-date {
+    margin: 0;
+    padding: 0 0 2.8mm 0;
+    text-align: center;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 9.2pt;
+    line-height: 1.08;
+    color: #2b2b2b;
+  }
+
+  .signature-date-line {
+    display: block;
+    margin: 0;
+    padding: 0;
+    line-height: 1.08;
+  }
+
+  .signature-date-line + .signature-date-line {
+    margin-top: 0.8mm;
+  }
+
+  .signature-image {
+    width: 30mm;
+    max-width: 30mm;
+    max-height: 9mm;
+    display: block;
+    margin: 0.8mm auto 0.4mm auto;
+  }
+
+  .signature-line {
+    width: 46mm;
+    margin: 0 auto 0.8mm auto;
+    border-top: 1pt solid #2d2d2d;
+  }
+
+  .signature-name,
+  .signature-role {
+    margin: 0;
+  }
+
+  .signature-name {
+    margin: 0 0 0.3mm 0;
+    font-weight: bold;
+    color: #1d1d1d;
+  }
+
+  .signature-role {
+    line-height: 1.08;
+    color: #555555;
+  }
+
+  .footer-note {
+    margin: 4mm 0 0 0;
+    text-align: center;
+    font-size: 7pt;
+    line-height: 1.12;
+    color: #555555;
+  }
+</style>
 
 <body>
+  <div class="page">
+    <div class="main">
+      <div class="heading">
+        {% block header %}{% endblock %}
+      </div>
 
-  {% block content %}{% endblock %}
+      <div class="content">
+        {% block content %}{% endblock %}
+      </div>
 
-  <span class="data_certificado">
-    São Paulo,
-    {% now "j \d\e F \d\e Y" %}.
-    <br><br>
-  </span>
+      <div class="section-spacer">&nbsp;</div>
 
-  <span class="corpo_certificado">
-    <br>
-    Atenciosamente,<br><br>
-    <img class="signature" src="{{configuracao.coordenacao.assinatura.url|slice:'1:'}}">
-    <br>
-    {{configuracao.coordenacao.nome_para_certificados}}<br>
-    <small>Coordenador do Capstone do Insper</small><br>
-  </span>
+      <div class="signature-area">
+        {% block signature_panel %}
+          <div class="signature-panel">
+            <div class="signature-date">
+              {% block date_block %}
+                <span class="signature-date-line">Sao Paulo, {% now "j \\d\\e F \\d\\e Y" %}.</span>
+              {% endblock %}
+            </div>
+            {% if assinatura_src %}
+              <img class="signature-image" src="{{ assinatura_src }}" alt="Assinatura">
+            {% endif %}
+            <div class="signature-line"></div>
+            <p class="signature-name"><strong>{{ configuracao.coordenacao.nome_para_certificados }}</strong></p>
+            <p class="signature-role">{% block signer_role %}Coordenador do Capstone do Insper{% endblock %}</p>
+          </div>
+        {% endblock %}
+      </div>
 
+      <div class="footer-note">{% block footer_note %}{% endblock %}</div>
+    </div>
+  </div>
 </body>
 </html>

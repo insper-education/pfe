@@ -7,6 +7,7 @@ Data: 18 de Dezembro de 2020
 
 import os
 from io import BytesIO # Para gerar o PDF
+from pathlib import Path
 from xhtml2pdf import pisa # Para gerar o PDF
 
 from django.conf import settings
@@ -20,6 +21,20 @@ from documentos.models import TipoDocumento
 from projetos.models import Documento, Configuracao, Certificado
 from projetos.support import get_upload_path
 
+
+def get_pdf_asset_uri(field_file):
+    """Converte um arquivo do Django para uma URI local legivel pelo xhtml2pdf."""
+    if not field_file:
+        return ""
+    return Path(field_file.path).resolve().as_uri()
+
+
+def get_pdf_file_uri(path_parts):
+    """Converte um caminho relativo ao projeto para uma URI local legivel pelo xhtml2pdf."""
+    file_path = Path(settings.BASE_DIR, *path_parts)
+    if not file_path.exists():
+        return ""
+    return file_path.resolve().as_uri()
 
 
 def render_to_pdf(template_src, context_dict=None):
@@ -67,14 +82,15 @@ def atualiza_certificado(usuario, projeto, tipo, contexto=None, alocacao=None):
 
     if projeto and not certificado.documento:
 
-        tipo_documento = TipoDocumento.objects.get(sigla="PT")
-        papel_timbrado = Documento.objects.filter(tipo_documento=tipo_documento).last()
+        papel_timbrado = Documento.objects.filter(tipo_documento__sigla="PT").last()
 
         context = {
             "usuario": usuario,
             "projeto": projeto,
             "configuracao": configuracao,
-            "papel_timbrado": papel_timbrado.documento.url[1:],
+            "papel_timbrado": get_pdf_asset_uri(papel_timbrado.documento) if papel_timbrado else "",
+            "assinatura_src": get_pdf_asset_uri(configuracao.coordenacao.assinatura)
+                if configuracao.coordenacao and configuracao.coordenacao.assinatura else "",
         }
         if contexto:
             context.update(contexto)
