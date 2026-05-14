@@ -203,7 +203,7 @@ def gerar_certificados(request):
 
     tipos = []
     qcertificados = 0
-    for grupo in ["O", "C", "MP", "MT", "B"]:
+    for grupo in ["O", "C", "MAG", "MP", "MT", "B"]:
         if grupo in request.POST:
             tipos_cert = TipoCertificado.objects.filter(grupo_certificado__sigla=grupo)
             tipos.append(grupo)
@@ -214,8 +214,11 @@ def gerar_certificados(request):
                 if grupo == "C":
                     for coorientador in Coorientador.objects.filter(projeto__ano=ano, projeto__semestre=semestre):    
                         qcertificados += atualiza_certificado(coorientador.usuario, coorientador.projeto, tipo)
+                if grupo == "MAG":
+                    for encontro in Encontro.objects.filter(projeto__ano=ano, projeto__semestre=semestre, tematica__nome__in=["Apoio a Grupos", "Apoio a Grupos 1", "Apoio a Grupos 2", "Apoio a Grupos 3"]):
+                        qcertificados += atualiza_certificado(encontro.facilitador, encontro.get_projeto(), tipo, contexto={"dinamica": encontro})
                 if grupo == "MP":
-                    for encontro in Encontro.objects.filter(projeto__ano=ano, projeto__semestre=semestre):
+                    for encontro in Encontro.objects.filter(projeto__ano=ano, projeto__semestre=semestre, tematica__nome="Mentoria Profissional"):
                         qcertificados += atualiza_certificado(encontro.facilitador, encontro.get_projeto(), tipo, contexto={"dinamica": encontro})
                 if grupo == "MT":
                     for conexao in Conexao.objects.filter(projeto__ano=ano, projeto__semestre=semestre, mentor_tecnico=True):
