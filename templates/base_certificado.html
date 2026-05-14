@@ -229,7 +229,7 @@
   }
 
   .signature-name {
-    margin: 0 0 0.1mm 0;
+    margin: 0 0 2px 0;
     font-weight: bold;
     color: #1d1d1d;
   }
@@ -275,7 +275,12 @@
             {% endif %}
             <div class="signature-line"></div>
             <p class="signature-name"><strong>{{ configuracao.coordenacao.nome_para_certificados }}</strong></p>
-            <p class="signature-role">{% block signer_role %}Coordenador do Capstone do Insper{% endblock %}</p>
+            <p class="signature-role">
+              {% block signer_role %}
+                Coordenador do Capstone do Insper<br>
+                Capstone Coordinator at Insper
+              {% endblock %}
+            </p>
           </div>
         {% endblock %}
       </div>
