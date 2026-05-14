@@ -4,6 +4,7 @@
   Data: 27 de Dezembro de 2024
 {% endcomment %}
 
+{% load i18n %}
 
 <!DOCTYPE html>
 <html lang="pt-BR">
@@ -209,16 +210,16 @@
   }
 
   .signature-image {
-    width: 30mm;
-    max-width: 30mm;
-    max-height: 9mm;
+    width: 50mm;
+    max-width: 50mm;
+    max-height: 16mm;
     display: block;
-    margin: 0.8mm auto 0.4mm auto;
+    margin: 1.2mm auto 0.2mm auto;
   }
 
   .signature-line {
-    width: 46mm;
-    margin: 0 auto 0.8mm auto;
+    width: 64mm;
+    margin: 0 auto 0.6mm auto;
     border-top: 1pt solid #2d2d2d;
   }
 
@@ -228,7 +229,7 @@
   }
 
   .signature-name {
-    margin: 0 0 0.3mm 0;
+    margin: 0 0 0.1mm 0;
     font-weight: bold;
     color: #1d1d1d;
   }
@@ -265,7 +266,8 @@
           <div class="signature-panel">
             <div class="signature-date">
               {% block date_block %}
-                <span class="signature-date-line">Sao Paulo, {% now "j \\d\\e F \\d\\e Y" %}.</span>
+                {% language "pt-br" %}<span class="signature-date-line">São Paulo, {% now "j \d\e F \d\e Y" %}.</span>{% endlanguage %}
+                {% language "en" %}<span class="signature-date-line">Sao Paulo, {% now "F j, Y" %}.</span>{% endlanguage %}
               {% endblock %}
             </div>
             {% if assinatura_src %}
