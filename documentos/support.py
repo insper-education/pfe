@@ -82,7 +82,7 @@ def atualiza_certificado(usuario, projeto, tipo, contexto=None, alocacao=None):
 
     if projeto and not certificado.documento:
 
-        papel_timbrado = Documento.objects.filter(tipo_documento__sigla="PT").last()
+        papel_timbrado = Documento.objects.filter(tipo_documento__sigla="PT").first()  # Papel timbrado mais recente
 
         context = {
             "usuario": usuario,
