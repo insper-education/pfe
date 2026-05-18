@@ -21,6 +21,8 @@
   <link rel="stylesheet" type="text/css" href="{% static 'css/Chart.min.css' %}">
   <link rel="stylesheet" href="{% static 'css/tab_arrend.css' %}"> {% comment %} SETAS {% endcomment %}
   <link rel="stylesheet" href="{% static 'css/div_arrend.css' %}">
+  <link rel="stylesheet" href="{% static 'bootstrap-select-1.13.14/dist/css/bootstrap-select.min.css' %}">
+  <script src="{% static 'bootstrap-select-1.13.14/dist/js/bootstrap-select.min.js' %}"></script>
   {% include "tabelas_includes.html" %}
 
   <style>
@@ -101,6 +103,20 @@
   .card-analise textarea.form-control {
     resize: vertical;
     min-height: 60px;
+  }
+
+  .card-analise .anotacoes_proposta {
+    background-color: #f8f9fa;
+    border-color: #ced4da;
+  }
+
+  .card-analise .anotacoes_proposta::placeholder {
+    color: #6c757d;
+    opacity: 1;
+  }
+
+  .card-analise .anotacoes_proposta:focus {
+    background-color: #ffffff;
   }
   
   .card-analise .btn-success {
@@ -277,15 +293,23 @@
               <i class="fas fa-user-check mr-1"></i>
               {% lng "Analisada por" "Analyzed by" %}
             </label>
-            <select class="form-control fechar_proposta" name="autorizador" id="autorizador" 
+            <select class="selectpicker fechar_proposta" name="autorizador" id="autorizador"
+                    data-width="100%" data-live-search="true" data-size="12"
                     data-toggle="tooltip" data-html="true" animation="true" 
                     title="Mesmo ao autorizar uma proposta, esta só será visível para os estudantes depois que a liberação de visualização for habilitada."
                     required>
               <option selected value='0' class="troca_lingua" data-pt="-- selecione um revisor --" data-en="-- select a reviewer --">-- selecione um revisor --</option>
               {% for pessoa in comite %}
-                <option value="{{pessoa.id}}" {% if pessoa.id == proposta.autorizado.id %}selected{% endif %}>
-                  {{ pessoa.get_full_name }}
-                </option>
+                {% if pessoa.id == user.id %}
+                  <option value="{{pessoa.id}}" {% if pessoa.id == proposta.autorizado.id %}selected{% endif %}
+                          data-content="<b>{{ pessoa.get_full_name }}</b>">
+                    {{ pessoa.get_full_name }}
+                  </option>
+                {% else %}
+                  <option value="{{pessoa.id}}" {% if pessoa.id == proposta.autorizado.id %}selected{% endif %}>
+                    {{ pessoa.get_full_name }}
+                  </option>
+                {% endif %}
               {% endfor %}
             </select>
           </div>
@@ -450,6 +474,10 @@
 
       <script>
         $(document).ready(function() {
+          if ($.fn.selectpicker) {
+            $("#autorizador").selectpicker();
+          }
+
           function toggleConformidade() {
               var autorizadorValue = $("#autorizador").val();
               if (autorizadorValue === '0' || autorizadorValue === '') {
