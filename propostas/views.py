@@ -367,6 +367,10 @@ def propostas_apresentadas(request):
                 
                 total_propostas = propostas_filtradas.count()
 
+            for curso in cursos:
+                if vagas[curso]["count"] == 0 and vagas[curso]["neces"] == 0:
+                    del vagas[curso]
+
             cabecalhos = [
                 {"pt": "Analisada", "en": "Analyzed", "font": "12px", "tooltip": "Algum professor do comitê analisou que a proposta seja publicada para os estudantes", "icone": "&#x1F441;"},
                 {"pt": "Disponível", "en": "Available", "font": "12px", "tooltip": "Proposta ficará disponível para estudantes na fase onde eles deverão selecionar interesse", "icone": "&#x1F44D;"},
