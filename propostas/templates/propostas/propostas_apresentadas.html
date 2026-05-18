@@ -22,6 +22,86 @@
       font-size: large;
       font-weight: bold;
     }
+
+    .painel-propostas {
+      margin-top: 1.25rem;
+      margin-bottom: 1.5rem;
+      padding: 1rem;
+      border-radius: 12px;
+      border: 1px solid #dbe7f3;
+      background: linear-gradient(180deg, #f7fbff 0%, #ffffff 100%);
+      box-shadow: 0 4px 14px rgba(18, 76, 138, 0.08);
+    }
+
+    .status-liberacao {
+      border-radius: 10px;
+      padding: 0.85rem 1rem;
+      border: 1px solid #cce5dc;
+      background: #f4fbf8;
+    }
+
+    .status-liberacao.fechado {
+      border-color: #f1d7d7;
+      background: #fff6f6;
+    }
+
+    .status-titulo {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #274c77;
+      margin-bottom: 0.15rem;
+    }
+
+    .status-data {
+      font-size: 0.87rem;
+      color: #5a6b7d;
+    }
+
+    .metric-card {
+      border: 1px solid #e8eef5;
+      border-radius: 10px;
+      background: #ffffff;
+      padding: 0.8rem 0.9rem;
+      height: 100%;
+    }
+
+    .metric-label {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
+      color: #60758d;
+      margin-bottom: 0.2rem;
+    }
+
+    .metric-value {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: #1d3557;
+      line-height: 1.1;
+    }
+
+    .painel-bloco {
+      border: 1px solid #e8eef5;
+      border-radius: 10px;
+      background: #ffffff;
+      padding: 0.9rem;
+      margin-top: 0.9rem;
+    }
+
+    .painel-bloco h6 {
+      margin-bottom: 0.75rem;
+      font-weight: 700;
+      color: #274c77;
+    }
+
+    .tabela-vagas th {
+      white-space: nowrap;
+      font-size: 0.86rem;
+    }
+
+    .tabela-vagas td {
+      font-size: 0.9rem;
+    }
 	</style>
 
   {% include "tabelas_includes.html" %}
@@ -85,7 +165,7 @@
 
               <th scope="row">
 
-                <a href="{% url 'proposta_completa' proposta.id %}" target="_blank" rel="noopener noreferrer">
+                <a href="{% url 'proposta_completa' proposta.id %}" target="_blank" rel="noopener noreferrer" class="imprimir">
                   {% if proposta.titulo %}{{proposta.titulo}}{% else %}Título não definido.{% endif %}
                 </a>
 
@@ -143,7 +223,7 @@
 
         <caption style="text-align:right">
           <small style="font-size:12px">
-            {% for curso in cursos %}
+            {% for curso in vagas %}
               <span style="white-space: nowrap;"><b>{{curso.sigla_curta}}</b>: {{curso.nome}}</span>
               {% if not forloop.last %}|{% endif %}
             {% endfor %}<br>
@@ -154,83 +234,134 @@
       
       </div>
 
-      {% if liberadas_propostas %}
-        {% lng "Sistema liberado para estudantes verem propostas de projetos até" "System open for students to view project proposals until " %}:
-        {{limite_propostas}}. &#x1F7E2;
-      {% else %}
-        {% lng "Sistema ainda não está liberado para estudantes verem propostas de projetos. &#x1F534;" "System is not yet open for students to view project proposals. &#x1F534;" %}
-      {% endif %}<br>
-      
-      <p>&nbsp;</p>
-      <b>{% lng "Número Total de Propostas Publicadas:" "Total Number of Published Proposals:" %}</b>        <span id="propostas_publicadas"></span>
-        <a data-toggle="tooltip" data-html="true" animation="true"
-          title="Contando propostas que a organização desistiua após pubicação ou que não foram aprovados pelo comitê do Capstone.">
-          ({{total_propostas}})
-        </a><br>
-      
-      <b>{% lng "Número Total de Propostas Fechadas" "Total Number of Confirmed Proposals" %}:</b>
-      <span id="propostas_fechadas"></span><br>
+      <div class="painel-propostas">
 
-      <b>{% lng "Número Total de Organizações Participando" "Total Number of Participating Organizations" %}:</b>
-      {{num_organizacoes}}<br>
+        <div class="status-liberacao {% if not liberadas_propostas %}fechado{% endif %}">
+          <div class="d-flex justify-content-between align-items-center flex-wrap">
+            <div>
+              <div class="status-titulo">
+                {% if liberadas_propostas %}
+                  {% lng "Sistema liberado para estudantes verem propostas de projetos até" "System open for students to view project proposals until" %}
+                {% else %}
+                  {% lng "Sistema ainda não está liberado para estudantes verem propostas de projetos" "System is not yet open for students to view project proposals" %}
+                {% endif %}
+              </div>
+              <div class="status-data">
+                {% lng "Data de liberação de visualização para estudantes" "Date of release for students to view" %}:
+                <strong>{{limite_propostas}}</strong>
+              </div>
+            </div>
+            {% if liberadas_propostas %}
+              <span class="badge badge-success badge-pill px-3 py-2">&#x1F7E2; {% lng "Liberado" "Open" %}</span>
+            {% else %}
+              <span class="badge badge-danger badge-pill px-3 py-2">&#x1F534; {% lng "Fechado" "Closed" %}</span>
+            {% endif %}
+          </div>
+        </div>
 
-      <p>&nbsp;</p>
-      <b>{% lng "Propostas disponíveis para estudantes" "Proposals available for students" %}:</b><br>
-      {% with nao_disponivel=True %}
-        {% include "propostas_nativamente.html" %}
-      {% endwith %}
+        <div class="row mt-3">
+          <div class="col-md-4 mb-2">
+            <div class="metric-card">
+              <div class="metric-label">{% lng "Propostas Publicadas" "Published Proposals" %}</div>
+              <div class="metric-value">
+                <span id="propostas_publicadas"></span>
+                <small class="text-muted ml-1" data-toggle="tooltip" data-html="true" animation="true"
+                  title="Contando propostas que a organização desistiua após pubicação ou que não foram aprovados pelo comitê do Capstone.">
+                  ({{total_propostas}})
+                </small>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4 mb-2">
+            <div class="metric-card">
+              <div class="metric-label">{% lng "Propostas Fechadas" "Confirmed Proposals" %}</div>
+              <div class="metric-value"><span id="propostas_fechadas"></span></div>
+            </div>
+          </div>
+          <div class="col-md-4 mb-2">
+            <div class="metric-card">
+              <div class="metric-label">{% lng "Organizações Participando" "Participating Organizations" %}</div>
+              <div class="metric-value">{{num_organizacoes}}</div>
+            </div>
+          </div>
+        </div>
 
-      <p>&nbsp;</p>
+        <div class="painel-bloco">
+          <h6>{% lng "Propostas disponíveis para estudantes" "Proposals available for students" %}</h6>
+          {% with nao_disponivel=True %}
+            {% include "propostas_nativamente.html" %}
+          {% endwith %}
+        </div>
 
-      <b>{% lng "Vagas por curso" "Positions per program" %}</b>
-      <br>
-      <table class="table-bordered table-sm">
-        <thead class="table-info">
-          <tr>
-            <th>
-              {% lng "Curso" "Program" %}
-            </th>
-            <th data-toggle="tooltip" data-html="true" animation="true" title="Vagas totais possíveis para estudantes">
-              {% lng "Vagas" "Slots" %}
-            </th>
-            <th data-toggle="tooltip" data-html="true" animation="true" title="Vagas disponibilizadas para estudantes">
-              {% lng "V. Disp." "S. Avail." %}
-            </th>
-            <th data-toggle="tooltip" data-html="true" animation="true" title="Vagas totais proporcionais para estudantes">
-              {% lng "P. Vagas" "P. Slots" %}
-            </th>
-            <th data-toggle="tooltip" data-html="true" animation="true" title="Vagas disponibilizadas proporcionais para estudantes">
-              {% lng "P. Disp." "P. Avail." %}
-            </th>
-            <th data-toggle="tooltip" data-html="true" animation="true" title="Total de vagas necessárias para o semestre">
-              {% lng "Neces." "Requi." %}
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for curso, vaga in vagas.items %}
-            <tr>
-              <td>{% lng curso.nome curso.nome_en %}</td>
-              <td style="text-align: right;">{{vaga.count}}</td>
-              <td style="text-align: right;">{{vaga.count_disp}}</td>
-              <td style="text-align: right;">{{vaga.prop|floatformat:1}}</td>
-              <td style="text-align: right;">{{vaga.prop_disp|floatformat:1}}</td>
-              <td style="text-align: right;">{{vaga.neces}}</td>
-            </tr>
-          {% endfor %}
-         <tr>
-            <td><b>Total</b></td>
-            <td style="text-align: right;"></td>
-            <td style="text-align: right;"></td>
-            <td style="text-align: right;"><b>{{total_vagas.prop|floatformat:1}}</b></td>
-            <td style="text-align: right;"><b>{{total_vagas.prop_disp|floatformat:1}}</b></td>
-            <td style="text-align: right;"><b>{{total_vagas.neces}}</b></td>
-          </tr>
-
-        </tbody>
-      </table>
-      
-      <br><br>
+        <div class="painel-bloco">
+          <h6>{% lng "Vagas por curso" "Positions per program" %}</h6>
+          <div class="table-responsive">
+            <table class="table table-bordered table-sm table-hover tabela-vagas mb-0">
+              <thead class="table-info">
+                <tr>
+                  <th>
+                    {% lng "Curso" "Program" %}
+                  </th>
+                  <th class="text-center" data-toggle="tooltip" data-html="true" animation="true" title="Vagas totais possíveis para estudantes">
+                    {% lng "Vagas" "Slots" %}
+                  </th>
+                  <th class="text-center" data-toggle="tooltip" data-html="true" animation="true" title="Vagas disponibilizadas para estudantes">
+                    <span class="texto-longo">
+                      {% lng "Vagas Disponíveis" "Available Slots" %}
+                    </span>
+                    <span class="texto-curto">
+                      {% lng "V. Disp." "S. Avail." %}
+                    </span>
+                  </th>
+                  <th class="text-center" data-toggle="tooltip" data-html="true" animation="true" title="Vagas totais proporcionais para estudantes">
+                    <span class="texto-longo">
+                      {% lng "Proporção de Vagas" "Proportion of Slots" %}
+                    </span>
+                    <span class="texto-curto">
+                      {% lng "P. Vagas" "P. Slots" %}
+                    </span>
+                  </th>
+                  <th class="text-center" data-toggle="tooltip" data-html="true" animation="true" title="Vagas disponibilizadas proporcionais para estudantes">
+                    <span class="texto-longo">
+                      {% lng "Proporção Disponível" "Available Proportion" %}
+                    </span>
+                    <span class="texto-curto">
+                      {% lng "P. Disp." "P. Avail." %}
+                    </span>
+                  </th>
+                  <th class="text-center" data-toggle="tooltip" data-html="true" animation="true" title="Total de vagas necessárias para o semestre">
+                    <span class="texto-longo">
+                      {% lng "Vagas Necessárias" "Required Slots" %}
+                    </span>
+                    <span class="texto-curto">
+                      {% lng "Neces." "Requi." %}
+                    </span>
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for curso, vaga in vagas.items %}
+                  <tr>
+                    <td>{% lng curso.nome curso.nome_en %}</td>
+                    <td class="text-right">{{vaga.count}}</td>
+                    <td class="text-right">{{vaga.count_disp}}</td>
+                    <td class="text-right">{{vaga.prop|floatformat:1}}</td>
+                    <td class="text-right">{{vaga.prop_disp|floatformat:1}}</td>
+                    <td class="text-right">{{vaga.neces}}</td>
+                  </tr>
+                {% endfor %}
+                <tr>
+                  <td><b>Total</b></td>
+                  <td class="text-right"></td>
+                  <td class="text-right"></td>
+                  <td class="text-right"><b>{{total_vagas.prop|floatformat:1}}</b></td>
+                  <td class="text-right"><b>{{total_vagas.prop_disp|floatformat:1}}</b></td>
+                  <td class="text-right"><b>{{total_vagas.neces}}</b></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
 
       <script>
         $("#propostas_publicadas").html(publicados);
@@ -256,7 +387,10 @@
         }
       </script>
 
-    {% include "plot_barras.html" %}
+      {% include "plot_barras.html" %}
+
+    </div>
+
     {% include "base-modal.html" %}
 
     <script>
