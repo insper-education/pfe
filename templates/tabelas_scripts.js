@@ -110,7 +110,7 @@ function getVisibleTextInNode(node) {
 
 
 var configuracao_table = {
-    dom: "<'row mr-1'<'col-md-6'><'col-md-6 d-flex flex-row-reverse'f>>t<'row'<'col-md-6'i><'col-md-6'p>><'row'<'col-sm'><'col-md'><'col-md text-right'l>>",
+    dom: "<'esconder'<'row mr-1'<'col-md-6'><'col-md-6 d-flex flex-row-reverse'f>>> t<'row'<'col-md-6'i><'col-md-6'p>><'row'<'col-sm'><'col-md'><'col-md text-right'l>>",
 
     {% comment %} Colocar bancas quando todas as edições {% endcomment %}
     createdRow: function( row, data, dataIndex, cells){
