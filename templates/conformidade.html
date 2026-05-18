@@ -54,6 +54,16 @@
     line-height: 1.4;
     user-select: none;
   }
+
+  .conformidade-explicacao {
+    background-color: #e9f7fb;
+    border-radius: 4px;
+    padding: 0.5rem 0.75rem;
+    margin-bottom: 0.75rem;
+    font-size: 0.84rem;
+    line-height: 1.2;
+    color: #0c5460;
+  }
   
   .btn-check-all {
     background: none;
@@ -87,6 +97,12 @@
     {% endif %}
   </div>
   <div class="card-body">
+
+    <div class="conformidade-explicacao">
+      <i class="fas fa-info-circle mr-1"></i>
+      {% lng "As propostas devem atender a todos os critérios abaixo para serem consideradas adequadas e, portanto, possíveis de serem publicadas para os estudantes." "Proposals must meet all the criteria below to be considered adequate and, therefore, possible to be published for students." %}
+    </div>
+
     {% for conformidade, descr in conformidades.items %}
       <div class="conformidade-item">
         <input class="fechar_proposta conformidade" 

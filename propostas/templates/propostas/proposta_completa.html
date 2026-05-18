@@ -258,17 +258,6 @@
     {% endwith %}
 
     <hr>
-
-    {% with editavel=True %}
-      {% include "recomendadas.html" %}
-    {% endwith %}
-
-    {% with editavel=True %}
-      {% include "perfil_estudantes.html" %}
-    {% endwith %}
-
-    <hr>
-
     
     <form method="post" id="disponibilizacaoform" enctype="multipart/form-data">
       {% csrf_token %}
@@ -336,6 +325,14 @@
 
         </div>
       </div>
+
+      {% with editavel=True %}
+        {% include "perfil_estudantes.html" %}
+      {% endwith %}
+
+      {% with editavel=True %}
+        {% include "recomendadas.html" %}
+      {% endwith %}
 
       {% include "conformidade.html" %}
 
