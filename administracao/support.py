@@ -87,7 +87,7 @@ def get_limite_propostas2(configuracao):
     evento = Evento.get_evento(sigla="IIPE", configuracao=configuracao) 
     return evento.endDate if evento else None
     
-def get_data_planejada(configuracao):
+def get_data_planejada_liberacao_propostas(configuracao):
     """Retorna a data planejada para a liberação das propostas"""
     evento = Evento.get_evento(sigla="APDE", configuracao=configuracao)
     return evento.endDate if evento else None
@@ -95,7 +95,7 @@ def get_data_planejada(configuracao):
 def propostas_liberadas(configuracao):
     """Verifica se as propostas estão liberadas."""
     hoje = datetime.date.today()
-    liberacao = get_data_planejada(configuracao)
+    liberacao = get_data_planejada_liberacao_propostas(configuracao)
     return (liberacao and hoje >= liberacao)
 
 def usuario_sem_acesso(request, acessos):

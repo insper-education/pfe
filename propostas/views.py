@@ -31,7 +31,7 @@ from .support import contem_caracteres_invalidos
 from .forms import PropostaForm
 
 from administracao.models import Estrutura
-from administracao.support import get_limite_propostas, get_data_planejada, propostas_liberadas, usuario_sem_acesso
+from administracao.support import get_limite_propostas, get_data_planejada_liberacao_propostas, propostas_liberadas, usuario_sem_acesso
 from administracao.support import limpa_texto
 
 from operacional.models import Curso
@@ -397,6 +397,7 @@ def propostas_apresentadas(request):
                 "total_vagas": total_vagas,
                 "limite_propostas": get_limite_propostas(configuracao),
                 "liberadas_propostas": propostas_liberadas(configuracao),
+                "data_planejada": get_data_planejada_liberacao_propostas(configuracao),
                 "cabecalhos": cabecalhos,
                 "total_propostas": total_propostas,
             }
@@ -885,7 +886,7 @@ def publicar_propostas(request):
         "liberadas_propostas": propostas_liberadas(configuracao),
         "min_props": configuracao.min_props,
         "limite_propostas": get_limite_propostas(configuracao),
-        "data_planejada": get_data_planejada(configuracao),
+        "data_planejada": get_data_planejada_liberacao_propostas(configuracao),
     }
 
     return render(request, "propostas/publicar_propostas.html", context)
