@@ -47,6 +47,7 @@ urlpatterns = [
     path("mostra_feedback_estudante/<int:feedback_id>", views.mostra_feedback_estudante,name="mostra_feedback_estudante"),
     path("nomes/", views.nomes, name="nomes"),
     path("projeto_avancado/<int:primarykey>", views.projeto_avancado, name="projeto_avancado"),
+    path("projeto_infos/", views.projeto_infos, name="projeto_infos"),
     path("projeto_infos/<int:primarykey>", views.projeto_infos, name="projeto_infos"),
     path("dinamicas_infos/<int:primarykey>", views.dinamicas_infos, name="dinamicas_infos"),
     path("funcionalidades_grupos/", views.funcionalidades_grupos, name="funcionalidades_grupos"),

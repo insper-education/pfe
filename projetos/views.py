@@ -79,9 +79,13 @@ def index_projetos(request):
         return render(request, "projetos/index_projetos.html", context=context)
 
 @login_required
-def projeto_infos(request, primarykey):
+def projeto_infos(request, primarykey=None):
     """Mostra um projeto com detalhes conforme tipo de usuário."""    
-    projeto = get_object_or_404(Projeto, pk=primarykey)
+
+    if primarykey is None and request.user.eh_prof_a:  # Se não tem projeto e usuário é professor ou administrador
+        projeto = Projeto.objects.filter(orientador=request.user.professor).order_by("-ano", "-semestre").first()  # Pega o projeto mais recente do professor
+    else:
+        projeto = get_object_or_404(Projeto, pk=primarykey)
     alocacoes = Alocacao.objects.filter(projeto=projeto)
     associados = Associado.objects.filter(projeto=projeto)
 

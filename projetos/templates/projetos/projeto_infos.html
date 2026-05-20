@@ -110,7 +110,7 @@
     <div class="bloco-destaque-projeto" style="display: flex;">
       <div style="flex: 1; min-width: 0;">
 
-        <h4>
+        <h4 id="titulo">
           {% lng "Título" "Title" %}:
           {{ projeto.get_titulo }}
           {% if projeto.titulo_final and projeto.titulo_final != projeto.proposta.titulo %}
@@ -358,7 +358,7 @@
         </ul>
       </div>
     {% else %}
-      <h4>{% lng "Orientador não definido" "Advisor not defined" %}</h4>
+      <h5>{% lng "Orientador não definido" "Advisor not defined" %}</h5>
     {% endif %}
 
     {% if coorientadores %}
@@ -561,7 +561,9 @@
 
     {% if medias_oo %}
       <hr>
-      <h4>{% lng "Médias de Grupo" "Group Averages" %}:</h4>
+      <h4 id="medias_de_grupo">
+        {% lng "Médias de Grupo" "Group Averages" %}:
+      </h4>
 
       <span class="medias-title">{% lng "Médias" "Averages" %}:</span>
       {% for key, value in medias_oo.media_grupo.items %}
@@ -644,7 +646,9 @@
     {% if user.eh_prof_a %}
       {% if projeto|has_relatos %}  
         <hr>
-        <h4>{% lng "Relatos Quinzenais" "Biweekly Reports" %}:</h4>
+        <h4 id="relatos_quinzenais">
+          {% lng "Relatos Quinzenais" "Biweekly Reports" %}:
+        </h4>
         {% include "relatos.html" with alocacoes=alocacoes|sem_externos %}
       {% endif %}
     {% endif %}
@@ -652,7 +656,7 @@
     {% if documentos or user.eh_prof_a %}
       <hr>
       <span class="d-flex align-items-center justify-content-between flex-wrap">
-        <h4>
+        <h4 id="documentos">
           {% lng "Documentos" "Documents" %}:
           {% if user.eh_prof_a %}
             {% if projeto and projeto.organizacao %}
@@ -671,7 +675,9 @@
     
     {% if projeto.get_pasta %}
       <hr>
-      <h4>{% lng "Pasta do Projeto" "Project Folder" %}:</h4>
+      <h4 id="pastas_de_projeto">
+        {% lng "Pasta do Projeto" "Project Folder" %}:
+      </h4>
       <div class="mt-3">
         {% comment %} {% include "professores/includes/ver_site.html" %} JÁ MOSTRA ABAIXO {% endcomment %}
         {% include "professores/includes/ver_pastas_projeto.html" %}
@@ -681,7 +687,7 @@
     {% with certificados=projeto.certificado_set.all %}
       {% if certificados or user.eh_admin %}
         <hr>
-        <h4>
+        <h4 id="certificados">
           {% lng "Certificados" "Certificates" %}:
           {% if user.eh_prof_a %}
             <small class="esconder">
@@ -698,16 +704,23 @@
 
     {% if user.eh_prof_a %}
       <hr>
-      <h4>{% lng "Reuniões" "Meetings" %}:</h4>
+      <h4 id="reunioes">
+        {% lng "Reuniões" "Meetings" %}:
+      </h4>
       {% include "projetos/includes/bloco_reunioes.html" with reunioes=projeto|get_reunioes alocacao=None %}
-        <br>
-      <h4>{% lng "Mentorias" "Mentorships" %}:</h4>
+      <br>
+      
+      <h4 id="mentorias">
+        {% lng "Mentorias" "Mentorships" %}:
+      </h4>
       {% include "projetos/includes/bloco_mentorias.html" with projeto=projeto %}
     {% endif %}
 
     {% if user.eh_prof_a %}
       <hr>
-      <h4>{% lng "Alocação Semanal dos Estudantes" "Weekly Allocation of Students" %}:</h4>
+      <h4 id="alocacao_semanal">
+        {% lng "Alocação Semanal dos Estudantes" "Weekly Allocation of Students" %}:
+      </h4>
       {% include "mostra_horarios.html" with com_orientacoes=True %}
     {% endif %}
 
@@ -715,7 +728,9 @@
       {% with despesas=projeto.despesa_set.all %}
         {% if despesas %}
           <hr>
-          <h4>{% lng "Despesas Financeiras do Projeto" "Financial Expenses of the Project" %}:</h4>
+          <h4 id="despesas">
+            {% lng "Despesas Financeiras do Projeto" "Financial Expenses of the Project" %}:
+          </h4>
           <ul>
             {% for despesa in projeto.despesa_set.all %}
               <li>
