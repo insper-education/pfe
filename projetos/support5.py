@@ -76,6 +76,7 @@ def envia_mensagens_avisos(aviso_id=None, endereco=None):
                 "orientadores": orientadores,
                 "estudantes": estudantes,
                 "bancas": bancas,
+                "min_props": configuracao.min_props,
             }
 
         mensagem_final = mensagem_como_template.render(Context(context))

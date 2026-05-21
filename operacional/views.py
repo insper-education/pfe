@@ -251,13 +251,14 @@ def edita_aviso(request, primarykey=None):
 
     variaveis = {
         "hoje": { "pt": "Data do dia de envio do aviso", "en": "Date of the day of sending the notice" },
-        "edicao": { "pt": "Edição do Capstone", "en": "Capstone edition" },
+        "edicao": { "pt": "Edição do Capstone (semestre e ano)", "en": "Capstone edition (semester and year)" },
         "delta": { "pt": "Diferença de dias entre o envio do aviso e o aviso", "en": "Difference in days between the sending of the notice and the notice" },
         "delta_invert": { "pt": "Diferença de dias entre o evento e o envio do aviso (- delta)", "en": "Difference in days between the event and the sending of the notice (- delta)" },
         "delta_fim": { "pt": "Indica se o delta é em relação ao início(false) ou fim(true) do evento", "en": "Indicates whether the delta is in relation to the start(false) or end(true) of the event" },
         "orientadores": { "pt": "Professores orientadores do semestre", "en": "Advisors of the semester" },
         "estudantes": { "pt": "Estudantes do semestre (somente internos)", "en": "Students of the semester (only internal)" },
         "bancas": { "pt": "Próximas bancas", "en": "Next defenses" },
+        "min_props": { "pt": "Mínimo de propostas que estudantes devem selecionar", "en": "Minimum number of proposals that students must select" },
         "eventos": { 
             "pt": "Todos os eventos do semestre", "en": "All events of the semester",
             "exemplos": 'IA (Início das Aulas) = {{eventos|data_evento_sigla:"IA"}}, MA (Mentoria Acadêmica) = {{eventos|data_evento_sigla:"MA"}}',
