@@ -1046,6 +1046,7 @@ def reunioes(request, todos=None):
             "cabecalhos": [
                 {"pt": "Título", "en": "Title"},
                 {"pt": "Projeto", "en": "Project"},
+                {"pt": "Criação", "en": "Creation", "tipo": "data_hora"},
                 {"pt": "Data", "en": "Date", "tipo": "data_hora"},
                 {"pt": "Local", "en": "Location"},
                 {"pt": "Participantes", "en": "Participants"}
@@ -1158,7 +1159,10 @@ def reuniao(request, reuniao_id_g=None):  # Id da reunião para editar, None par
         reuniao.local = request.POST.get("local", "")
         reuniao.anotacoes = request.POST.get("anotacoes", None)
         reuniao.travado = "travado" in request.POST
-        reuniao.usuario = request.user
+        if reuniao.usuario:
+            reuniao.atualizado_por = request.user
+        else:
+            reuniao.usuario = request.user
         reuniao.save()
 
         participantes = anota_participacao(request.POST, reuniao=reuniao)
