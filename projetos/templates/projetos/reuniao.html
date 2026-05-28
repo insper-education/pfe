@@ -59,6 +59,46 @@
       color: #888;
       cursor: not-allowed;
     }
+
+    .audit-meta {
+      display: inline-flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+      margin-left: 0.35rem;
+      padding: 0.15rem 0.5rem;
+      border-radius: 999px;
+      background: #eef4ff;
+      border: 1px solid #dbe7ff;
+      color: #4f5f7a;
+      font-size: 0.82em;
+      line-height: 1.2;
+    }
+
+    .audit-meta .dot {
+      opacity: 0.6;
+      font-weight: 600;
+    }
+
+    .audit-date {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      margin-left: 0.2rem;
+      padding: 0.15rem 0.55rem;
+      border-radius: 999px;
+      background: #f3f5f9;
+      border: 1px solid #e2e7f0;
+      color: #455468;
+      font-size: 0.88em;
+      font-weight: 500;
+      line-height: 1.2;
+    }
+
+    .audit-date i {
+      opacity: 0.75;
+      font-size: 0.95em;
+    }
   </style>
 
 {% endblock %}
@@ -89,8 +129,20 @@
       {% if user.eh_prof_a and reuniao %}
         <div class="form-floating mb-2">
           <label for="criacao" class="form_label" style="font-size:0.97em;">{% lng "Data de Criação" "Creation Date" %}</label>
-          <span class="form-control-sm">{{ reuniao.criacao|date:"d/m/Y H:i" }}</span>
+          <span class="audit-date">
+            <i class="far fa-calendar-alt"></i>
+            {{ reuniao.criacao|date:"d/m/Y H:i" }}
+          </span>
+          <span class="audit-meta">
+            <span>{% lng "Criado por" "Created by" %} {{ reuniao.usuario }}</span>
+            {% if reuniao.atualizado_por and reuniao.atualizado_por != reuniao.usuario %}
+              <span class="dot">•</span>
+              <span>{% lng "Atualizado por" "Updated by" %} {{ reuniao.atualizado_por }}</span>
+            {% endif %}
+          </span>
         </div>
+
+
       {% endif %}
 
       <div class="form-floating mb-2">

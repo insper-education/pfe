@@ -75,50 +75,52 @@
 
 <div class="reunioes-list mt-2">
   {% for reuniao in reunioes %}
-    <div class="reuniao-linha">
-      <div class="mostra-data-hora">
-        <div class="mostra-data">
-          <i class="far fa-calendar"></i>
-          <span class="texto-longo">{{ reuniao.data_hora|date:"d/m/Y" }}</span>
-          <span class="texto-curto">{{ reuniao.data_hora|date:"d/m/y" }}</span>
+    <a href="{% url 'edita_reuniao' reuniao.id %}" class="reuniao-linha text-decoration-none">
+      <div class="reuniao-linha">
+        <div class="mostra-data-hora">
+          <div class="mostra-data">
+            <i class="far fa-calendar"></i>
+            <span class="texto-longo">{{ reuniao.data_hora|date:"d/m/Y" }}</span>
+            <span class="texto-curto">{{ reuniao.data_hora|date:"d/m/y" }}</span>
+          </div>
+          <div class="mostra-hora">
+            <i class="far fa-clock ml-2"></i>
+            {{ reuniao.data_hora|date:"H:i" }}
+          </div>
         </div>
-        <div class="mostra-hora">
-          <i class="far fa-clock ml-2"></i>
-          {{ reuniao.data_hora|date:"H:i" }}
-        </div>
-      </div>
-      {% if alocacao %}
-        {% with participacao=reuniao|get_participacao:alocacao.aluno.user %}
-          <div class="reuniao-titulo-compacto" title="{{ reuniao.titulo }}{% if participacao.observacoes %} - {{ participacao.observacoes }}{% endif %}">
+        {% if alocacao %}
+          {% with participacao=reuniao|get_participacao:alocacao.aluno.user %}
+            <div class="reuniao-titulo-compacto" title="{{ reuniao.titulo }}{% if participacao.observacoes %} - {{ participacao.observacoes }}{% endif %}">
+              {{ reuniao.titulo }}
+            </div>
+            {% with situacao=participacao.situacao_display %}
+              <span class="badge badge-mini" style="background-color: {{ situacao.cor }}; color:#FFFFFF">{% lng situacao.pt situacao.en %}</span>
+            {% endwith %}
+          {% endwith %}
+        {% else %}
+          <div class="reuniao-titulo-compacto" title="{{ reuniao.titulo }}">
             {{ reuniao.titulo }}
           </div>
-          {% with situacao=participacao.situacao_display %}
-            <span class="badge badge-mini" style="background-color: {{ situacao.cor }}; color:#FFFFFF">{% lng situacao.pt situacao.en %}</span>
-          {% endwith %}
-        {% endwith %}
-      {% else %}
-        <div class="reuniao-titulo-compacto" title="{{ reuniao.titulo }}">
-          {{ reuniao.titulo }}
-        </div>
-        <div class="reuniao-participantes">
-          {% with participantes=reuniao|get_participantes %}
-            {% for participante in participantes %}
-              {% with situacao=participante.situacao_display %}
-                <span class="badge badge-mini" style="background-color: {{ situacao.cor }}; color:#FFFFFF">
-                  {% if participante.participante.eh_estud %}
-                    <i class="fa fa-user-graduate"></i>
-                  {% elif participante.participante.eh_prof_a %}
-                    <i class="fas fa-chalkboard-teacher"></i>
-                  {% elif participante.participante.eh_parc %}
-                    <i class="fas fa-user-tie"></i>
-                  {% endif %}
-                  {{ participante.participante.get_full_name }}
-                </span>
-              {% endwith %}
-            {% endfor %}
-          {% endwith %}
-        </div>
-      {% endif %}
-    </div>
+          <div class="reuniao-participantes">
+            {% with participantes=reuniao|get_participantes %}
+              {% for participante in participantes %}
+                {% with situacao=participante.situacao_display %}
+                  <span class="badge badge-mini" style="background-color: {{ situacao.cor }}; color:#FFFFFF">
+                    {% if participante.participante.eh_estud %}
+                      <i class="fa fa-user-graduate"></i>
+                    {% elif participante.participante.eh_prof_a %}
+                      <i class="fas fa-chalkboard-teacher"></i>
+                    {% elif participante.participante.eh_parc %}
+                      <i class="fas fa-user-tie"></i>
+                    {% endif %}
+                    {{ participante.participante.get_full_name }}
+                  </span>
+                {% endwith %}
+              {% endfor %}
+            {% endwith %}
+          </div>
+        {% endif %}
+      </div>
+    </a>
   {% endfor %}
 </div>

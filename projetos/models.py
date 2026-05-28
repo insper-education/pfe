@@ -2365,7 +2365,9 @@ class Reuniao(models.Model):
     criacao = models.DateTimeField("Data de Criação", default=datetime.datetime.now,
                                    help_text="Data e hora de quando a reunião foi criada")
     usuario = models.ForeignKey("users.PFEUser", null=True, blank=True, on_delete=models.SET_NULL,
-                                help_text="Usuário que criou ou atualizou a reunião", related_name="reuniao_usuario")
+                                help_text="Usuário que criou a reunião", related_name="reuniao_usuario")
+    atualizado_por = models.ForeignKey("users.PFEUser", null=True, blank=True, on_delete=models.SET_NULL,
+                                help_text="Usuário que atualizou a reunião", related_name="reuniao_atualizado_por")
     data_hora = models.DateTimeField("Data e Hora", null=True, blank=True)
     local = models.CharField("Local", max_length=128, blank=True)
     participantes = models.ManyToManyField("users.PFEUser", verbose_name="Participantes", blank=True, help_text="Participantes da reunião", through="ReuniaoParticipante")
