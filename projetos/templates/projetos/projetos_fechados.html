@@ -19,6 +19,126 @@
     .sem_estudantes {
       opacity: 0.3;
     }
+    .projslines,
+    .projline {
+      color: #36536b;
+      transition: color 0.18s ease, background-color 0.18s ease, box-shadow 0.18s ease;
+    }
+    .projslines:hover,
+    .projline:hover {
+      color: #17354d;
+    }
+    .projslines {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 5px 10px;
+      border-radius: 999px;
+      background: #eef3f7;
+      box-shadow: inset 0 0 0 1px #d2dde7;
+      font-style: normal;
+      font-size: 0.92rem;
+      font-weight: 600;
+      line-height: 1;
+    }
+    .projslines:hover {
+      background: #e3ebf2;
+      box-shadow: inset 0 0 0 1px #bfd0de;
+      text-decoration: none;
+    }
+    .projline {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      border-radius: 999px;
+      background: #f4f7fa;
+      box-shadow: inset 0 0 0 1px #d5dfe7;
+      font-style: normal;
+      line-height: 1;
+    }
+    .projline:hover {
+      background: #e7eef4;
+      box-shadow: inset 0 0 0 1px #c3d1dc;
+    }
+    .projslines .seta,
+    .projline .seta {
+      font-size: 0.88rem;
+    }
+    .titulo_projeto_bloco {
+      border-bottom: 1px solid #d6dde4;
+      margin: 0 0 10px 0;
+      padding: 0 0 10px 0;
+    }
+    .totais {
+      margin: 10px 6px 0;
+      padding: 14px;
+      border: 1px solid #d6dde4;
+      border-radius: 12px;
+      background: linear-gradient(180deg, #f8fafc 0%, #f2f6fa 100%);
+      box-shadow: 0 4px 12px rgba(35, 56, 75, 0.06);
+    }
+    .totais_grade {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .totais_linha {
+      flex: 1 1 280px;
+      min-width: 240px;
+      padding: 12px 14px;
+      border: 1px solid #dde5ec;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.78);
+    }
+    .totais_rotulo {
+      margin-bottom: 6px;
+      color: #5a6d7f;
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+    .totais_principal {
+      display: block;
+      color: #23384b;
+      font-size: 1.25rem;
+      line-height: 1.2;
+    }
+    .totais_detalhe {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
+      color: #5a6d7f;
+      font-size: 0.9rem;
+    }
+    .totais_badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 9px;
+      border-radius: 999px;
+      background: #eef3f7;
+      line-height: 1.2;
+      white-space: nowrap;
+    }
+    .totais_badge_numero {
+      font-weight: 700;
+      color: #23384b;
+    }
+    @media only screen and (max-width: 740px) {
+      .totais {
+        padding: 12px;
+      }
+      .totais_linha {
+        min-width: 100%;
+      }
+      .totais_principal {
+        font-size: 1.12rem;
+      }
+    }
     .logo-block {
       display: flex;
       align-items: center;
@@ -93,7 +213,7 @@
                   </div>
                 {% endif %}
 
-                <div>
+                <div class="titulo_projeto_bloco">
                   <p>
                     <b>{% lng "Projeto:" "Project:" %}</b>
                     <a class="imprimir dark-blue-bold" target="_blank" rel="noopener noreferrer" href="{% url 'projeto_infos' projeto.id %}"> 
@@ -154,24 +274,28 @@
                   <b>{% lng "Semestre:" "Semester:" %}</b> {{projeto.ano}}.{{projeto.semestre}}
                 </p>
 
-                <div class="orientador ml-1 mb-1">
-                  {% if projeto.orientador %}
-                    <b>
-                      {% if projeto.proposta.intercambio %}
-                        {% lng_g projeto.orientador.user.genero "Professor Responsável" "Professora Responsável" "Responsible Professor" %}:
-                      {% else %}
-                        {% lng_g projeto.orientador.user.genero "Orientador" "Orientadora" "Advisor" %}:
-                      {% endif %}
-                    </b>
-                    <a class="imprimir" href="{% url 'professor_detail' projeto.orientador.id %}"> {{projeto.orientador.user.get_full_name}}</a>
-                    <span class="emails">
-                      <span class="texto-longo"><a href="mailto:{{projeto.orientador.user.email}}">&lt;{{projeto.orientador.user.email}}&gt;</a></span>
-                      <span class="texto-curto"><a href="mailto:{{projeto.orientador.user.email}}"><i class="far fa-envelope"></i></a></span>
-                    </span>
-                  {% else %}
-                    {% lng "Orientador: Não definido" "Advisor: Not defined" %}
-                  {% endif %}
-                </div>
+              </div>
+
+              <div class="orientador ml-1 mb-1">
+                {% if projeto.orientador %}
+                  <b>
+                    {% if projeto.proposta.intercambio %}
+                      {% lng_g projeto.orientador.user.genero "Professor Responsável" "Professora Responsável" "Responsible Professor" %}:
+                    {% else %}
+                      {% lng_g projeto.orientador.user.genero "Orientador" "Orientadora" "Advisor" %}:
+                    {% endif %}
+                  </b>
+                  <a class="imprimir" href="{% url 'professor_detail' projeto.orientador.id %}"> {{projeto.orientador.user.get_full_name}}</a>
+                  <span class="emails">
+                    <span class="texto-longo"><a href="mailto:{{projeto.orientador.user.email}}">&lt;{{projeto.orientador.user.email}}&gt;</a></span>
+                    <span class="texto-curto"><a href="mailto:{{projeto.orientador.user.email}}"><i class="far fa-envelope"></i></a></span>
+                  </span>
+                {% else %}
+                  {% lng "Orientador: Não definido" "Advisor: Not defined" %}
+                {% endif %}
+              </div>
+
+              <div class="projblock" style="display: none;">
 
                 {% with coorientadores=projeto.coorientador_set.all %}
                   {% if coorientadores %}
@@ -231,6 +355,8 @@
                 {% comment %} Separador (conveniente para copiar e colar o texto) {% endcomment %}
                 <div style="height: 1px;">&nbsp;</div>
 
+              </div>
+
                 <div class="organizacao ml-1 mb-1">
                   <b>{% lng "Organização:" "Organization:" %}</b>
                   {% if projeto.organizacao %}
@@ -270,30 +396,32 @@
                   {% endif %}
                 </div>
 
-                <ol class="conexoes">
-                {% for conexao in conexoes %}
-                  <li {% if not conexao.parceiro.user.is_active %}class="links-claros"{% endif %}>
-                    <a class="imprimir" href="{% url 'parceiro_detail' conexao.parceiro.id %}">
-                      {{ conexao.parceiro.user.get_full_name }}
-                      <span class="papeis">
+              <div class="projblock" style="display: none;">
 
-                        {% for papel in conexao.get_papeis %}
-                          <span class="texto-longo">[{% lng papel.nome papel.nome_en %}]</span>
-                          <span class="texto-curto" data-toggle="tooltip" data-html="true" animation="true" title="{{papel.nome}}">[{{papel.sigla}}]</span>
-                        {% endfor %}
-                                      
-                        {% if conexao.observacao %}
-                          &nbsp;&nbsp;obs: {{conexao.observacao}}
-                        {% endif %}
-                      
+                <ol class="conexoes">
+                  {% for conexao in conexoes %}
+                    <li {% if not conexao.parceiro.user.is_active %}class="links-claros"{% endif %}>
+                      <a class="imprimir" href="{% url 'parceiro_detail' conexao.parceiro.id %}">
+                        {{ conexao.parceiro.user.get_full_name }}
+                        <span class="papeis">
+
+                          {% for papel in conexao.get_papeis %}
+                            <span class="texto-longo">[{% lng papel.nome papel.nome_en %}]</span>
+                            <span class="texto-curto" data-toggle="tooltip" data-html="true" animation="true" title="{{papel.nome}}">[{{papel.sigla}}]</span>
+                          {% endfor %}
+                                        
+                          {% if conexao.observacao %}
+                            &nbsp;&nbsp;obs: {{conexao.observacao}}
+                          {% endif %}
+                        
+                        </span>
+                      </a>
+                      <span class="emails">
+                        <span class="texto-longo"><a href="mailto:{{conexao.parceiro.user.email}}">&lt;{{conexao.parceiro.user.email}}&gt;</a></span>
+                        <span class="texto-curto"><a href="mailto:{{conexao.parceiro.user.email}}"><i class="far fa-envelope"></i></a></span>
                       </span>
-                    </a>
-                    <span class="emails">
-                      <span class="texto-longo"><a href="mailto:{{conexao.parceiro.user.email}}">&lt;{{conexao.parceiro.user.email}}&gt;</a></span>
-                      <span class="texto-curto"><a href="mailto:{{conexao.parceiro.user.email}}"><i class="far fa-envelope"></i></a></span>
-                    </span>
-                  </li>
-                {% endfor %}
+                    </li>
+                  {% endfor %}
                 </ol>
 
               </div>
@@ -304,34 +432,39 @@
       </table>
 
       <div class="totais">
-        <b>{% lng "Total de projetos" "Total of projects" %} = {{ numero_projetos }}</b>
-        {% if numero_projetos_avancado > 0 or numero_projetos_time_misto > 0 %}
-          [
-          <span class="regulares">{{ numero_projetos_regulares }} {% lng_n numero_projetos_regulares "regular" "regulares" "regular" %}</span>
-          {% if numero_projetos_avancado > 0 %}
-            <span class="avancado">+ {{ numero_projetos_avancado }} {% lng_n numero_projetos_avancado "avançado" "avançados" "advanced" %}</span>
-          {% endif %}
-          {% if numero_projetos_time_misto > 0 %}
-            <span class="misto">+ {{ numero_projetos_time_misto }} {% lng_n numero_projetos_time_misto "time misto" "times misto" "mixed team" "mixed teams" %}</span>
-          {% endif %}
-          ]
-        {% endif %}
-        <br>
+        <div class="totais_grade">
+          <div class="totais_linha">
+            <div class="totais_rotulo">{% lng "Projetos" "Projects" %}</div>
+            <b class="totais_principal">{{ numero_projetos }} {% lng_n numero_projetos "projeto" "projetos" "project" "projects" %}</b>
+            {% if numero_projetos_avancado > 0 or numero_projetos_time_misto > 0 %}
+              <div class="totais_detalhe">
+                <span class="totais_badge regulares"><span class="totais_badge_numero">{{ numero_projetos_regulares }}</span><span>{% lng_n numero_projetos_regulares "regular" "regulares" "regular" %}</span></span>
+                {% if numero_projetos_avancado > 0 %}
+                  <span class="totais_badge avancado"><span class="totais_badge_numero">{{ numero_projetos_avancado }}</span><span>{% lng_n numero_projetos_avancado "avançado" "avançados" "advanced" %}</span></span>
+                {% endif %}
+                {% if numero_projetos_time_misto > 0 %}
+                  <span class="totais_badge misto"><span class="totais_badge_numero">{{ numero_projetos_time_misto }}</span><span>{% lng_n numero_projetos_time_misto "time misto" "times misto" "mixed team" "mixed teams" %}</span></span>
+                {% endif %}
+              </div>
+            {% endif %}
+          </div>
 
-        <b>{% lng "Total de estudantes" "Total of students" %} = {{ numero_estudantes}}</b>
-        {% if numero_estudantes_avancado > 0 or numero_estudantes_externos > 0 %}
-          [
-          <span class="regulares">{{ numero_estudantes_regulares }} {% lng_n numero_estudantes_regulares "regular" "regulares" "regular" %}</span>
-          {% if numero_estudantes_avancado > 0 %}
-            <span class="avancado">+ {{ numero_estudantes_avancado }} {% lng_n numero_estudantes_avancado "avançado" "avançados" "advanced" %}</span>
-          {% endif %}
-          {% if numero_estudantes_externos > 0 %}
-            <span class="externos">+ {{ numero_estudantes_externos }} {% lng_n numero_estudantes_externos "externo" "externos" "external" %}</span>
-          {% endif %}
-          ]
-        {% endif %}
-        <br>
-
+          <div class="totais_linha">
+            <div class="totais_rotulo">{% lng "Estudantes" "Students" %}</div>
+            <b class="totais_principal">{{ numero_estudantes }} {% lng_n numero_estudantes "estudante" "estudantes" "student" "students" %}</b>
+            {% if numero_estudantes_avancado > 0 or numero_estudantes_externos > 0 %}
+              <div class="totais_detalhe">
+                <span class="totais_badge regulares"><span class="totais_badge_numero">{{ numero_estudantes_regulares }}</span><span>{% lng_n numero_estudantes_regulares "regular" "regulares" "regular" %}</span></span>
+                {% if numero_estudantes_avancado > 0 %}
+                  <span class="totais_badge avancado"><span class="totais_badge_numero">{{ numero_estudantes_avancado }}</span><span>{% lng_n numero_estudantes_avancado "avançado" "avançados" "advanced" %}</span></span>
+                {% endif %}
+                {% if numero_estudantes_externos > 0 %}
+                  <span class="totais_badge externos"><span class="totais_badge_numero">{{ numero_estudantes_externos }}</span><span>{% lng_n numero_estudantes_externos "externo" "externos" "external" %}</span></span>
+                {% endif %}
+              </div>
+            {% endif %}
+          </div>
+        </div>
       </div>
 
       <br>
