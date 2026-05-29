@@ -44,9 +44,9 @@ def em_probation(alocacao):
         banca = None
         if composicao.exame.banca or composicao.exame.sigla == "P":  # Banca
             if composicao.exame.grupo:  # Grupo - Intermediária/Final
-                banca = Banca.objects.filter(projeto=alocacao.projeto, composicao__exame__sigla=composicao.exame.sigla).last()
+                banca = Banca.objects.filter(projeto=alocacao.projeto, tipo_evento__sigla=composicao.exame.sigla).last()
             else:  # Individual - Probation
-                banca = Banca.objects.filter(alocacao=alocacao, composicao__exame__sigla=composicao.exame.sigla).last()
+                banca = Banca.objects.filter(alocacao=alocacao, tipo_evento__sigla=composicao.exame.sigla).last()
         try:
             exame=Exame.objects.get(sigla=composicao.exame.sigla)
             if composicao.exame.grupo:  # GRUPO

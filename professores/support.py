@@ -386,7 +386,7 @@ def recupera_avaliadores_bancas(exame, ano, semestre):
     """Recupera listas de todos os membros das bancas especificadas."""
     pessoas = []
     bancas = []
-    bancas_f = Banca.objects.filter(projeto__ano=ano, projeto__semestre=semestre, composicao__exame=exame)
+    bancas_f = Banca.objects.filter(projeto__ano=ano, projeto__semestre=semestre, tipo_evento__sigla=exame.sigla)
     for banca in bancas_f:
         for membro in banca.membros():
             #if membro:
