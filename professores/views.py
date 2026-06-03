@@ -179,13 +179,16 @@ def avaliar_entregas(request, prof_id=None):
                     return HttpResponse("Edição inválida.", status=400)
 
         # Coletando entregas por projeto
+        composicoes = Composicao.objects.filter(Q(entregavel=True) | Q(coordenacao=True))
         avaliacoes = [
             (projeto, filtra_entregas(
-                filtra_composicoes(Composicao.objects.filter(entregavel=True), projeto.ano, projeto.semestre),
+                filtra_composicoes(composicoes, projeto.ano, projeto.semestre),
                 projeto
             ))
             for projeto in projetos
         ]
+
+
 
         context = {
             "avaliacoes": avaliacoes,

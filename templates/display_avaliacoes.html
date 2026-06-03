@@ -28,8 +28,11 @@
                   </li>
                 {% endfor %}
               </ul>
-              <b>{% lng "Nota" "Grade" %} = {{nota|floatformat:2}}  </b>
+              <b>{% lng "Nota" "Grade" %} = {{nota|floatformat:2}}</b>
             {% else %}
+             {% if item.composicao.coordenacao %}
+              <b>{% lng "Nota" "Grade" %} = {{nota|floatformat:2}}</b>
+             {% else %}
               <b>
                 {% lng "Decisão" "Decision" %}:</b><br>
               &#8227;
@@ -38,6 +41,7 @@
               {% else %}
                 {% lng "Inadequado" "Inadequate" %}
               {% endif %}
+             {% endif %} 
             {% endif %}
             </div></td>
 

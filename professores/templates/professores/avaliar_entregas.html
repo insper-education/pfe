@@ -109,8 +109,9 @@
             </div>
             {% for item in entregas %}
             {% with dias_inic=item.evento.data_inicio_aval|dif_dias_hoje dias_ate=item.evento.data_aval|dif_dias_hoje dias=-1 %} {% comment %} Eventos são mostrados duas semanas antes do prazo {% endcomment %}
-              <div class="pintern exame{{item.composicao.exame.id}}" {% if not forloop.first %}style="margin-top: 8px;"{% endif %}>
-                <span class="nome_entrega" {% if dias_inic > dias %}style="color:lightgrey;"{% endif %}>
+              <div class="pintern exame{{item.composicao.exame.id}}" 
+                   style="{% if not forloop.first %}margin-top: 8px;{% endif %} {% if item.composicao.coordenacao %}background-color: #dad4ed;{% endif %}">
+                <span class="nome_entrega" {% if dias_inic > dias and not item.composicao.coordenacao %}style="color:lightgrey;"{% endif %}>
                   {% if item.composicao.exame %}
                     <b>{% lng item.composicao.exame.titulo item.composicao.exame.titulo_en %}</b>
                   {% else %}
@@ -181,12 +182,20 @@
                           target="_blank" rel="noopener noreferrer">
                           {% lng "sem arquivos" "no files" %}
                         </a><br>
+                      {% else %}
+                        {% if user.eh_admin and item.composicao.coordenacao %}
+                          <a data-toggle="tooltip" data-html="true" animation="true" title="Avaliado pela coordenação do Capstone"
+                          href="{% url 'entrega_avaliar' item.composicao.id projeto.id %}"
+                          target="_blank" rel="noopener noreferrer">
+                          {% lng "Avaliar" "Evaluate" %}
+                        </a><br>
+                        {% endif %}
                       {% endif %}
                     {% endfor %}
                   </ul>
                   {% include "display_avaliacoes.html" with avaliacoes=item.avaliacoes nota=item.nota observacao=item.observacao com_orientador=True %}
 
-                {% else %}
+                {% else %} {% comment %} INDIVIDUAL {% endcomment %}
                   {% for alocacao, values in item.alocacoes.items %}
                     <hr class="linha">
                     <b class="{% if dias_inic > dias %}lightgrey{% endif %} nome_est">&#10040; {{alocacao.aluno.user.get_full_name}}:</b>

@@ -77,6 +77,8 @@ class Composicao(models.Model):
     
     entregavel = models.BooleanField(default=True, help_text="Entregável")
 
+    coordenacao = models.BooleanField(default=False, help_text="Avaliado pela Coordenação")
+                                      
     pesos = models.ManyToManyField("projetos.ObjetivosDeAprendizagem", through="Peso",
                                     help_text="Pesos dos Objetivos de Aprendizado por Avaliação")
 
