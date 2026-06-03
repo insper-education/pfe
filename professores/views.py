@@ -1423,7 +1423,7 @@ def entrega_avaliar(request, composicao_id, projeto_id, estudante_id=None):
     objetivos = composicao.pesos.all()
     pesos = Peso.objects.filter(composicao=composicao)
     
-    editor = request.user == projeto.orientador.user
+    editor = (request.user == projeto.orientador.user) or request.user.eh_admin
     
     if request.method == "POST":
 
