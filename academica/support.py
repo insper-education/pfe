@@ -64,11 +64,13 @@ def filtra_entregas(composicoes, projeto, user=None):
                                                   projeto=projeto)
             avaliacoes = Avaliacao2.objects.filter(projeto=projeto, 
                                                    exame=composicao.exame, 
-                                                   avaliador=orientador)
+                                                   #  avaliador=orientador   # NAO DEVERIA HAVER DUPLICIDADE
+                                                   )
             nota, peso = get_nota_peso(avaliacoes)
             observacao = Observacao.objects.filter(projeto=projeto,
                                                    exame=composicao.exame,
-                                                   avaliador=orientador).last()
+                                                #    avaliador=orientador  # NAO DEVERIA HAVER DUPLICIDADE
+                                                   ).last()
             
             entregas.append({"composicao": composicao, 
                             "evento": evento,
