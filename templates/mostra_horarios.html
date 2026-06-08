@@ -218,9 +218,76 @@
 
   <script>
 
+    let refreshHorasIntervalId = null;
+    let refreshHorasFailureCount = 0;
+
+    function stop_refresh_horas() {
+      if (refreshHorasIntervalId !== null) {
+        clearInterval(refreshHorasIntervalId);
+        refreshHorasIntervalId = null;
+      }
+    }
+
+    function get_refresh_container() {
+      return document.getElementById("horarios_proj_{{projeto.id}}");
+    }
+
+    function post_json_form(url, payload, onSuccess, onError) {
+      fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
+          "X-Requested-With": "XMLHttpRequest"
+        },
+        body: new URLSearchParams(payload)
+      })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}`);
+        }
+        return response.json();
+      })
+      .then((data) => {
+        if (onSuccess) {
+          onSuccess(data);
+        }
+      })
+      .catch((error) => {
+        if (onError) {
+          onError(error);
+        }
+      });
+    }
+
+    function get_json(url, payload, onSuccess, onError) {
+      const query = new URLSearchParams(payload);
+      fetch(`${url}?${query.toString()}`, {
+        method: "GET",
+        headers: {
+          "X-Requested-With": "XMLHttpRequest"
+        }
+      })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}`);
+        }
+        return response.json();
+      })
+      .then((data) => {
+        if (onSuccess) {
+          onSuccess(data);
+        }
+      })
+      .catch((error) => {
+        if (onError) {
+          onError(error);
+        }
+      });
+    }
+
     function set_horas(horas_comerciais, horas_outras) {
       {% if request.user.eh_estud %}
-        let container = document.getElementById("horarios_proj_{{projeto.id}}");
+        let container = get_refresh_container();
         if (!container) return;
         horas_alocadas_diurno = container.querySelector("#horas_alocadas_diurno");
         horas_alocadas_total = container.querySelector("#horas_alocadas_total");
@@ -242,7 +309,7 @@
     }
 
     function allElementsHaveHighlight(className) {
-      let container = document.getElementById("horarios_proj_{{projeto.id}}");
+      let container = get_refresh_container();
       if (!container) return false;
       let elements = container.querySelectorAll(`.${className}`);
       for (let element of elements) {
@@ -254,7 +321,7 @@
     }
 
     function confere_juntos() {
-      let container = document.getElementById("horarios_proj_{{projeto.id}}");
+      let container = get_refresh_container();
       if (!container) return;
       contador = 0;
       for (let i = 0; i < 5; i++) {  // Dias da semana (seg, ter, qua, qui, sex)
@@ -296,7 +363,7 @@
 
     {% if request.user.eh_estud %}
       document.addEventListener("DOMContentLoaded", (event) => {
-        let container = document.getElementById("horarios_proj_{{projeto.id}}");
+        let container = get_refresh_container();
         if (!container) return;
         let isMouseDown = false;
 
@@ -346,17 +413,17 @@
           confere_juntos();
 
           // Ajax para salvar a alocação
-          $.ajax({
-            url: "{% url 'alocacao_hora' %}",
-            type: "POST",
-            data: { 
-              horarios : JSON.stringify(horarios),
-              "csrfmiddlewaretoken": "{{ csrf_token }}"
+          post_json_form(
+            "{% url 'alocacao_hora' %}",
+            {
+              horarios: JSON.stringify(horarios),
+              csrfmiddlewaretoken: "{{ csrf_token }}"
             },
-            dataType: "JSON",
-            success: function (data) {},
-            {% include "ajax_error_function.js" with com_alerta=True %}
-          });
+            function (_data) {},
+            function (error) {
+              console.error("Erro ao salvar alocacao de horarios.", error);
+            }
+          );
 
         });
       });
@@ -383,7 +450,7 @@
             } else {
               horas_outras++;
             }
-            let element = document.getElementById("horarios_proj_{{projeto.id}}")?.querySelector(`#h_${dia}_${horario}`);
+            let element = get_refresh_container()?.querySelector(`#h_${dia}_${horario}`);
             if (element) {
               element.classList.add("highlight");
             }
@@ -393,7 +460,7 @@
         {% else %}
           horarios = {{ alocacao.horarios|safe }};
           alocacao = {{ alocacao.id }};
-          var initContainer = document.getElementById("horarios_proj_{{projeto.id}}");
+          var initContainer = get_refresh_container();
           if (initContainer) {
             for (let i = 0; i < horarios.length; i++) {
               const [dia, horario] = horarios[i];
@@ -415,22 +482,52 @@
     }
 
     function refresh_horas() {
-      $.ajax({
-        url: "{% url 'refresh_hora' %}",
-        type: "GET",
-        dataType: "json",
-        data: { 
-          projeto_id : {{ projeto.id }},
-          "csrfmiddlewaretoken": "{{ csrf_token }}"
-        },
-        success: function (data) {
-          let refContainer = document.getElementById("horarios_proj_{{projeto.id}}");
-          if (!refContainer) return;
+      let refContainer = get_refresh_container();
+      if (!refContainer) {
+        stop_refresh_horas();
+        return;
+      }
 
-          for( id in data.todos_horarios ) {
+      get_json(
+        "{% url 'refresh_hora' %}",
+        {
+          projeto_id: {{ projeto.id }},
+          csrfmiddlewaretoken: "{{ csrf_token }}"
+        },
+        function (data) {
+          let freshContainer = get_refresh_container();
+          if (!freshContainer) {
+            stop_refresh_horas();
+            return;
+          }
+
+          if (!data || !data.todos_horarios) {
+            refreshHorasFailureCount++;
+            if (refreshHorasFailureCount >= 3) {
+              stop_refresh_horas();
+            }
+            return;
+          }
+
+          refreshHorasFailureCount = 0;
+
+          for (const id in data.todos_horarios) {
+            if (!Object.prototype.hasOwnProperty.call(data.todos_horarios, id)) {
+              continue;
+            }
+
             horarios = data.todos_horarios[id];
-            if(horarios) {
-              horarios = JSON.parse(horarios);
+            if (horarios) {
+              try {
+                horarios = JSON.parse(horarios);
+              } catch (error) {
+                console.error("Erro ao interpretar horarios atualizados.", error);
+                refreshHorasFailureCount++;
+                if (refreshHorasFailureCount >= 3) {
+                  stop_refresh_horas();
+                }
+                return;
+              }
 
               {% if request.user.tipo_de_usuario != 1 %}
                 var horas_comerciais = 0;
@@ -450,7 +547,7 @@
                   }
                 }
 
-                let aElement = refContainer.querySelector("#a"+id);
+                let aElement = freshContainer.querySelector("#a"+id);
                 if(aElement) {
                   aElement.innerText = (horas_comerciais*2) + "/" + ((horas_comerciais+horas_outras)*2);
 
@@ -464,7 +561,7 @@
 
               for (let i = 0; i < 5; i++) {
                 for (let j = 0; j < {{horarios|length}}; j++) {
-                  const element = refContainer.querySelector(`#h_${i}_${j}_${id}`);
+                  const element = freshContainer.querySelector(`#h_${i}_${j}_${id}`);
                   if (element) {
                     if (isInHorarios(horarios, [i, j])) {
                       element.classList.add("highlight");
@@ -481,13 +578,18 @@
 
           confere_juntos();
         },
-        {% comment %} Creio que melhor sem essa rotina de erro {% endcomment %}
-        {% comment %} {% include "ajax_error_function.js" %} {% endcomment %}
-      });
+        function (error) {
+          refreshHorasFailureCount++;
+          console.error("Erro ao atualizar horarios do projeto.", error);
+          if (refreshHorasFailureCount >= 3) {
+            stop_refresh_horas();
+          }
+        }
+      );
     }
 
     // Verifica atualizações continuamente
-    setInterval(refresh_horas, {% if request.user.eh_estud %}8000{% else %}60000{% endif %} );
+    refreshHorasIntervalId = setInterval(refresh_horas, {% if request.user.eh_estud %}8000{% else %}60000{% endif %} );
     refresh_horas();
 
   </script>
