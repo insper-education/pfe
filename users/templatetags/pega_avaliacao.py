@@ -24,11 +24,40 @@ def pega_tipo(objeto, tipo):
 @register.filter
 def pega_objetivo(avaliacoes, objetivo):
     """Filtra para um tipo específico de Objetivo de Aprendizagem."""
-    # avaliacoes = avaliacoes.filter(objetivo=objetivo)
+    objetivo_id = getattr(objetivo, "id", objetivo)
     try:
         avaliacao = avaliacoes.get(objetivo=objetivo)
     except Avaliacao2.DoesNotExist:
         avaliacao = None
+    except Avaliacao2.MultipleObjectsReturned as exc:
+        duplicadas = list(
+            avaliacoes.filter(objetivo=objetivo)
+            .values(
+                "id",
+                "exame_id",
+                "projeto_id",
+                "alocacao_id",
+                "avaliador_id",
+                "objetivo_id",
+                "momento",
+                "nota",
+                "peso",
+                "na",
+            )
+            .order_by("id")
+        )
+        contexto = {
+            "objetivo_id": objetivo_id,
+            "quantidade": len(duplicadas),
+            "avaliacoes_ids": list(avaliacoes.values_list("id", flat=True)[:20]),
+            "duplicadas": duplicadas,
+        }
+        logger.exception("Mais de uma Avaliacao2 encontrada em pega_objetivo", extra=contexto)
+        raise Avaliacao2.MultipleObjectsReturned(
+            f"pega_objetivo encontrou {len(duplicadas)} Avaliacao2 para objetivo={objetivo_id}. "
+            f"Avaliacao2 visiveis no filtro atual: {contexto['avaliacoes_ids']}. "
+            f"Registros conflitantes: {duplicadas}"
+        ) from exc
     return avaliacao
 
 @register.filter
