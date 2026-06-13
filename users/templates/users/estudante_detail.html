@@ -368,19 +368,9 @@
             </small>
           {% endif %}
         </h4>
-        <ul>
-          {% for certificado in certificados %}
-            <li>
-              {{certificado.tipo_certificado}}
-              {% if certificado.data %}
-                  em {{certificado.data|date:"DATE_FORMAT"}}
-              {% endif %}
-              {% if certificado.documento %}
-                  - documento: <a href="{{ certificado.documento.url }}" target="_blank" rel="noopener noreferrer"><span style="word-break: break-all;">{{ certificado.documento.url }}</span></a><br>
-              {% endif %}
-            </li>
-          {% endfor %}
-        </ul>
+        <div class="caixa_rolante">
+          {% include "certificados.html" with certificados=certificados %}
+        </div>
       {% endif %}
 
       {% if alocacoes.count > 0 %}
