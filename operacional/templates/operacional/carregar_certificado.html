@@ -16,6 +16,151 @@
 {% block content %}
 
   <style>
+    .certificado-page {
+      padding: 14px 16px 24px;
+    }
+
+    .certificado-card {
+      background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+      border: 1px solid #d8e1ea;
+      border-radius: 16px;
+      box-shadow: 0 14px 34px rgba(31, 41, 55, 0.08);
+      margin: 0 auto;
+      max-width: 780px;
+      overflow: hidden;
+    }
+
+    .certificado-card__header {
+      background: linear-gradient(135deg, #0f4c81 0%, #1b6ca8 55%, #5aa9e6 100%);
+      color: #fff;
+      padding: 18px 24px 16px;
+    }
+
+    .certificado-card__title {
+      font-size: 1.7rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin: 0 0 4px;
+    }
+
+    .certificado-card__subtitle {
+      color: rgba(255, 255, 255, 0.9);
+      font-size: 0.93rem;
+      line-height: 1.35;
+      margin: 0;
+      max-width: 640px;
+    }
+
+    .certificado-form {
+      padding: 18px 24px 20px;
+    }
+
+    .certificado-grid {
+      display: grid;
+      gap: 14px 18px;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .certificado-field {
+      min-width: 0;
+    }
+
+    .certificado-field--full {
+      grid-column: 1 / -1;
+    }
+
+    .certificado-field label {
+      color: #17324d;
+      display: block;
+      font-weight: 600;
+      margin: 0;
+    }
+
+    .certificado-field label > span:first-child {
+      min-width: 7.5ex;
+    }
+
+    .certificado-field input[type="date"],
+    .certificado-field textarea {
+      background: #fff;
+      border: 1px solid #c8d3df;
+      border-radius: 12px;
+      box-sizing: border-box;
+      margin-top: 6px;
+      padding: 9px 12px;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+      width: 100%;
+    }
+
+    .certificado-field input[type="date"]:focus,
+    .certificado-field textarea:focus {
+      border-color: #1b6ca8;
+      box-shadow: 0 0 0 3px rgba(27, 108, 168, 0.14);
+      outline: none;
+    }
+
+    .certificado-field textarea {
+      min-height: 88px;
+      resize: vertical;
+    }
+
+    .certificado-field .bootstrap-select {
+      margin-top: 6px;
+      width: 100% !important;
+    }
+
+    .certificado-field .bootstrap-select .dropdown-toggle,
+    .certificado-field .file-label,
+    .certificado-field .file-input-container {
+      border-radius: 12px;
+    }
+
+    .certificado-field .bootstrap-select .dropdown-toggle {
+      background: #fff;
+      border: 1px solid #c8d3df;
+      min-height: 40px;
+      padding: 8px 12px;
+    }
+
+    .certificado-field .bootstrap-select .dropdown-toggle:focus,
+    .certificado-field .bootstrap-select.show .dropdown-toggle {
+      border-color: #1b6ca8;
+      box-shadow: 0 0 0 3px rgba(27, 108, 168, 0.14) !important;
+      outline: none !important;
+    }
+
+    .certificado-field .bootstrap-select .filter-option {
+      color: #17324d;
+    }
+
+    .certificado-field .bootstrap-select .dropdown-menu {
+      border: 1px solid #d8e1ea;
+      border-radius: 14px;
+      box-shadow: 0 18px 36px rgba(15, 23, 42, 0.14);
+      overflow: hidden;
+    }
+
+    .certificado-field .file-input-container {
+      background: linear-gradient(180deg, #f8fafc 0%, #eef4f8 100%);
+      border: 1px dashed #b8c6d6;
+      margin-top: 6px;
+      padding: 10px 12px;
+      width: 100%;
+    }
+
+    .certificado-field .file-label {
+      background: #fff;
+      border: 1px solid #c8d3df;
+      color: #17324d;
+      font-weight: 600;
+      padding: 8px 12px;
+    }
+
+    .certificado-field .file-name {
+      color: #49627c;
+      margin-top: 8px;
+    }
+
     .campo-obrigatorio-invalido + .bootstrap-select .dropdown-toggle {
       border-color: #dc3545;
     }
@@ -23,17 +168,71 @@
     .mensagem-validacao-campo {
       color: #dc3545;
       display: none;
-      margin-top: 4px;
+      margin-top: 3px;
+      font-size: 0.88rem;
     }
 
     .mensagem-validacao-campo--visivel {
       display: block;
     }
+
+    .certificado-actions {
+      border-top: 1px solid #dde6ef;
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 18px;
+      padding-top: 16px;
+    }
+
+    .certificado-actions .btn {
+      background: linear-gradient(135deg, #0f4c81 0%, #1b6ca8 100%);
+      border: none;
+      border-radius: 999px;
+      box-shadow: 0 8px 20px rgba(27, 108, 168, 0.22);
+      font-weight: 700;
+      min-width: 210px;
+      padding: 10px 18px;
+    }
+
+    .certificado-actions .btn:hover,
+    .certificado-actions .btn:focus {
+      background: linear-gradient(135deg, #0c426f 0%, #175f93 100%);
+    }
+
+    @media (max-width: 768px) {
+      .certificado-page {
+        padding: 10px 8px 18px;
+      }
+
+      .certificado-card__header,
+      .certificado-form {
+        padding-left: 14px;
+        padding-right: 14px;
+      }
+
+      .certificado-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .certificado-actions .btn {
+        width: 100%;
+      }
+    }
   </style>
 
-  <form method="post" enctype="multipart/form-data" id="form_carregar_certificado"> {% csrf_token %}
+  <div class="certificado-page">
+    <div class="certificado-card">
+      <div class="certificado-card__header">
+        <h1 class="certificado-card__title">{% lng "Carregar Certificado" "Load Certificate" %}</h1>
+        <p class="certificado-card__subtitle">
+          {% lng "Associe um arquivo de um tipo de certificado a um usuário." "Associate a certificate file to a user." %}
+        </p>
+      </div>
 
-    <div>
+      <form method="post" enctype="multipart/form-data" id="form_carregar_certificado" class="certificado-form"> {% csrf_token %}
+        <div class="certificado-grid">
+
+    <div class="certificado-field">
       <label for="projeto">
         <span style="display:inline-block; width:7.5ex; text-align:right;">
           {% lng "Projeto:" "Project:" %}
@@ -55,7 +254,7 @@
       </label>
     </div>
 
-    <div>
+    <div class="certificado-field">
       <label for="usuario">
         <span style="display:inline-block; width:7.5ex; text-align:right;">
           {% lng "Usuário:" "User:" %}
@@ -72,7 +271,7 @@
       </label>
     </div>
 
-    <div>
+    <div class="certificado-field">
       <label for="data">
         <span style="display:inline-block; width:7.5ex; text-align:right;">
           {% lng "Data:" "Date:" %}
@@ -81,7 +280,7 @@
       </label>
     </div>
 
-    <div>
+    <div class="certificado-field">
       <label for="tipo">
         <span style="display:inline-block; width:7.5ex; text-align:right;">
           {% lng "Tipo:" "Type:" %}
@@ -103,25 +302,31 @@
       </label>
     </div>
 
-    <div>
+    <div class="certificado-field certificado-field--full">
       <label for="observacao">
         {% lng "Observação:" "Observation:" %}
-      </label><br>
+      </label>
       <textarea id="observacao" name="observacao" rows="3" cols="80" maxlength="1000">{{observacao}}</textarea>
     </div>
 
-    <div>
+    <div class="certificado-field certificado-field--full">
       <label for="documento">
         {% lng "Certificado:" "Certificate:" %}
       </label>
-      {% include "selecionar_arquivo.html" with arquivo_nome="documento" arquivo_accept="*" required=True %}<br><br>
+      {% include "selecionar_arquivo.html" with arquivo_nome="documento" arquivo_accept="*" required=True %}
     </div>
 
-    <button type="submit" class="btn btn-primary">
-      {% lng "Cadastrar Certificado" "Register Certificate" %}
-    </button>
+        </div>
 
-  </form>
+        <div class="certificado-actions">
+          <button type="submit" class="btn btn-primary">
+            {% lng "Cadastrar Certificado" "Register Certificate" %}
+          </button>
+        </div>
+
+      </form>
+    </div>
+  </div>
 
   <script>
     function atualizaValidacaoTipoCertificado() {
