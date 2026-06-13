@@ -40,6 +40,11 @@
     flex: 0 0 calc(100% - 5.2em);
     max-width: calc(100% - 5.2em);
     position: relative;
+      /*
+        Spinner reaproveitado no painel de upload.
+        Mesmo com a barra de progresso, ele continua útil para comunicar atividade
+        quando o navegador fica algum tempo sem emitir novos eventos de progresso.
+      */
     width: 100%;
     padding-right: 15px;
     padding-left: 6px;
@@ -48,7 +53,7 @@
 
   .upload-status {
     min-width: 16.5rem;
-    max-width: 24rem;
+    max-width: 26rem;
     padding: 0.55rem 0.7rem;
     border-radius: 0.8rem;
     background: linear-gradient(135deg, #f8fbff 0%, #eef4ff 100%);
@@ -72,6 +77,10 @@
   .upload-status--error {
     background: linear-gradient(135deg, #fff5f5 0%, #ffe8e8 100%);
     border-color: rgba(190, 79, 79, 0.22);
+      /*
+        Cartão de status do upload exibido no rodapé da modal.
+        A aparência muda conforme a fase: enviando, aguardando servidor, concluído ou erro.
+      */
   }
 
   .upload-status-text {
@@ -149,6 +158,7 @@
   .upload-status--processing .upload-status-spinner {
     border-top-color: #c4881b;
     box-shadow: 0 6px 14px rgba(181, 125, 31, 0.18);
+      /* Cabeçalho do cartão: spinner, mensagem principal e badge da fase atual. */
   }
 
   .upload-status--completed .upload-status-spinner {
@@ -289,6 +299,11 @@
   @media (max-width: 767px) {
     .upload-status-meta {
       grid-template-columns: 1fr;
+      /*
+        Área opcional de aviso para dois cenários específicos:
+        1) upload aparentemente travado sem novos bytes
+        2) servidor demorando demais para responder após o envio completo
+      */
     }
   }
 
@@ -319,7 +334,7 @@
     <h5 id="documentacao" class="modal-title">
       {% if documento %}{% lng "Editar" "Edit" %}{% else %}{% lng "Adicionar" "Add" %}{% endif %} {% lng "Documento" "Document" %}
     </h5>
-    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+    <button type="button" id="fecha_modal_topo" class="close" data-dismiss="modal" aria-label="Close">
       <span aria-hidden="true">&times;</span>
     </button>
   </div>
@@ -524,7 +539,9 @@
       <div class="upload-status-head">
         <div class="upload-status-title">
           <div class="carregando upload-status-spinner" aria-hidden="true"></div>
-          <div class="upload-status-text" id="upload_status_text">{% lng "Preparando upload..." "Preparing upload..." %}</div>
+          <div class="upload-status-text" id="upload_status_text">
+            <span lang="pt">Preparando upload...</span><span lang="en" style="display:none">Preparing upload...</span>
+          </div>
         </div>
         <div class="upload-status-badge" id="upload_status_badge">Upload</div>
       </div>
@@ -555,12 +572,13 @@
       </div>
       <div class="upload-status-warning" id="upload_warning"></div>
     </div>
-    <button type="button" class="btn btn-secondary mb-1" data-dismiss="modal">Fechar</button>
+    <button type="button" id="fecha_modal_rodape" class="btn btn-secondary mb-1" data-dismiss="modal">Fechar</button>
     <button id="atualiza" type="submit" class="btn btn-primary mb-1">Enviar</button>
   </div>
 
   <script>
 
+    // Quando a organização muda, a lista de projetos é filtrada no próprio modal.
     $("#organizacao").change(function() {
       if($(this).val()) {
         $(".proj").hide();
@@ -574,6 +592,7 @@
       $("#organizacao").val($('#projeto option:selected').attr("data-org") );
     });
 
+    // Alguns tipos de documento já nascem como não confidenciais.
     $("#tipo_documento").change(function() {
       {% if confidencial is None %} {% comment %} Significa que não esta abrindo um documento é algo novo {% endcomment %}
         if($(this).val()==26 || $(this).val()==37) { //  (26, 'Relatório Publicado'), 37, 'Materia na Midia'
@@ -589,7 +608,7 @@
     });
     $("#tipo_documento").trigger("change");  // Para rodar quando estiver carregando
 
-    // Pelo menos um campo deve ser selecionado
+    // Regra do formulário: é obrigatório informar um arquivo ou um link.
     $("#arquivo").change(function() {      
       $("#link").prop("required", !$(this).val());
     });
@@ -604,11 +623,48 @@
 </form>
 
 <script>
+  function idiomaAtualEhIngles() {
+    lingua_atual = localStorage.getItem("lingua");
+    return lingua_atual === "en";
+  }
+
+  function textoBilingue(pt, en) {
+    var exibePt = idiomaAtualEhIngles() ? ' style="display:none"' : "";
+    var exibeEn = idiomaAtualEhIngles() ? "" : ' style="display:none"';
+    return '<span lang="pt"' + exibePt + '>' + pt + '</span>' +
+           '<span lang="en"' + exibeEn + '>' + en + '</span>';
+  }
+
+  // Estado global do upload desta modal.
+  // Como o envio é AJAX e assíncrono, concentramos aqui as informações
+  // necessárias para exibir progresso, velocidade, ETA e avisos de stall.
   var uploadStatusInterval = null;
   var uploadStatusState = null;
+
+  // Limites usados só para comunicação com o usuário.
   var UPLOAD_STALL_WARNING_SECONDS = 45;
   var SERVER_RESPONSE_WARNING_SECONDS = 30;
+  var UPLOAD_SPEED_HOLD_SECONDS = 8;
 
+  function getModalUpload() {
+    return $("#popup").closest(".modal").length ? $("#popup").closest(".modal") : $("#popup");
+  }
+
+  // Enquanto o upload está ativo, impedimos fechamento acidental por clique fora, ESC ou botões.
+  function atualizaProtecaoFechamentoModal(bloquearFechamento) {
+    var modal = getModalUpload();
+    var botoesFechar = $("#fecha_modal_topo, #fecha_modal_rodape");
+
+    botoesFechar.prop("disabled", !!bloquearFechamento);
+    botoesFechar.attr("aria-disabled", bloquearFechamento ? "true" : "false");
+
+    if (modal.length && modal.data("bs.modal")) {
+      modal.data("bs.modal")._config.backdrop = bloquearFechamento ? "static" : true;
+      modal.data("bs.modal")._config.keyboard = !bloquearFechamento;
+    }
+  }
+
+  // Troca as classes visuais do painel conforme a fase atual do upload.
   function atualizaEstadoVisualUpload(estado) {
     var painel = $("#carregando_arquivo");
     painel.removeClass("upload-status--processing upload-status--completed upload-status--error");
@@ -629,6 +685,7 @@
     $("#upload_status_badge").text(badge);
   }
 
+  // Exibe um aviso complementar abaixo da grade de métricas quando necessário.
   function atualizaAvisoUpload(mensagem, tipo) {
     var aviso = $("#upload_warning");
 
@@ -639,7 +696,7 @@
       return;
     }
 
-    aviso.text(mensagem);
+    aviso.html(mensagem);
     aviso.addClass("upload-status-warning--visible");
 
     if (tipo === "erro") {
@@ -647,6 +704,7 @@
     }
   }
 
+  // Converte bytes para uma forma legível em tela, inclusive para velocidade.
   function formataBytes(totalBytes) {
     if (!totalBytes || totalBytes < 0) {
       return "0 B";
@@ -665,6 +723,7 @@
     return valor.toFixed(casas) + " " + unidades[unidadeIndex];
   }
 
+  // Converte segundos em texto amigável para tempo total e ETA.
   function formataDuracao(totalSegundos) {
     totalSegundos = Math.max(0, Math.floor(totalSegundos || 0));
 
@@ -681,9 +740,10 @@
     return segundos + "s";
   }
 
+  // Atualiza apenas os campos recebidos, sem resetar o restante do painel.
   function atualizaPainelUpload(campos) {
     if (campos.texto !== undefined) {
-      $("#upload_status_text").text(campos.texto);
+      $("#upload_status_text").html(campos.texto);
     }
     if (campos.percentual !== undefined) {
       var percentual = Math.max(0, Math.min(100, campos.percentual));
@@ -703,10 +763,15 @@
       $("#upload_eta").text(campos.eta);
     }
     if (campos.etaLabel !== undefined) {
-      $("#upload_eta_label").text(campos.etaLabel);
+      $("#upload_eta_label").html(campos.etaLabel);
     }
   }
 
+  /*
+    Prepara o painel no momento em que o usuário dispara o submit.
+    Aqui ainda não existe garantia de que o navegador começou a mandar bytes,
+    por isso o estado inicial é "preparando".
+  */
   function iniciaPainelUpload(totalBytes) {
     uploadStatusState = {
       totalBytes: totalBytes || 0,
@@ -714,17 +779,20 @@
       startedAt: Date.now(),
       lastProgressAt: Date.now(),
       responseWaitStartedAt: null,
-      speedSampleAt: Date.now(),
-      speedSampleBytes: 0,
+      lastMeasuredSpeedBytes: 0,
+      lastMeasuredSpeedAt: null,
+      lastSpeedBytesPoint: 0,
+      lastSpeedAtPoint: Date.now(),
       fase: "preparando"
     };
 
     $("#carregando_arquivo").show();
     $("#atualiza").prop("disabled", true);
+    atualizaProtecaoFechamentoModal(true);
     atualizaEstadoVisualUpload("preparando");
 
     atualizaPainelUpload({
-      texto: "Preparando upload...",
+      texto: textoBilingue("Preparando upload...", "Preparing upload..."),
       percentual: 0,
       bytes: "0 B / " + formataBytes(totalBytes),
       velocidade: "0 B/s",
@@ -747,25 +815,30 @@
 
       var now = Date.now();
       var elapsedSeconds = (now - uploadStatusState.startedAt) / 1000;
-      var deltaSeconds = (now - uploadStatusState.speedSampleAt) / 1000;
-      var deltaBytes = uploadStatusState.enviadosBytes - uploadStatusState.speedSampleBytes;
-      var speedBytes = deltaSeconds > 0 ? Math.max(0, deltaBytes / deltaSeconds) : 0;
+      var secondsSinceLastSpeed = uploadStatusState.lastMeasuredSpeedAt ? (now - uploadStatusState.lastMeasuredSpeedAt) / 1000 : null;
+      var speedBytes = uploadStatusState.lastMeasuredSpeedBytes || 0;
       var remainingBytes = Math.max(0, (uploadStatusState.totalBytes || 0) - uploadStatusState.enviadosBytes);
       var eta = "--";
       var etaLabel = "ETA";
       var aviso = "";
 
-      uploadStatusState.speedSampleAt = now;
-      uploadStatusState.speedSampleBytes = uploadStatusState.enviadosBytes;
-
+      // Depois que o browser termina o envio, o painel passa a medir espera do servidor.
       if (uploadStatusState.fase === "aguardando_resposta") {
         var responseWaitSeconds = (now - uploadStatusState.responseWaitStartedAt) / 1000;
-        etaLabel = "Status";
-        eta = "Servidor processando resposta...";
+        etaLabel = textoBilingue("Status", "Status");
+        eta = textoBilingue("Servidor processando resposta...", "Server processing response...");
         if (responseWaitSeconds >= SERVER_RESPONSE_WARNING_SECONDS) {
-          aviso = "Arquivo transferido, mas o servidor esta demorando para responder ha " + formataDuracao(responseWaitSeconds) + ".";
+          aviso = textoBilingue(
+            "Arquivo transferido, mas o servidor esta demorando para responder ha " + formataDuracao(responseWaitSeconds) + ".",
+            "File transferred, but the server has been taking too long to respond for " + formataDuracao(responseWaitSeconds) + "."
+          );
         }
-      } else if (speedBytes > 0 && remainingBytes > 0) {
+      } else if (uploadStatusState.fase === "enviando" && secondsSinceLastSpeed !== null && secondsSinceLastSpeed > UPLOAD_SPEED_HOLD_SECONDS) {
+        // Segura o último valor por alguns segundos antes de assumir velocidade zero.
+        speedBytes = 0;
+      }
+
+      if (speedBytes > 0 && remainingBytes > 0) {
         eta = formataDuracao(remainingBytes / speedBytes);
       } else if ((uploadStatusState.totalBytes || 0) > 0 && uploadStatusState.enviadosBytes >= (uploadStatusState.totalBytes || 0)) {
         eta = "0s";
@@ -774,7 +847,11 @@
       if (uploadStatusState.fase === "enviando") {
         var stalledSeconds = (now - uploadStatusState.lastProgressAt) / 1000;
         if (stalledSeconds >= UPLOAD_STALL_WARNING_SECONDS) {
-          aviso = "Sem avancar no envio ha " + formataDuracao(stalledSeconds) + ". Isso costuma indicar conexao travada ou servidor sem receber novos dados.";
+          // Se não há progresso novo por muito tempo, sinalizamos possível travamento.
+          aviso = textoBilingue(
+            "Sem avancar no envio ha " + formataDuracao(stalledSeconds) + ". Isso costuma indicar conexao travada ou servidor sem receber novos dados.",
+            "No upload progress for " + formataDuracao(stalledSeconds) + ". This usually indicates a stalled connection or a server that stopped receiving new data."
+          );
         }
       }
 
@@ -788,6 +865,7 @@
     }, 500);
   }
 
+  // Encerra timers e reseta o estado do painel ao concluir ou falhar.
   function finalizaPainelUpload(esconder) {
     if (uploadStatusInterval) {
       clearInterval(uploadStatusInterval);
@@ -796,6 +874,7 @@
 
     uploadStatusState = null;
     $("#atualiza").prop("disabled", false);
+    atualizaProtecaoFechamentoModal(false);
     atualizaAvisoUpload("");
 
     if (esconder) {
@@ -803,6 +882,7 @@
     }
   }
 
+  // Tenta extrair uma mensagem textual útil de respostas HTML de erro do backend.
   function extraiMensagemErro(request) {
     if (!request || !request.responseText) {
       return "Erro ao processar o upload.";
@@ -815,6 +895,10 @@
     return texto || request.responseText;
   }
 
+  /*
+    Traduz um erro técnico em uma explicação mais específica para o usuário.
+    O texto final depende da fase em que o upload estava quando a falha ocorreu.
+  */
   function descreveFalhaUpload(request) {
     var contato = "Por favor contactar: <a href='mailto:lpsoares@insper.edu.br'>lpsoares@insper.edu.br</a>";
     var fase = uploadStatusState ? uploadStatusState.fase : null;
@@ -836,6 +920,7 @@
     return "Erro no servidor. " + contato;
   }
 
+  // Validação leve no browser: verifica se o arquivo ainda está acessível via File API.
   function arquivoSelecionadoValido(arquivoInput, callback) {
     if (!arquivoInput || !arquivoInput.files || arquivoInput.files.length === 0) {
       callback(true);
@@ -864,6 +949,11 @@
     }
   }
 
+  /*
+    Função principal do envio da modal.
+    Monta o FormData, dispara o POST AJAX e atualiza o painel em resposta aos
+    eventos de progresso, sucesso e erro entregues pelo navegador.
+  */
   function enviarFormularioDocumento(formElement) {
     var arquivoInput = document.getElementById("arquivo");
     var arquivo = arquivoInput && arquivoInput.files ? arquivoInput.files[0] : null;
@@ -901,11 +991,12 @@
         var xhr = $.ajaxSettings.xhr();
 
         if (xhr.upload) {
+          // O navegador iniciou a tentativa de envio, mas ainda sem progresso mensurável.
           xhr.upload.addEventListener("loadstart", function() {
             atualizaPainelUpload({
-              texto: "Conectando ao servidor...",
+              texto: textoBilingue("Conectando ao servidor...", "Connecting to server..."),
               percentual: 0,
-              eta: "Calculando...",
+              eta: textoBilingue("Calculando...", "Calculating..."),
               etaLabel: "ETA"
             });
           });
@@ -915,21 +1006,38 @@
               return;
             }
 
+            // A velocidade é suavizada para não oscilar demais entre eventos espaçados.
+            var agora = Date.now();
+            var deltaBytes = event.loaded - uploadStatusState.lastSpeedBytesPoint;
+            var deltaSeconds = (agora - uploadStatusState.lastSpeedAtPoint) / 1000;
+            if (deltaBytes > 0 && deltaSeconds >= 1.5) {
+              var velocidadeInstantanea = deltaBytes / deltaSeconds;
+              if (uploadStatusState.lastMeasuredSpeedBytes > 0) {
+                uploadStatusState.lastMeasuredSpeedBytes = (uploadStatusState.lastMeasuredSpeedBytes * 0.7) + (velocidadeInstantanea * 0.3);
+              } else {
+                uploadStatusState.lastMeasuredSpeedBytes = velocidadeInstantanea;
+              }
+              uploadStatusState.lastMeasuredSpeedAt = agora;
+              uploadStatusState.lastSpeedBytesPoint = event.loaded;
+              uploadStatusState.lastSpeedAtPoint = agora;
+            }
+
             uploadStatusState.fase = "enviando";
             uploadStatusState.enviadosBytes = event.loaded;
-            uploadStatusState.lastProgressAt = Date.now();
+            uploadStatusState.lastProgressAt = agora;
             atualizaEstadoVisualUpload("enviando");
 
             var totalBytes = event.lengthComputable ? event.total : uploadStatusState.totalBytes;
             var percentual = totalBytes > 0 ? (event.loaded / totalBytes) * 100 : 0;
 
             atualizaPainelUpload({
-              texto: "Enviando arquivo ao servidor...",
+              texto: textoBilingue("Enviando arquivo ao servidor...", "Uploading file to server..."),
               percentual: percentual,
               bytes: formataBytes(event.loaded) + " / " + formataBytes(totalBytes)
             });
           });
 
+          // O corpo do upload já foi enviado; agora resta esperar a resposta final do servidor.
           xhr.upload.addEventListener("load", function() {
             if (!uploadStatusState) {
               return;
@@ -942,32 +1050,33 @@
             atualizaEstadoVisualUpload("aguardando_resposta");
 
             atualizaPainelUpload({
-              texto: "Arquivo transferido. Aguardando resposta do servidor...",
+              texto: textoBilingue("Arquivo transferido. Aguardando resposta do servidor...", "File transferred. Waiting for server response..."),
               percentual: 100,
               bytes: formataBytes(uploadStatusState.totalBytes) + " / " + formataBytes(uploadStatusState.totalBytes),
-              eta: "Servidor processando resposta...",
-              etaLabel: "Status"
+              eta: textoBilingue("Servidor processando resposta...", "Server processing response..."),
+              etaLabel: textoBilingue("Status", "Status")
             });
           });
 
+          // Erro durante o envio dos dados, normalmente rede ou backend interrompido.
           xhr.upload.addEventListener("error", function() {
             atualizaEstadoVisualUpload("erro");
             atualizaPainelUpload({
-              texto: "Falha durante a transferencia do arquivo.",
+              texto: textoBilingue("Falha durante a transferencia do arquivo.", "Failure while transferring the file."),
               eta: "--",
               etaLabel: "ETA"
             });
-            atualizaAvisoUpload("A conexao falhou durante o envio do arquivo.", "erro");
+            atualizaAvisoUpload(textoBilingue("A conexao falhou durante o envio do arquivo.", "The connection failed while uploading the file."), "erro");
           });
 
           xhr.upload.addEventListener("abort", function() {
             atualizaEstadoVisualUpload("erro");
             atualizaPainelUpload({
-              texto: "Upload cancelado antes da conclusao.",
+              texto: textoBilingue("Upload cancelado antes da conclusao.", "Upload canceled before completion."),
               eta: "--",
               etaLabel: "ETA"
             });
-            atualizaAvisoUpload("O upload foi cancelado antes da conclusao.", "erro");
+            atualizaAvisoUpload(textoBilingue("O upload foi cancelado antes da conclusao.", "The upload was canceled before completion."), "erro");
           });
         }
 
@@ -977,26 +1086,35 @@
       processData: false,
       contentType: false,
       success: function(response){
+        // O backend respondeu corretamente e a página pode ser recarregada.
         atualizaEstadoVisualUpload("concluido");
         atualizaPainelUpload({
-          texto: "Upload concluido. Atualizando pagina...",
+          texto: textoBilingue("Upload concluido. Atualizando pagina...", "Upload completed. Refreshing page..."),
           percentual: 100,
-          eta: "Concluido",
-          etaLabel: "Status"
+          eta: textoBilingue("Concluido", "Completed"),
+          etaLabel: textoBilingue("Status", "Status")
         });
         finalizaPainelUpload(true);
         $("#popup").modal("hide");
         location.reload();
       },
       error: function (request, status, error) {
+        // Aqui entram falhas de rede, do daemon WSGI ou do próprio backend.
         var mensagemFalha = descreveFalhaUpload(request);
         atualizaEstadoVisualUpload("erro");
         atualizaPainelUpload({
-          texto: request && request.status === 0 ? "Conexao interrompida durante o upload." : "Erro apos o envio. Verifique a resposta do servidor.",
+          texto: request && request.status === 0
+            ? textoBilingue("Conexao interrompida durante o upload.", "Connection interrupted during upload.")
+            : textoBilingue("Erro apos o envio. Verifique a resposta do servidor.", "Error after upload. Check the server response."),
           eta: "--",
           etaLabel: "ETA"
         });
-        atualizaAvisoUpload(request && request.status === 0 ? "A conexao foi interrompida antes da conclusao do upload." : "O servidor nao respondeu como esperado para este upload.", "erro");
+        atualizaAvisoUpload(
+          request && request.status === 0
+            ? textoBilingue("A conexao foi interrompida antes da conclusao do upload.", "The connection was interrupted before the upload completed.")
+            : textoBilingue("O servidor nao respondeu como esperado para este upload.", "The server did not respond as expected for this upload."),
+          "erro"
+        );
         finalizaPainelUpload(false);
 
         if (request && request.status === 0) {
@@ -1027,6 +1145,7 @@
     });
   }
   
+  // Entrada do submit da modal: valida o formulário e só então inicia o AJAX.
   $("form#meuForm").submit(function(e){
       e.preventDefault();
 
@@ -1057,5 +1176,21 @@
       });
 
     return false;
+  });
+
+  // Bloqueia fechamento acidental do modal enquanto o upload ainda estiver em andamento.
+  getModalUpload().on("hide.bs.modal", function(event) {
+    if (!uploadStatusState) {
+      return;
+    }
+
+    event.preventDefault();
+    atualizaAvisoUpload(
+      textoBilingue(
+        "O upload ainda esta em andamento. Aguarde a conclusao antes de fechar esta janela.",
+        "The upload is still in progress. Wait for it to finish before closing this window."
+      ),
+      "erro"
+    );
   });
 </script> 
