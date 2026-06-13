@@ -46,6 +46,135 @@
     display: inline-block;
   }
 
+  .upload-status {
+    min-width: 20rem;
+    max-width: 32rem;
+    padding: 0.85rem 1rem;
+    border-radius: 1rem;
+    background: linear-gradient(135deg, #f8fbff 0%, #eef4ff 100%);
+    border: 1px solid rgba(116, 152, 205, 0.22);
+    box-shadow: 0 12px 28px rgba(61, 98, 148, 0.12);
+    font-size: 0.92rem;
+    line-height: 1.25;
+  }
+
+  .upload-status-text {
+    font-weight: 600;
+    color: #1f3556;
+    margin-bottom: 0.45rem;
+    letter-spacing: 0.01em;
+  }
+
+  .upload-progress {
+    width: 100%;
+    height: 0.92rem;
+    background: rgba(116, 152, 205, 0.13);
+    border-radius: 999px;
+    overflow: hidden;
+    margin-bottom: 0.55rem;
+    box-shadow: inset 0 1px 2px rgba(31, 53, 86, 0.08);
+  }
+
+  .upload-progress-bar {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #7aa7ea 0%, #4f78b7 45%, #2f5f9e 100%);
+    background-size: 200% 100%;
+    transition: width 0.25s ease;
+    position: relative;
+    animation: uploadShift 2.4s linear infinite;
+  }
+
+  .upload-progress-bar::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.38) 50%, transparent 100%);
+    transform: translateX(-100%);
+    animation: uploadSheen 1.8s ease-in-out infinite;
+  }
+
+  .upload-status-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    margin-bottom: 0.35rem;
+  }
+
+  .upload-status-title {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    min-width: 0;
+  }
+
+  .upload-status-spinner {
+    flex: 0 0 auto;
+    width: 1.9rem;
+    height: 1.9rem;
+    border-width: 4px;
+    box-shadow: 0 6px 14px rgba(79, 120, 183, 0.18);
+  }
+
+  .upload-status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.2rem 0.6rem;
+    border-radius: 999px;
+    background: rgba(79, 120, 183, 0.12);
+    color: #355b93;
+    font-size: 0.77rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .upload-status-badge::before {
+    content: "";
+    width: 0.48rem;
+    height: 0.48rem;
+    border-radius: 999px;
+    background: #4f78b7;
+    box-shadow: 0 0 0 0 rgba(79, 120, 183, 0.45);
+    animation: uploadPulse 1.6s infinite;
+  }
+
+  .upload-status-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+    color: #5f6b7a;
+    font-size: 0.82rem;
+  }
+
+  .upload-status-meta span {
+    white-space: nowrap;
+    padding: 0.35rem 0.6rem;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.78);
+    border: 1px solid rgba(116, 152, 205, 0.12);
+    color: #456188;
+    box-shadow: 0 4px 12px rgba(80, 108, 148, 0.08);
+  }
+
+  @keyframes uploadShift {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 200% 50%; }
+  }
+
+  @keyframes uploadSheen {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+  }
+
+  @keyframes uploadPulse {
+    0% { box-shadow: 0 0 0 0 rgba(79, 120, 183, 0.45); }
+    70% { box-shadow: 0 0 0 8px rgba(79, 120, 183, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(79, 120, 183, 0); }
+  }
+
 
 </style>
 
@@ -258,8 +387,23 @@
   </div>
 
   <div class="modal-footer">    
-    <div id="carregando_arquivo" style="float: left; display: none;">{% lng "Carregando arquivo..." "Loading file..." %}
-      <div class="carregando"></div>
+    <div id="carregando_arquivo" class="upload-status" style="float: left; display: none;">
+      <div class="upload-status-head">
+        <div class="upload-status-title">
+          <div class="carregando upload-status-spinner" aria-hidden="true"></div>
+          <div class="upload-status-text" id="upload_status_text">{% lng "Preparando upload..." "Preparing upload..." %}</div>
+        </div>
+        <div class="upload-status-badge">Upload</div>
+      </div>
+      <div class="upload-progress" aria-hidden="true">
+        <div class="upload-progress-bar" id="upload_progress_bar"></div>
+      </div>
+      <div class="upload-status-meta">
+        <span id="upload_percentual">0%</span>
+        <span id="upload_bytes">0 B / 0 B</span>
+        <span id="upload_velocidade">0 B/s</span>
+        <span id="upload_tempo">0s</span>
+      </div>
     </div>
     <button type="button" class="btn btn-secondary mb-1" data-dismiss="modal">Fechar</button>
     <button id="atualiza" type="submit" class="btn btn-primary mb-1">Enviar</button>
@@ -310,6 +454,117 @@
 </form>
 
 <script>
+  var uploadStatusInterval = null;
+  var uploadStatusState = null;
+
+  function formataBytes(totalBytes) {
+    if (!totalBytes || totalBytes < 0) {
+      return "0 B";
+    }
+
+    var unidades = ["B", "KB", "MB", "GB", "TB"];
+    var valor = totalBytes;
+    var unidadeIndex = 0;
+
+    while (valor >= 1024 && unidadeIndex < unidades.length - 1) {
+      valor = valor / 1024;
+      unidadeIndex += 1;
+    }
+
+    var casas = unidadeIndex === 0 ? 0 : 1;
+    return valor.toFixed(casas) + " " + unidades[unidadeIndex];
+  }
+
+  function formataDuracao(totalSegundos) {
+    totalSegundos = Math.max(0, Math.floor(totalSegundos || 0));
+
+    var horas = Math.floor(totalSegundos / 3600);
+    var minutos = Math.floor((totalSegundos % 3600) / 60);
+    var segundos = totalSegundos % 60;
+
+    if (horas > 0) {
+      return horas + "h " + minutos + "m " + segundos + "s";
+    }
+    if (minutos > 0) {
+      return minutos + "m " + segundos + "s";
+    }
+    return segundos + "s";
+  }
+
+  function atualizaPainelUpload(campos) {
+    if (campos.texto !== undefined) {
+      $("#upload_status_text").text(campos.texto);
+    }
+    if (campos.percentual !== undefined) {
+      var percentual = Math.max(0, Math.min(100, campos.percentual));
+      $("#upload_progress_bar").css("width", percentual + "%");
+      $("#upload_percentual").text(percentual.toFixed(1).replace(".0", "") + "%");
+    }
+    if (campos.bytes !== undefined) {
+      $("#upload_bytes").text(campos.bytes);
+    }
+    if (campos.velocidade !== undefined) {
+      $("#upload_velocidade").text(campos.velocidade);
+    }
+    if (campos.tempo !== undefined) {
+      $("#upload_tempo").text(campos.tempo);
+    }
+  }
+
+  function iniciaPainelUpload(totalBytes) {
+    uploadStatusState = {
+      totalBytes: totalBytes || 0,
+      enviadosBytes: 0,
+      startedAt: Date.now(),
+      fase: "preparando"
+    };
+
+    $("#carregando_arquivo").show();
+    $("#atualiza").prop("disabled", true);
+
+    atualizaPainelUpload({
+      texto: "Preparando upload...",
+      percentual: 0,
+      bytes: "0 B / " + formataBytes(totalBytes),
+      velocidade: "0 B/s",
+      tempo: "0s"
+    });
+
+    if (uploadStatusInterval) {
+      clearInterval(uploadStatusInterval);
+    }
+
+    uploadStatusInterval = setInterval(function() {
+      if (!uploadStatusState) {
+        clearInterval(uploadStatusInterval);
+        uploadStatusInterval = null;
+        return;
+      }
+
+      var elapsedSeconds = (Date.now() - uploadStatusState.startedAt) / 1000;
+      var speedBytes = elapsedSeconds > 0 ? uploadStatusState.enviadosBytes / elapsedSeconds : 0;
+
+      atualizaPainelUpload({
+        tempo: formataDuracao(elapsedSeconds),
+        velocidade: formataBytes(speedBytes) + "/s"
+      });
+    }, 500);
+  }
+
+  function finalizaPainelUpload(esconder) {
+    if (uploadStatusInterval) {
+      clearInterval(uploadStatusInterval);
+      uploadStatusInterval = null;
+    }
+
+    uploadStatusState = null;
+    $("#atualiza").prop("disabled", false);
+
+    if (esconder) {
+      $("#carregando_arquivo").hide();
+    }
+  }
+
   function extraiMensagemErro(request) {
     if (!request || !request.responseText) {
       return "Erro ao processar o upload.";
@@ -351,7 +606,9 @@
   }
 
   function enviarFormularioDocumento(formElement) {
-    $("#carregando_arquivo").show();
+    var arquivoInput = document.getElementById("arquivo");
+    var arquivo = arquivoInput && arquivoInput.files ? arquivoInput.files[0] : null;
+    iniciaPainelUpload(arquivo ? arquivo.size : 0);
 
     $.ajaxSetup({
       headers: { "X-CSRFToken": "{{csrf_token}}" }
@@ -381,16 +638,82 @@
       {% elif adiciona == "adiciona_documento_estudante" %}
         url: "{% url adiciona tipo.sigla %}",
       {% endif %}
+      xhr: function() {
+        var xhr = $.ajaxSettings.xhr();
+
+        if (xhr.upload) {
+          xhr.upload.addEventListener("loadstart", function() {
+            atualizaPainelUpload({
+              texto: "Conectando ao servidor...",
+              percentual: 0
+            });
+          });
+
+          xhr.upload.addEventListener("progress", function(event) {
+            if (!uploadStatusState) {
+              return;
+            }
+
+            uploadStatusState.fase = "enviando";
+            uploadStatusState.enviadosBytes = event.loaded;
+
+            var totalBytes = event.lengthComputable ? event.total : uploadStatusState.totalBytes;
+            var percentual = totalBytes > 0 ? (event.loaded / totalBytes) * 100 : 0;
+
+            atualizaPainelUpload({
+              texto: "Enviando arquivo ao servidor...",
+              percentual: percentual,
+              bytes: formataBytes(event.loaded) + " / " + formataBytes(totalBytes)
+            });
+          });
+
+          xhr.upload.addEventListener("load", function() {
+            if (!uploadStatusState) {
+              return;
+            }
+
+            uploadStatusState.fase = "aguardando_resposta";
+            uploadStatusState.enviadosBytes = uploadStatusState.totalBytes;
+
+            atualizaPainelUpload({
+              texto: "Arquivo transferido. Aguardando resposta do servidor...",
+              percentual: 100,
+              bytes: formataBytes(uploadStatusState.totalBytes) + " / " + formataBytes(uploadStatusState.totalBytes)
+            });
+          });
+
+          xhr.upload.addEventListener("error", function() {
+            atualizaPainelUpload({
+              texto: "Falha durante a transferencia do arquivo."
+            });
+          });
+
+          xhr.upload.addEventListener("abort", function() {
+            atualizaPainelUpload({
+              texto: "Upload cancelado antes da conclusao."
+            });
+          });
+        }
+
+        return xhr;
+      },
       data: data,
       processData: false,
       contentType: false,
       success: function(response){
-        $("#carregando_arquivo").hide();
+        atualizaPainelUpload({
+          texto: "Upload concluido. Atualizando pagina...",
+          percentual: 100
+        });
+        finalizaPainelUpload(true);
         $("#popup").modal("hide");
         location.reload();
       },
       error: function (request, status, error) {
-        $("#carregando_arquivo").hide();
+        atualizaPainelUpload({
+          texto: request && request.status === 0 ? "Conexao interrompida durante o upload." : "Erro apos o envio. Verifique a resposta do servidor."
+        });
+        finalizaPainelUpload(false);
 
         if (request && request.status === 0) {
           var arquivoInput = document.getElementById("arquivo");
