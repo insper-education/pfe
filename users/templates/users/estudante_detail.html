@@ -358,9 +358,16 @@
         {% endif %}
       {% endif %}
 
-      {% if certificados %}
+      {% if certificados or user.eh_admin %}
         <hr>
-        <h4>{% lng "Certificados" "Certificates" %}</h4>
+        <h4>
+          {% lng "Certificados" "Certificates" %}
+          {% if user.eh_prof_a %}
+            <small class="esconder">
+              <a href="{% url 'carregar_certificado' %}?proj_id={{alocacoes.last.projeto.id}}&usr_id={{aluno.user.id}}">&#10133;</a>
+            </small>
+          {% endif %}
+        </h4>
         <ul>
           {% for certificado in certificados %}
             <li>

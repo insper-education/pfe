@@ -17,82 +17,88 @@
 
   <form method="post" enctype="multipart/form-data"> {% csrf_token %}
 
-    <br>
-    <label for="projeto">
-      <span style="display:inline-block; width:7.5ex; text-align:right;">
-        {% lng "Projeto:" "Project:" %}
-      </span>
-      <select class="selectpicker show-tick" name="projeto" id="projeto" title="Selecione projeto"
-      data-live-search="true" data-width="560px">
+    <div>
+      <label for="projeto">
+        <span style="display:inline-block; width:7.5ex; text-align:right;">
+          {% lng "Projeto:" "Project:" %}
+        </span>
+        <select class="selectpicker show-tick" name="projeto" id="projeto" title="Selecione projeto"
+         data-live-search="true" data-width="560px">
           <option selected value> -- selecione projeto -- </option>
           <optgroup label="{{projeto.ano}}.{{projeto.semestre}}">
           {% for projeto in projetos %}
             {% ifchanged projeto.semestre %}</optgroup><optgroup label="{{projeto.ano}}.{{projeto.semestre}}">{% endifchanged %}
             {% if projeto %}
-              <option value="{{projeto.id}}" {% if projeto.id == alocacao.aluno.id %}selected{% endif %}>
-              {{projeto.get_titulo}}
+              <option value="{{projeto.id}}" {% if projeto.id == alocacao.aluno.id or projetos|length == 1 %}selected{% endif %}>
+              {{projeto.get_titulo_org}}
             </option>  
             {% endif %}
           {% endfor %}
           </optgroup>
-      </select>
-    </label>
-    <br><br>
+        </select>
+      </label>
+    </div>
 
-    <label for="usuario">
-      <span style="display:inline-block; width:7.5ex; text-align:right;">
-        {% lng "Usuário:" "User:" %}
-      </span>
-      <select class="selectpicker show-tick" name="usuario" id="usuario" title="Selecione usuário"
-      data-live-search="true" data-width="560px">
+    <div>
+      <label for="usuario">
+        <span style="display:inline-block; width:7.5ex; text-align:right;">
+          {% lng "Usuário:" "User:" %}
+        </span>
+        <select class="selectpicker show-tick" name="usuario" id="usuario" title="Selecione usuário"
+         data-live-search="true" data-width="560px">
           <option selected value> -- selecione usuário -- </option>
-          {% comment %} <optgroup label="Semestre Capstone"> {% endcomment %}
           {% for usuario in usuarios %}
-              <option value="{{usuario.id}}">{{usuario}}</option>  
-          {% endfor %}
-          {% comment %} </optgroup> {% endcomment %}
-      </select>
-    </label>
-    <br><br>
-
-    <label for="data">
-      <span style="display:inline-block; width:7.5ex; text-align:right;">
-        {% lng "Data:" "Date:" %}
-      </span>
-      <input id="data" type="date" name="data" value="{{data|date:'Y-m-d'}}" required>
-    </label>
-    <br><br>
-
-    <label for="tipo">
-      <span style="display:inline-block; width:7.5ex; text-align:right;">
-        {% lng "Tipo:" "Type:" %}
-      </span>
-      <select class="selectpicker show-tick" name="tipo" id="tipo" title="Selecione tipo de certificado"
-      data-live-search="true" data-width="560px" required>
-          <option disabled selected value> -- selecione tipo de certificado -- </option>
-          {% comment %} <optgroup label="Semestre Capstone"> {% endcomment %}
-          {% for tipo in tipos_certificados %}
-            {% if tipo %}
-              <option value="{{tipo.id}}">
-              {{tipo.titulo}}
+            <option value="{{usuario.id}}" {% if usuarios|length == 1 %}selected{% endif %}>
+              {{usuario}}
             </option>  
-            {% endif %}
           {% endfor %}
-          {% comment %} </optgroup> {% endcomment %}
-      </select>
-    </label>
-    <br><br>
+        </select>
+      </label>
+    </div>
 
-    <label for="observacao">
-      {% lng "Observação:" "Observation:" %}
-    </label><br>
-    <textarea id="observacao" name="observacao" rows="3" cols="80" maxlength="1000">{{observacao}}</textarea>
-    <br><br>
+    <div>
+      <label for="data">
+        <span style="display:inline-block; width:7.5ex; text-align:right;">
+          {% lng "Data:" "Date:" %}
+        </span>
+        <input id="data" type="date" name="data" value="{{data|date:'Y-m-d'}}" required>
+      </label>
+    </div>
 
-    <label for="documento">
-      {% lng "Certificado:" "Certificate:" %}
-    </label>
-    {% include "selecionar_arquivo.html" with arquivo_nome="documento" arquivo_accept="*" required=True %}<br><br>
+    <div>
+      <label for="tipo">
+        <span style="display:inline-block; width:7.5ex; text-align:right;">
+          {% lng "Tipo:" "Type:" %}
+        </span>
+        <select class="selectpicker show-tick" name="tipo" id="tipo" title="Selecione tipo de certificado"
+        data-live-search="true" data-width="560px" required>
+            <option disabled selected value> -- selecione tipo de certificado -- </option>
+            {% comment %} <optgroup label="Semestre Capstone"> {% endcomment %}
+            {% for tipo in tipos_certificados %}
+              {% if tipo %}
+                <option value="{{tipo.id}}">
+                {{tipo.titulo}}
+              </option>  
+              {% endif %}
+            {% endfor %}
+            {% comment %} </optgroup> {% endcomment %}
+        </select>
+      </label>
+    </div>
+
+    <div>
+      <label for="observacao">
+        {% lng "Observação:" "Observation:" %}
+      </label><br>
+      <textarea id="observacao" name="observacao" rows="3" cols="80" maxlength="1000">{{observacao}}</textarea>
+    </div>
+
+    <div>
+      <label for="documento">
+        {% lng "Certificado:" "Certificate:" %}
+      </label>
+      {% include "selecionar_arquivo.html" with arquivo_nome="documento" arquivo_accept="*" required=True %}<br><br>
+    </div>
 
     <button type="submit" class="btn btn-primary">
       {% lng "Cadastrar Certificado" "Register Certificate" %}

@@ -904,12 +904,6 @@ def estudante_detail(request, primarykey=None):
         "areas_de_interesse_possiveis": Area.objects.filter(ativa=True),
     })
 
-    # Estilos de Comunicação
-    # estilos_respostas = get_respostas_estilos(estudante.user)
-    # if estilos_respostas:
-    #     context["estilos"] = EstiloComunicacao.objects.all()
-    #     context["estilos_respostas"] = estilos_respostas
-
     # Funcionalidade do Grupo
     funcionalidade_grupo = estudante.user.funcionalidade_grupo
     if funcionalidade_grupo:

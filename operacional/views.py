@@ -359,11 +359,25 @@ def carregar_certificado(request):
 
         return render(request, "generic_ml.html", context=context)
 
-    projetos = Projeto.objects.annotate(
-        titulo=Coalesce("titulo_final", "proposta__titulo")
-    ).order_by("-ano", "-semestre", "titulo")
+    if "proj_id" in request.GET:
+        try:
+            projeto_id = int(request.GET["proj_id"])
+            projetos = [get_object_or_404(Projeto, id=projeto_id)]
+        except (TypeError, ValueError):
+            projetos = None
+    else:
+        projetos = Projeto.objects.annotate(
+            titulo=Coalesce("titulo_final", "proposta__titulo")
+        ).order_by("-ano", "-semestre", "titulo")
 
-    usuarios = PFEUser.objects.all()
+    if "usr_id" in request.GET:
+        try:
+            usuario_id = int(request.GET["usr_id"])
+            usuarios = [get_object_or_404(PFEUser, id=usuario_id)]
+        except (TypeError, ValueError):
+            usuarios = None
+    else:
+        usuarios = PFEUser.objects.all()
 
     tipos_certificados = TipoCertificado.objects.all()
 

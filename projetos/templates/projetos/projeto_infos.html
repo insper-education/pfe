@@ -691,7 +691,7 @@
           {% lng "Certificados" "Certificates" %}:
           {% if user.eh_prof_a %}
             <small class="esconder">
-              <a href="{% url 'carregar_certificado' %}">&#10133;</a>
+              <a href="{% url 'carregar_certificado' %}?proj_id={{projeto.id}}">&#10133;</a>
             </small>
           {% endif %}
         </h4>
