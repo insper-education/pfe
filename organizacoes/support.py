@@ -18,7 +18,7 @@ from django.shortcuts import get_object_or_404
 
 from django.conf import settings
 
-from projetos.models import Projeto, Organizacao, Documento
+from projetos.models import Projeto, Organizacao, Documento, Configuracao
 from projetos.support import get_upload_path, simple_upload
 
 from documentos.models import TipoDocumento
@@ -111,9 +111,17 @@ def cria_documento(request, forca_confidencial=False, usuario=None):
         if len(link) > max_length - 1:
             return "<h1>Erro: Nome do link maior que " + str(max_length) + " caracteres.</h1>"
 
+    arquivo_upload = request.FILES.get("arquivo")
+
     max_length = Documento._meta.get_field("documento").max_length
-    if "arquivo" in request.FILES and len(request.FILES["arquivo"].name) > max_length - 1:
+    if arquivo_upload and len(arquivo_upload.name) > max_length - 1:
             return "<h1>Erro: Nome do arquivo maior que " + str(max_length) + " caracteres.</h1>"
+
+    configuracao = Configuracao.objects.only("maxMB_filesize").first()
+    if arquivo_upload and configuracao and request.user.tipo_de_usuario != 4:
+        max_size_bytes = configuracao.maxMB_filesize * 1048576
+        if arquivo_upload.size > max_size_bytes:
+            return "<h1>Erro: Tamanho do arquivo maior que o permitido de " + str(configuracao.maxMB_filesize) + "MB.</h1>"
 
     # (0, 'Português'),
     # (1, 'Inglês'),
@@ -158,8 +166,8 @@ def cria_documento(request, forca_confidencial=False, usuario=None):
         documento.usuario = request.user
 
     algum_arquivo = False
-    if "arquivo" in request.FILES:
-        arquivo = simple_upload(request.FILES["arquivo"],
+    if arquivo_upload:
+        arquivo = simple_upload(arquivo_upload,
                                 path=get_upload_path(documento, ''))
         documento.documento = arquivo[len(settings.MEDIA_URL):]
         algum_arquivo = True

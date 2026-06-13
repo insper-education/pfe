@@ -310,6 +310,18 @@
 </form>
 
 <script>
+  function extraiMensagemErro(request) {
+    if (!request || !request.responseText) {
+      return "Erro ao processar o upload.";
+    }
+
+    var html = document.createElement("div");
+    html.innerHTML = request.responseText;
+    var texto = (html.textContent || html.innerText || "").trim();
+
+    return texto || request.responseText;
+  }
+
   function arquivoSelecionadoValido(arquivoInput, callback) {
     if (!arquivoInput || !arquivoInput.files || arquivoInput.files.length === 0) {
       callback(true);
@@ -389,6 +401,11 @@
             formElement.reportValidity();
             return;
           }
+        }
+
+        if (request && (request.status === 400 || request.status === 413)) {
+          alert(extraiMensagemErro(request));
+          return;
         }
 
         $("#popup").modal("hide");

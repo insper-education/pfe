@@ -8,7 +8,9 @@ Data: 14 de Dezembro de 2020
 import datetime
 import dateutil.parser
 import json
+import logging
 
+from django.core.exceptions import RequestDataTooBig
 from django.conf import settings
 from django.contrib.auth.decorators import login_required, permission_required
 from django.db import transaction
@@ -32,6 +34,8 @@ from projetos.models import Proposta, Organizacao, Projeto, Configuracao, Feedba
 from projetos.models import Anotacao, Conexao, Documento, TipoRetorno, Evento, FeedbackEstudante
 from operacional.models import Curso
 from documentos.models import TipoDocumento
+
+logger = logging.getLogger("django")
 
 # Liberado para Parceiros poderem enviar proposta de projeto mesmo se não logados
 # @login_required
@@ -192,10 +196,28 @@ def adiciona_documento(request, organizacao_id=None, projeto_id=None, tipo_nome=
 
     
     if request.headers.get("X-Requested-With") == "XMLHttpRequest" and request.method == "POST": # Ajax check
-        erro = cria_documento(request, usuario=usuario)
-        if erro:
-           return HttpResponseBadRequest(erro)
-        return JsonResponse({"atualizado": True,})
+        try:
+            erro = cria_documento(request, usuario=usuario)
+            if erro:
+               return HttpResponseBadRequest(erro)
+            return JsonResponse({"atualizado": True,})
+        except RequestDataTooBig:
+            logger.warning(
+                "Upload rejeitado por tamanho no endpoint de documento | user_id=%s | path=%s | tipo=%s",
+                request.user.id,
+                request.path,
+                tipo_nome,
+                exc_info=True,
+            )
+            return HttpResponseBadRequest("<h1>Erro: Tamanho do upload maior que o permitido pelo servidor.</h1>")
+        except Exception:
+            logger.exception(
+                "Erro inesperado ao criar documento | user_id=%s | path=%s | tipo=%s",
+                request.user.id,
+                request.path,
+                tipo_nome,
+            )
+            raise
 
     organizacao = get_object_or_404(Organizacao, id=organizacao_id) if organizacao_id else None
     projeto = get_object_or_404(Projeto, id=projeto_id) if projeto_id else None
