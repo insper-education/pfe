@@ -9,6 +9,8 @@ Data: 1 de Dezembro de 2023
 import datetime
 import dateutil.parser
 import json
+import logging
+import time
 
 from collections import OrderedDict
 
@@ -22,6 +24,9 @@ from projetos.models import Projeto, Organizacao, Documento, Configuracao
 from projetos.support import get_upload_path, simple_upload
 
 from documentos.models import TipoDocumento
+
+
+logger = logging.getLogger("django")
 
 
 def _getFields(obj, tree=None, retval=None, fileobj=None):
@@ -111,7 +116,39 @@ def cria_documento(request, forca_confidencial=False, usuario=None):
         if len(link) > max_length - 1:
             return "<h1>Erro: Nome do link maior que " + str(max_length) + " caracteres.</h1>"
 
-    arquivo_upload = request.FILES.get("arquivo")
+    content_length_header = request.META.get("CONTENT_LENGTH")
+    content_type = request.META.get("CONTENT_TYPE", "")
+    leitura_upload_inicio = time.time()
+
+    logger.warning(
+        "Upload FILES read started | user_id=%s | path=%s | content_length=%s | content_type=%s",
+        getattr(request.user, "id", None),
+        request.path,
+        content_length_header,
+        content_type,
+    )
+
+    try:
+        arquivo_upload = request.FILES.get("arquivo")
+    except Exception:
+        logger.exception(
+            "Upload FILES read failed | user_id=%s | path=%s | content_length=%s | duration=%.2f seconds",
+            getattr(request.user, "id", None),
+            request.path,
+            content_length_header,
+            time.time() - leitura_upload_inicio,
+        )
+        raise
+
+    logger.warning(
+        "Upload FILES read finished | user_id=%s | path=%s | has_file=%s | filename=%s | file_size=%s | duration=%.2f seconds",
+        getattr(request.user, "id", None),
+        request.path,
+        bool(arquivo_upload),
+        getattr(arquivo_upload, "name", None),
+        getattr(arquivo_upload, "size", None),
+        time.time() - leitura_upload_inicio,
+    )
 
     max_length = Documento._meta.get_field("documento").max_length
     if arquivo_upload and len(arquivo_upload.name) > max_length - 1:
@@ -168,7 +205,10 @@ def cria_documento(request, forca_confidencial=False, usuario=None):
     algum_arquivo = False
     if arquivo_upload:
         arquivo = simple_upload(arquivo_upload,
-                                path=get_upload_path(documento, ''))
+                                path=get_upload_path(documento, ''),
+                                valida="documento")
+        if arquivo is None:
+            return "<h1>Erro: Tipo de arquivo não permitido para este upload.</h1>"
         documento.documento = arquivo[len(settings.MEDIA_URL):]
         algum_arquivo = True
 

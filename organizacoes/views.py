@@ -194,7 +194,6 @@ def adiciona_documento(request, organizacao_id=None, projeto_id=None, tipo_nome=
     documento = get_object_or_404(Documento, id=documento_id) if documento_id else None
     usuario = documento.usuario if documento else request.user
 
-    
     if request.headers.get("X-Requested-With") == "XMLHttpRequest" and request.method == "POST": # Ajax check
         try:
             erro = cria_documento(request, usuario=usuario)
@@ -218,72 +217,6 @@ def adiciona_documento(request, organizacao_id=None, projeto_id=None, tipo_nome=
                 tipo_nome,
             )
             raise
-
-    organizacao = get_object_or_404(Organizacao, id=organizacao_id) if organizacao_id else None
-    projeto = get_object_or_404(Projeto, id=projeto_id) if projeto_id else None
-    projetos = Projeto.objects.filter(proposta__organizacao=organizacao) if organizacao else Projeto.objects.all()
-
-    tipo = None
-    if tipo_nome and tipo_nome != "ANY":
-        tipo = TipoDocumento.objects.get(sigla=tipo_nome)
-
-    if documento:
-        tipo = documento.tipo_documento
-
-    if tipo and request.user.tipo_de_usuario not in json.loads(tipo.gravar):  # Verifica se usuário tem privilégios para gravar tipo de arquivo
-            return HttpResponse("<h1>Sem privilégios para gravar tipo de arquivo!</h1>", status=401)
-   
-    lingua = 0
-    data = datetime.datetime.now()
-    if documento:
-        #data = documento.data
-        confidencial = documento.confidencial
-        anotacao = documento.anotacao
-        lingua = documento.lingua_do_documento
-    else:
-        confidencial = None
-        anotacao = None
-        
-    if adiciona is None:
-        adiciona = "adiciona_documento"
-
-    context = {
-        "organizacao": organizacao,
-        "tipos_documentos": TipoDocumento.objects.all(),
-        "data": data,
-        "Documento": Documento,
-        "projetos": projetos,
-        "projeto": projeto,
-        "tipo": tipo,
-        "organizacoes": Organizacao.objects.all(),
-        "documento": documento,
-        "documento_id": documento_id,
-        "configuracao": get_object_or_404(Configuracao),
-        "travado": False,
-        "adiciona": adiciona,
-        "confidencial": confidencial,
-        "anotacao": anotacao,
-        "lingua": lingua,
-    }
-    
-    return render(request, "organizacoes/documento_view.html", context=context)
-
-
-@login_required
-@transaction.atomic
-@permission_required("users.altera_professor", raise_exception=True)
-def adiciona_documento(request, organizacao_id=None, projeto_id=None, tipo_nome=None, documento_id=None, adiciona=None):
-    """Cria um documento."""
-
-    # Recupera o documento se existir e define o autor para o documento
-    documento = get_object_or_404(Documento, id=documento_id) if documento_id else None
-    usuario = documento.usuario if documento else request.user
-
-    if request.headers.get("X-Requested-With") == "XMLHttpRequest" and request.method == "POST": # Ajax check
-        erro = cria_documento(request, usuario=usuario)
-        if erro:
-           return HttpResponseBadRequest(erro)
-        return JsonResponse({"atualizado": True,})
 
     organizacao = get_object_or_404(Organizacao, id=organizacao_id) if organizacao_id else None
     projeto = get_object_or_404(Projeto, id=projeto_id) if projeto_id else None
