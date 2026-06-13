@@ -294,11 +294,13 @@ def edita_aviso(request, primarykey=None):
 def carregar_certificado(request):
     """Carrega certificado na base de dados."""
     if request.method == "POST":
-        if "usuario" in request.POST and "tipo" in request.POST and "documento" in request.FILES:
+        usuario_id = request.POST.get("usuario", None)
+        tipo = request.POST.get("tipo", None)
+
+        if usuario_id and tipo and "documento" in request.FILES:
 
             certificado = Certificado()
 
-            usuario_id = request.POST.get("usuario", None)
             certificado.usuario = get_object_or_404(PFEUser, id=usuario_id) if usuario_id else None
                 
             projeto_id = request.POST.get("projeto", None)
@@ -313,7 +315,6 @@ def carregar_certificado(request):
                 certificado.data = datetime.date.today()
 
             # TROCAR O NUMERO POR UM TEXTO
-            tipo = request.POST.get("tipo", None)
             tipocertificado = get_object_or_404(TipoCertificado, id=tipo) if tipo else None
             certificado.tipo_certificado = tipocertificado
 
@@ -353,8 +354,8 @@ def carregar_certificado(request):
             context = {
                 "voltar": True,
                 "area_principal": True,
-                "mensagem_erro": {"pt": "Falha na inserção na base da dados.", 
-                                  "en": "Failed to insert in the database."},
+                "mensagem_erro": {"pt": "Falha na inserção na base da dados. Verifique os campos obrigatórios.", 
+                                  "en": "Failed to insert in the database. Check the required fields."},
             }
 
         return render(request, "generic_ml.html", context=context)

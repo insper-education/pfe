@@ -15,7 +15,23 @@
 
 {% block content %}
 
-  <form method="post" enctype="multipart/form-data"> {% csrf_token %}
+  <style>
+    .campo-obrigatorio-invalido + .bootstrap-select .dropdown-toggle {
+      border-color: #dc3545;
+    }
+
+    .mensagem-validacao-campo {
+      color: #dc3545;
+      display: none;
+      margin-top: 4px;
+    }
+
+    .mensagem-validacao-campo--visivel {
+      display: block;
+    }
+  </style>
+
+  <form method="post" enctype="multipart/form-data" id="form_carregar_certificado"> {% csrf_token %}
 
     <div>
       <label for="projeto">
@@ -45,7 +61,7 @@
           {% lng "Usuário:" "User:" %}
         </span>
         <select class="selectpicker show-tick" name="usuario" id="usuario" title="Selecione usuário"
-         data-live-search="true" data-width="560px">
+         data-live-search="true" data-width="560px" required>
           <option selected value> -- selecione usuário -- </option>
           {% for usuario in usuarios %}
             <option value="{{usuario.id}}" {% if usuarios|length == 1 %}selected{% endif %}>
@@ -71,18 +87,19 @@
           {% lng "Tipo:" "Type:" %}
         </span>
         <select class="selectpicker show-tick" name="tipo" id="tipo" title="Selecione tipo de certificado"
-        data-live-search="true" data-width="560px" required>
-            <option disabled selected value> -- selecione tipo de certificado -- </option>
-            {% comment %} <optgroup label="Semestre Capstone"> {% endcomment %}
-            {% for tipo in tipos_certificados %}
-              {% if tipo %}
-                <option value="{{tipo.id}}">
-                {{tipo.titulo}}
-              </option>  
-              {% endif %}
-            {% endfor %}
-            {% comment %} </optgroup> {% endcomment %}
+         data-live-search="true" data-width="560px" required>
+          <option disabled selected value=""> -- selecione tipo de certificado -- </option>
+          {% for tipo in tipos_certificados %}
+            {% if tipo %}
+              <option value="{{tipo.id}}">
+              {{tipo.titulo}}
+            </option>  
+            {% endif %}
+          {% endfor %}
         </select>
+        <div id="tipo_validacao" class="mensagem-validacao-campo">
+          {% lng "Selecione um tipo de certificado." "Select a certificate type." %}
+        </div>
       </label>
     </div>
 
@@ -107,6 +124,15 @@
   </form>
 
   <script>
+    function atualizaValidacaoTipoCertificado() {
+      var campoTipo = $("#tipo");
+      var tipoValido = !!campoTipo.val();
+
+      campoTipo.toggleClass("campo-obrigatorio-invalido", !tipoValido);
+      $("#tipo_validacao").toggleClass("mensagem-validacao-campo--visivel", !tipoValido);
+
+      return tipoValido;
+    }
 
     // Atualiza o projeto em função do estudante selecionado
     $("#usuario").change(function() {
@@ -131,6 +157,18 @@
         {% include "ajax_error_function.js" %}
       });
 
+    });
+
+    $("#tipo").on("changed.bs.select change", function() {
+      atualizaValidacaoTipoCertificado();
+    });
+
+    $("#form_carregar_certificado").on("submit", function(event) {
+      var tipoValido = atualizaValidacaoTipoCertificado();
+      if (!tipoValido) {
+        event.preventDefault();
+        $("#tipo").selectpicker("toggle");
+      }
     });
 
   </script>
