@@ -448,6 +448,8 @@ def blackboard_notas(request, anosemestre):
     exames.append(Exame.objects.get(sigla="M"))  # Média
 
     if request.method == "POST":
+        tipo = request.POST["tipo"]
+        linguagem = request.POST["linguagem"]
         download_token = request.POST.get("download_token", "")
         colunas = {}
         for exame in exames:
@@ -461,7 +463,11 @@ def blackboard_notas(request, anosemestre):
 
         dataset = tablib.Dataset()
 
-        headers=["Nome", "Sobrenome", "Nome do usuário"]
+        if linguagem == "pt":  # Português
+            headers=["Nome", "Sobrenome", "Nome do usuário"]
+        else:  # Inglês
+            headers=["First Name", "Last Name", "Username"]
+
         for coluna in colunas:
             if coluna and colunas[coluna].coluna:
                 headers.append(coluna + " [Total de pontos: 10 Pontuação] |" + colunas[coluna].coluna)
@@ -475,10 +481,6 @@ def blackboard_notas(request, anosemestre):
             ext_cursos += "_" + sigla
 
         alocacoes = Alocacao.objects.filter(projeto__ano=ano, projeto__semestre=semestre, aluno__trancado=False, aluno__curso2__id__in=cursos).order_by("aluno__user__last_name", "aluno__user__first_name")
-
-        tipo = request.POST["tipo"]
-        separador_virgula = request.POST["decimal_separator"] == "virgula"
-        print("Separador vírgula:", separador_virgula)
         
         for alocacao in alocacoes:
             notas = get_notas_alocacao(alocacao, checa_banca=False)
@@ -494,14 +496,14 @@ def blackboard_notas(request, anosemestre):
             media = get_media_alocacao_i(alocacao)
             for coluna in colunas:
                 if coluna in avaliacao:
-                    if separador_virgula:
+                    if linguagem == "pt":  # Português
                         linha += [f"{avaliacao[coluna]:.2f}".replace('.',',')]
                     else:
                         linha += [f"{avaliacao[coluna]:.2f}"]
                 else:
                     if coluna == "Média":
                         if media["media"]:
-                            if separador_virgula:
+                            if linguagem == "pt":  # Português
                                 linha += [f"{media['media']:.2f}".replace('.',',')]
                             else:
                                 linha += [f"{media['media']:.2f}"]
@@ -509,7 +511,7 @@ def blackboard_notas(request, anosemestre):
                             linha += [""]
                     elif coluna == "Descontos":
                         if media["descontos"]:
-                            if separador_virgula:
+                            if linguagem == "pt":  # Português
                                 linha += [f"{media['descontos']:.2f}".replace('.',',')]
                             else:
                                 linha += [f"{media['descontos']:.2f}"]

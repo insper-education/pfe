@@ -376,18 +376,18 @@
 
         <div class="blackboard-box blackboard-section blackboard-options">
           <div class="blackboard-box-header">
-            <b class="blackboard-title">{% lng "Separador de Casas Decimais" "Decimal Separator" %}</b>
+            <b class="blackboard-title">{% lng "Linguagem" "Language" %}</b>
           </div>
-          <span class="blackboard-subtitle">{% lng "Escolha o separador de casas decimais utilizado no arquivo exportado." "Choose the decimal separator used in the exported file." %}</span>
+          <span class="blackboard-subtitle">{% lng "Escolha a linguagem que corresponde ao formato de número esperado pelo Blackboard para os campos de nota." "Choose the language that corresponds to the number format expected by Blackboard for grade fields." %}</span>
           <div class="blackboard-option-list blackboard-option-list-vertical">
             <span class="blackboard-option-row">
-              <input type="radio" id="virgula" name="decimal_separator" value="virgula" checked>
-              <label for="virgula">{% lng "Vírgula [Português]" "Comma [Portuguese]" %}</label>
+              <input type="radio" id="pt" name="linguagem" value="pt" checked>
+              <label for="pt">{% lng "Português (vírgula)" "Portuguese (comma)" %}</label>
             </span>
             <br>
             <span class="blackboard-option-row">
-              <input type="radio" id="ponto" name="decimal_separator" value="ponto">
-              <label for="ponto">{% lng "Ponto [Inglês]" "Dot [English]" %}</label>
+              <input type="radio" id="en" name="linguagem" value="en">
+              <label for="en">{% lng "Inglês (ponto)" "English (dot)" %}</label>
             </span>
           </div>
         </div>
