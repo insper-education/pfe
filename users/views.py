@@ -528,7 +528,7 @@ def blackboard_notas(request, anosemestre):
             response.write(xls_dataset.encode("utf-16le"))  # Encode the content in UTF-16LE
             response["Content-Disposition"] = "attachment; filename=notas_"+str(ano)+"_"+str(semestre)+ext_cursos+".xls"
         elif tipo == "csv":
-            csv_dataset = dataset.export("csv", quotechar='"', dialect="excel")
+            csv_dataset = dataset.export("csv", quotechar='"', dialect="excel", quoting=csv.QUOTE_ALL)
             #csv_with_trailing_commas = csv_dataset.replace("\r\n", ",\r\n")  # Caso precise colocar uma vírgula no final de cada linha
             response = HttpResponse(csv_dataset, content_type="text/csv")
             response.write(u"\ufeff".encode("utf-8-sig"))
