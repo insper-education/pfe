@@ -440,9 +440,6 @@ def blackboard_notas(request, anosemestre):
     
     composicoes = filtra_composicoes(Composicao.objects.filter(peso__peso__gt=0).distinct(), ano, semestre)  # (entregavel=True):
 
-    for c in Composicao.objects.filter(peso__peso__gt=0).distinct():
-        print(c)  # Para debug: mostra cada composicao para verificar se os filtros estão corretos
-        
     exames = list()
     for composicao in composicoes:
         exames.append(composicao.exame)
@@ -451,6 +448,7 @@ def blackboard_notas(request, anosemestre):
     exames.append(Exame.objects.get(sigla="M"))  # Média
 
     if request.method == "POST":
+        download_token = request.POST.get("download_token", "")
         colunas = {}
         for exame in exames:
             if exame.sigla in request.POST:
@@ -479,6 +477,8 @@ def blackboard_notas(request, anosemestre):
         alocacoes = Alocacao.objects.filter(projeto__ano=ano, projeto__semestre=semestre, aluno__trancado=False, aluno__curso2__id__in=cursos).order_by("aluno__user__last_name", "aluno__user__first_name")
 
         tipo = request.POST["tipo"]
+        separador_virgula = request.POST["decimal_separator"] == "virgula"
+        print("Separador vírgula:", separador_virgula)
         
         for alocacao in alocacoes:
             notas = get_notas_alocacao(alocacao, checa_banca=False)
@@ -494,16 +494,25 @@ def blackboard_notas(request, anosemestre):
             media = get_media_alocacao_i(alocacao)
             for coluna in colunas:
                 if coluna in avaliacao:
-                    linha += [f"{avaliacao[coluna]:.2f}".replace('.',',')]
+                    if separador_virgula:
+                        linha += [f"{avaliacao[coluna]:.2f}".replace('.',',')]
+                    else:
+                        linha += [f"{avaliacao[coluna]:.2f}"]
                 else:
                     if coluna == "Média":
                         if media["media"]:
-                            linha += [f"{media['media']:.2f}".replace('.',',')]
+                            if separador_virgula:
+                                linha += [f"{media['media']:.2f}".replace('.',',')]
+                            else:
+                                linha += [f"{media['media']:.2f}"]
                         else:
                             linha += [""]
                     elif coluna == "Descontos":
                         if media["descontos"]:
-                            linha += [f"{media['descontos']:.2f}".replace('.',',')]
+                            if separador_virgula:
+                                linha += [f"{media['descontos']:.2f}".replace('.',',')]
+                            else:
+                                linha += [f"{media['descontos']:.2f}"]
                         else:
                             linha += [""]
                     else:
@@ -524,6 +533,9 @@ def blackboard_notas(request, anosemestre):
             response = HttpResponse(csv_dataset, content_type="text/csv")
             response.write(u"\ufeff".encode("utf-8-sig"))
             response["Content-Disposition"] = "attachment; filename=notas_"+str(ano)+"_"+str(semestre)+ext_cursos+".csv"
+
+        if download_token:
+            response.set_cookie("blackboard_download_token", download_token, max_age=120, samesite="Lax")
         
         return response
 

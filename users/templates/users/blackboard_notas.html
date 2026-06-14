@@ -207,7 +207,51 @@
     .blackboard-submit {
       margin-top: 12px;
       padding: 8px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
       text-align: right;
+    }
+
+    .carregando {
+      display: inline-block;
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #7498cd;
+      border-radius: 100%;
+      width: 18px;
+      height: 18px;
+      animation: spin 1s linear infinite;
+      flex: 0 0 auto;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .blackboard-processing {
+      display: none;
+      align-items: center;
+      gap: 8px;
+      color: #50627f;
+      font-size: 0.92em;
+      line-height: 1.2;
+    }
+
+    .blackboard-processing.is-visible {
+      display: inline-flex;
+    }
+
+    .blackboard-processing.is-download {
+      color: #3d5f8f;
+    }
+
+    .blackboard-submit .btn[disabled] {
+      opacity: 0.7;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
     }
 
     .blackboard-submit .btn {
@@ -233,7 +277,12 @@
       }
 
       .blackboard-submit {
+        display: block;
         text-align: left;
+      }
+
+      .blackboard-processing {
+        margin-bottom: 8px;
       }
     }
   </style>
@@ -251,7 +300,9 @@
     </div>
 
     <div id="atualizar">
-      <form method="post" enctype="multipart/form-data">{% csrf_token %}
+      <iframe id="blackboard-download-target" name="blackboard-download-target" style="display:none;"></iframe>
+      <form id="blackboard-download-form" method="post" enctype="multipart/form-data" target="blackboard-download-target">{% csrf_token %}
+        <input type="hidden" id="download_token" name="download_token" value="">
 
         <div class="blackboard-box blackboard-section">
           <div class="blackboard-box-header">
@@ -323,13 +374,157 @@
           </div>
         </div>
 
+        <div class="blackboard-box blackboard-section blackboard-options">
+          <div class="blackboard-box-header">
+            <b class="blackboard-title">{% lng "Separador de Casas Decimais" "Decimal Separator" %}</b>
+          </div>
+          <span class="blackboard-subtitle">{% lng "Escolha o separador de casas decimais utilizado no arquivo exportado." "Choose the decimal separator used in the exported file." %}</span>
+          <div class="blackboard-option-list blackboard-option-list-vertical">
+            <span class="blackboard-option-row">
+              <input type="radio" id="virgula" name="decimal_separator" value="virgula" checked>
+              <label for="virgula">{% lng "Vírgula [Português]" "Comma [Portuguese]" %}</label>
+            </span>
+            <br>
+            <span class="blackboard-option-row">
+              <input type="radio" id="ponto" name="decimal_separator" value="ponto">
+              <label for="ponto">{% lng "Ponto [Inglês]" "Dot [English]" %}</label>
+            </span>
+          </div>
+        </div>
+
         <div class="blackboard-submit">
-          <button class="btn btn-primary mb-1" type="submit">
+          <div id="blackboard-processing" class="blackboard-processing" aria-live="polite">
+            <span class="carregando" aria-hidden="true"></span>
+            <span id="blackboard-processing-text">{% lng "Gerando arquivo para download..." "Preparing download file..." %}</span>
+          </div>
+
+          <button id="blackboard-download-button" class="btn btn-primary mb-1" type="submit">
             {% lng "Download Arquivo" "Download File" %}
           </button>
         </div>
       </form>
     </div>
   </div>
+
+  <script>
+    (function() {
+      var form = document.getElementById("blackboard-download-form");
+      var button = document.getElementById("blackboard-download-button");
+      var processing = document.getElementById("blackboard-processing");
+      var processingText = document.getElementById("blackboard-processing-text");
+      var downloadTokenField = document.getElementById("download_token");
+      var cookiePollTimer = null;
+      var downloadFinishTimer = null;
+      var currentDownloadToken = null;
+
+      if (!form || !button || !processing || !processingText || !downloadTokenField) {
+        return;
+      }
+
+      function getCookieValue(name) {
+        var prefix = name + "=";
+        var cookies = document.cookie ? document.cookie.split(";") : [];
+
+        for (var i = 0; i < cookies.length; i += 1) {
+          var cookie = cookies[i].trim();
+          if (cookie.indexOf(prefix) === 0) {
+            return decodeURIComponent(cookie.substring(prefix.length));
+          }
+        }
+
+        return null;
+      }
+
+      function clearDownloadCookie() {
+        document.cookie = "blackboard_download_token=; Max-Age=0; path=/; SameSite=Lax";
+      }
+
+      function stopCookiePolling() {
+        if (cookiePollTimer) {
+          window.clearInterval(cookiePollTimer);
+          cookiePollTimer = null;
+        }
+      }
+
+      function finishDownloadFeedback() {
+        stopCookiePolling();
+
+        if (downloadFinishTimer) {
+          window.clearTimeout(downloadFinishTimer);
+          downloadFinishTimer = null;
+        }
+
+        currentDownloadToken = null;
+        downloadTokenField.value = "";
+        clearDownloadCookie();
+        setProcessingState("idle");
+      }
+
+      function setProcessingState(state) {
+        var active = state !== "idle";
+
+        button.disabled = active;
+        button.setAttribute("aria-disabled", active ? "true" : "false");
+        processing.classList.toggle("is-visible", active);
+
+        if (state === "processing") {
+          processing.classList.remove("is-download");
+          processingText.innerHTML = '{% filter escapejs %}{% lng "Gerando arquivo para download..." "Preparing download file..." %}{% endfilter %}';
+          return;
+        }
+
+        if (state === "downloading") {
+          processing.classList.add("is-download");
+          processingText.innerHTML = '{% filter escapejs %}{% lng "Download em andamento. Aguarde antes de gerar outro arquivo." "Download in progress. Please wait before generating another file." %}{% endfilter %}';
+          return;
+        }
+
+        processing.classList.remove("is-download");
+        processingText.innerHTML = '{% filter escapejs %}{% lng "Gerando arquivo para download..." "Preparing download file..." %}{% endfilter %}';
+      }
+
+      form.addEventListener("submit", function(event) {
+        if (button.disabled) {
+          event.preventDefault();
+          return;
+        }
+
+        currentDownloadToken = "bb-" + Date.now() + "-" + Math.random().toString(36).slice(2);
+        downloadTokenField.value = currentDownloadToken;
+        clearDownloadCookie();
+        setProcessingState("processing");
+
+        stopCookiePolling();
+
+        cookiePollTimer = window.setInterval(function() {
+          var cookieToken = getCookieValue("blackboard_download_token");
+
+          if (!cookieToken || cookieToken !== currentDownloadToken) {
+            return;
+          }
+
+          setProcessingState("downloading");
+          stopCookiePolling();
+
+          downloadFinishTimer = window.setTimeout(function() {
+            finishDownloadFeedback();
+          }, 1800);
+        }, 400);
+      });
+
+      window.addEventListener("beforeunload", function() {
+        stopCookiePolling();
+
+        if (downloadFinishTimer) {
+          window.clearTimeout(downloadFinishTimer);
+          downloadFinishTimer = null;
+        }
+      });
+
+      window.addEventListener("pageshow", function() {
+        finishDownloadFeedback();
+      });
+    })();
+  </script>
 
 {% endblock %}
