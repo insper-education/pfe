@@ -11,73 +11,325 @@
 
 {% block head %}
   <style>
-    table {border-collapse: collapse;}
-    th, td {
-      border: 1px solid #ddd;
-      padding: 8px;
+    .blackboard-page {
+      max-width: 980px;
+      padding-bottom: 8px;
     }
-    thead {background-color: #EEF;}
+
+    .blackboard-box {
+      margin-top: 12px;
+      padding: 10px 12px;
+      border: 1px solid #dcdcdc;
+      border-radius: 8px;
+      background: #fcfcfc;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    }
+
+    .blackboard-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .blackboard-edition {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 999px;
+      background: #eef2ff;
+      color: #33446b;
+      font-weight: 600;
+    }
+
+    .blackboard-page table {
+      border-collapse: collapse;
+      width: 100%;
+      max-width: 820px;
+      margin-top: 6px;
+      background: #fff;
+      border-radius: 6px;
+      overflow: hidden;
+    }
+
+    .blackboard-table-wrap {
+      overflow-x: auto;
+      padding-bottom: 2px;
+    }
+
+    .blackboard-page th,
+    .blackboard-page td {
+      border: 1px solid #e2e2e2;
+      padding: 2px 5px;
+      vertical-align: middle;
+    }
+
+    .blackboard-page thead {
+      background-color: #e9eefc;
+      color: #2f3f68;
+    }
+
+    .blackboard-page th {
+      font-weight: 600;
+    }
+
+    .blackboard-page tbody tr:nth-child(even) {
+      background-color: #fafafa;
+    }
+
+    .blackboard-page td:first-child {
+      white-space: nowrap;
+      font-weight: 600;
+      color: #33446b;
+    }
+
+    .blackboard-page input[type="text"] {
+      width: 120px;
+      max-width: 100%;
+      padding: 4px 6px;
+      border: 1px solid #bbb;
+      border-radius: 4px;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .blackboard-page input[type="text"]:focus {
+      outline: none;
+      border-color: #7c8db5;
+      box-shadow: 0 0 0 2px rgba(124, 141, 181, 0.18);
+    }
+
+    .blackboard-code-cell {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .blackboard-code-label {
+      min-width: 2.8em;
+      margin: 0;
+      color: #555;
+      font-weight: 600;
+    }
+
+    .blackboard-section {
+      margin-top: 2px;
+    }
+
+    .blackboard-title {
+      display: block;
+      margin-bottom: 4px;
+      color: #33446b;
+      font-size: 1.02em;
+    }
+
+    .blackboard-box-header {
+      margin: -10px -12px 8px;
+      padding: 8px 12px;
+      border-bottom: 1px solid #e6e9f2;
+      border-radius: 8px 8px 0 0;
+      background: linear-gradient(180deg, #f8faff 0%, #f2f5fd 100%);
+    }
+
+    .blackboard-subtitle {
+      display: block;
+      margin-bottom: 6px;
+      color: #66708a;
+      font-size: 0.95em;
+      line-height: 1.35;
+    }
+
+    .blackboard-help {
+      margin-top: 8px;
+      padding: 8px 10px;
+      border-left: 4px solid #93a4d1;
+      border-radius: 6px;
+      background: #f4f7ff;
+      color: #44506f;
+      line-height: 1.45;
+    }
+
+    .blackboard-help-title {
+      display: block;
+      margin-bottom: 2px;
+      color: #33446b;
+    }
+
+    .blackboard-help-list {
+      margin: 0;
+      padding-left: 18px;
+    }
+
+    .blackboard-help-list li {
+      margin: 2px 0;
+    }
+
+    .blackboard-options {
+      line-height: 1.8;
+    }
+
+    .blackboard-option-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px 8px;
+    }
+
+    .blackboard-option-list-courses {
+      display: block;
+    }
+
+    .blackboard-option-list-vertical {
+      display: block;
+    }
+
+    .blackboard-option-row {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      min-width: 260px;
+      margin-bottom: 0;
+      padding: 2px 5px;
+      border: 1px solid transparent;
+      border-radius: 6px;
+      background: #f6f7fb;
+      transition: background-color 0.15s ease, border-color 0.15s ease;
+    }
+
+    .blackboard-option-row:hover {
+      background: #eef2ff;
+      border-color: #d7def4;
+    }
+
+    .blackboard-options label {
+      font-weight: normal;
+      margin-left: 0;
+    }
+
+    .blackboard-submit {
+      margin-top: 12px;
+      padding: 8px 12px;
+      text-align: right;
+    }
+
+    .blackboard-submit .btn {
+      padding: 6px 12px;
+      border-radius: 6px;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+      transition: transform 0.12s ease, box-shadow 0.12s ease;
+    }
+
+    .blackboard-submit .btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12);
+    }
+
+    @media (max-width: 720px) {
+      .blackboard-option-list {
+        display: block;
+      }
+
+      .blackboard-option-row {
+        width: 100%;
+        min-width: 0;
+      }
+
+      .blackboard-submit {
+        text-align: left;
+      }
+    }
   </style>
 {% endblock %}
 
 {% block content %}
 
-  {% comment %} {% include "edicoes.html" %}<br> {% endcomment %}
-  <b>
-    {% lng "Edição:" "Edition:" %}  </b>
-  {{ anosemestre }}<br>
-  
-  <div id="atualizar">
+  <div class="blackboard-page">
+    <div class="blackboard-box">
+      {% comment %} {% include "edicoes.html" %}<br> {% endcomment %}
+      <div class="blackboard-header">
+        <b>{% lng "Edição:" "Edition:" %}</b>
+        <span class="blackboard-edition">{{ anosemestre }}</span>
+      </div>
+    </div>
 
-    <form method="post" enctype="multipart/form-data">{% csrf_token %}
-    
-      <br>
-      {% lng "Criar no Blackboard colunas:" "Create columns in Blackboard:" %}<br>
-      <table>
-        <thead>
-          <tr>
-            <th>{% lng "Sigla" "Acronym" %}</th>
-            <th>{% lng "Nome no Boletim de Notas" "Name in Grade Center" %}</th>
-            <th>{% lng "Código da Coluna" "Column Code" %}</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for exame in exames %}
-            <tr>
-              <td>{{exame.sigla}}</td>
-              <td>{{exame.titulo}}</td>
-              <td><label for="{{exame.sigla}}" style="width: 2.3em;">{{exame.sigla}}: </label><input id="{{exame.sigla}}" type="text" size="8" name="{{exame.sigla}}" {% if colunas|get_exame:exame %}value="{{colunas|get_exame:exame}}"{% endif %}></td>
-            </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-      {% lng "Com:<br>- Exibição primária: Pontuação<br>- Pontos possíveis: 10<br>" "With:<br>- Primary Display: Score<br>- Possible Points: 10<br>" %}
-      </span>
-      <br>
-      
-      <b>{% lng "Cursos" "Programs" %}</b><br>
-      {% for curso in cursos %}
-        <input type="checkbox" id="curso{{curso.id}}" name="curso" value="{{curso.id}}" checked>
-        <label for="curso{{curso.id}}">
-          <span>{{curso}}</span>
-        </label><br>
-      {% endfor %}
-      <br>
+    <div id="atualizar">
+      <form method="post" enctype="multipart/form-data">{% csrf_token %}
 
-      <b>
-        {% lng "Tipo de Arquivo" "File Type" %}      </b><br>
-      <input type="radio" id="xls" name="tipo" value="xls" checked>
-      <label for="xls">Tab-separated File (.xls) [utf-16le]</label><br>
-      <input type="radio" id="csv" name="tipo" value="csv">
-      <label for="csv">Comma Separated Values (.csv) [utf-8-sig]</label><br>
-      <br>
+        <div class="blackboard-box blackboard-section">
+          <div class="blackboard-box-header">
+            <b class="blackboard-title">{% lng "Criar no Blackboard colunas:" "Create columns in Blackboard:" %}</b>
+          </div>
+          <div class="blackboard-table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>{% lng "Sigla" "Acronym" %}</th>
+                  <th>{% lng "Nome no Boletim de Notas" "Name in Grade Center" %}</th>
+                  <th>{% lng "Código da Coluna" "Column Code" %}</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for exame in exames %}
+                  <tr>
+                    <td>{{ exame.sigla }}</td>
+                    <td>{{ exame.titulo }}</td>
+                    <td class="blackboard-code-cell">
+                      <label for="{{ exame.sigla }}" class="blackboard-code-label">{{ exame.sigla }}:</label>
+                      <input id="{{ exame.sigla }}" type="text" name="{{ exame.sigla }}" {% if colunas|get_exame:exame %}value="{{ colunas|get_exame:exame }}"{% endif %}>
+                    </td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+          <div class="blackboard-help">
+            <b class="blackboard-help-title">{% lng "Configuração sugerida:" "Suggested setup:" %}</b>
+            <ul class="blackboard-help-list">
+              <li>{% lng "Exibição primária: Pontuação" "Primary Display: Score" %}</li>
+              <li>{% lng "Pontos possíveis: 10" "Possible Points: 10" %}</li>
+            </ul>
+          </div>
+        </div>
 
-      <button class="btn btn-primary mb-1" type="submit">
-        {% lng "Download Arquivo" "Download File" %}      </button>
-      <br>
+        <div class="blackboard-box blackboard-section blackboard-options">
+          <div class="blackboard-box-header">
+            <b class="blackboard-title">{% lng "Cursos" "Programs" %}</b>
+          </div>
+          <span class="blackboard-subtitle">{% lng "Selecione os cursos que devem entrar no arquivo exportado." "Select the programs that should be included in the exported file." %}</span>
+          <div class="blackboard-option-list blackboard-option-list-courses">
+            {% for curso in cursos %}
+              <span class="blackboard-option-row">
+                <input type="checkbox" id="curso{{ curso.id }}" name="curso" value="{{ curso.id }}" checked>
+                <label for="curso{{ curso.id }}">{{ curso }}</label>
+              </span>
+              <br>
+            {% endfor %}
+          </div>
+        </div>
 
-    </form>
+        <div class="blackboard-box blackboard-section blackboard-options">
+          <div class="blackboard-box-header">
+            <b class="blackboard-title">{% lng "Tipo de Arquivo" "File Type" %}</b>
+          </div>
+          <span class="blackboard-subtitle">{% lng "Escolha o formato mais adequado para a importação no Blackboard." "Choose the format that best fits the Blackboard import." %}</span>
+          <div class="blackboard-option-list blackboard-option-list-vertical">
+            <span class="blackboard-option-row">
+              <input type="radio" id="xls" name="tipo" value="xls" checked>
+              <label for="xls">Tab-separated File (.xls) [utf-16le]</label>
+            </span>
+            <br>
+            <span class="blackboard-option-row">
+              <input type="radio" id="csv" name="tipo" value="csv">
+              <label for="csv">Comma Separated Values (.csv) [utf-8-sig]</label>
+            </span>
+          </div>
+        </div>
 
+        <div class="blackboard-submit">
+          <button class="btn btn-primary mb-1" type="submit">
+            {% lng "Download Arquivo" "Download File" %}
+          </button>
+        </div>
+      </form>
+    </div>
   </div>
 
 {% endblock %}

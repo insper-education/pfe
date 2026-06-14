@@ -438,12 +438,17 @@ def blackboard_notas(request, anosemestre):
     """Gera notas para o blackboard."""
     ano, semestre = map(int, anosemestre.split('.'))
     
-    composicoes = filtra_composicoes(Composicao.objects.filter(pesos__isnull=False), ano, semestre)  # (entregavel=True):
-    exames = set()
+    composicoes = filtra_composicoes(Composicao.objects.filter(peso__peso__gt=0).distinct(), ano, semestre)  # (entregavel=True):
+
+    for c in Composicao.objects.filter(peso__peso__gt=0).distinct():
+        print(c)  # Para debug: mostra cada composicao para verificar se os filtros estão corretos
+        
+    exames = list()
     for composicao in composicoes:
-        exames.add(composicao.exame)
-    exames.add(Exame.objects.get(sigla="D"))  # Descontos
-    exames.add(Exame.objects.get(sigla="M"))  # Média
+        exames.append(composicao.exame)
+    exames.append(Exame.objects.get(sigla="P"))  # Probatório
+    exames.append(Exame.objects.get(sigla="D"))  # Descontos
+    exames.append(Exame.objects.get(sigla="M"))  # Média
 
     if request.method == "POST":
         colunas = {}
