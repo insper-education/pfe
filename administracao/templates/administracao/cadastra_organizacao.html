@@ -121,6 +121,12 @@
           <label for="informacoes">{% lng "Informações sobre a organização" "Information about the organization" %}</label>
           <textarea class="form-control" id="informacoes" name="informacoes" rows="4" maxlength="{% max_length organizacao "informacoes" %}">{% if organizacao.informacoes %}{% slice_max_length organizacao "informacoes" %}{% elif proposta.descricao_organizacao %}{% slice_other_max_length proposta.descricao_organizacao organizacao "informacoes" %}{% endif %}</textarea>
         </div>
+
+        <div class="campo-com-label">
+          <label for="origem">{% lng "Origem da abertura de contato" "Source of contact opening" %}</label>
+          <textarea class="form-control" id="origem" name="origem" rows="2" maxlength="{% max_length organizacao "origem" %}">{% if organizacao.origem %}{% slice_max_length organizacao "origem" %}{% elif proposta.origem %}{% slice_other_max_length proposta.origem organizacao "origem" %}{% endif %}</textarea>
+        </div>
+
       </div>
 
       <div class="form-section">

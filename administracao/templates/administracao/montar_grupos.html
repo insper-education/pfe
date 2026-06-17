@@ -260,7 +260,13 @@
             </a>
             
             {% if proposta.organizacao and proposta.organizacao.nome %}
-              <a class="ancora imprimir" href="{% url 'organizacao_completo' proposta.organizacao.id %}" style="font-weight: bold; color: darkblue;margin-left: auto; text-align: center; min-width: 21%;">  
+              <a class="ancora imprimir" href="{% url 'organizacao_completo' proposta.organizacao.id %}" style="font-weight: bold; color: darkblue;margin-left: auto; text-align: center; min-width: 21%;"
+               data-toggle="tooltip" data-html="true" animation="true" 
+               title="{% if proposta.organizacao.website %}<b>Website</b>: <a href='{{ proposta.organizacao.website }}'>{{ proposta.organizacao.website }}</a><br>{% endif %}
+                {% if proposta.organizacao.segmento %}<b>Segmento</b>: {{proposta.organizacao.segmento.nome}}<br>{% endif %}
+                {% if proposta.organizacao.informacoes %}<br><b>Informações</b>: {{proposta.organizacao.informacoes|linebreaks}}{% endif %}
+                {% if proposta.organizacao.origem %}<br><b>Origem do contato</b>: {{proposta.organizacao.origem|linebreaks}}{% endif %}
+                {% if proposta.organizacao.endereco %}<br><b>Endereço</b>: {{proposta.organizacao.endereco|linebreaks}}{% endif %}">
                 {{ proposta.organizacao.nome }}
               </a>
             {% elif proposta.nome_organizacao %}

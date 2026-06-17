@@ -55,6 +55,9 @@ class Organizacao(models.Model):
     informacoes = models.TextField("Informações", max_length=1000, null=True, blank=True,
                                    help_text="Informações sobre a organização parceira")
     
+    origem = models.TextField("Origem da abertura de contato", max_length=512, null=True, blank=True,
+                              help_text="Origem da abertura de contato com a organização parceira")
+
     logotipo = models.ImageField("Logotipo", upload_to=get_upload_path, null=True, blank=True,
                                  help_text="Logotipo da organização parceira")
     

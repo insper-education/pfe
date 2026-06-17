@@ -23,27 +23,53 @@
 
   <h4>{{organizacao.nome}}</h4>
   
-  {% if organizacao.website %}
-    <b>website:</b>
-    <a href="{{ organizacao.website }}"> {{ organizacao.website }} </a><br>  
-  {% endif %}
-  {% if organizacao.informacoes %}
-    <b>{% lng "Informações sobre a empresa" "Company information" %}:</b>
-    {{ organizacao.informacoes|linebreaks }}
-  {% endif %}
-
-  {% if organizacao.area_curso.all %}
-    <b>{% lng "Áreas de projetos" "Project areas" %}:</b>
-    {% for curso in organizacao.area_curso.all %}{% if not forloop.first %}, {% endif %}{{curso.nome}}{% endfor %}.<br>
-  {% endif %}
-
-  {% if organizacao.segmento %}
-    <b>{% lng "Segmento" "Segment" %}:</b>
-    {% lng organizacao.segmento.nome organizacao.segmento.nome_en %}<br>
-  {% endif %}
+  <table class="table table-sm w-auto">
+    <tbody>
+      {% if organizacao.website %}
+        <tr>
+          <td scope="row">
+            <b>{% lng "Website" "Website" %}</b>:
+            <a href="{{ organizacao.website }}"> {{ organizacao.website }} </a>
+          </td>
+        </tr>
+      {% endif %}
+      {% if organizacao.informacoes %}
+        <tr>
+          <td scope="row">
+            <b>{% lng "Informações sobre a empresa" "Company information" %}</b><br>
+            {{ organizacao.informacoes|linebreaks }}
+          </td>
+        </tr>
+      {% endif %}
+      {% if organizacao.origem %}
+        <tr>
+          <td scope="row">
+            <b>{% lng "Origem da abertura de contato" "Source of contact opening" %}</b><br>
+            {{ organizacao.origem|linebreaks }}
+          </td>
+        </tr>
+      {% endif %}
+      {% if organizacao.area_curso.all %}
+          <tr>
+            <td scope="row">
+              <b>{% lng "Áreas de projetos" "Project areas" %}</b>
+              {% for curso in organizacao.area_curso.all %}{% if not forloop.first %}, {% endif %}{{curso.nome}}{% endfor %}.
+            </td>
+          </tr>
+      {% endif %}
+      {% if organizacao.segmento %}
+        <tr>
+          <td scope="row">
+            <b>{% lng "Segmento" "Segment" %}</b>:
+            {% lng organizacao.segmento.nome organizacao.segmento.nome_en %}<br>
+          </td>
+        </tr>
+      {% endif %}
+    </tbody>
+  </table>
 
   <br>
-  <b>{% lng "contato(s)" "contact(s)" %}:</b>
+  <b>{% lng "Contato(s)" "Contact(s)" %}:</b>
   <small class="esconder"><a href="{% url 'cadastrar_usuario' %}?tipo=parceiro&organizacao={{organizacao.id}}">&#10133;</a></small>
   <br>
   <ul>
