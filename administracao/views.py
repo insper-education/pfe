@@ -32,7 +32,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.db import transaction
 from django.db import connection
 from django.db.models.functions import Lower
-from django.http import HttpResponse, HttpResponseNotFound, JsonResponse
+from django.http import HttpResponse, HttpResponseNotFound, HttpResponseNotAllowed, JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.utils.datastructures import MultiValueDictKeyError
@@ -1104,14 +1104,30 @@ def fechar_conexoes(request):
 @permission_required("users.altera_professor", raise_exception=True)
 def pre_alocar_estudante(request):
     """Ajax para pre-alocar estudates em propostas."""
+    if request.headers.get("X-Requested-With") != "XMLHttpRequest":
+        return JsonResponse({"atualizado": False, "erro": "Requisição inválida."}, status=400)
+
+    if request.method != "POST":
+        return HttpResponseNotAllowed(["POST"])
+
     if request.user.eh_admin:  # admin
 
-        estudante = request.GET.get("estudante", None)
-        estudante_id = int(estudante[len("estudante"):])
+        estudante = request.POST.get("estudante", None)
+        if not estudante or not estudante.startswith("estudante"):
+            return JsonResponse({"atualizado": False, "erro": "Estudante inválido."}, status=400)
+        estudante_id = estudante[len("estudante"):]
+        if not estudante_id.isdigit():
+            return JsonResponse({"atualizado": False, "erro": "Estudante inválido."}, status=400)
+        estudante_id = int(estudante_id)
         estudante = get_object_or_404(Aluno, id=estudante_id)
 
-        proposta = request.GET.get("proposta", None)
-        proposta_id = int(proposta[len("proposta"):])
+        proposta = request.POST.get("proposta", None)
+        if not proposta or not proposta.startswith("proposta"):
+            return JsonResponse({"atualizado": False, "erro": "Proposta inválida."}, status=400)
+        proposta_id = proposta[len("proposta"):]
+        if not proposta_id.isdigit():
+            return JsonResponse({"atualizado": False, "erro": "Proposta inválida."}, status=400)
+        proposta_id = int(proposta_id)
         proposta = get_object_or_404(Proposta, id=proposta_id)
 
         estudante.pre_alocacao = proposta
@@ -1123,7 +1139,7 @@ def pre_alocar_estudante(request):
     else:
         return HttpResponseNotFound("<h1>Usuário sem privilérios!</h1>")
 
-    return JsonResponse({"atualizado": False,})
+    return JsonResponse({"atualizado": request.user.eh_admin,})
 
 
 @login_required
@@ -1131,12 +1147,20 @@ def pre_alocar_estudante(request):
 @permission_required("users.altera_professor", raise_exception=True)
 def estrela_estudante(request):
     """Ajax para informar que alocação de estudate pode ter algum ponto de observação."""
+    if request.headers.get("X-Requested-With") != "XMLHttpRequest":
+        return JsonResponse({"atualizado": False, "erro": "Requisição inválida."}, status=400)
+
+    if request.method != "POST":
+        return HttpResponseNotAllowed(["POST"])
+
     if request.user.eh_admin:
 
-        estudante_id = request.GET.get("estudante", None)
+        estudante_id = request.POST.get("estudante", None)
+        if not estudante_id or not str(estudante_id).isdigit():
+            return JsonResponse({"atualizado": False, "erro": "Estudante inválido."}, status=400)
         estudante = get_object_or_404(Aluno, id=estudante_id)
 
-        estado = request.GET.get("estado", "false") == "true"
+        estado = request.POST.get("estado", "false") == "true"
         estudante.estrela = estado
         estudante.save()
 
@@ -1146,7 +1170,7 @@ def estrela_estudante(request):
     else:
         return HttpResponseNotFound("<h1>Usuário sem privilérios!</h1>")
 
-    return JsonResponse({"atualizado": False,})
+    return JsonResponse({"atualizado": request.user.eh_admin,})
 
 
 @login_required
