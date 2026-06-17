@@ -30,6 +30,11 @@
       cursor:pointer;
     }
 
+    #tab_aloc tr.total-alocacao td {
+      background-color: #343a40;
+      color: #ffffff;
+    }
+
     .projeto_sel {
       border: 1px solid #ccc;
       padding: 12px;
@@ -79,79 +84,77 @@
 {% block content %}
 
   <div id="lista_projetos">
-  {% if projetos %}
+    {% if projetos %}
 
-    {% for projeto in projetos %}
-    <div class="projeto_sel">
-      <a href="{% url 'organizacao_completo' projeto.organizacao.id %}" class="dark-blue-bold">{{ projeto.organizacao.nome }}</a> -
-      <a href="{% url 'projeto_infos' projeto.id %}">{{projeto.get_titulo}}</a>
-      <br>
+      {% for projeto in projetos %}
+        <div class="projeto_sel">
+          <a href="{% url 'organizacao_completo' projeto.organizacao.id %}" class="dark-blue-bold">{{ projeto.organizacao.nome }}</a> -
+          <a href="{% url 'projeto_infos' projeto.id %}">{{projeto.get_titulo}}</a>
+          <br>
 
-      <label for="projeto{{projeto.id}}">Orientador(a)</label></b>:
-      <select class="orientador" name="projeto{{projeto.id}}" id="projeto{{projeto.id}}" title="Selecione orientador do projeto">
-          <option selected value> -- selecione um orientador(a) -- </option>
-          <optgroup label="Comitê Capstone">
-          {% for orientador in orientadores %}
-            {% if orientador.membro_comite %}
-              <option value="orientador{{orientador.id}}" {% if orientador.id == projeto.orientador.user.id %}selected{% endif %}>
-              {{orientador.get_full_name}}
-            </option>  
-            {% endif %}
-          {% endfor %}
-          </optgroup>
+          <label for="projeto{{projeto.id}}">Orientador(a)</label></b>:
+          <select class="orientador" name="projeto{{projeto.id}}" id="projeto{{projeto.id}}" title="Selecione orientador do projeto">
+              <option selected value> -- selecione um orientador(a) -- </option>
+              <optgroup label="Comitê Capstone">
+              {% for orientador in orientadores %}
+                {% if orientador.membro_comite %}
+                  <option value="orientador{{orientador.id}}" {% if orientador.id == projeto.orientador.user.id %}selected{% endif %}>
+                  {{orientador.get_full_name}}
+                </option>  
+                {% endif %}
+              {% endfor %}
+              </optgroup>
 
-          <optgroup label="Professores">
-          {% for orientador in orientadores %}
-            {% if not orientador.membro_comite %}
-              <option value="orientador{{orientador.id}}" {% if orientador.id == projeto.orientador.user.id %}selected{% endif %}>
-              {{orientador.get_full_name}}
-            </option>  
-            {% endif %}
-          {% endfor %}
-          </optgroup>
+              <optgroup label="Professores">
+              {% for orientador in orientadores %}
+                {% if not orientador.membro_comite %}
+                  <option value="orientador{{orientador.id}}" {% if orientador.id == projeto.orientador.user.id %}selected{% endif %}>
+                  {{orientador.get_full_name}}
+                </option>  
+                {% endif %}
+              {% endfor %}
+              </optgroup>
 
-      </select>
-      
-      <br>
-      <small>
-      <ol style="margin-bottom: 6px;">
-        {% for alocacao in projeto.alocacao_set.all %}
-          <li><a href="{% url 'estudante_detail' alocacao.aluno.id %}"
-              data-toggle="tooltip" data-html="true" animation="true" title="">
-              {{alocacao.aluno.user.get_full_name}}
-              </a>
-              <a href="mailto:{{alocacao.aluno.user.email}}">&lt;{{alocacao.aluno.user.email}}&gt;</a>
-              [{{ alocacao.aluno.curso2 }}]
-              {% if alocacao.aluno.externo %}<span style="color:red">[{{alocacao.aluno.externo}}]</span>{% endif %}
-          </li>
-        {% endfor %}
-      </ol>
-      </small>
-    </div>
-    {% endfor %}
+          </select>
+          
+          <br>
+          <small>
+          <ol style="margin-bottom: 6px;">
+            {% for alocacao in projeto.alocacao_set.all %}
+              <li><a href="{% url 'estudante_detail' alocacao.aluno.id %}"
+                  data-toggle="tooltip" data-html="true" animation="true" title="">
+                  {{alocacao.aluno.user.get_full_name}}
+                  </a>
+                  <a href="mailto:{{alocacao.aluno.user.email}}">&lt;{{alocacao.aluno.user.email}}&gt;</a>
+                  [{{ alocacao.aluno.curso2 }}]
+                  {% if alocacao.aluno.externo %}<span style="color:red">[{{alocacao.aluno.externo}}]</span>{% endif %}
+              </li>
+            {% endfor %}
+          </ol>
+          </small>
+        </div>
+      {% endfor %}
 
-  {% else %}
-    {% lng "Não existem projetos fechados nesse semestre." "There are no closed projects in this semester." %}
+    {% else %}
+      {% lng "Não existem projetos fechados nesse semestre." "There are no closed projects in this semester." %}
+      <br><br>
+    {% endif %}
+
+    <br>
+    <b>{% lng "Total de projetos:" "Total of projects:" %}</b>
+    {{projetos|length}}<br>
     <br><br>
-  {% endif %}
-
-  <br>
-  <b>{% lng "Total de projetos:" "Total of projects:" %}</b>
-  {{projetos|length}}<br>
-  <br><br>
-    </div>
+  </div>
 
   <div>
     <span id="lista_orientadores"></span>
   </div>
 
-  <br>
-  <h5>Links:</h5>
-  <ul>
-    <li><a href="{% url 'projetos_fechados' %}">
-      {% lng "Visualizar Projetos Fechados" "View Closed Projects" %}
-    </a></li>
-  </ul>
+  
+  <a class="btn btn-primary mb-1 troca_lingua_title" href="{% url 'projetos_fechados' %}">
+    {% lng "Visualizar Projetos Fechados" "View Closed Projects" %}
+  </a>
+  
 
   <script>
 
@@ -188,7 +191,14 @@
         for (var i=0; i<keys.length; i++) {
           tabela += "<tr class='item'><td>" + keys[i] + "</td><td>" + lista_orientadores[keys[i]] + "</td></tr>";
         }
-        tabela += "</tbody></table>"
+
+        //TOTAL
+        tabela += "</tbody><tfoot>";
+        tabela += "<tr class='total-alocacao'><td><b>Total</b></td><td><b>" + Object.values(lista_orientadores).reduce((a, b) => a + b, 0) + "/" + orientadores.length + "</b></td></tr>";
+        tabela += "</tfoot>";
+
+        // Fecha tabela
+        tabela += "</table>"
 
         // Define valor da tabela
         $("#lista_orientadores").html(tabela);
@@ -201,6 +211,8 @@
           sort("#tab_aloc", ".item", "td:nth-child(2)");
         });
 
+      } else {
+        $("#lista_orientadores").html("");
       }
       
     }
