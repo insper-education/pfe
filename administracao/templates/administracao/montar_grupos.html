@@ -306,8 +306,19 @@
       {% for curso in cursos %}
         <b>{{curso.sigla_curta}}</b>: {{curso.nome}} {% if not forloop.last %}|{% endif %}
       {% endfor %}
+      |
+      <span style="background-color: #555555; color: #FFFFFF; padding: 0 2px 0 2px;">XX</span>: {% lng "Curso do estudante corresponde aos perfis da proposta" "Student's course matches the proposal's profiles" %}
+      |
+      <span style="background-color: #FF0000; color: #FFFFFF; padding: 0 2px 0 2px;">XX</span>: {% lng "Curso do estudante não corresponde aos perfis da proposta" "Student's course does not match the proposal's profiles" %}
+      <br>
+      <span style="background-color: #F0F0F0; border: 1px solid #00c; font-size: 8px; padding-left: 16px;">&nbsp;&nbsp;</span>: {% lng "Estudante alocado em proposta com opção definida" "Student allocated to proposal with defined option" %}
+      |
+      <span style="background-color: orange; border: 1px solid #00c; font-size: 8px; padding-left: 16px;">&nbsp;&nbsp;</span>: {% lng "Estudante alocado em proposta além da quinta opção" "Student allocated to proposal beyond the fifth option" %}
+      |
+      <span style="background-color: #FF90B0; border: 1px solid #00c; font-size: 8px; padding-left: 16px;">&nbsp;&nbsp;</span>: {% lng "Estudante alocado em proposta sem opção definida" "Student allocated to proposal without defined option" %}
       <br>
       <span class="estrela">&#9733;</span>: {% lng "Alguma observação sobre a alocação do estudante no projeto" "Some observation about the student's allocation in the project" %}
+      |
       <span class="text-danger fw-bold">&reg;</span>: {% lng "Estudante com reprovação" "Student failed previous semester" %}
     </small>
   </div>
@@ -439,8 +450,11 @@
       var curso = estudante.find(".l_curso")
       if(perfs.includes(curso.text())) {
         curso.css("background-color", "#555555");
+        curso.attr("title", "");
       } else {
         curso.css("background-color", "#FF0000");
+        curso.attr("title", "Curso não corresponde aos perfis da proposta");
+
       }
 
       return [anterior, opcao];
