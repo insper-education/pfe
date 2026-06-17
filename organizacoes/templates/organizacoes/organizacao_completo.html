@@ -13,146 +13,569 @@
 {% block head %}
   {% include "reload.html" %}
   <link rel="stylesheet" href="{% static 'css/caixa_rolante.css' %}">
+
+  <style>
+    .organizacao-topo {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr);
+      gap: 0.9rem;
+      align-items: start;
+      border: 1px solid #dfe3e8;
+      border-radius: 6px;
+      background: #ffffff;
+      padding: 0.85rem 0.95rem;
+      margin-bottom: 0.9rem;
+    }
+
+    .organizacao-logo-wrap {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 96px;
+      min-height: 72px;
+      padding: 0.35rem;
+    }
+
+    .organizacao-logo {
+      max-width: 84px;
+      max-height: 60px;
+      object-fit: contain;
+    }
+
+    .organizacao-topo.sem-logo {
+      grid-template-columns: 1fr;
+    }
+
+    .organizacao-cabecalho {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 0.75rem;
+      margin-bottom: 0.45rem;
+    }
+
+    .organizacao-cabecalho h4 {
+      margin: 0;
+      line-height: 1.2;
+    }
+
+    .organizacao-website {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      max-width: 20rem;
+      border: 1px solid #e9ecef;
+      border-radius: 999px;
+      background: #f8f9fa;
+      padding: 0.16rem 0.5rem;
+      font-size: 0.84rem;
+      line-height: 1.2;
+      white-space: nowrap;
+    }
+
+    .organizacao-website span {
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .organizacao-info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 0.45rem;
+      border-top: 1px solid #edf0f2;
+      padding-top: 0.45rem;
+    }
+
+    .organizacao-info-bloco {
+      font-size: 0.92rem;
+      line-height: 1.32;
+      border: 1px solid #e9ecef;
+      border-radius: 6px;
+      padding: 0.45rem 0.6rem;
+      background: #f8f9fa;
+    }
+
+    .organizacao-info-bloco p {
+      margin-bottom: 0.35rem;
+    }
+
+    .organizacao-info-bloco p:last-child {
+      margin-bottom: 0;
+    }
+
+    .organizacao-info-titulo {
+      display: block;
+      color: #495057;
+      font-size: 0.75rem;
+      font-weight: bold;
+      letter-spacing: 0.02em;
+      margin-bottom: 0.15rem;
+      text-transform: uppercase;
+    }
+
+    .organizacao-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.25rem;
+      margin-top: 0.45rem;
+    }
+
+    .organizacao-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      border: 1px solid #e1e6eb;
+      border-radius: 999px;
+      background: #ffffff;
+      color: #343a40;
+      font-size: 0.8rem;
+      line-height: 1.2;
+      padding: 0.14rem 0.45rem;
+    }
+
+    @media (max-width: 700px) {
+      .organizacao-topo {
+        grid-template-columns: 1fr;
+      }
+
+      .organizacao-logo-wrap {
+        width: 100%;
+      }
+
+      .organizacao-cabecalho {
+        flex-direction: column;
+        gap: 0.4rem;
+      }
+
+      .organizacao-website {
+        max-width: 100%;
+      }
+    }
+
+    .contatos-cabecalho {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      margin: 1rem 0 0.45rem;
+    }
+
+    .contatos-cabecalho h5 {
+      margin: 0;
+      font-weight: bold;
+    }
+
+    .contato-add {
+      line-height: 1;
+      padding: 0.1rem 0.35rem;
+    }
+
+    .contatos-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 0.45rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .contato-card {
+      border: 1px solid #dfe3e8;
+      border-radius: 6px;
+      background: #ffffff;
+      padding: 0.5rem 0.6rem;
+      transition: background-color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .contato-card:hover {
+      border-color: #c7d0da;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+    }
+
+    .contato-card.contato-principal-card {
+      border-color: #b6d4fe;
+      background: #f8fbff;
+    }
+
+    .contato-card.contato-inativo {
+      background: #f8f9fa;
+    }
+
+    .contato-card.contato-vazio {
+      color: #6c757d;
+    }
+
+    .contato-topo {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 0.4rem;
+      margin-bottom: 0.25rem;
+    }
+
+    .contato-nome {
+      font-weight: bold;
+      line-height: 1.2;
+    }
+
+    .contato-cargo {
+      color: #555555;
+      font-size: 0.78rem;
+      line-height: 1.2;
+      margin-top: 0.05rem;
+    }
+
+    .contato-badges {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 0.2rem;
+      flex: 0 0 auto;
+    }
+
+    .contato-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.2rem;
+      border: 1px solid #dee2e6;
+      border-radius: 999px;
+      background: #ffffff;
+      color: #495057;
+      font-size: 0.68rem;
+      line-height: 1.1;
+      padding: 0.1rem 0.35rem;
+      white-space: nowrap;
+    }
+
+    .contato-badge-principal {
+      border-color: #ffe08a;
+      background: #fff8df;
+      color: #7a5a00;
+    }
+
+    .contato-badge-inativo {
+      background: #f1f3f5;
+      color: #6c757d;
+    }
+
+    .contato-info {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.22rem;
+      margin-top: 0.25rem;
+    }
+
+    .contato-linha {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.28rem;
+      max-width: 100%;
+      border: 1px solid #e9ecef;
+      border-radius: 999px;
+      background: #ffffff;
+      padding: 0.12rem 0.4rem;
+      line-height: 1.2;
+      font-size: 0.82rem;
+    }
+
+    .contato-linha i,
+    .contato-linha .contato-icone {
+      color: #495057;
+      text-align: center;
+      width: 0.9rem;
+    }
+
+    .contato-linha a {
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .contato-email {
+      flex-basis: 100%;
+    }
+
+    .contato-whatsapp {
+      width: 14px;
+      height: 14px;
+      vertical-align: text-bottom;
+    }
+
+    .contato-inativo .contato-whatsapp {
+      opacity: 0.4;
+    }
+
+    .dados-contato {
+      border: 1px solid #dfe3e8;
+      border-radius: 6px;
+      background: #ffffff;
+      padding: 0.75rem 0.85rem;
+      margin: 0.9rem 0 1rem;
+    }
+
+    .dados-contato h5 {
+      margin: 0 0 0.55rem;
+      font-weight: bold;
+    }
+
+    .dados-contato-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 0.45rem 0.8rem;
+    }
+
+    .dados-contato-item {
+      min-width: 0;
+      font-size: 0.9rem;
+      line-height: 1.25;
+    }
+
+    .dados-contato-label {
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      color: #495057;
+      font-size: 0.75rem;
+      font-weight: bold;
+      text-transform: uppercase;
+      margin-bottom: 0.08rem;
+    }
+
+    .dados-contato-label i {
+      width: 0.9rem;
+      text-align: center;
+    }
+
+    .dados-contato-valor {
+      overflow-wrap: anywhere;
+    }
+
+    .dados-contato-indisponivel {
+      color: #b00020;
+      font-style: normal;
+    }
+
+    .dados-contato-endereco {
+      grid-column: 1 / -1;
+    }
+
+    .dados-contato-endereco a {
+      display: inline-block;
+    }
+  </style>
 {% endblock %}
 
 {% block content %}
-  
-  {% if organizacao.logotipo %}
-    <img id="logotipo" class="logotipo flutua_dir" src="{{ organizacao.logotipo.url }}" alt="{{ organizacao.sigla }}">
-  {% endif %}
 
-  <h4>{{organizacao.nome}}</h4>
-  
-  <table class="table table-sm w-auto">
-    <tbody>
-      {% if organizacao.website %}
-        <tr>
-          <td scope="row">
-            <b>{% lng "Website" "Website" %}</b>:
-            <a href="{{ organizacao.website }}"> {{ organizacao.website }} </a>
-          </td>
-        </tr>
-      {% endif %}
-      {% if organizacao.informacoes %}
-        <tr>
-          <td scope="row">
-            <b>{% lng "Informações sobre a empresa" "Company information" %}</b><br>
-            {{ organizacao.informacoes|linebreaks }}
-          </td>
-        </tr>
-      {% endif %}
-      {% if organizacao.origem %}
-        <tr>
-          <td scope="row">
-            <b>{% lng "Origem da abertura de contato" "Source of contact opening" %}</b><br>
-            {{ organizacao.origem|linebreaks }}
-          </td>
-        </tr>
-      {% endif %}
-      {% if organizacao.area_curso.all %}
-          <tr>
-            <td scope="row">
-              <b>{% lng "Áreas de projetos" "Project areas" %}</b>
-              {% for curso in organizacao.area_curso.all %}{% if not forloop.first %}, {% endif %}{{curso.nome}}{% endfor %}.
-            </td>
-          </tr>
-      {% endif %}
-      {% if organizacao.segmento %}
-        <tr>
-          <td scope="row">
-            <b>{% lng "Segmento" "Segment" %}</b>:
-            {% lng organizacao.segmento.nome organizacao.segmento.nome_en %}<br>
-          </td>
-        </tr>
-      {% endif %}
-    </tbody>
-  </table>
-
-  <br>
-  <b>{% lng "Contato(s)" "Contact(s)" %}:</b>
-  <small class="esconder"><a href="{% url 'cadastrar_usuario' %}?tipo=parceiro&organizacao={{organizacao.id}}">&#10133;</a></small>
-  <br>
-  <ul>
-  {% for parceiro in organizacao.parceiro_set.all|order_by:"-user__is_active, -principal_contato, user" %}
-    <li style="margin-bottom: 6px;" {% if not parceiro.user.is_active %}class="links-claros"{% endif %}> 
-      <a href="{% url 'parceiro_detail' parceiro.id %}">{{parceiro.user.get_full_name}}</a>
-      {% if parceiro.principal_contato %}
-        <span data-toggle="tooltip" data-html="true" animation="true" title="Principal Contato">&#x2B50;</span>
-      {% endif %}
-      {% if parceiro.cargo %}
-        <div style="margin-top: -4px; font-size:13px; line-height:1.3;">{{parceiro.cargo}}</div>
-      {% endif %}
-      <div style="line-height:0.95;">
-        <i class="far fa-envelope"></i>
-        <a href="mailto:{{parceiro.user.email}}">{{parceiro.user.email}}</a>
+  <section class="organizacao-topo{% if not organizacao.logotipo %} sem-logo{% endif %}">
+    {% if organizacao.logotipo %}
+      <div class="organizacao-logo-wrap">
+        <img id="logotipo" class="organizacao-logo" src="{{ organizacao.logotipo.url }}" alt="{{ organizacao.sigla }}">
       </div>
+    {% endif %}
+
+    <div>
+      <div class="organizacao-cabecalho">
+        <h4>{{organizacao.nome}}</h4>
+        {% if organizacao.website %}
+          <a class="organizacao-website" href="{{ organizacao.website }}">
+            <i class="fas fa-globe"></i>
+            <span>{{ organizacao.website }}</span>
+          </a>
+        {% endif %}
+      </div>
+
+      {% if organizacao.informacoes or organizacao.origem %}
+        <div class="organizacao-info-grid">
+          {% if organizacao.informacoes %}
+            <div class="organizacao-info-bloco">
+              <span class="organizacao-info-titulo">{% lng "Informações sobre a empresa" "Company information" %}</span>
+              {{ organizacao.informacoes|linebreaks }}
+            </div>
+          {% endif %}
+          {% if organizacao.origem %}
+            <div class="organizacao-info-bloco">
+              <span class="organizacao-info-titulo">{% lng "Origem da abertura de contato" "Source of contact opening" %}</span>
+              {{ organizacao.origem|linebreaks }}
+            </div>
+          {% endif %}
+        </div>
+      {% endif %}
+
+      {% if organizacao.area_curso.all or organizacao.segmento %}
+        <div class="organizacao-tags">
+          {% if organizacao.segmento %}
+            <span class="organizacao-info-titulo">{% lng "Segmento" "Segment" %}:</span>
+            <span class="organizacao-tag">
+              <i class="fas fa-industry"></i>
+              {% lng organizacao.segmento.nome organizacao.segmento.nome_en %}
+            </span>
+          {% endif %}
+        </div>
+        <div class="organizacao-tags">
+          {% if organizacao.area_curso.all %}
+            <span class="organizacao-info-titulo">{% lng "Área de cursos" "Course areas" %}:</span>
+            {% for curso in organizacao.area_curso.all %}
+              <span class="organizacao-tag">
+                <i class="fas fa-layer-group"></i>
+                {{curso.nome}}
+              </span>
+            {% endfor %}
+          {% endif %}
+        </div>
+      {% endif %}
+    </div>
+  </section>
+
+  <div class="contatos-cabecalho">
+    <h5>{% lng "Contato(s)" "Contact(s)" %}</h5>
+    <a class="btn btn-outline-primary btn-sm esconder contato-add troca_lingua_title"
+       href="{% url 'cadastrar_usuario' %}?tipo=parceiro&organizacao={{organizacao.id}}"
+       data-title_pt="Adicionar contato" data-title_en="Add contact"
+       aria-label="Adicionar contato">
+      <i class="fas fa-plus"></i>
+    </a>
+  </div>
+
+  <div class="contatos-grid">
+  {% for parceiro in organizacao.parceiro_set.all|order_by:"-user__is_active, -principal_contato, user" %}
+    <div class="contato-card{% if parceiro.principal_contato %} contato-principal-card{% endif %}{% if not parceiro.user.is_active %} contato-inativo links-claros{% endif %}">
+      <div class="contato-topo">
+        <div>
+          <a class="contato-nome" href="{% url 'parceiro_detail' parceiro.id %}">{{parceiro.user.get_full_name}}</a>
+          {% if parceiro.cargo %}
+            <div class="contato-cargo">{{parceiro.cargo}}</div>
+          {% endif %}
+        </div>
+        <div class="contato-badges">
+          {% if parceiro.principal_contato %}
+            <span class="contato-badge contato-badge-principal troca_lingua_title"
+              data-title_pt="Principal Contato" data-title_en="Main Contact"
+              data-toggle="tooltip" data-html="true" animation="true">
+              <i class="fas fa-star"></i>
+              {% lng "Principal" "Main" %}
+            </span>
+          {% endif %}
+          {% if not parceiro.user.is_active %}
+            <span class="contato-badge contato-badge-inativo">
+              {% lng "Inativo" "Inactive" %}
+            </span>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="contato-info">
+        <div class="contato-linha contato-email">
+          <i class="far fa-envelope"></i>
+          <a href="mailto:{{parceiro.user.email}}">{{parceiro.user.email}}</a>
+        </div>
       {% if parceiro.user.telefone %}
-        <div style="line-height:0.95;">
-          &#x260F;
+        <div class="contato-linha">
+          <i class="fas fa-phone-alt"></i>
           <a href="tel:{{parceiro.user.telefone}}">{{parceiro.user.telefone}}</a>
         </div>
       {% endif %}
       {% if parceiro.user.celular %}
-        <div>
-          {% if not parceiro.user.is_active %}<span style="color: transparent; text-shadow: 0 0 0 lightgrey;">&#x1F4F1;</span>{% else %}&#x1F4F1;{% endif %}
-          <a href="tel:{{parceiro.user.celular}}">{{parceiro.user.celular}}</a>&nbsp;
-          <a href="https://wa.me/{{parceiro.user.celular|cut:' '}}"><img src="{% static 'images/whatsapp.svg' %}" alt="whatsapp" style="width:16px;height:16px; {% if not parceiro.user.is_active %}opacity: 0.4;filter: alpha(opacity=40);{% endif %}"></a>
+        <div class="contato-linha">
+          <i class="fas fa-mobile-alt"></i>
+          <a href="tel:{{parceiro.user.celular}}">{{parceiro.user.celular}}</a>
+          <a href="https://wa.me/{{parceiro.user.celular|cut:' '}}">
+            <img class="contato-whatsapp" src="{% static 'images/whatsapp.svg' %}" alt="whatsapp">
+          </a>
         </div>
       {% endif %}
       {% if parceiro.user.instant_messaging %}
-        <div>
-          <img src="{% static 'images/skype.png' %}" alt="instant_messaging" style="width:16px;height:16px;">
+        <div class="contato-linha">
+          <img class="contato-whatsapp" src="{% static 'images/skype.png' %}" alt="instant_messaging">
           {{parceiro.user.instant_messaging}}
         </div>
       {% endif %}
-    </li>
+      </div>
+    </div>
+  {% empty %}
+    <div class="contato-card contato-vazio">
+      {% lng "Nenhum contato cadastrado." "No contacts registered." %}
+    </div>
   {% endfor %}
-  </ul>
+  </div>
 
-  <br>
-  <b>{% lng "Dados de contato" "Contact data" %}:</b><br>
-  &nbsp;&nbsp;&nbsp;Razão Social:
-  {% if organizacao.razao_social %}
-    {{ organizacao.razao_social }}
-  {% else %}
-    <i style="color:red">{% lng "Não disponível" "Not available" %}</i>
-  {% endif %}
-  &nbsp;&nbsp;&nbsp;
-  <br>
-  &nbsp;&nbsp;&nbsp;Ramo de Atividade:
-  {% if organizacao.ramo_atividade %}
-    {{ organizacao.ramo_atividade }}
-  {% else %}
-    <i style="color:red">{% lng "Não disponível" "Not available" %}</i>
-  {% endif %}
-  &nbsp;&nbsp;&nbsp;
-  <br>
-  &nbsp;&nbsp;&nbsp;CNPJ:
-  {% if organizacao.cnpj %}
-  <a href="http://servicos.receita.fazenda.gov.br/Servicos/cnpjreva/Cnpjreva_Solicitacao.asp?cnpj={{organizacao.cnpj}}">
-    {{ organizacao.cnpj|cnpj }}
-  </a>
-  {% else %}
-    <i style="color:red">{% lng "Não disponível" "Not available" %}</i>
-  {% endif %}
-  &nbsp;&nbsp;&nbsp;
-  Inscrição Estadual:
-  {% if organizacao.inscricao_estadual %}
-    <a href="http://www.sintegra.gov.br/">
-      {{ organizacao.inscricao_estadual }}
-    </a>
-  {% else %}
-    <i style="color:red">{% lng "Não disponível" "Not available" %}</i>
-  {% endif %}
-  <br>
-  &nbsp;&nbsp;&nbsp;{% lng "Endereço" "Address" %}:
-  {% if organizacao.endereco %}
-    <a style="margin-left:16px;display:block;" href="http://maps.google.com/maps?q={{organizacao.endereco}}">
-      {{ organizacao.endereco|linebreaks }}
-    </a>
-  {% else %}
-    <i style="color:red">{% lng "Não disponível" "Not available" %}</i>
-  {% endif %}
+  <section class="dados-contato">
+    <h5>{% lng "Dados de contato" "Contact data" %}</h5>
+
+    <div class="dados-contato-grid">
+      <div class="dados-contato-item">
+        <span class="dados-contato-label">
+          <i class="fas fa-building"></i>
+          {% lng "Razão Social" "Corporate Name" %}
+        </span>
+        <div class="dados-contato-valor">
+          {% if organizacao.razao_social %}
+            {{ organizacao.razao_social }}
+          {% else %}
+            <em class="dados-contato-indisponivel">{% lng "Não disponível" "Not available" %}</em>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="dados-contato-item">
+        <span class="dados-contato-label">
+          <i class="fas fa-briefcase"></i>
+          {% lng "Ramo de Atividade" "Business Activity" %}
+        </span>
+        <div class="dados-contato-valor">
+          {% if organizacao.ramo_atividade %}
+            {{ organizacao.ramo_atividade }}
+          {% else %}
+            <em class="dados-contato-indisponivel">{% lng "Não disponível" "Not available" %}</em>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="dados-contato-item">
+        <span class="dados-contato-label">
+          <i class="fas fa-id-card"></i>
+          CNPJ
+        </span>
+        <div class="dados-contato-valor">
+          {% if organizacao.cnpj %}
+            <a href="http://servicos.receita.fazenda.gov.br/Servicos/cnpjreva/Cnpjreva_Solicitacao.asp?cnpj={{organizacao.cnpj}}">
+              {{ organizacao.cnpj|cnpj }}
+            </a>
+          {% else %}
+            <em class="dados-contato-indisponivel">{% lng "Não disponível" "Not available" %}</em>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="dados-contato-item">
+        <span class="dados-contato-label">
+          <i class="fas fa-file-signature"></i>
+          {% lng "Inscrição Estadual" "State Registration" %}
+        </span>
+        <div class="dados-contato-valor">
+          {% if organizacao.inscricao_estadual %}
+            <a href="http://www.sintegra.gov.br/">{{ organizacao.inscricao_estadual }}</a>
+          {% else %}
+            <em class="dados-contato-indisponivel">{% lng "Não disponível" "Not available" %}</em>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="dados-contato-item dados-contato-endereco">
+        <span class="dados-contato-label">
+          <i class="fas fa-map-marker-alt"></i>
+          {% lng "Endereço" "Address" %}
+        </span>
+        <div class="dados-contato-valor">
+          {% if organizacao.endereco %}
+            <a href="http://maps.google.com/maps?q={{organizacao.endereco}}">
+              {{ organizacao.endereco|linebreaks }}
+            </a>
+          {% else %}
+            <em class="dados-contato-indisponivel">{% lng "Não disponível" "Not available" %}</em>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </section>
 
   <hr>
   <span class="d-flex align-items-center justify-content-between flex-wrap">
