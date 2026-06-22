@@ -15,7 +15,7 @@ from wsgiref.util import FileWrapper
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
-from django.http import Http404, HttpResponse
+from django.http import Http404
 from django.http.response import StreamingHttpResponse
 from django.shortcuts import render, get_object_or_404, redirect
 
@@ -127,7 +127,7 @@ def get_response(file, path, request):
 
     ext = path.split('.')[-1].lower()
     if ext in mime_types:
-        return HttpResponse(file.read(), content_type=mime_types[ext])
+        return stream_file(request, file.name, mime_types[ext])
 
     if ext in stream_types:
         return stream_file(request, file.name, stream_types[ext])
