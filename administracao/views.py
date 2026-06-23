@@ -701,7 +701,7 @@ def exportar(request):
             formato = "xlsx"
             response = HttpResponse(databook.export("xlsx"), content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
         elif formato == "json":
-            response = HttpResponse(json.dumps(livro, default=data_default), content_type="application/json")
+            response = HttpResponse(json.dumps(livro, default=data_default, indent=2, ensure_ascii=False), content_type="application/json")
         elif formato == "csv":
             response = HttpResponse(dataset.export("csv"), content_type="text/csv")
         else:
