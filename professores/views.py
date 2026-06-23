@@ -12,12 +12,13 @@ import logging
 import requests
 import json
 
+from collections import defaultdict
 from urllib.parse import unquote
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required, permission_required
 from django.db import transaction
-from django.db.models import Case, When, Value, F, Func, FloatField, Max, Q
+from django.db.models import Case, When, Value, F, Func, FloatField, Max, Prefetch, Q
 from django.db.models.functions import Lower
 from django.http import HttpResponse, HttpResponseNotFound, JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
@@ -32,7 +33,7 @@ from .support import move_avaliacoes, ver_pendencias_professor, mensagem_edicao_
 from .support3 import resultado_projetos_intern, puxa_encontros, puxa_bancas, calculate_allocation_statistics
 
 from academica.models import Exame, Composicao, Peso
-from academica.support import filtra_entregas
+from academica.support import get_nota_peso
 from academica.support4 import get_banca_estudante
 from academica.support5 import filtra_composicoes
 from academica.support_notas import converte_letra, converte_conceito
@@ -64,6 +65,118 @@ from .forms import DinamicasForm, EncontroFeedbackForm
 
 # Get an instance of a logger
 logger = logging.getLogger("django")
+
+
+class ListaComFirstLast(list):
+    """Lista pequena que preserva a interface first/last usada nas templates."""
+
+    def first(self):
+        return self[0] if self else None
+
+    def last(self):
+        return self[-1] if self else None
+
+
+def _filtra_entregas_precarregadas(composicoes, projeto, eventos_cache):
+    """Monta entregas em bloco para evitar milhares de queries na listagem geral."""
+
+    if projeto.orientador:
+        orientador = projeto.orientador.user
+    else:
+        orientador = None
+
+    tipo_documento_ids = {c.tipo_documento_id for c in composicoes if c.tipo_documento_id}
+    exame_ids = {c.exame_id for c in composicoes if c.exame_id}
+
+    documentos_por_tipo = defaultdict(ListaComFirstLast)
+    if tipo_documento_ids:
+        documentos = Documento.objects.filter(
+            projeto=projeto,
+            tipo_documento_id__in=tipo_documento_ids,
+        ).select_related("usuario", "tipo_documento").order_by("id")
+        for documento in documentos:
+            documentos_por_tipo[documento.tipo_documento_id].append(documento)
+
+    avaliacoes_por_exame = defaultdict(ListaComFirstLast)
+    avaliacoes_por_alocacao = defaultdict(ListaComFirstLast)
+    if exame_ids:
+        avaliacoes = Avaliacao2.objects.filter(
+            projeto=projeto,
+            exame_id__in=exame_ids,
+        ).select_related("objetivo", "exame", "avaliador", "alocacao").order_by("momento", "id")
+        for avaliacao in avaliacoes:
+            avaliacoes_por_exame[avaliacao.exame_id].append(avaliacao)
+            avaliacoes_por_alocacao[
+                (avaliacao.exame_id, avaliacao.avaliador_id, avaliacao.alocacao_id)
+            ].append(avaliacao)
+
+    observacoes_por_exame = defaultdict(ListaComFirstLast)
+    observacoes_por_alocacao = defaultdict(ListaComFirstLast)
+    if exame_ids:
+        observacoes = Observacao.objects.filter(
+            projeto=projeto,
+            exame_id__in=exame_ids,
+        ).select_related("exame", "avaliador", "alocacao").order_by("id")
+        for observacao in observacoes:
+            observacoes_por_exame[observacao.exame_id].append(observacao)
+            observacoes_por_alocacao[
+                (observacao.exame_id, observacao.avaliador_id, observacao.alocacao_id)
+            ].append(observacao)
+
+    alocacoes = [
+        alocacao for alocacao in projeto.alocacao_set.all()
+        if alocacao.aluno.externo is None
+    ]
+
+    entregas = []
+    for composicao in composicoes:
+        chave_evento = (composicao.tipo_evento_id, projeto.ano, projeto.semestre)
+        if chave_evento not in eventos_cache:
+            eventos_cache[chave_evento] = Evento.get_evento(
+                tipo=composicao.tipo_evento,
+                ano=projeto.ano,
+                semestre=projeto.semestre,
+            )
+        evento = eventos_cache[chave_evento]
+
+        if composicao.exame and composicao.exame.grupo:
+            avaliacoes = avaliacoes_por_exame[composicao.exame_id]
+            nota, peso = get_nota_peso(avaliacoes)
+            entregas.append({
+                "composicao": composicao,
+                "evento": evento,
+                "documentos": documentos_por_tipo[composicao.tipo_documento_id],
+                "avaliacoes": avaliacoes,
+                "nota": nota,
+                "observacao": observacoes_por_exame[composicao.exame_id].last(),
+            })
+        else:
+            alocacoes_entrega = {}
+            for alocacao in alocacoes:
+                chave = (
+                    composicao.exame_id,
+                    orientador.id if orientador else None,
+                    alocacao.id,
+                )
+                avaliacoes = avaliacoes_por_alocacao[chave]
+                nota, peso = get_nota_peso(avaliacoes)
+                alocacoes_entrega[alocacao] = {
+                    "documentos": ListaComFirstLast(
+                        documento for documento in documentos_por_tipo[composicao.tipo_documento_id]
+                        if documento.usuario_id == alocacao.aluno.user_id
+                    ),
+                    "avaliacoes": avaliacoes,
+                    "nota": nota,
+                    "observacao": observacoes_por_alocacao[chave].last(),
+                }
+
+            entregas.append({
+                "composicao": composicao,
+                "evento": evento,
+                "alocacoes": alocacoes_entrega,
+            })
+
+    return sorted(entregas, key=lambda t: (datetime.date.today() if t["evento"] is None else t["evento"].endDate))
 
 
 
@@ -150,7 +263,14 @@ def avaliar_entregas(request, prof_id=None):
 
     if request.method == "POST":
 
-        projetos = Projeto.objects.all()
+        alocacoes_prefetch = Prefetch(
+            "alocacao_set",
+            queryset=Alocacao.objects.select_related("aluno__user", "aluno__curso2"),
+        )
+        projetos = Projeto.objects.select_related(
+            "proposta__organizacao",
+            "orientador__user",
+        ).prefetch_related(alocacoes_prefetch)
 
         # Se projeto especificado
         if projeto_id:
@@ -179,14 +299,31 @@ def avaliar_entregas(request, prof_id=None):
                     return HttpResponse("Edição inválida.", status=400)
 
         # Coletando entregas por projeto
-        composicoes = Composicao.objects.filter(Q(entregavel=True) | Q(coordenacao=True))
-        avaliacoes = [
-            (projeto, filtra_entregas(
-                filtra_composicoes(composicoes, projeto.ano, projeto.semestre),
-                projeto
+        composicoes = Composicao.objects.filter(
+            Q(entregavel=True) | Q(coordenacao=True)
+        ).select_related("exame", "tipo_documento", "tipo_evento")
+        composicoes_cache = {}
+        eventos_cache = {}
+        avaliacoes = []
+        for projeto in projetos:
+            # Antes de 2022 os relatos quinzenais eram feitos no Blackboard.
+            if projeto.ano < 2022:
+                continue
+
+            chave_composicoes = (projeto.ano, projeto.semestre)
+            if chave_composicoes not in composicoes_cache:
+                composicoes_cache[chave_composicoes] = list(
+                    filtra_composicoes(composicoes, projeto.ano, projeto.semestre)
+                )
+
+            avaliacoes.append((
+                projeto,
+                _filtra_entregas_precarregadas(
+                    composicoes_cache[chave_composicoes],
+                    projeto,
+                    eventos_cache,
+                )
             ))
-            for projeto in projetos
-        ]
 
 
 
@@ -205,12 +342,16 @@ def avaliar_entregas(request, prof_id=None):
         elif professor and prof_id != "todos":
             edicoes = get_edicoes_orientador(professor, configuracao)[0]
         else:
-            edicoes = get_edicoes(Projeto, configuracao)[0]
+            edicoes = get_edicoes(Projeto)[0]
 
         # Coletando os tipos de entregas que podem ser avaliadas
-        exames = {c.exame for c in Composicao.objects.filter(entregavel=True)}
+        exames = {
+            c.exame
+            for c in Composicao.objects.filter(entregavel=True).select_related("exame")
+            if c.exame
+        }
 
-        selecionada_edicao = None
+        selecionada_edicao = f"{configuracao.ano}.{configuracao.semestre}"
         edicao = request.GET.get("edicao", None)
         if edicao:
             if edicao == "todas":

@@ -20,12 +20,98 @@
     .lightgrey:hover,
     .lightgrey:active {color:lightgrey;}
     .nome_entrega {
-      font-size: 0.9em;
-      margin-left: 0.4em;
+      display: inline-block;
+      font-size: 0.95em;
+      margin-left: 0;
+      padding-bottom: 2px;
+      color: #263746;
     }
-    .nome_est {margin-left: 0.4em;}
-    .linha {margin: 4px 0px 2px 0px;}
+    .nome_est {
+      display: inline-block;
+      margin-left: 0.2em;
+      margin-top: 2px;
+      color: #2f4054;
+    }
+    .linha {
+      border-top: 1px solid #dfe4ea;
+      margin: 8px 0px 5px 0px;
+    }
     .delta-tempo-coleta {display: none;}
+    .aviso-pendencias-avaliacao {
+      align-items: center;
+      background: #fff1f0;
+      border: 1px solid #d88a83;
+      border-left: 5px solid #b42318;
+      border-radius: 6px;
+      box-shadow: 0 2px 8px rgba(180, 35, 24, 0.10);
+      color: #7a271a;
+      display: flex;
+      gap: 8px;
+      margin: 0px 0px 12px 0px;
+      padding: 10px 12px;
+      width: min(100%, 980px);
+    }
+    .aviso-pendencias-avaliacao i {
+      color: #b42318;
+      font-size: 1.15em;
+    }
+    .aviso-pendencias-avaliacao strong {
+      white-space: nowrap;
+    }
+    #atualizar .div_arredondado {
+      background: #f7f8fa;
+      border-color: #cfd5dd;
+      box-shadow: 0 2px 8px rgba(31, 45, 61, 0.06);
+      padding: 10px 12px;
+      width: min(100%, 980px);
+    }
+    .entregas-label {
+      color: #263746;
+      margin: 10px 0px 5px 0px;
+    }
+    .entrega-cartao {
+      background-color: #fffdf6;
+      border: 1px solid #d7dde5;
+      border-left: 4px solid #5d7fa8;
+      border-radius: 6px;
+      margin-top: 10px;
+      padding: 8px 10px;
+    }
+    .entrega-cartao:hover {
+      border-color: #b8c4d1;
+      box-shadow: 0 2px 8px rgba(31, 45, 61, 0.08);
+    }
+    .entrega-cartao:has(.redish) {
+      background-color: #fff8f7;
+      border-color: #d88a83;
+      border-left-color: #b42318;
+      box-shadow: inset 0 0 0 1px rgba(180, 35, 24, 0.12);
+    }
+    .entrega-cartao:has(.redish) .nome_entrega {
+      color: #7a271a;
+    }
+    .entrega-coordenacao {
+      background-color: #f1ecfb;
+      border-left-color: #7b61a8;
+    }
+    .entrega-cartao ul {
+      margin-top: 4px;
+    }
+    .entrega-cartao .redish {
+      background-color: #ffd9d6;
+      border: 1px solid #d88a83;
+      border-left: 4px solid #b42318;
+      border-radius: 4px;
+      color: #7a271a;
+      font-weight: 600;
+    }
+    .entrega-cartao ul.redish {
+      padding: 6px 8px 6px 28px;
+    }
+    .entrega-cartao li.redish {
+      margin: 3px 0px;
+      padding: 3px 6px;
+    }
     .resumo-tabela {
       width: 100%;
       margin-top: 8px;
@@ -34,16 +120,22 @@
     }
     .resumo-tabela th,
     .resumo-tabela td {
-      border: 1px solid #ddd;
-      padding: 4px 8px;
+      border: 1px solid #dce1e6;
+      padding: 6px 10px;
     }
     .resumo-tabela th {
-      background: #f8f9fa;
+      background: #edf2f7;
+      color: #263746;
+      text-align: left;
+    }
+    .resumo-tabela tbody tr:nth-child(even) {
+      background: #fbfcfd;
     }
     .resumo-tabela td.valor {
       text-align: right;
       width: 120px;
       font-weight: bold;
+      color: #243244;
     }
   </style>
   {% include "style_display_avaliacoes.html" %}
@@ -54,6 +146,16 @@
   {% include "edicoes.html" with com_entregas=tipos_entregas %}
 
   <div id="atualizar">
+
+    <div id="aviso_pendencias_avaliacao"
+         class="aviso-pendencias-avaliacao"
+         style="display:none;"
+         data-singular='{% lng "Há 1 entrega com avaliação pendente para o professor preencher ou refazer." "There is 1 delivery with a pending evaluation for the professor to fill in or redo." %}'
+         data-plural='{% lng "Há {0} entregas com avaliações pendentes para o professor preencher ou refazer." "There are {0} deliveries with pending evaluations for the professor to fill in or redo." %}'>
+      <i class="fas fa-exclamation-triangle"></i>
+      <strong>{% lng "Atenção" "Attention" %}:</strong>
+      <span id="aviso_pendencias_texto"></span>
+    </div>
 
     {% if not edicoes %}
       {% for projeto, entregas in avaliacoes %}
@@ -104,13 +206,12 @@
               </ul>
             {% endwith %}
 
-            <div style="margin:8px 0px 3px 0px; ">
+            <div class="entregas-label">
               <strong>{% lng "Entregas" "Deliveries" %}:</strong>
             </div>
             {% for item in entregas %}
             {% with dias_inic=item.evento.data_inicio_aval|dif_dias_hoje dias_ate=item.evento.data_aval|dif_dias_hoje dias=-1 %} {% comment %} Eventos são mostrados duas semanas antes do prazo {% endcomment %}
-              <div class="pintern exame{{item.composicao.exame.id}}" 
-                   style="{% if not forloop.first %}margin-top: 8px;{% endif %} {% if item.composicao.coordenacao %}background-color: #dad4ed;{% endif %}">
+              <div class="pintern entrega-cartao exame{{item.composicao.exame.id}}{% if item.composicao.coordenacao %} entrega-coordenacao{% endif %}">
                 <span class="nome_entrega" {% if dias_inic > dias and not item.composicao.coordenacao %}style="color:lightgrey;"{% endif %}>
                   {% if item.composicao.exame %}
                     <b>{% lng item.composicao.exame.titulo item.composicao.exame.titulo_en %}</b>
@@ -131,16 +232,15 @@
                 {% if item.composicao.exame.grupo %}
                   <ul style="margin-bottom: 2px; padding-left: 22px;" 
                     class="
-                      {% if item.avaliacoes and item.avaliacoes.first %}
-                        {% if documento.data > item.avaliacoes.first.momento %}redish{% endif %}
-                      {% else %}
+                      {% if not item.avaliacoes or not item.avaliacoes.first %}
                         {% if dias_ate < prazo_avaliar %}redish
                         {% elif item.evento.endDate < hoje %}yellowish{% endif %}
                       {% endif %}
                       {% if dias_inic > dias %}lightgrey{% endif %}
                     ">
                     {% for documento in item.documentos %}
-                      <li style="list-style-type:'';" {% if dias_inic > dias %}class="lightgrey"{% endif %}>
+                      <li style="list-style-type:'';"
+                          class="{% if dias_inic > dias %}lightgrey{% endif %}{% if item.avaliacoes and item.avaliacoes.first and documento.data > item.avaliacoes.first.momento %} redish{% endif %}">
                         {% if forloop.first%}<b>{% endif %}
                         {% if documento.documento or documento.link %}
                           <a {% if documento.usuario %} data-toggle="tooltip" data-html="true" animation="true" title="Entregue por {{documento.usuario.get_full_name}}"{% endif %}
@@ -201,16 +301,15 @@
                     <b class="{% if dias_inic > dias %}lightgrey{% endif %} nome_est">&#10040; {{alocacao.aluno.user.get_full_name}}:</b>
                     <ul style="margin-bottom: 0px; padding-left: 32px;"
                       class="
-                        {% if values.avaliacoes and values.avaliacoes.first%}
-                          {% if documento.data > values.avaliacoes.first.momento %}redish{% endif %}
-                        {% else %}
+                        {% if not values.avaliacoes or not values.avaliacoes.first %}
                           {% if dias_ate < prazo_avaliar %}redish
                           {% elif item.evento.endDate < hoje %}yellowish{% endif %}
                         {% endif %}
                         {% if dias_inic > dias %}lightgrey{% endif %}
                       ">
                       {% for documento in values.documentos %}
-                        <li style="list-style-type:'';" {% if dias_inic > dias %}class="lightgrey"{% endif %}>
+                        <li style="list-style-type:'';"
+                            class="{% if dias_inic > dias %}lightgrey{% endif %}{% if values.avaliacoes and values.avaliacoes.first and documento.data > values.avaliacoes.first.momento %} redish{% endif %}">
                           {% if forloop.first%}<b>{% endif %}
                           {% if documento.documento or documento.link %}
                             <a {% if documento.usuario %} data-toggle="tooltip" data-html="true" animation="true" title="Entregue por {% if documento.usuario %}{{documento.usuario.get_full_name}}{% else %}(ERRO AO IDENTIFICAR ESTUDANTE){% endif %}"{% endif %}
@@ -437,21 +536,59 @@
   </div> 
 
   <script>
+    function atualizarAvisoPendencias() {
+      var quantidade = $(".entrega-cartao:visible").filter(function() {
+        return $(this).find(".redish").length > 0;
+      }).length;
+      var aviso = $("#aviso_pendencias_avaliacao");
+
+      if (!aviso.length) {
+        return;
+      }
+
+      if (!quantidade) {
+        aviso.hide();
+        return;
+      }
+
+      var texto = quantidade === 1 ? aviso.data("singular") : aviso.data("plural");
+      $("#aviso_pendencias_texto").html(texto.replace("{0}", quantidade));
+      aviso.css("display", "flex");
+    }
+
+    {% if tipos_entregas %}
+      function aplicarFiltroEntregas() {
+        var selectedValue = $("#filterEntregas").val();
+        if (selectedValue == "todas") {
+          $(".pintern").show();
+        } else {
+          $(".pintern").hide();
+          $(".exame"+selectedValue).show();
+        }
+        atualizarAvisoPendencias();
+      }
+    {% endif %}
+
+    function carrega_pagina() {
+      if (typeof atualizarResumoPrazos === "function") {
+        atualizarResumoPrazos();
+      }
+      {% if tipos_entregas %}
+        aplicarFiltroEntregas();
+      {% endif %}
+      atualizarAvisoPendencias();
+    }
+
     function carrega_site() {
       {% include "edicao_puxar_local_ou_versao.js" %}
       {% if tipos_entregas %}
-        $("#filterEntregas").change(function() {
-          var selectedValue = $(this).val();
-          if (selectedValue == "todas") {
-            $(".pintern").show();
-          } else {
-            $(".pintern").hide();
-            $(".exame"+selectedValue).show();
-          }
-        });
+        $("#filterEntregas")
+          .off("change.avaliarEntregas")
+          .on("change.avaliarEntregas", aplicarFiltroEntregas);
       {% endif %}
+      carrega_pagina();
     };
-    window.onload = carrega_site
+    window.onload = carrega_site;
   </script>
 
   {% include "edicoes_ajax.html" %}
