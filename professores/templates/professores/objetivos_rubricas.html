@@ -13,5 +13,20 @@
 {% endblock %}
 
 {% block content %}
-  {% include "professores/includes/tabela_objetivos_rubricas.html" %}
+
+  {% include "edicoes.html" with n_todas=True %}
+
+  <div id="atualizar">
+    {% include "professores/includes/tabela_objetivos_rubricas.html" %}
+  </div>
+
+  <script>
+    function carrega_site() {
+      {% include "edicao_puxar_local_ou_versao.js" %}
+    };
+    window.onload = carrega_site
+  </script>
+
+  {% include "edicoes_ajax.html" %}
+
 {% endblock %}

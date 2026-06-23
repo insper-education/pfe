@@ -52,7 +52,7 @@ from professores.support3 import get_banca_incompleta
 from projetos.models import Coorientador, ObjetivosDeAprendizagem, Avaliacao2, Observacao
 from projetos.models import Banca, Evento, Encontro, Documento, TematicaEncontro
 from projetos.models import Projeto, Configuracao, Acompanhamento
-from projetos.support4 import get_objetivos_atuais
+from projetos.support4 import get_objetivos_atuais_cache
 from projetos.support2 import get_pares_colegas, recupera_envolvidos, anota_participacao
 from projetos.messages import email, render_message, htmlizar, message_agendamento_dinamica, prepara_mensagem_email
 from projetos.arquivos import le_arquivo
@@ -2672,11 +2672,23 @@ def objetivo_editar(request, primarykey):
 @permission_required("projetos.view_objetidosdeaprendizagem", raise_exception=True)
 def objetivos_rubricas(request):
     """Exibe os objetivos e rubricas."""
-    context = {
-        "titulo": {"pt": "Objetivos de Aprendizagem e Rubricas", "en": "Learning Goals and Rubrics"},
-        "objetivos": get_objetivos_atuais(),
-        "niveis_objetivos": Estrutura.loads(nome="Níveis de Objetivos"),
-    }
+
+    if request.method == "POST":
+        if "edicao" not in request.POST:
+            return HttpResponse("Algum erro não identificado.", status=401)
+        ano, semestre = map(int, request.POST["edicao"].split('.'))
+
+        context = {
+            "objetivos": get_objetivos_atuais_cache(ano, semestre),
+            "niveis_objetivos": Estrutura.loads(nome="Níveis de Objetivos"),
+        }
+
+    else:
+        context = {
+            "titulo": {"pt": "Objetivos de Aprendizagem e Rubricas", "en": "Learning Goals and Rubrics"},
+            "edicoes": get_edicoes(Projeto)[0],
+        }
+
     return render(request, "professores/objetivos_rubricas.html", context)
 
 

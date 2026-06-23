@@ -247,7 +247,7 @@
             <input class="filter form-check-input" type="checkbox" id="individuais" checked >
             <label class="to_label form-check-label" style="line-height: 1.0;" for="individuais"><span class="to_hide">
               {% lng "Individuais" "Individual" %}
-            </label>
+            </span></label>
           </div>
           <div class="input-group-prepend form-check mb-2 mr-sm-2">
             <input class="filter form-check-input" type="checkbox" id="grupo" checked >
@@ -306,23 +306,23 @@
       {% endif %}
 
       {% if com_tipo_banca %}
-        <div id="blocoFilterTipo" class="input-group input-group-sm mt-1 flex-nowrap">
+        <div id="blocoFilterTipoBanca" class="input-group input-group-sm mt-1 flex-nowrap">
           <div class="input-group-prepend">
             <label class="to_label input-group-text" for="tipo_banca" onClick="recarregar_pagina()"><span class="to_hide">
               {% lng "Tipo de Banca" "Examination Board Type" %}
             </span></label>
           </div>
           <select class="to_hide2 custom-select w-auto form-control" id="tipo_banca" name="tipo_banca">
-            <option value="todos" {% if tipo_banca == "todos" %}selected="todos"{% endif %} class="opt_edi troca_lingua" data-pt="todas" data-en="all">
+            <option value="todos" {% if tipo_banca == "todos" %}selected{% endif %} class="opt_edi troca_lingua" data-pt="todas" data-en="all">
               todas
             </option>
-            <option value="b_intermediaria" {% if tipo_banca == "Intermediária" %}selected{% endif %} class="opt_edi troca_lingua" data-pt="Intermediária" data-en="Intermediate">
+            <option value="b_BI" {% if tipo_banca == "BI" or tipo_banca == "b_BI" or tipo_banca == "Intermediária" %}selected{% endif %} class="opt_edi troca_lingua" data-pt="Intermediária" data-en="Intermediate">
               Intermediária
             </option>
-            <option value="b_final" {% if tipo_banca == "Final" %}selected{% endif %} class="opt_edi troca_lingua" data-pt="Final" data-en="Final">
+            <option value="b_BF" {% if tipo_banca == "BF" or tipo_banca == "b_BF" or tipo_banca == "Final" %}selected{% endif %} class="opt_edi troca_lingua" data-pt="Final" data-en="Final">
               Final</option>
-            <option value="b_falconi" {% if tipo_banca == "Falconi" %}selected{% endif %} class="opt_edi">Falconi</option>
-            <option value="b_probation" {% if tipo_banca == "Probation" %}selected{% endif %} class="opt_edi troca_lingua" data-pt="Probatória" data-en="Probation">
+            <option value="b_F" {% if tipo_banca == "F" or tipo_banca == "b_F" or tipo_banca == "Falconi" %}selected{% endif %} class="opt_edi">Falconi</option>
+            <option value="b_P" {% if tipo_banca == "P" or tipo_banca == "b_P" or tipo_banca == "Probation" %}selected{% endif %} class="opt_edi troca_lingua" data-pt="Probatória" data-en="Probation">
               Probatória
             </option>
           </select>
