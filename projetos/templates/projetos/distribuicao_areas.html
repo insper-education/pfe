@@ -287,7 +287,15 @@
         <tbody>
           {% for dado, linha in tabela.items %}
             <tr class="item">
-              <td>{% if tipo == "estudantes" %}{{ dado.get_full_name }}{% else %}{{ dado.get_titulo_org }}{% endif %}</td>
+              <td>
+                {% if tipo == "estudantes" %}
+                  <a href="{% url 'user_detail' dado.id %}" target="_blank">{{ dado.get_full_name }}</a>
+                {% elif tipo == "propostas" %}
+                  <a href="{% url 'proposta_completa' dado.id %}" target="_blank">{{ dado.get_titulo_org }}</a>
+                {% elif tipo == "projetos" %}
+                  <a href="{% url 'projeto_infos' dado.id %}" target="_blank">{{ dado.get_titulo_org }}</a>
+                {% endif %}
+              </td>
               <td>{% if tipo == "estudantes" %}{{ dado.aluno.get_ultimo_periodo }}
                 {% else %}{{ dado.get_edicao }}{% endif %}</td>
               {% for area in areas %}
