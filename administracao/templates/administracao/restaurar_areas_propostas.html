@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% comment %}
+  Ferramenta administrativa para restaurar áreas de interesse de propostas.
+{% endcomment %}
+
+{% load linguas %}
+
+{% block content %}
+
+  <p>
+    Esta página carrega um CSV e substitui somente os registros de
+    <code>AreaDeInteresse</code> vinculados a propostas.
+  </p>
+
+  <p>
+    Registros atuais com <code>proposta_id</code> preenchido:
+    <strong>{{ areas_atuais }}</strong>
+  </p>
+
+  <h6>Campos esperados</h6>
+  <ul>
+    {% for campo in campos %}
+      <li><code>{{ campo }}</code></li>
+    {% endfor %}
+  </ul>
+
+  <form method="post" enctype="multipart/form-data" class="mb-4">{% csrf_token %}
+    {% include "selecionar_arquivo.html" with arquivo_nome="arquivo" arquivo_accept=".csv" required=True %}
+
+    <div class="form-check mt-3">
+      <input class="form-check-input" type="checkbox" value="sim" id="confirmar" name="confirmar">
+      <label class="form-check-label" for="confirmar">
+        Confirmo que quero substituir todas as áreas de interesse de propostas pelo conteúdo deste CSV.
+      </label>
+    </div>
+
+    <button class="btn btn-primary mt-3" type="submit">
+      Validar / Restaurar
+    </button>
+  </form>
+
+  {% if total_csv is not None %}
+    <h5>Resultado da leitura</h5>
+    <ul>
+      <li>Registros no CSV: <strong>{{ total_csv }}</strong></li>
+      <li>Propostas distintas: <strong>{{ propostas_csv }}</strong></li>
+      <li>Áreas distintas: <strong>{{ areas_csv }}</strong></li>
+      {% if importado %}
+        <li>Registros removidos antes da restauração: <strong>{{ removidos }}</strong></li>
+        <li>Registros inseridos: <strong>{{ inseridos }}</strong></li>
+      {% endif %}
+    </ul>
+  {% endif %}
+
+  {% if erros %}
+    <h5 class="text-danger">Inconsistências encontradas</h5>
+    <ul>
+      {% for erro in erros %}
+        <li>{{ erro }}</li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+
+  {% if amostra %}
+    <h5>Amostra</h5>
+    <div class="table-responsive">
+      <table class="table table-sm table-striped">
+        <thead>
+          <tr>
+            <th>proposta_id</th>
+            <th>area_id</th>
+            <th>nivel_interesse</th>
+            <th>outras</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for registro in amostra %}
+            <tr>
+              <td>{{ registro.proposta_id }}</td>
+              <td>{{ registro.area_id|default:"-" }}</td>
+              <td>{{ registro.nivel_interesse|default:"-" }}</td>
+              <td>{{ registro.outras|default:"-" }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% endif %}
+
+{% endblock %}

@@ -7,6 +7,7 @@ Data: 17 de Dezembro de 2020
 """
 
 import os
+import io
 import json
 import re
 import tablib
@@ -79,6 +80,200 @@ from pfe.celery import APP as celery_app
 
 # Get an instance of a logger
 logger = logging.getLogger("django")
+
+
+def _valor_csv(linha, *nomes):
+    """Retorna o primeiro valor encontrado entre nomes alternativos de coluna."""
+    for nome in nomes:
+        valor = linha.get(nome)
+        if valor is not None:
+            return str(valor).strip()
+    return ""
+
+
+def _inteiro_csv(valor, campo, numero_linha, erros, obrigatorio=False):
+    """Converte um valor de CSV para inteiro, registrando erro amigável quando falha."""
+    if valor in ("", "None", "NULL", "\\N"):
+        if obrigatorio:
+            erros.append(f"Linha {numero_linha}: campo {campo} vazio.")
+        return None
+
+    try:
+        return int(valor)
+    except ValueError:
+        erros.append(f"Linha {numero_linha}: campo {campo} inválido ({valor}).")
+        return None
+
+
+def _normaliza_linha_csv(linha):
+    """Normaliza cabeçalhos do CSV para facilitar leitura de dumps diferentes."""
+    normalizada = {}
+    for chave, valor in linha.items():
+        if chave is None:
+            continue
+        chave_normalizada = chave.strip().lower().lstrip("\ufeff")
+        normalizada[chave_normalizada] = "" if valor is None else str(valor).strip()
+    return normalizada
+
+
+def _le_areas_propostas_csv(arquivo):
+    """Lê CSV com áreas de interesse de propostas e retorna registros validados."""
+    bruto = arquivo.read()
+    encoding = (chardet.detect(bruto) or {}).get("encoding") or "utf-8-sig"
+
+    try:
+        texto = bruto.decode(encoding)
+    except UnicodeDecodeError:
+        texto = bruto.decode("utf-8-sig")
+
+    try:
+        dialect = csv.Sniffer().sniff(texto[:4096], delimiters=",;\t")
+    except csv.Error:
+        dialect = csv.excel
+
+    leitor = csv.DictReader(io.StringIO(texto), dialect=dialect)
+    registros = []
+    erros = []
+
+    if not leitor.fieldnames:
+        return [], ["Arquivo CSV vazio ou sem cabeçalho."]
+
+    for numero_linha, linha_original in enumerate(leitor, start=2):
+        linha = _normaliza_linha_csv(linha_original)
+
+        proposta_id = _inteiro_csv(
+            _valor_csv(linha, "proposta_id", "proposta"),
+            "proposta_id",
+            numero_linha,
+            erros,
+            obrigatorio=True,
+        )
+        area_id = _inteiro_csv(_valor_csv(linha, "area_id", "area"), "area_id", numero_linha, erros)
+        nivel_interesse = _inteiro_csv(
+            _valor_csv(linha, "nivel_interesse"),
+            "nivel_interesse",
+            numero_linha,
+            erros,
+        )
+        outras = _valor_csv(linha, "outras")
+
+        if nivel_interesse is not None and nivel_interesse not in (1, 2, 3):
+            erros.append(f"Linha {numero_linha}: nivel_interesse deve ser 1, 2 ou 3.")
+
+        if outras in ("None", "NULL", "\\N"):
+            outras = ""
+
+        if len(outras) > 256:
+            erros.append(f"Linha {numero_linha}: campo outras tem mais de 256 caracteres.")
+
+        if proposta_id and area_id is None and not outras:
+            erros.append(f"Linha {numero_linha}: informe area_id ou outras.")
+
+        if proposta_id:
+            registros.append({
+                "proposta_id": proposta_id,
+                "area_id": area_id,
+                "nivel_interesse": nivel_interesse,
+                "outras": outras or None,
+            })
+
+    return registros, erros
+
+
+@login_required
+@permission_required("users.view_administrador", raise_exception=True)
+def restaurar_areas_propostas(request):
+    """Restaura áreas de interesse de propostas a partir de um CSV revisado."""
+    context = {
+        "titulo": {"pt": "Restaurar Áreas de Propostas", "en": "Restore Proposal Areas"},
+        "campos": ["proposta_id", "area_id", "nivel_interesse", "outras"],
+        "areas_atuais": AreaDeInteresse.objects.filter(proposta_id__isnull=False).count(),
+    }
+
+    if request.method != "POST":
+        return render(request, "administracao/restaurar_areas_propostas.html", context=context)
+
+    arquivo = request.FILES.get("arquivo")
+    if not arquivo:
+        context["mensagem_aviso"] = {
+            "pt": "Selecione um arquivo CSV.",
+            "en": "Select a CSV file.",
+        }
+        return render(request, "administracao/restaurar_areas_propostas.html", context=context)
+
+    registros, erros = _le_areas_propostas_csv(arquivo)
+
+    proposta_ids = {registro["proposta_id"] for registro in registros}
+    area_ids = {registro["area_id"] for registro in registros if registro["area_id"] is not None}
+
+    propostas_existentes = set(Proposta.objects.filter(id__in=proposta_ids).values_list("id", flat=True))
+    areas_existentes = set(Area.objects.filter(id__in=area_ids).values_list("id", flat=True))
+
+    propostas_faltantes = sorted(proposta_ids - propostas_existentes)
+    areas_faltantes = sorted(area_ids - areas_existentes)
+
+    if propostas_faltantes:
+        erros.append("Propostas não encontradas no banco atual: " + ", ".join(map(str, propostas_faltantes[:20])))
+    if areas_faltantes:
+        erros.append("Áreas não encontradas no banco atual: " + ", ".join(map(str, areas_faltantes[:20])))
+
+    context.update({
+        "registros": registros,
+        "erros": erros,
+        "total_csv": len(registros),
+        "propostas_csv": len(proposta_ids),
+        "areas_csv": len(area_ids),
+        "amostra": registros[:20],
+    })
+
+    if erros:
+        context["mensagem_aviso"] = {
+            "pt": "O CSV tem inconsistências. Nenhuma alteração foi feita.",
+            "en": "The CSV has inconsistencies. No changes were made.",
+        }
+        return render(request, "administracao/restaurar_areas_propostas.html", context=context)
+
+    if request.POST.get("confirmar") != "sim":
+        context["mensagem_alerta_fade"] = {
+            "pt": "Prévia carregada. Marque a confirmação e envie novamente para restaurar.",
+            "en": "Preview loaded. Check confirmation and submit again to restore.",
+        }
+        return render(request, "administracao/restaurar_areas_propostas.html", context=context)
+
+    objetos = [
+        AreaDeInteresse(
+            proposta_id=registro["proposta_id"],
+            area_id=registro["area_id"],
+            outras=registro["outras"],
+            nivel_interesse=registro["nivel_interesse"],
+        )
+        for registro in registros
+    ]
+
+    with transaction.atomic():
+        removidos, _ = AreaDeInteresse.objects.filter(proposta_id__isnull=False).delete()
+        AreaDeInteresse.objects.bulk_create(objetos, batch_size=500)
+
+    logger.warning(
+        "Áreas de interesse de propostas restauradas por %s: %s removidas, %s inseridas.",
+        request.user,
+        removidos,
+        len(objetos),
+    )
+
+    context.update({
+        "importado": True,
+        "removidos": removidos,
+        "inseridos": len(objetos),
+        "areas_atuais": AreaDeInteresse.objects.filter(proposta_id__isnull=False).count(),
+        "mensagem_alerta_fade": {
+            "pt": "Áreas de interesse das propostas restauradas com sucesso.",
+            "en": "Proposal interest areas restored successfully.",
+        },
+    })
+    return render(request, "administracao/restaurar_areas_propostas.html", context=context)
+
+
 
 @login_required
 @permission_required("users.view_administrador", raise_exception=True)
