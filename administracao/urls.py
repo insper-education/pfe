@@ -41,7 +41,6 @@ urlpatterns = [
     path("propor/", views.propor, name="propor"),
     path("relatorio/<str:modelo>/<str:formato>", views.relatorio, name="relatorio"),
     path("relatorios", views.relatorios, name="relatorios"),
-    path("restaurar_areas_propostas/", views.restaurar_areas_propostas, name="restaurar_areas_propostas"),
     path("selecionar_orientadores/", views.selecionar_orientadores, name="selecionar_orientadores"),
     path("tarefas_agendadas/", views.tarefas_agendadas, name="tarefas_agendadas"),
     path("versoes_sistema/", views.versoes_sistema, name="versoes_sistema"),
