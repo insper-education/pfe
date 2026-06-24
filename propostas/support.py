@@ -65,6 +65,24 @@ def areas_propostas(check_values, outras, proposta):
 
 def cria_area_proposta(request, proposta):
     """Cria um objeto Areas e preenche ele."""
+    if "selection" not in request.POST:
+        areas_existentes = AreaDeInteresse.objects.filter(proposta=proposta)
+        if areas_existentes.exists():
+            logger.warning(
+                "Preservando áreas de interesse da proposta %s: POST sem campo 'selection'.",
+                proposta.id,
+            )
+            return list(
+                areas_existentes.filter(area__isnull=False).values_list("area__titulo", flat=True)
+            )
+
+        if "areas_form_present" not in request.POST:
+            logger.warning(
+                "Ignorando sincronização de áreas da proposta %s: formulário de áreas ausente no POST.",
+                proposta.id,
+            )
+            return []
+
     check_values = request.POST.getlist("selection")
     outras = request.POST.get("outras", "")
     areas_propostas(check_values, outras, proposta)

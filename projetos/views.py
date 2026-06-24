@@ -250,15 +250,16 @@ def distribuicao_areas(request, tipo = "estudantes"):
         )
 
         context["tipo"] = tipo
-        return render(request, "projetos/distribuicao_areas.html", context)
+    
+    else:
 
-    context = {
-        "titulo": { "pt": "Tendência de Áreas de Interesse", "en": "Trend of Areas of Interest"},
-        "edicoes": get_edicoes(Aluno)[0],
-        "cursos": cursos_insper,
-        "cursos_externos": cursos_externos,
-        "sel_tipo": tipo,
-    }
+        context = {
+            "titulo": { "pt": "Tendência de Áreas de Interesse", "en": "Trend of Areas of Interest"},
+            "edicoes": get_edicoes(Aluno)[0],
+            "cursos": cursos_insper,
+            "cursos_externos": cursos_externos,
+            "sel_tipo": tipo,
+        }
 
     return render(request, "projetos/distribuicao_areas.html", context)
 

@@ -80,6 +80,9 @@
 </style>
 
 {% if areas_de_interesse_possiveis or areas_de_interesse_selecionadas %}
+  {% if not vencido %}
+    <input type="hidden" name="areas_form_present" value="1">
+  {% endif %}
 
   {% if com_borda %}
     <div class="card">

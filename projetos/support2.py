@@ -54,17 +54,29 @@ def get_areas_propostas(propostas, areas=None):
 
 
 
-def _monta_tabela_areas(areaspfe, campo_origem):
-    """Monta tabela de áreas por origem (usuário ou proposta)."""
-    tabela = {}
+def _iter_origens(origens):
+    """Normaliza uma origem única ou coleção de origens."""
+    if origens is None:
+        return []
+    if isinstance(origens, (list, tuple, set)):
+        return origens
+    return [origens]
+
+
+def _monta_tabela_areas(areaspfe, campo_origem, origens=None, transforma_origem=None):
+    """Monta tabela de áreas por origem (usuário, proposta ou projeto)."""
+    tabela = {origem: [] for origem in origens} if origens is not None else {}
     for _area, objs in areaspfe.items():
         for obj in objs[0]:
-            origem = getattr(obj, campo_origem)
-            tabela.setdefault(origem, []).append(obj.area)
+            origem = getattr(obj, campo_origem, None)
+            if transforma_origem:
+                origem = transforma_origem(origem, obj)
+            for item_origem in _iter_origens(origem):
+                tabela.setdefault(item_origem, []).append(obj.area)
     return tabela
 
 
-def _monta_tabela_niveis(areaspfe, campo_origem):
+def _monta_tabela_niveis(areaspfe, campo_origem, origens=None, transforma_origem=None):
     """Monta tabela de níveis por origem e área.
 
     Valor armazenado:
@@ -72,22 +84,32 @@ def _monta_tabela_niveis(areaspfe, campo_origem):
     - 0: área selecionada sem nível definido
     """
     tabela_niveis = {}
-    for _area, objs in areaspfe.items():
-        for obj in objs[0]:
-            origem = getattr(obj, campo_origem)
+    if origens is not None:
+        for origem in origens:
             origem_id = getattr(origem, "id", None)
-            if origem_id is None:
-                continue
-
-            if origem_id not in tabela_niveis:
+            if origem_id is not None:
                 tabela_niveis[origem_id] = {}
 
-            nivel = obj.nivel_interesse if obj.nivel_interesse in (1, 2, 3) else 0
-            atual = tabela_niveis[origem_id].get(obj.area_id)
+    for _area, objs in areaspfe.items():
+        for obj in objs[0]:
+            origem = getattr(obj, campo_origem, None)
+            if transforma_origem:
+                origem = transforma_origem(origem, obj)
 
-            # Se houver conflito, prioriza nível explícito sobre ausência de nível.
-            if atual is None or (atual == 0 and nivel in (1, 2, 3)):
-                tabela_niveis[origem_id][obj.area_id] = nivel
+            for item_origem in _iter_origens(origem):
+                origem_id = getattr(item_origem, "id", None)
+                if origem_id is None:
+                    continue
+
+                if origem_id not in tabela_niveis:
+                    tabela_niveis[origem_id] = {}
+
+                nivel = obj.nivel_interesse if obj.nivel_interesse in (1, 2, 3) else 0
+                atual = tabela_niveis[origem_id].get(obj.area_id)
+
+                # Se houver conflito, prioriza nível explícito sobre ausência de nível.
+                if atual is None or (atual == 0 and nivel in (1, 2, 3)):
+                    tabela_niveis[origem_id][obj.area_id] = nivel
 
     return tabela_niveis
 
@@ -196,34 +218,57 @@ def contexto_distribuicao_areas(tipo, ano, semestre, todas, areas_ativas, curso=
         if not todas:
             propostas = propostas.filter(ano=ano, semestre=semestre)
 
-        areaspfe, outras = get_areas_propostas(propostas, areas=areas_ativas)
-        propostas_ids = propostas.values_list("id", flat=True)
+        propostas = propostas.select_related("organizacao")
+        propostas_lista = list(propostas)
+        propostas_ids = [proposta.id for proposta in propostas_lista]
+        areaspfe, outras = get_areas_propostas(propostas_lista, areas=areas_ativas)
         area_interesses = AreaDeInteresse.objects.filter(proposta_id__in=propostas_ids, area__in=areas_ativas).select_related("area", "proposta")
         context.update({
-            "total": propostas.count(),
+            "total": len(propostas_lista),
             "areaspfe": areaspfe,
             "outras": outras,
-            "tabela": _monta_tabela_areas(areaspfe, "proposta"),
-            "tabela_niveis": _monta_tabela_niveis(areaspfe, "proposta"),
+            "tabela": _monta_tabela_areas(areaspfe, "proposta", origens=propostas_lista),
+            "tabela_niveis": _monta_tabela_niveis(areaspfe, "proposta", origens=propostas_lista),
             "area_chart_data": _monta_dados_barras_area(areas_ativas, area_interesses),
         })
         
     elif tipo == "projetos":
-        projetos = Projeto.objects.all()
+        projetos = Projeto.objects.select_related("proposta", "proposta__organizacao")
         if not todas:
             projetos = projetos.filter(ano=ano, semestre=semestre)
 
-        propostas_ids = projetos.values_list("proposta_id", flat=True)
-        propostas_projetos = Proposta.objects.filter(id__in=propostas_ids).distinct()
+        projetos_lista = list(projetos)
+        projetos_por_proposta_id = defaultdict(list)
+        for projeto in projetos_lista:
+            if projeto.proposta_id:
+                projetos_por_proposta_id[projeto.proposta_id].append(projeto)
+
+        propostas_ids = list(projetos_por_proposta_id.keys())
+        propostas_projetos = Proposta.objects.filter(id__in=propostas_ids).select_related("organizacao").distinct()
         areaspfe, outras = get_areas_propostas(propostas_projetos, areas=areas_ativas)
         area_interesses = AreaDeInteresse.objects.filter(proposta_id__in=propostas_ids, area__in=areas_ativas).select_related("area", "proposta")
 
+        def projetos_da_proposta(proposta, _obj):
+            if proposta is None:
+                return []
+            return projetos_por_proposta_id.get(proposta.id, [])
+
         context.update({
-            "total": propostas_projetos.count(),
+            "total": len(projetos_lista),
             "areaspfe": areaspfe,
             "outras": outras,
-            "tabela": _monta_tabela_areas(areaspfe, "proposta"),
-            "tabela_niveis": _monta_tabela_niveis(areaspfe, "proposta"),
+            "tabela": _monta_tabela_areas(
+                areaspfe,
+                "proposta",
+                origens=projetos_lista,
+                transforma_origem=projetos_da_proposta,
+            ),
+            "tabela_niveis": _monta_tabela_niveis(
+                areaspfe,
+                "proposta",
+                origens=projetos_lista,
+                transforma_origem=projetos_da_proposta,
+            ),
             "area_chart_data": _monta_dados_barras_area(areas_ativas, area_interesses),
         })
     else:
