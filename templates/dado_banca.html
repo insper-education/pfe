@@ -105,18 +105,18 @@
   }
 
   .banca-modern .conceitos-geral {
-    margin-top: 6px;
-    border: 3px solid #dbeafe;
+    margin-top: 8px;
+    border: 3px solid #92ff68;
     border-radius: 10px;
-    background: #f8fbff;
+    background: #c0ffa0;
     padding: 8px 10px;
   }
 
   .banca-modern .conceitos-individuais {
     margin-top: 8px;
-    border: 3px solid #fef3c7;
+    border: 3px solid #fbbf24;
     border-radius: 10px;
-    background: #fffbeb;
+    background: #fef3c7;
     padding: 8px 10px;
   }
 
@@ -366,31 +366,33 @@
           {% if objs.items %}
             <div class="sec-title">{% lng "Conceitos" "Grades" %}:</div>
             <div class="conceitos-geral">
-            <ul class="sec-list" style="list-style-type: '&#x21A3; '; margin-bottom: 0;">
-              {% for objetivo, conceito in objs.items %}{% if objetivo != "momento" and objetivo != "avaliacoes_individuais" and objetivo|slice:11 != "observacoes" %}
-                <li>
-                  <span style="font-weight: 500;">{{objetivo.titulo}}</span>: 
-                  <span data-toggle="tooltip" data-html="true" animation="true" title=
-                  {% if banca.sigla == "BI" %} 
-                    "{{objetivos|get_rubrica:objetivo.id|get_texto_intermediaria_nota:conceito.nota}}"
-                  {% else %}
-                    "{{objetivos|get_rubrica:objetivo.id|get_texto_final_nota:conceito.nota}}"
-                  {% endif %}>
-                <span id="banca{{banca.id}}_{{avaliador.id}}_{{objetivo.id}}"></span></span></li>
-                <script>
-                  $("#banca{{banca.id}}_{{avaliador.id}}_{{objetivo.id}}").html(
-                    {% if conceito.nota is not None %}converteN({{conceito.nota}}){% else %}"N/A"{% endif %}
-                  );
-                  objetivo_tmp = new Objetivo();
-                  objetivo_tmp.titulo = "{{objetivo.titulo|escapejs}}"
-                  banca.add_objetivo(objetivo_tmp)
-                  {% if conceito.nota is not None %}
-                    banca.dict[objetivo_tmp.titulo].soma_nota({{conceito.nota}});
-                  {% endif %}
-                </script>
+            <div class="student-block">
+              <ul class="sec-list" style="list-style-type: '&#x21A3; '; margin-bottom: 0;">
+                {% for objetivo, conceito in objs.items %}{% if objetivo != "momento" and objetivo != "avaliacoes_individuais" and objetivo|slice:11 != "observacoes" %}
+                  <li>
+                    <span style="font-weight: 500;">{{objetivo.titulo}}</span>: 
+                    <span data-toggle="tooltip" data-html="true" animation="true" title=
+                    {% if banca.sigla == "BI" %}
+                      "{{objetivos|get_rubrica:objetivo.id|get_texto_intermediaria_nota:conceito.nota}}"
+                    {% else %}
+                      "{{objetivos|get_rubrica:objetivo.id|get_texto_final_nota:conceito.nota}}"
+                    {% endif %}>
+                  <span id="banca{{banca.id}}_{{avaliador.id}}_{{objetivo.id}}"></span></span></li>
+                  <script>
+                    $("#banca{{banca.id}}_{{avaliador.id}}_{{objetivo.id}}").html(
+                      {% if conceito.na %}"N/A"{% else %}converteN({{conceito.nota}}){% endif %}
+                    );
+                    objetivo_tmp = new Objetivo();
+                    objetivo_tmp.titulo = "{{objetivo.titulo|escapejs}}"
+                    banca.add_objetivo(objetivo_tmp)
+                    {% if conceito.nota is not None %}
+                      banca.dict[objetivo_tmp.titulo].soma_nota({{conceito.nota}});
+                    {% endif %}
+                  </script>
 
-              {% endif %}{% endfor %}
-            </ul>
+                {% endif %}{% endfor %}
+              </ul>
+              </div>
             </div>
           {% endif %}
           {% if objs.observacoes_estudantes or user.eh_prof_a and objs.observacoes_orientador or user.eh_prof_a and objs.observacoes_anotacoes %}
@@ -435,11 +437,7 @@
                 {% for objetivo_ind, conceito_ind in objetivos_ind.items %}
                   <li>
                     <span style="font-weight: 500;">{{ objetivo_ind.titulo }}</span>:
-                    {% if conceito_ind.na %}
-                      N/A
-                    {% else %}
-                      {{ conceito_ind.get_conceito }}
-                    {% endif %}
+                    {% if conceito_ind.na %}N/A{% else %}{{ conceito_ind.get_conceito }}{% endif %}
                   </li>
                   <script>
                     add_nota_individual(

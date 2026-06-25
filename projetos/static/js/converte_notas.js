@@ -6,7 +6,9 @@
 
 // Função para converter nota numérica em conceito
 function converteN(nota) {
-  if(nota=="") return ""; // Para não mostrar "I" quando o campo está vazio
+  if (nota === "" || nota === null || nota === undefined) return ""; // Para não mostrar "I" quando o campo está vazio
+  nota = Number(nota);
+  if (Number.isNaN(nota)) return "inválida";
   if(nota>=9.5) return "A+"
   if(nota>=9.0) return "A"
   if(nota>=8.0) return "B+"
