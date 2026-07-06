@@ -171,25 +171,35 @@ def atualiza_visibilidade_tematica(request):
 @permission_required("users.altera_professor", raise_exception=True)
 def verifica_membro_banca(request):
     """Verifica se o usuário é membro de alguma banca."""
-    membro_id = request.POST.get("membro_id", None)
-    edicao = request.POST.get("edicao", None)
-    tipo = [request.POST.get("tipo", None)]  # "BI", "BF", "P", "F"
-    remove_banca = request.POST.get("remove_banca", None)
-    
     if request.headers.get("X-Requested-With") != "XMLHttpRequest" or request.method != "POST":
         return HttpResponse("Erro não identificado.", status=401)
-    if not membro_id or not tipo:
+
+    membro_id = request.POST.get("membro_id")
+    edicao = request.POST.get("edicao")
+    tipo_sigla = request.POST.get("tipo")  # "BI", "BF", "P", "F"
+    remove_banca = request.POST.get("remove_banca")
+
+    if not membro_id or not tipo_sigla:
         return JsonResponse({"lista_bancas": []})
-    
+
+    if tipo_sigla not in {"BI", "BF", "P", "F"}:
+        return JsonResponse({"lista_bancas": []})
+
     try:
-        membro = get_object_or_404(PFEUser, pk=int(membro_id))
-    except ValueError:
+        membro_pk = int(membro_id)
+    except (TypeError, ValueError):
         return HttpResponse("Membro não encontrado.", status=404)
     
-    bancas = Banca.get_bancas_com_membro(membro, siglas=tipo)
+    membro = get_object_or_404(PFEUser, pk=membro_pk)
+    
+    bancas = (
+        Banca.get_bancas_com_membro(membro, siglas=[tipo_sigla])
+        .select_related("tipo_evento", "projeto", "alocacao__aluno__user", "alocacao__projeto")
+        .order_by("startDate")
+    )
 
-    if edicao and '.' in edicao:
-        ano, semestre = edicao.split('.')
+    if edicao and "." in edicao:
+        ano, semestre = edicao.split(".", 1)
         bancas = bancas.filter(projeto__ano=ano, projeto__semestre=semestre)
     else:
         configuracao = get_object_or_404(Configuracao)
@@ -197,8 +207,10 @@ def verifica_membro_banca(request):
     
     # Para não contar a própria banca que está sendo editada
     if remove_banca:
-        remove_banca = int(remove_banca)
-        bancas = bancas.exclude(id=remove_banca)
+        try:
+            bancas = bancas.exclude(id=int(remove_banca))
+        except (TypeError, ValueError):
+            pass
 
     lista_bancas = []
     for banca in bancas:

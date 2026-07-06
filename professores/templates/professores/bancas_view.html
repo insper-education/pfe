@@ -12,11 +12,84 @@
 <script src="{% static 'bootstrap-select-1.13.14/dist/js/bootstrap-select.min.js' %}"></script>
 
 <style>
+  :root {
+    --bancas-bg: #f4f7fb;
+    --bancas-surface: #ffffff;
+    --bancas-border: #dbe3ee;
+    --bancas-text: #1f2a37;
+    --bancas-accent: #2f5d95;
+  }
   table, th, td { border: 0px; }
+  .modal-header {
+    background: linear-gradient(180deg, #f7faff 0%, #eef4fc 100%);
+    border-bottom: 1px solid #d8e3f2;
+    padding-top: 0.6rem;
+    padding-bottom: 0.6rem;
+  }
+  .modal-title {
+    color: var(--bancas-text);
+    font-weight: 600;
+    letter-spacing: 0.1px;
+  }
   .btn-group.bootstrap-select select {
     width: 1px !important;
   }
+  .secao-card {
+    background: linear-gradient(180deg, #fbfdff 0%, #f7fafe 100%);
+    border: 1px solid var(--bancas-border);
+    border-radius: 10px;
+    padding: 6px 8px;
+    margin-bottom: 6px;
+    box-shadow: 0 1px 2px rgba(26, 39, 58, 0.05);
+  }
+  #modal-body {
+    background: var(--bancas-bg);
+    overflow: visible;
+    padding-bottom: 0 !important;
+  }
+  #modal-body .mb-3 {
+    margin-bottom: 0.5rem !important;
+  }
+  #modal-body .mb-2 {
+    margin-bottom: 0.4rem !important;
+  }
+  .secao-card table {
+    margin-bottom: 0;
+  }
+  .secao-card-compact .mb-3 {
+    margin-bottom: 6px !important;
+  }
+  .secao-card-compact .mb-3:last-child {
+    margin-bottom: 0 !important;
+  }
   .url_reativo {font-size: 16px;}
+  input[type="text"],
+  input[type="datetime-local"],
+  select.custom-select {
+    border: 1px solid #cfd9e7;
+    border-radius: 7px;
+    background: var(--bancas-surface);
+  }
+  input[type="text"]:focus,
+  input[type="datetime-local"]:focus,
+  select.custom-select:focus {
+    border-color: #7fa2cc;
+    box-shadow: 0 0 0 0.1rem rgba(47, 93, 149, 0.15);
+    outline: none;
+  }
+  .modal-footer {
+    background: #f6f9fd;
+    border-top: 1px solid #d8e3f2;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+  }
+  #botoes .btn {
+    border-radius: 7px;
+    box-shadow: 0 1px 2px rgba(18, 31, 48, 0.12);
+  }
+  #botoes .btn:hover {
+    transform: translateY(-1px);
+  }
   @media (max-width: 460px) {
     .url_reativo {font-size: 14px;}
   }
@@ -27,6 +100,14 @@
   }
   label {display: inline;}
   @media (max-width: 600px) {
+    .modal-header,
+    .modal-footer {
+      padding-left: 0.75rem;
+      padding-right: 0.75rem;
+    }
+    .secao-card {
+      padding: 5px 6px;
+    }
     #div_botao {
       flex-direction: column;
     }
@@ -137,7 +218,7 @@
       <input type="hidden" name="alocacao" value="{{banca.alocacao.id}}">
     {% endif %}
 
-    <div class="mb-3" style="line-height: 1.3;">
+    <div class="mb-3 secao-card" style="line-height: 1.3;">
 
       {% comment %} Mostra informações do projeto selecionado {% endcomment %}
       {% lng "Título:" "Title:" %}
@@ -212,7 +293,7 @@
       </div>
     </div>
 
-    <div class="mb-3" style="line-height: 1;">
+    <div class="mb-3 secao-card" style="line-height: 1;">
       <span style="display: inline-block; margin-bottom: 8px;">
         <b>{% lng "Tipo de Banca" "Presentation" %}:</b>
       </span>
@@ -222,7 +303,7 @@
       {% for tipo in bancas.values %}
         {% with tipo_evento=tipo.last.tipo_evento %}
         <div style="margin-left: 0.3em; margin-bottom: 0.3em;" class="radio">
-          <label for="tipo{{tipo.exame.sigla}}"><input class="tipo_banca" id="tipo{{tipo_evento.sigla}}" type="radio" name="tipo" value="{{tipo_evento.sigla}}"
+          <label for="tipo{{tipo_evento.sigla}}"><input class="tipo_banca" id="tipo{{tipo_evento.sigla}}" type="radio" name="tipo" value="{{tipo_evento.sigla}}"
            {% if banca and banca.projeto.orientador.user != request.user and not request.user.eh_admin %}disabled{% endif %}
            {% if banca.tipo_evento == tipo_evento or tipo_evento.sigla == tipob %}checked{% endif %} required>
             {% lng tipo_evento.nome tipo_evento.nome_en %}
@@ -307,6 +388,8 @@
     });
     </script>
 
+    <div class="secao-card secao-card-compact mb-2">
+
     <div class="mb-3">
         <label for="inicio" style="white-space: nowrap; display:inline-block; margin-bottom: 3px; margin-right: 18px;">
           <span style="display:inline-block; width:5.5ex; text-align:right;">
@@ -336,7 +419,7 @@
           required>
         </label>
 
-        <span id="aviso_horario" style="color: red; font-weight: bold; display: block;"></span>
+        <span id="aviso_horario" style="color: red; font-weight: bold; display: block;" aria-live="polite" role="status"></span>
 
     </div>
 
@@ -391,7 +474,7 @@
         value="{{banca.location}}"
       {% endif %}
       />
-      <span id="aviso_local" style="color: red;"></span>
+      <span id="aviso_local" style="color: red;" aria-live="polite" role="status"></span>
     </div>
 
     {% if banca.location %}
@@ -419,8 +502,10 @@
       {% endif %} 
       />
     </div>
+
+    </div>
     
-    <div class="mb-3">
+    <div class="mb-3 secao-card">
       <table>
         <thead>
           <tr>
@@ -432,7 +517,7 @@
           <tr>
             <td><label for="membro1">#1</label></td>
             <td>
-              <select name="membro1" class="pessoas custom-select custom-select-sm membros" id="membro1" title="Selecione membro da banca"
+              <select name="membro1" class="pessoas custom-select custom-select-sm membros troca_lingua_title" id="membro1" data-title_pt="Selecione membro da banca" data-title_en="Select Board Member"
                 {% if not user.eh_admin %}required{% endif %}
                 {% if banca and banca.projeto.orientador.user != request.user and request.user.tipo_de_usuario != 4 %}disabled{% endif %}
                 oninvalid="this.setCustomValidity('Selecione ao menos duas pessoas para a banca')"
@@ -446,7 +531,7 @@
           <tr>
             <td><label for="membro2">#2</label></td>
             <td>
-              <select name="membro2" class="pessoas custom-select custom-select-sm membros" id="membro2" title="Selecione membro da banca"
+              <select name="membro2" class="pessoas custom-select custom-select-sm membros troca_lingua_title" id="membro2" data-title_pt="Selecione membro da banca" data-title_en="Select Board Member"
                 {% if user.tipo_de_usuario != 4 %}required{% endif %}
                 {% if banca and banca.projeto.orientador.user != request.user and request.user.tipo_de_usuario != 4 %}disabled{% endif %}
                 oninvalid="this.setCustomValidity('Selecione ao menos duas pessoas para a banca')"
@@ -460,7 +545,7 @@
           <tr>
             <td><label for="membro3">#3</label></td>
             <td>
-              <select name="membro3" class="pessoas custom-select custom-select-sm membros" id="membro3" title="Selecione membro da banca"
+              <select name="membro3" class="pessoas custom-select custom-select-sm membros troca_lingua_title" id="membro3" data-title_pt="Selecione membro da banca" data-title_en="Select Board Member"
                 {% if banca and banca.projeto.orientador.user != request.user and request.user.tipo_de_usuario != 4 %}disabled{% endif %}>
                 <option selected value class="troca_lingua" data-pt="-- selecione membro da banca --" data-en="-- select board member --">-- selecione membro da banca --</option>
               </select>
@@ -485,8 +570,8 @@
       </div>
     {% endif %}
 
-    <span id="mensagem" style="color: red; font-weight: bold; display: block;"></span>
-    <span id="mensagem2" style="color: red; font-weight: bold; display: block;"></span>
+    <span id="mensagem" style="color: red; font-weight: bold; display: block;" aria-live="polite" role="status"></span>
+    <span id="mensagem2" style="color: red; font-weight: bold; display: block;" aria-live="assertive" role="alert"></span>
 
   </div>
 
@@ -532,31 +617,41 @@
 
   var operacao = "agendar";
   var botao_anterior = "BI"; // só para ir para o lugar certo de primeira
+  var envio_em_andamento = false;
+  var timeout_envio = null;
+  var sequencia_membros = {};
 
   function verifica_certo() {
     var membros  = $(".membros")
     var dic = {};
     var orientador_id = $("#orientador_id").val();
-    for(mem in membros){
-      var chave = membros.eq(mem).val()
+    var erro_membros = "";
+
+    $("#mensagem2").html("");
+
+    membros.each(function() {
+      var chave = $(this).val();
       if(typeof chave !== "undefined" && chave != "") {
 
         if(chave == orientador_id) {
-          $("#submit").prop("disabled",true);
-          $("#mensagem2").html("Orientador não pode ser selecionado como membro da banca");
-          return;
+          erro_membros = "Orientador não pode ser selecionado como membro da banca";
+          return false;
         }
 
         if(chave in dic) {
-          $("#submit").prop("disabled",true);
-          $("#mensagem2").html("Os membros devem ser diferentes");
-          return;
+          erro_membros = "Os membros devem ser diferentes";
+          return false;
         } else {
           dic[chave] = true;
         }
       }
+    });
+
+    if (erro_membros) {
+      $("#submit").prop("disabled",true);
+      $("#mensagem2").html(erro_membros);
+      return;
     }
-    $("#mensagem2").html("");
 
     var mensagem = $("#projeto").children(":selected").data("mensagem");
     if(mensagem) { 
@@ -574,6 +669,8 @@
   
   function consulta_bancas_ajax(objeto, membro_id) {
     var membro_bancas = $("#"+objeto+"_bancas");
+    var seq = (sequencia_membros[objeto] || 0) + 1;
+    sequencia_membros[objeto] = seq;
     
     // Limpa o campo e coloca cinza enquanto carrega
     membro_bancas.html("");
@@ -588,6 +685,9 @@
     {% endif %}
     
     var tipo = $("input[name='tipo']:checked").val();
+    if (!tipo) {
+      tipo = $("input[name='tipo']").first().val();
+    }
 
     $.ajax({
       url: "{% url 'verifica_membro_banca' %}",
@@ -601,6 +701,9 @@
       type: "POST",
       dataType: "json",
       success: function (data) {
+        if (seq !== sequencia_membros[objeto]) {
+          return;
+        }
         membro_bancas.html("");
         if(data.lista_bancas.length > 0) {
           $("#horarios_outros_bancas").show();
@@ -616,6 +719,11 @@
           } else if(data.lista_bancas.length > 3) {
             membro_bancas.css("color", "red");
           }
+        }
+      },
+      complete: function() {
+        if (seq !== sequencia_membros[objeto]) {
+          return;
         }
       },
       {% include "ajax_error_function.js" %}
@@ -656,12 +764,19 @@
       $("#alocacao").prop("required",false);
     }
 
+    sel_pt = "-- selecione membro da banca --";
+    sel_en = "-- select board member --";
+    selecione = sel_pt;
+    if(localStorage.getItem("lingua") == "en") {
+      selecione = sel_en;
+    }
+
     {% comment %} Verifica se mudou de estado {% endcomment %}
     if (botao_anterior != "F") {
       {% comment %} Consuladores da Falconi {% endcomment %}  
       if (tipo == "F") {
         $(".pessoas").empty();
-        $(".pessoas").append($("<option selected value></option>").text("-- selecione membro da banca --"));
+        $(".pessoas").append($("<option selected value class='troca_lingua' data-pt='" + sel_pt + "' data-en='" + sel_en + "'></option>").text(selecione));
         {% for pessoa in falconis %}
           $(".pessoas").append($("<option></option>").attr("value",{{pessoa.id}}).text("{{pessoa.get_full_name}}"));
         {% endfor %}
@@ -669,7 +784,7 @@
       } else {
         {% comment %} Professores do Insper {% endcomment %}
         $(".pessoas").empty();
-        $(".pessoas").append($("<option selected value></option>").text("-- selecione membro da banca --"));
+        $(".pessoas").append($("<option selected value class='troca_lingua' data-pt='" + sel_pt + "' data-en='" + sel_en + "'></option>").text(selecione));
         {% for professor in professores %}
           $(".pessoas").append($("<option></option>").attr("value",{{professor.id}}).text("{{professor.get_full_name}}"));
         {% endfor %}
@@ -679,7 +794,7 @@
       if (tipo != "F" || tipo==undefined ) {
         {% comment %} Professores do Insper {% endcomment %}
         $(".pessoas").empty();
-        $(".pessoas").append($("<option selected value></option>").text("-- selecione membro da banca --"));
+        $(".pessoas").append($("<option selected value class='troca_lingua' data-pt='" + sel_pt + "' data-en='" + sel_en + "'></option>").text(selecione));
         {% for professor in professores %}
           $(".pessoas").append($("<option></option>").attr("value",{{professor.id}}).text("{{professor.get_full_name}}"));
         {% endfor %}
@@ -693,8 +808,8 @@
 
   function puxe_bancas() {
     var membros  = $(".membros")
-    for(mem in membros){
-      elem = membros.eq(mem);
+    membros.each(function(){
+      var elem = $(this);
       
       // Limpa o campo e coloca cinza enquanto carrega
       var membro_bancas = $("#"+elem.attr("id")+"_bancas");
@@ -705,7 +820,7 @@
       if(typeof membro_id !== "undefined" && membro_id != "") {
         consulta_bancas_ajax(elem.attr("id"), membro_id);
       }
-    }
+    });
   }
 
   $(document).ready(function () {
@@ -760,37 +875,54 @@
     {% endif %}
 
   });
- 
+
   $(".tipo_banca").change(carrega_modal);
 
   $("form#criarbancasform").submit(function(e){
     e.preventDefault();
+    var form = this;
+    var $form = $(form);
+    var $submitButtons = $form.find("button[type='submit']");
+
+    if (envio_em_andamento) {
+      return false;
+    }
     
     if($("#inicio").val() == $("#fim").val()) {
       alert("Datas e horários de início e fim são iguais!");
       return false;
     }
 
-    d_inicio = new Date($("#inicio").val());
-    d_fim = new Date($("#fim").val());
+    const d_inicio = new Date($("#inicio").val());
+    const d_fim = new Date($("#fim").val());
+
+    if (isNaN(d_inicio.getTime()) || isNaN(d_fim.getTime())) {
+      alert("Data ou horário inválido!");
+      return false;
+    }
+
     if(d_inicio > d_fim) {
       alert("Data de início depois da data final!");
       return false;
     }
 
-    d_inicio = new Date($("#inicio").val());
-    d_fim = new Date($("#fim").val());
     if (d_fim - d_inicio >= 24*60*60*1000) {
       alert("Duração da banca maior que um dia, verificar!");
       return false;
     }
+
+    envio_em_andamento = true;
+    $submitButtons.prop("disabled", true);
+    timeout_envio = setTimeout(function() {
+      envio_em_andamento = false;
+      $submitButtons.prop("disabled", false);
+    }, 20000);
     
     $.ajaxSetup({
       headers: { "X-CSRFToken": "{{csrf_token}}" }
     });
 
-    var form = $("form#criarbancasform").closest("form");
-    var formData = new FormData(form[0]);
+    var formData = new FormData(form);
 
     // Adiciona o tipo de operação
     formData.append(operacao, "true");
@@ -812,6 +944,11 @@
         } else {
           alert(response.mensagem);
         }
+      },
+      complete: function() {
+        clearTimeout(timeout_envio);
+        envio_em_andamento = false;
+        $submitButtons.prop("disabled", false);
       },
       {% include "ajax_error_function.js" %}
     });
