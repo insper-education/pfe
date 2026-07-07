@@ -364,8 +364,9 @@ def lista_interesses(proposta):
         message += "- {0}<br>".format(Proposta.TIPO_INTERESSE[4][1])
     return message
 
+
 def envia_proposta(proposta, request, enviar=True):
-    """Envia Proposta por email."""
+    """Envia aviso que Proposta foi submetida por email."""
 
     context_carta = {
             "request": request,
@@ -392,6 +393,27 @@ def envia_proposta(proposta, request, enviar=True):
         email(subject, recipient_list, message)
 
     return message
+
+def avisa_sub_proposta(proposta, request):
+    """Envia aviso que Proposta foi submetida por email."""
+
+    context_carta = {
+            "request": request,
+            "proposta": proposta,
+            "atualizada": "update" in request.POST,
+            "emails": list(map(str.strip, re.split(",|;", proposta.email))),
+            "lista_areas": lista_areas(proposta),
+            "lista_interesses": lista_interesses(proposta),
+        }
+    carta = get_object_or_404(Carta, template="Aviso de Submissão de Proposta")
+    t = Template(carta.texto)
+    message = t.render(Context(context_carta))
+    message = html.urlize(message)
+
+    subject = "Capstone | Submissão de Proposta: ({0}.{1} - {2})".format(proposta.ano, proposta.semestre, proposta.titulo)
+    configuracao = get_object_or_404(Configuracao)
+    recipient_list = [configuracao.contatos.email]
+    email(subject, recipient_list, message)
 
 
 def retorna_ternario(propostas, cursos):

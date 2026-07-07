@@ -26,7 +26,7 @@ from ratelimit.decorators import ratelimit
 from .models import PerguntasRespostas
 
 from .support import ordena_propostas_novo, ordena_propostas
-from .support import envia_proposta, preenche_proposta, preenche_proposta_pdf
+from .support import envia_proposta, preenche_proposta, preenche_proposta_pdf, avisa_sub_proposta
 from .support import contem_caracteres_invalidos
 from .forms import PropostaForm
 
@@ -655,6 +655,7 @@ def proposta_editar(request, slug=None):
 
             enviar = bool(cd.get("mensagem"))  # Por e-mail se enviar
             mensagem = envia_proposta(proposta, request, enviar)
+            avisa_sub_proposta(proposta, request)
 
             if enviar:
                 resposta["pt"] += "Você deve receber um e-mail de confirmação nos próximos instantes.<br>"
@@ -821,6 +822,7 @@ def carrega_proposta(request):
             else:
                 enviar = "mensagem" in request.POST  # Por e-mail se enviar
                 mensagem = envia_proposta(proposta, request, enviar)
+                avisa_sub_proposta(proposta, request)
                 
                 resposta["pt"] += "Submissão de proposta de projeto realizada com sucesso.<br>"
                 resposta["en"] += "Project proposal submission completed successfully.<br>"
