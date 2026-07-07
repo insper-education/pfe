@@ -655,7 +655,7 @@ def proposta_editar(request, slug=None):
 
             enviar = bool(cd.get("mensagem"))  # Por e-mail se enviar
             mensagem = envia_proposta(proposta, request, enviar)
-            avisa_sub_proposta(proposta, request)
+            #avisa_sub_proposta(proposta, request)
 
             if enviar:
                 resposta["pt"] += "Você deve receber um e-mail de confirmação nos próximos instantes.<br>"
