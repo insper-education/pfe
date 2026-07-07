@@ -1,0 +1,234 @@
+{% comment %}
+  Desenvolvido para o Projeto Final de Engenharia
+  Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+  Data: 7 de Julho de 2026
+{% endcomment %}
+
+{% load static %}
+{% load linguas %}
+
+<link rel="stylesheet" href="{% static 'css/tab_arrend.css' %}"> {% comment %} Para as setas {% endcomment %}
+
+<style>
+
+  .segmentos-box {
+    --segmentos-cor-principal: #0f766e;
+    --segmentos-cor-borda: #0d9488;
+    --segmentos-cor-fundo-icone: #e6fffb;
+  }
+
+  .segmentos-box .sem_b, .segmentos-box .sem_b td {
+    border: none;
+    font-size: 14px;
+  }
+  .segmentos-box .ar_in {
+    padding: 0px 3px 0px 3px;
+  }
+  .segmentos-box .ar_la {
+    line-height:0.6em;
+    margin-bottom: 0px;
+  }
+
+  .segmentos-box #bordar_areas {
+    display: inline-block;
+    border-radius: 8px;
+    border: 2px solid #636DD1;
+    padding: 6px;
+    width: fit-content;
+    margin: 0.1em 0px 0.5em 0px;  
+  }
+  
+  .segmentos-box .card {
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    margin-bottom: 1rem;
+    border: 1px solid var(--segmentos-cor-borda);
+    width: 700px;
+    max-width: 100%;
+  }
+
+  .segmentos-box .card-header {
+    background-color: var(--segmentos-cor-principal);
+    color: white;
+    padding: 10px 15px;
+    border-radius: 8px 8px 0 0;
+  }
+
+  .segmentos-box .card-body {
+    padding: 15px;
+  }
+
+  .segmentos-box .checkbox-label {
+    align-items: center;
+    margin-left: 10px;
+    display: inline-flex;
+  }
+
+  .segmentos-box .checkbox-label input {
+    margin-right: 10px;
+  }
+
+  .segmentos-box .segmento-item-icon {
+    width: 1.4em;
+    height: 1.4em;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 6px;
+    border-radius: 999px;
+    background: var(--segmentos-cor-fundo-icone);
+    color: var(--segmentos-cor-principal);
+    font-size: 0.88em;
+  }
+
+  .segmentos-box .nivel-interesse {
+    margin-left: 6px;
+    font-size: 11px;
+    font-weight: 600;
+    color: #334155;
+    background: #e2e8f0;
+    border-radius: 10px;
+    padding: 1px 7px;
+    white-space: nowrap;
+  }
+
+  .segmentos-box textarea {
+    width: 100%;
+    border-radius: 4px;
+    border: 1px solid #ced4da;
+    padding: 5px;
+    resize: vertical;
+  }
+</style>
+
+{% if segmentos_possiveis %}
+  <div class="segmentos-box">
+  {% if not vencido %}
+    <input type="hidden" name="segmentos_form_present" value="1">
+  {% endif %}
+
+  {% if com_borda %}
+    <div class="card">
+      <div class="card-header">
+        <h6 class="mb-0">
+          <i class="fa fa-sitemap mr-2"></i>
+          <label {% if titulo_segmentos %}for="titulo_segmentos"{% endif %} style="line-height:0.6em;"><b>
+            {% lng "Segmentos" "Segments" %}
+          </b></label>
+          {% if titulo_segmentos %}
+            <span class="checkbox-label">
+              <input type="checkbox" id="titulo_segmentos" value="segmentos"
+               {% if tudo_ligado %}checked{% endif %}
+               {% if vencido %}disabled{% endif %}>
+            </span>
+          {% endif %}
+
+          <i style="cursor: pointer; user-select: none; float: right; margin-right: 6px; margin-top: 0px;" class="esconder">
+            <span id="esconde_segmentos" class="seta seta-baixo"></span>
+          </i>
+      </h6>
+    </div>
+    <div id="bloco_segmentos" class="card-body">
+  {% endif %}
+
+  <table class="sem_b">
+    <tbody>
+        {% for segmento in segmentos_possiveis %}
+          <tr><td class="ar_in">
+                  <input style="position: relative; top: 2px;" type="checkbox" name="selection_segmento" id="segmento_{{segmento.id}}" value="{{segmento.id}}" class="filtra_segmento"
+                  {% if tudo_ligado %}
+                      checked
+                  {% else %}
+                {% if segmentos_selecionados and segmento in segmentos_selecionados %}checked{% endif %}
+                  {% endif %}
+                  {% if vencido %}disabled{% endif %}>
+              </td>
+              <td class="ar_in">
+                  <label for="segmento_{{segmento.id}}" class="ar_la">
+                    <span>{% lng segmento.nome segmento.nome_en %}</span>
+                    {% if segmento.icone %}<span class="segmento-item-icon">{{segmento.icone}}</span>{% endif %}
+                  </label>
+              </td>
+          </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% if not com_borda %}
+      <div style="height:8px;font-size:8px;">&nbsp;</div>
+  {% endif %}
+    
+  {% if com_borda %}
+      </div>
+    </div>
+
+    <script>
+      $("#esconde_segmentos").on("click", function() {
+        $("#bloco_segmentos").toggle(200);
+        $(this).toggleClass("seta-baixo seta-cima");
+      });
+    </script>
+
+  {% endif %}
+
+  {% if titulo_segmentos %}
+
+    <script>
+
+      var filterListSegmentos = $("input.filtra_segmento[type=checkbox]");
+
+      function atualiza_segmentos() {
+
+          var verdade = true;
+          filterListSegmentos.each(function(i, el) {
+              if(!($(el)[0].checked)) {
+                verdade = false;
+                return;
+              } 
+          });
+          if(verdade) {
+              $("#titulo_segmentos").prop("checked", true);
+              $("#titulo_segmentos").prop("indeterminate", false);
+              return;
+          }
+          
+          var verdade = false;
+          filterListSegmentos.each(function(i, el) {
+              if($(el)[0].checked) {
+                verdade = true;
+                return;
+              } 
+          });
+          if(!verdade) {
+              $("#titulo_segmentos").prop("checked", false);
+              $("#titulo_segmentos").prop("indeterminate", false);
+              return;
+          }
+
+          $("#titulo_segmentos").prop("indeterminate", true);
+
+      }
+
+      atualiza_segmentos();
+
+      $(".filtra_segmento").change(function() {
+          atualiza_segmentos();
+      });
+
+      $("#titulo_segmentos").change(function() {
+          if( $("#titulo_segmentos").is(":checked") ) {
+              filterListSegmentos.each(function(i, el) {
+                  $(el).prop("checked", true).change();
+              });
+          } else {
+              filterListSegmentos.each(function(i, el) {
+                  $(el).prop("checked", false).change();
+              });
+          }
+      });
+
+    </script>
+
+  {% endif %}  
+
+  </div>
+{% endif %}

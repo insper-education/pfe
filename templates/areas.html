@@ -4,10 +4,14 @@
   Data: 21 de Abril de 2020
 {% endcomment %}
 
+{% load static %}
 {% load linguas %}
 {% load areas_utils %}
 
+<link rel="stylesheet" href="{% static 'css/tab_arrend.css' %}"> {% comment %} Para as setas {% endcomment %}
+
 <style>
+
   .sem_b, .sem_b td {
     border: none;
     font-size: 14px;
@@ -99,9 +103,13 @@
                {% if vencido %}disabled{% endif %}>
             </span>
           {% endif %}
+
+          <i style="cursor: pointer; user-select: none; float: right; margin-right: 6px; margin-top: 0px;" class="esconder">
+            <span id="esconde_areas" class="seta seta-baixo"></span>
+          </i>
       </h6>
     </div>
-    <div class="card-body">
+    <div id="bloco_areas" class="card-body">
   {% endif %}
 
   <table class="sem_b">
@@ -148,6 +156,14 @@
   {% if com_borda %}
       </div>
     </div>
+
+    <script>
+      $("#esconde_areas").on("click", function() {
+        $("#bloco_areas").toggle(200);
+        $(this).toggleClass("seta-baixo seta-cima");
+      });
+    </script>
+
   {% endif %}
 
   {% if titulo_areas %}

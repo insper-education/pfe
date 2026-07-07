@@ -2070,6 +2070,7 @@ def filtro_projetos(request):
             "titulo": {"pt": "Filtro para Projetos", "en": "Filter for Projects"},
             "edicoes": get_edicoes(Projeto)[0],
             "areas_de_interesse_possiveis": Area.objects.filter(ativa=True),
+            "segmentos_possiveis": Segmento.objects.all(),
         }
 
     return render(request, "projetos/filtro_projetos.html", context)

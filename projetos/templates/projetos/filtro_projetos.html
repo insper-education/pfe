@@ -15,13 +15,14 @@
 
   {% include "edicoes.html" %}
   {% include "areas.html" with tudo_ligado=True titulo_areas=True not_outras=True com_borda=True %}
+  {% include "segmentos.html" with tudo_ligado=True titulo_segmentos=True not_outras=True com_borda=True %}
   
   <div id="atualizar">
     {% include "tabelas_top_ml.html" with tabela="Projetos" cabecalhos=cabecalhos %}
       {% for projeto in projetos %}
-        {% with estudantes=projeto.alocacao_set.all areas=projeto.proposta.areadeinteresse_set.all %}
+        {% with estudantes=projeto.alocacao_set.all areas=projeto.proposta.areadeinteresse_set.all segmento=projeto.organizacao.segmento %}
 
-        <tr class="item {% for area in areas %}{{area.area.id}} {% endfor %}">
+        <tr class="item {% for area in areas %}{{area.area.id}} {% endfor %}{% if segmento %}segmento_{{segmento.id}}{% endif %}">
             <th scope="row" data-order="{{projeto.get_titulo}}">{% include "projetos/includes/bloco_projeto.html" with projeto=projeto tit_proposta=True %}</th>
             <td>{% include "projetos/includes/bloco_areas.html" with areas=areas %}</td>
             <td>{% include "estudantes/includes/bloco_estudantes.html" with grupo=estudantes pequeno=True %}</td>
@@ -53,13 +54,23 @@
         table = tabelaElem.DataTable();
         if (!table) return true;
 
+        function correspondeGrupo(rowNode, tituloId, selector) {
+          if ($(tituloId).is(":checked")) {
+            return true;
+          }
+          const checked = $(selector + ":checked");
+          if (checked.length === 0) {
+            return false;
+          }
+          return checked.toArray().some(el => rowNode.hasClass(el.id));
+        }
+
         $.fn.dataTable.ext.search.push(
           function(settings, data, dataIndex) {
-            // Se o principal estiver selecionado, todos aparecem, mesmo sem nenhuma área marcada
-            if( $("#titulo_areas").is(":checked") ) return true;
-            const filterList = $("input.filtra_area[type=checkbox]:checked");
             const rowNode = $(table.row(dataIndex).node());
-            return filterList.toArray().some(el => rowNode.hasClass(el.id));
+            const okArea = correspondeGrupo(rowNode, "#titulo_areas", "input.filtra_area[type=checkbox]");
+            const okSegmento = correspondeGrupo(rowNode, "#titulo_segmentos", "input.filtra_segmento[type=checkbox]");
+            return okArea && okSegmento;
           }
         );
 
@@ -70,6 +81,14 @@
     window.onload = carrega_pagina
 
     $(".filtra_area").change(function(){
+      if(table) {table.draw();}
+    });
+
+    $(".filtra_segmento").change(function(){
+      if(table) {table.draw();}
+    });
+
+    $("#titulo_areas, #titulo_segmentos").change(function(){
       if(table) {table.draw();}
     });
     
