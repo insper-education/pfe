@@ -5,71 +5,131 @@
 */
 
 function parseDate(dateString) {
-  var parts = dateString.split("/");
-  // Handle two-digit year
+  if (!dateString || typeof dateString !== "string") {
+    return null;
+  }
+  var parts = dateString.trim().split("/");
+  if (parts.length < 3) {
+    return null;
+  }
+  var day = parseInt(parts[0], 10);
+  var month = parseInt(parts[1], 10);
   var year = parseInt(parts[2], 10);
+  if (isNaN(day) || isNaN(month) || isNaN(year)) {
+    return null;
+  }
   if (year < 100) {
-    // If year is less than 100, assume it's in the 2000s
     year += 2000;
   }
-  return new Date(year, parts[1] - 1, parts[0]);
+  var date = new Date(year, month - 1, day);
+  if (
+    date.getFullYear() !== year ||
+    date.getMonth() !== month - 1 ||
+    date.getDate() !== day
+  ) {
+    return null;
+  }
+  return date;
+}
+
+function getSortText(node, sortvalue) {
+  var target = sortvalue ? node.querySelector(sortvalue) : node;
+  if (!target) {
+    return "";
+  }
+  var text = target.innerText || target.textContent || "";
+  return text.trim();
+}
+
+function getSortMeta(rawValue, tipo) {
+  var empty = rawValue === "" || rawValue === null;
+
+  if (empty) {
+    return { empty: true, key: null };
+  }
+
+  if (tipo === "n") {
+    var numberValue = parseFloat(String(rawValue).replace(",", "."));
+    return {
+      empty: isNaN(numberValue),
+      key: isNaN(numberValue) ? null : numberValue,
+    };
+  }
+
+  if (tipo === "d") {
+    var dateValue = parseDate(rawValue);
+    return {
+      empty: !dateValue,
+      key: dateValue ? dateValue.getTime() : null,
+    };
+  }
+
+  return {
+    empty: false,
+    key: String(rawValue).toLowerCase(),
+  };
+}
+
+function compareEntries(a, b, direction) {
+  // Mantém valores vazios por último para evitar resultados confusos.
+  if (a.empty && b.empty) {
+    return a.index - b.index;
+  }
+  if (a.empty) {
+    return 1;
+  }
+  if (b.empty) {
+    return -1;
+  }
+
+  if (a.key < b.key) {
+    return -1 * direction;
+  }
+  if (a.key > b.key) {
+    return 1 * direction;
+  }
+  return a.index - b.index;
 }
 
 // Baseado no código de w3.sortHTML
 function sort(id, sel, sortvalue, tipo="s") {
-  var a, b, i, ii, y, bytt, v1, v2, cc, j; 
-  a = document.querySelectorAll(id);
-  for (i = 0; i < a.length; i++) {
-    for (j = 0; j < 2; j++) {
-      cc = 0;
-      y = 1;
-      while (y == 1) {
-        y = 0;
-        b = a[i].querySelectorAll(sel);
-        for (ii = 0; ii < (b.length - 1); ii++) {
-          bytt = 0;
-          if (sortvalue) {
-            v1 = b[ii].querySelector(sortvalue).innerText.trim();
-            v2 = b[ii + 1].querySelector(sortvalue).innerText.trim();
-          } else {
-            v1 = b[ii].innerText.trim();
-            v2 = b[ii + 1].innerText.trim();
-          }
-
-          // Tratar valores vazios
-          v1 = (v1 === "" || v1 === null) ? null : v1; // Tratar string vazia
-          v2 = (v2 === "" || v2 === null) ? null : v2; // Tratar string vazia
-
-          if (tipo=="n") { // number
-            v1 = parseFloat(v1);
-            v2 = parseFloat(v2);
-            // Verificar se v1 ou v2 são NaN e tratá-los    
-            if (isNaN(v1)) v1 = Number.NEGATIVE_INFINITY; // Tratar como menor
-            if (isNaN(v2)) v2 = Number.NEGATIVE_INFINITY; // Tratar como menor
-          } else if (tipo=="d") { // date
-            v1 = parseDate(v1);
-            v2 = parseDate(v2);
-            // Verificar se v1 ou v2 são inválidos
-            if (isNaN(v1.getTime())) v1 = new Date(0); // Tratar como menor
-            if (isNaN(v2.getTime())) v2 = new Date(0); // Tratar como menor
-          } else { // tipo=="s" (string)
-            v1 = v1.toLowerCase();
-            v2 = v2.toLowerCase();
-          }
-
-          if ((j == 0 && (v1 > v2 || (v1 === null && v2 !== null))) || 
-              (j == 1 && (v1 < v2 || (v2 === null && v1 !== null)))) {
-            bytt = 1;
-            break;
-          }
-        }
-        if (bytt == 1) {
-          b[ii].parentNode.insertBefore(b[ii + 1], b[ii]);
-          y = 1;
-          cc++;
-        }
-      }
-      if (cc > 0) {break;}
+  var containers = document.querySelectorAll(id);
+  for (var i = 0; i < containers.length; i++) {
+    var rows = Array.prototype.slice.call(containers[i].querySelectorAll(sel));
+    if (rows.length < 2) {
+      continue;
     }
+
+    var entries = rows.map(function(row, index) {
+      var rawValue = getSortText(row, sortvalue);
+      var meta = getSortMeta(rawValue, tipo);
+      return {
+        row: row,
+        index: index,
+        empty: meta.empty,
+        key: meta.key,
+      };
+    });
+
+    // Mantém o comportamento antigo: se já está ascendente, inverte para descendente.
+    var alreadyAsc = true;
+    for (var j = 0; j < entries.length - 1; j++) {
+      if (compareEntries(entries[j], entries[j + 1], 1) > 0) {
+        alreadyAsc = false;
+        break;
+      }
+    }
+
+    var direction = alreadyAsc ? -1 : 1;
+    entries.sort(function(left, right) {
+      return compareEntries(left, right, direction);
+    });
+
+    var parent = rows[0].parentNode;
+    var fragment = document.createDocumentFragment();
+    for (var k = 0; k < entries.length; k++) {
+      fragment.appendChild(entries[k].row);
+    }
+    parent.appendChild(fragment);
   }
 };
