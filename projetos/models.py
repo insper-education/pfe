@@ -599,6 +599,10 @@ class Configuracao(models.Model):
     tecnico = models.ForeignKey("users.PFEUser", null=True, blank=True, on_delete=models.SET_NULL,
                                  related_name="tecnico",
                                  help_text="responsável pela parte técnica do Capstone")
+    
+    contatos = models.ForeignKey("users.PFEUser", null=True, blank=True, on_delete=models.SET_NULL,
+                                 related_name="contatos",
+                                 help_text="responsável pelos contatos com empresas e organizações")
 
     lingua = models.CharField(max_length=2, blank=True, default="pt",
                               help_text="Língua deafult do sistema")

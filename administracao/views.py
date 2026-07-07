@@ -565,6 +565,7 @@ def configurar(request):
 
                 configuracao.operacao = get_object_or_404(PFEUser, pk=int(request.POST["operacao"]))
                 configuracao.tecnico = get_object_or_404(PFEUser, pk=int(request.POST["tecnico"]))
+                configuracao.contatos = get_object_or_404(PFEUser, pk=int(request.POST["contatos"]))
 
                 configuracao.coordenacao.save()
                 configuracao.save()

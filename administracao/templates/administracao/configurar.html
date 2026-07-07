@@ -394,6 +394,7 @@
     <section class="config-card">
       <div class="config-card-header">👥 {% lng "Equipe de Apoio" "Support Team" %}</div>
       <div class="config-card-body config-grid-2">
+
         <div class="field">
           <label for="operacao">{% lng "Responsável Operação Capstone" "Capstone Operation Responsible" %}</label>
           <select name="operacao" id="operacao"
@@ -422,7 +423,23 @@
           </select>
           <div class="help">{% lng "Operação pode ser um administrador ou funcionário do Insper." "Operation can be an administrator or employee of Insper." %}</div>
         </div>
+
+        <div class="field">
+          <label for="contatos">{% lng "Responsável pelos Contatos" "Responsible for Contacts" %}</label>
+          <select name="contatos" id="contatos" class="troca_lingua_title" 
+           data-title_pt="Responsável pelos Contatos" data-title_en="Responsible for Contacts"
+           title="Selecione responsável pelos contatos" required>
+            {% for oper in operacionalizadores %}
+              <option value="{{oper.id}}" {% if oper.id == configuracao.contatos.id %}selected{% endif %}>
+                {{oper.get_full_name}}
+              </option>
+            {% endfor %}
+          </select>
+          <div class="help">{% lng "Operação pode ser um administrador ou funcionário do Insper." "Operation can be an administrator or employee of Insper." %}</div>
+        </div>
       </div>
+      
+
     </section>
 
     <div class="form-footer">
