@@ -31,10 +31,11 @@
 
     {% if user.eh_prof_a %}
       <b>{% lng "Data Inicial" "Initial Date" %}:</b>
-      {{objetivo.data_inicial}}
+      {% lng_dl objetivo.data_inicial %}
+
       &nbsp;&nbsp;
       <b>{% lng "Data Final" "Final Date" %}:</b>
-      {% if objetivo.data_final %}{{objetivo.data_final}}{% else %}{% lng "Atual" "Current" %}{% endif %}
+      {% if objetivo.data_final %}{% lng_dl objetivo.data_final %}{% else %}{% lng "Atual" "Current" %}{% endif %}
       <br>
     {% endif %}
 
