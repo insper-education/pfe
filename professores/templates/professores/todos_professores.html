@@ -5,6 +5,7 @@
   Data: 18 de Novembro de 2019
 {% endcomment %}
 
+{% load static %}
 {% load linguas %}
 {% load bancas %}
 
@@ -39,11 +40,29 @@
 
 {% block content %}
 
+  <div class="row align-items-start mb-2" style="display: inline-block; margin-right: 3px;">
+    <div class="ml-3">
+      <div class="input-group input-group-sm">
+          <div class="input-group-prepend">
+            <label class="to_label input-group-text" for="ativos">
+              <span class="to_hide">{% lng "Ativos" "Active" %}</span>
+            </label>
+          </div>
+          <div class="input-group-append">
+            <div class="input-group-text bg-white">
+              <input type="checkbox" id="ativos" class="selectpicker form-control form-control-sm" checked>
+            </div>
+          </div>
+      </div>
+    </div>
+  </div><br>
+
   {% include "botao_adiciona.html" with url_add="cadastrar_usuario" url_path="?tipo=professor" txt_pt="Cadastrar Novo Professor" txt_en="Register New Professor" %}
     
   {% include "tabelas_top_ml.html" with tabela="Professores" cabecalhos=cabecalhos %}
     {% for professor in professores %} 
-      <tr class="item" {% if not professor.user.is_active %} style="color: lightgrey;" {% endif %}>
+      <tr class="item" {% if not professor.user.is_active %} style="color: lightgrey;" {% endif %}
+        data-valor="{{ professor.user.is_active|yesno:'true,false' }}">
 
         <th scope="row" data-sort="{{professor.user.get_full_name}}">
           {% if professor.user.membro_comite %}<u>{% endif %}
@@ -92,7 +111,7 @@
 
         <td class="text-center">
           <a href="{% url 'relatorios_publicos' 'todas' %}?orientador={{professor.id}}">
-            Link
+            <i class="fas fa-file-export"></i>
           </a>
         </td>
 
@@ -100,9 +119,17 @@
           {% if professor.lattes %}
             <a rel="noopener noreferrer" target="_blank" href="{{professor.lattes}}"
              {% if not professor.user.is_active %} style="color: LightBlue;" {% endif %}>
-              {{professor.lattes}}
+              {% comment %} {{professor.lattes}} {% endcomment %}
+              <img class="lattes" src="{% static 'images/lattes.png' %}" alt="Lattes" style="height: 1.5em; margin-top: -0.2em;">
             </a>
           {% endif %}
+          {% if professor.user.linkedin %}
+            <a rel="noopener noreferrer" target="_blank" href="{{professor.user.linkedin}}"
+             {% if not professor.user.is_active %} style="color: LightBlue;" {% endif %}>
+              <img class="linkedin" src="{% static 'images/linkedin.png' %}" alt="LinkedIn" style="height: 1.5em; margin-top: -0.2em;">
+            </a>
+          {% endif %}
+            
         </td>
 
       </tr>
@@ -113,6 +140,7 @@
   </div>
 
   <script>
+    {% include "check_linha_tabelas.html" with checkbox="ativos" tabela="Professores" data="valor" %}
     function carrega_pagina(){
       {% include "tabelas_scripts.html" with tabela="Professores" %}
     }

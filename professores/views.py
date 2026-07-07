@@ -2875,7 +2875,7 @@ def todos_professores(request):
                            { "pt": "Orientações", "en": "Advising", },
                            { "pt": "Coorientações", "en": "Co-Advising", },
                            { "pt": "Documentos Públicos", "en": "Public Documents", },
-                           { "pt": "Lattes", "en": "Lattes", },],
+                           { "pt": "Links", "en": "Links", },],
             "titulo": { "pt": "Professores", "en": "Professors", },
         }
 
