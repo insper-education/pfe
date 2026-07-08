@@ -494,6 +494,7 @@ def projetos_lista(request):
             context = {
                 "projetos": projetos_filtrados,
                 "cabecalhos": cabecalhos,
+                "edicao": edicao,
             }
         else:
             return HttpResponse("Algum erro não identificado.", status=401)
