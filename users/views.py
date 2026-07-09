@@ -57,7 +57,7 @@ from projetos.models import Certificado, Configuracao, Projeto, Conexao, Evento
 from projetos.models import Area, Coorientador, Avaliacao2, Observacao, Reprovacao
 from projetos.messages import email
 from projetos.support3 import calcula_objetivos, get_notas_alocacao
-from projetos.support4 import get_objetivos_atuais
+from projetos.support4 import get_objetivos_atuais_cache
 
 # Get an instance of a logger
 logger = logging.getLogger("django")
@@ -564,10 +564,12 @@ def estudantes_objetivos(request):
         alocacoes = Alocacao.objects.filter(projeto__ano=ano, projeto__semestre=semestre)
 
         # Filtra os Objetivos de Aprendizagem do semestre (Todos: individuais e juntando com os de grupo)
-        objetivos_t = get_objetivos_atuais(ano, semestre)
+        objetivos_t = get_objetivos_atuais_cache(ano, semestre)
 
         ### ISSO ESTA DESATUALIZADO E PRECISA USAR UM ESQUEMA MAIS ATUAL USANDO OS EXAMES
-        objetivos_i = objetivos_t.filter(avaliacao_aluno=True) # Somentes objetivos de avaliação individual
+        ##objetivos_i = objetivos_t.filter(avaliacao_aluno=True) # Somentes objetivos de avaliação individual
+        objetivos_i = [obj for obj in objetivos_t if getattr(obj, "avaliacao_aluno", False)]
+        ### ISSO TUDO PRECISA MELHORAR
 
         cabecalhos = [{"pt": "Nome", "en": "Name"},
                         {"pt": "e-mail", "en": "e-mail"},
@@ -627,7 +629,7 @@ def projetos_objetivos(request):
         projetos = Projeto.objects.filter(ano=ano, semestre=semestre)
 
         # Filtra os Objetivos de Aprendizagem do semestre
-        objetivos = get_objetivos_atuais(ano, semestre)
+        objetivos = get_objetivos_atuais_cache(ano, semestre)
         
         individual = False
 

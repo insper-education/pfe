@@ -18,25 +18,25 @@ from academica.support4 import get_notas_estudante
 
 from users.models import Alocacao
 
-def get_objetivos_atuais(ano=None, semestre=None):
+# def get_objetivos_atuais(ano=None, semestre=None):
     
-    objetivos = ObjetivosDeAprendizagem.objects.all()
+#     objetivos = ObjetivosDeAprendizagem.objects.all()
 
-    if ano and semestre:
-        mes = 3 if semestre == 1 else 9
-        data = datetime.datetime(ano, mes, 1)
-        objetivos = objetivos.filter(data_inicial__lt=data)
-        objetivos = objetivos.filter(data_final__gt=data) | objetivos.filter(data_final__isnull=True)
+#     if ano and semestre:
+#         mes = 3 if semestre == 1 else 9
+#         data = datetime.datetime(ano, mes, 1)
+#         objetivos = objetivos.filter(data_inicial__lt=data)
+#         objetivos = objetivos.filter(data_final__gt=data) | objetivos.filter(data_final__isnull=True)
 
-    else:
-        # Só os objetivos atualmente em uso
-        hoje = datetime.date.today()
-        objetivos = objetivos.filter(data_final__gt=hoje) | objetivos.filter(data_final__isnull=True)
+#     else:
+#         # Só os objetivos atualmente em uso
+#         hoje = datetime.date.today()
+#         objetivos = objetivos.filter(data_final__gt=hoje) | objetivos.filter(data_final__isnull=True)
 
 
-    objetivos = objetivos.order_by("ordem")
+#     objetivos = objetivos.order_by("ordem")
 
-    return objetivos
+#     return objetivos
 
 
 def get_edicoes_aluno(estudante):

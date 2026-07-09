@@ -43,7 +43,7 @@ from operacional.models import Curso
 from projetos.models import Projeto, Proposta, Configuracao, Area, AreaDeInteresse
 from projetos.models import Encontro, Banca, Entidade, Evento, ObjetivosDeAprendizagem
 from projetos.messages import email, message_agendamento_dinamica, create_message, message_cancelamento
-from projetos.support4 import get_objetivos_atuais
+from projetos.support4 import get_objetivos_atuais_cache
 
 from users.models import PFEUser, Aluno, Alocacao, Opcao, OpcaoTemporaria
 from users.models import UsuarioEstiloComunicacao, Associado
@@ -1063,16 +1063,23 @@ def exames_pesos(request):
 def pesos_rubricas(request):
     """Exibe os pessos de cada exames e as rubricas do semestre letivo do estudantes."""
 
-    if not request.user.eh_estud:
-        context = {
-            "area_principal": True,
-            "mensagem_aviso": {"pt": "Você não está cadastrado como estudante.", "en": "You are not registered as a student."}
-        }
-        return render(request, "generic_ml.html", context=context)
+    ano = request.GET.get("ano", None)
+    semestre = request.GET.get("semestre", None)
+
+    if ano is None or semestre is None:
+        if request.user.eh_estud:  # Tentando pegar ano e semestre do estudante, não é bom pois ele pode ter várias alocações
+            ano = request.user.aluno.ano
+            semestre = request.user.aluno.semestre
+        else:
+            context = {
+                "area_principal": True,
+                "mensagem_aviso": {"pt": "Erro ao acessar a página. Ano e semestre não informados.", "en": "Error accessing the page. Year and semester not informed."},
+            }
+            return render(request, "generic_ml.html", context=context)
 
     composicoes_com_peso = Composicao.objects.filter(peso__peso__gt=0).distinct()
     
-    composicoes = filtra_composicoes(composicoes_com_peso, request.user.aluno.ano, request.user.aluno.semestre)
+    composicoes = filtra_composicoes(composicoes_com_peso, ano, semestre)
     
     # Para cada composição, veja todos os objetivos associados
     objetivos_unicos = {}
@@ -1080,7 +1087,6 @@ def pesos_rubricas(request):
         for objetivo in composicao.pesos.all():
             objetivos_unicos[objetivo.sigla] = objetivo
     objetivos_avaliados = list(objetivos_unicos.values())
-
 
     cabecalhos = [
         {"pt": "Exames", "en": "Evaluation"},
@@ -1094,7 +1100,7 @@ def pesos_rubricas(request):
         "composicoes": composicoes,
         "cabecalhos": cabecalhos,
         "objetivos_avaliados": objetivos_avaliados,
-        "objetivos": get_objetivos_atuais(),
+        "objetivos": get_objetivos_atuais_cache(ano, semestre),
         "niveis_objetivos": Estrutura.loads(nome="Níveis de Objetivos"),
     }
 

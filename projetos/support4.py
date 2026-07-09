@@ -15,25 +15,25 @@ from .models import ObjetivosDeAprendizagem
 
 
 # PARAR DE USAR ESSA FUNÇÃO, USAR get_objetivos_atuais_cache
-def get_objetivos_atuais(ano=None, semestre=None):
+# def get_objetivos_atuais(ano=None, semestre=None):
     
-    objetivos = ObjetivosDeAprendizagem.objects.all()
+#     objetivos = ObjetivosDeAprendizagem.objects.all()
 
-    if ano and semestre:
-        mes = 3 if semestre == 1 else 9
-        data = datetime.datetime(ano, mes, 1)
-        objetivos = objetivos.filter(data_inicial__lt=data)
-        objetivos = objetivos.filter(data_final__gt=data) | objetivos.filter(data_final__isnull=True)
+#     if ano and semestre:
+#         mes = 3 if semestre == 1 else 9
+#         data = datetime.datetime(ano, mes, 1)
+#         objetivos = objetivos.filter(data_inicial__lt=data)
+#         objetivos = objetivos.filter(data_final__gt=data) | objetivos.filter(data_final__isnull=True)
 
-    else:
-        # Só os objetivos atualmente em uso
-        hoje = datetime.date.today()
-        objetivos = objetivos.filter(data_final__gt=hoje) | objetivos.filter(data_final__isnull=True)
+#     else:
+#         # Só os objetivos atualmente em uso
+#         hoje = datetime.date.today()
+#         objetivos = objetivos.filter(data_final__gt=hoje) | objetivos.filter(data_final__isnull=True)
 
 
-    objetivos = objetivos.order_by("ordem")
+#     objetivos = objetivos.order_by("ordem")
 
-    return objetivos
+#     return objetivos
 
 
 # Idealmente migrar todos para cá
@@ -43,6 +43,9 @@ def get_objetivos_atuais_cache(ano=None, semestre=None):
     Usa Django cache para evitar queries repetidas.
     """
     
+    ano = int(ano) if ano else None
+    semestre = int(semestre) if semestre else None
+
     # Criar chave de cache única
     if ano and semestre:
         cache_key = f"objetivos_{ano}_{semestre}"
