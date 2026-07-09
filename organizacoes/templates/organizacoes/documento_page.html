@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% comment %}
+  Wrapper para renderizar documento_view como página completa
+  quando a URL é aberta diretamente no navegador.
+{% endcomment %}
+
+{% block content %}
+  {% include "organizacoes/documento_view.html" %}
+{% endblock %}

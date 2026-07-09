@@ -264,8 +264,11 @@ def adiciona_documento(request, organizacao_id=None, projeto_id=None, tipo_nome=
         "anotacao": anotacao,
         "lingua": lingua,
     }
-    
-    return render(request, "organizacoes/documento_view.html", context=context)
+
+    is_modal = request.headers.get("X-Requested-With") == "XMLHttpRequest"
+    template_name = "organizacoes/documento_view.html" if is_modal else "organizacoes/documento_page.html"
+
+    return render(request, template_name, context=context)
 
 
 @login_required
@@ -346,7 +349,13 @@ def adiciona_documento_estudante(request, tipo_nome=None, documento_id=None):
         "lingua": lingua,
     }
 
-    return render(request, "organizacoes/documento_view.html", context=context)
+    is_modal = (
+        request.headers.get("X-Requested-With") == "XMLHttpRequest"
+        or request.GET.get("modal") == "1"
+    )
+    template_name = "organizacoes/documento_view.html" if is_modal else "organizacoes/documento_page.html"
+
+    return render(request, template_name, context=context)
 
 
 @login_required
