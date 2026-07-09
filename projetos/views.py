@@ -1301,8 +1301,8 @@ def lista_feedback_estudantes(request):
 
         for ano, semestre in [edicao.split('.') for edicao in edicoes]:
             
-            estudantes = Aluno.objects.filter(ano=ano, semestre=semestre).count()
-            num_estudantes.append(estudantes)
+            alocacoes = Alocacao.objects.filter(projeto__ano=ano, projeto__semestre=semestre)
+            num_estudantes.append(alocacoes.count())
 
             numb_feedb = todos_feedbacks.filter(projeto__ano=ano, projeto__semestre=semestre).\
                 values("estudante").distinct().count()
