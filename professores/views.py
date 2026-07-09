@@ -2333,7 +2333,6 @@ def pendencias_professores(request):
 
     tipos = [
         ("Planos de Orientação", "planos_de_orientacao"),
-        ("Alocações Semanais", "alocacoes_semanais"),
         ("Relatos Quinzenais", "relatos_quinzenais"),
         ("Avaliar Entregas", "avaliar_entregas"),
         ("Agendar Bancas", "bancas_index"),

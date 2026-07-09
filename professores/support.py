@@ -473,13 +473,6 @@ def check_planos_de_orientacao(projetos, ano, semestre, PRAZO):
     return {"planos_de_orientacao": {"cor": cor, "prazo": prazo, "itens": itens, "atraso": atraso}}
 
 
-def check_alocacoes_semanais(projetos, ano, semestre, PRAZO):
-    cor = 'b'
-    itens = []
-    atraso = 0
-    prazo = None
-    return {"alocacoes_semanais": {"cor": cor, "prazo": prazo, "itens": itens, "atraso": atraso}}
-
 def check_relatos_quinzenais(projetos, ano, semestre, PRAZO):
     # Verifica se todos os projetos do professor orientador têm as avaliações dos relatos quinzenais
     cor = 'b'
@@ -722,7 +715,6 @@ def ver_pendencias_professor(user, ano, semestre):
         projetos = Projeto.objects.filter(orientador=user.professor, ano=ano, semestre=semestre)
         if projetos:
             context.update(check_planos_de_orientacao(projetos, ano, semestre, PRAZO))
-            context.update(check_alocacoes_semanais(projetos, ano, semestre, PRAZO))
             context.update(check_relatos_quinzenais(projetos, ano, semestre, PRAZO))
             context.update(check_avaliar_entregas(projetos, ano, semestre, PRAZO))
             context.update(check_bancas_index(projetos, ano, semestre, PRAZO))
