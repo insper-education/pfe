@@ -93,7 +93,7 @@
                     class="{% if opcao.prioridade == 0 %}red-bold{% elif opcao.prioridade <= 5 %}green-bold{% else %}yellow-bold{% endif %}">
                   <a class="prioridade" href="{% url 'proposta_completa' opcao.proposta.id %}"
                    data-toggle="tooltip" data-html="true" animation="true"
-                   title="{{ opcao.proposta.titulo }} ({{ opcao.proposta.organizacao.sigla }})">
+                   title="[{{ opcao.proposta.organizacao.sigla }}] {{ opcao.proposta.titulo }}">
                     {% if opcao.prioridade == 0 %}X{% else %}{{opcao.prioridade}}{% endif %}
                   </a>
                 </td>
