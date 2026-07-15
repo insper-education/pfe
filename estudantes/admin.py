@@ -26,7 +26,7 @@ class RelatoAdmin(admin.ModelAdmin):
 class ParesAdmin(admin.ModelAdmin):
     """Exibição no sistema de administração do Django para Avaliação de Pares."""
 
-    list_display = ("momento", "alocacao_de", "alocacao_para")
+    list_display = ("momento", "tipo", "alocacao_de", "alocacao_para")
     list_filter = ("momento", "tipo")
     search_fields = ["alocacao_de__aluno__user__first_name",
                      "alocacao_de__aluno__user__last_name",

@@ -195,17 +195,19 @@ def check_avaliacao_pares(alocacao, sigla, chave):
     cor = 'b'
     prazo = None
     hoje = datetime.date.today()
-    evento = Evento.objects.filter(tipo_evento__sigla=sigla, startDate__gte=hoje).order_by("startDate").first()
+    # Prazo extra de uma semana para alunos preencherem a avaliação de pares intermediária e final de forma atrasada
+    evento = Evento.objects.filter(tipo_evento__sigla=sigla, startDate__gte=hoje-datetime.timedelta(days=7)).order_by("startDate").first()
     if evento and evento.endDate - hoje <= datetime.timedelta(days=7):
         tipo = 0 if sigla == "API" else 1
-        pares = Pares.objects.filter(alocacao_de=alocacao, tipo=tipo).exists()  # (0, "intermediaria"),   # (1, "final"),
-        if pares:
+        pares = Pares.objects.filter(alocacao_de=alocacao, tipo=tipo).last()  # (0, "intermediaria"),   # (1, "final"),
+        if pares and evento.endDate - hoje > datetime.timedelta(days=0):
             cor = 'g'
+        elif pares:
+            cor = 'b'
         else:
             prazo = evento.endDate
-            cor = 'r' if evento.endDate == hoje else 'y'
+            cor = 'r' if evento.endDate <= hoje else 'y'
     return {chave: {"cor": cor, "prazo": prazo, "itens": None, "atraso": None}}
-
 
 
 def check_avaliacao_pares_intermediaria(alocacao,):

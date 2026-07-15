@@ -97,6 +97,7 @@ def index_estudantes(request):
                 context["fase_final"] = hoje > evento_banca_final.endDate
 
         # Avaliações de Pares
+        context["prazo_feedback_geral"] = 7  # dias
         context["fora_fase_feedback_intermediario"], _, _ = configuracao_pares_vencida(request.user.aluno, "API") # Avaliação de Pares Intermediária
         context["fora_fase_feedback_final"], _, _ = configuracao_pares_vencida(request.user.aluno, "APF") # Avaliação de Pares Final
 
@@ -671,6 +672,8 @@ def avaliacao_pares(request, momento):
 
     estudante = request.user.aluno if request.user.tipo_de_usuario == 1 else None
 
+    limite_vencimento = 7 # dias
+
     if momento=="intermediaria":
         prazo, inicio, fim = configuracao_pares_vencida(estudante, "API")  # Avaliação de Pares Intermediária
         tipo=0
@@ -697,7 +700,7 @@ def avaliacao_pares(request, momento):
         alocacao_de = Alocacao.objects.get(projeto=projeto, aluno=estudante)
         alocacoes = Alocacao.objects.filter(projeto=projeto).exclude(aluno=estudante)
 
-        if (not prazo) and request.method == "POST":
+        if (prazo < limite_vencimento) and request.method == "POST":
 
             for alocacao in alocacoes:
 
@@ -740,7 +743,7 @@ def avaliacao_pares(request, momento):
                     recipient_list = [projeto.orientador.user.email]
                     
                     message = "Caro Orientador(a),<br><br>"
-                    message += "Todas as avaliações de pares " + ("intermediárias" if momento=="intermediaria" else "finais")
+                    message += "As avaliações de pares " + ("intermediárias" if momento=="intermediaria" else "finais")
                     message += " do projeto que você está orientando<br>"
                     message += "<b>" + projeto.get_titulo_org() + "</b><br>"
                     message += "foram realizadas.<br><br>"
@@ -768,6 +771,8 @@ def avaliacao_pares(request, momento):
         context["colegas"] = [[{"aluno":"Fulano (exemplo)",id:0},None],[{"aluno":"Beltrano (exemplo)",id:0},None]],
 
     context["vencido"] = prazo
+    context["limite_vencimento"] = limite_vencimento
+
     context["momento"] = momento
     context["inicio"] = inicio
     context["fim"] = fim

@@ -31,12 +31,20 @@
 
 {% block content %}
 
-  {% if vencido %}
+  {% if vencido > limite_vencimento %}
     <h5 class="red-bold">
       {% if momento == "intermediaria" %}
         {% lng "Fora do Período de Avaliação de Pares Intermediária" "Out of Intermediate Peer Evaluation Period" %}
       {% else %}
         {% lng "Fora do Período de Avaliação de Pares Final" "Out of Final Evaluation Period" %}
+      {% endif %}
+    </h5>
+  {% elif vencido > 0 %}
+    <h5 class="red-bold">
+      {% if momento == "intermediaria" %}
+        {% lng "Você perdeu o período regular da Avaliação de Pares Intermediária" "You missed the regular period of Intermediate Peer Evaluation" %}
+      {% else %}
+        {% lng "Você perdeu o período regular da Avaliação de Pares Final" "You missed the regular period of Final Peer Evaluation" %}
       {% endif %}
     </h5>
   {% else %}
@@ -71,7 +79,7 @@
         </b></label><br>
         <textarea id="aprecia{{colega.id}}" name="aprecia{{colega.id}}" rows="4" cols="80" maxlength="1000" 
         {% if not colega.aluno.externo %}required{% endif %}
-        {% if vencido or user.tipo_de_usuario != 1%}disabled{% endif %}>{% if par.aprecia %}{{par.aprecia}}{% endif %}</textarea>
+        {% if vencido > limite_vencimento or user.tipo_de_usuario != 1%}disabled{% endif %}>{% if par.aprecia %}{{par.aprecia}}{% endif %}</textarea>
       </div>
 
       <div class="div_arredondado">
@@ -82,7 +90,7 @@
         </b></label><br>
         <textarea id="atrapalhando{{colega.id}}" name="atrapalhando{{colega.id}}" rows="4" cols="80" maxlength="1000"
         {% if not colega.aluno.externo %}required{% endif %}
-        {% if vencido or user.tipo_de_usuario != 1%}disabled{% endif %}>{% if par.atrapalhando %}{{par.atrapalhando}}{% endif %}</textarea>
+        {% if vencido > limite_vencimento or user.tipo_de_usuario != 1%}disabled{% endif %}>{% if par.atrapalhando %}{{par.atrapalhando}}{% endif %}</textarea>
       </div>
 
       <div class="div_arredondado">
@@ -93,7 +101,7 @@
         </b></label><br>
         <textarea id="mudar{{colega.id}}" name="mudar{{colega.id}}" rows="4" cols="80" maxlength="1000"
         {% if not colega.aluno.externo %}required{% endif %}
-        {% if vencido or user.tipo_de_usuario != 1%}disabled{% endif %}>{% if par.mudar %}{{par.mudar}}{% endif %}</textarea>
+        {% if vencido > limite_vencimento or user.tipo_de_usuario != 1%}disabled{% endif %}>{% if par.mudar %}{{par.mudar}}{% endif %}</textarea>
       </div>
 
       <div class="div_arredondado">
@@ -105,7 +113,7 @@
           {% for tipo in TIPO_ENTREGA %}
             <label><input type="radio" name="entrega{{colega.id}}" value="{{tipo.0}}" 
               {% if not colega.aluno.externo %}required{% endif %}
-              {% if par.entrega == tipo.0 %}checked="checked"{% endif %} {% if vencido or user.tipo_de_usuario != 1%}disabled{% endif %}>
+              {% if vencido > limite_vencimento or user.tipo_de_usuario != 1%}disabled{% endif %} {% if par.entrega == tipo.0 %}checked="checked"{% endif %}>
               {% lng tipo.1 tipo.2 %}</label>
           {% endfor %}
         </div>
@@ -121,7 +129,7 @@
           {% for tipo in TIPO_INICIATIVA %}
             <label><input type="radio" name="iniciativa{{colega.id}}" value="{{tipo.0}}" 
               {% if not colega.aluno.externo %}required{% endif %}
-              {% if par.iniciativa == tipo.0 %}checked="checked"{% endif %} {% if vencido or user.tipo_de_usuario != 1%}disabled{% endif %}>
+              {% if par.iniciativa == tipo.0 %}checked="checked"{% endif %} {% if vencido > limite_vencimento or user.tipo_de_usuario != 1%}disabled{% endif %}>
               {% lng tipo.1 tipo.2 %}</label>
           {% endfor %}
         </div>
@@ -136,7 +144,7 @@
           {% for tipo in TIPO_COMUNICACAO %}
             <label><input type="radio" name="comunicacao{{colega.id}}" value="{{tipo.0}}" 
               {% if not colega.aluno.externo %}required{% endif %}
-              {% if par.comunicacao == tipo.0 %}checked="checked"{% endif %} {% if vencido or user.tipo_de_usuario != 1%}disabled{% endif %}>
+              {% if par.comunicacao == tipo.0 %}checked="checked"{% endif %} {% if vencido > limite_vencimento or user.tipo_de_usuario != 1%}disabled{% endif %}>
               {% lng tipo.1 tipo.2 %}</label>
           {% endfor %}
         </div>
@@ -146,7 +154,7 @@
 
     {% endfor %}
 
-    <button class="btn btn-primary mb-1" {% if vencido or user.tipo_de_usuario != 1%}disabled{% endif %} type="submit">
+    <button class="btn btn-primary mb-1" {% if vencido > limite_vencimento or user.tipo_de_usuario != 1%}disabled{% endif %} type="submit">
       {% lng "Enviar" "Submit" %}
     </button>
 

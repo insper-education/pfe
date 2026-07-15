@@ -81,7 +81,7 @@ def configuracao_estudante_vencida(estudante):
     return False
 
 # Para avaliação de pares
-def configuracao_pares_vencida(estudante, sigla, prazo=10):
+def configuracao_pares_vencida(estudante, sigla, antes=10, depois=7):
     """Retorna verdade se ainda em tempo de estudante fazer avaliação de pares."""
     configuracao = Configuracao.objects.get()
 
@@ -90,20 +90,24 @@ def configuracao_pares_vencida(estudante, sigla, prazo=10):
 
     if estudante is not None and estudante.ano is not None and estudante.semestre is not None:
         if estudante.ano < ano:
-            return True, None, None
+            return 180, None, None  # Vencido
         elif estudante.ano == ano and semestre == 2 and estudante.semestre == 1:
-            return True, None, None
+            return 180, None, None  # Vencido
     
     hoje = datetime.date.today()
-    delta = datetime.timedelta(days=prazo)
-    evento = Evento.objects.filter(tipo_evento__sigla=sigla, startDate__gte=hoje, startDate__lt=hoje+delta).last()
+    dias_antes = datetime.timedelta(days=antes)
+    dias_depois = datetime.timedelta(days=depois)
+    evento = Evento.objects.filter(tipo_evento__sigla=sigla, startDate__gte=hoje-dias_depois, startDate__lt=hoje+dias_antes).last()
+
+    prazo = (hoje - evento.startDate).days if evento else 0
+    print(prazo)
 
     if not evento:
-        return True, None, None
+        return 180, None, None  # Vencido
     
-    inicio = evento.startDate-delta
+    inicio = evento.startDate-dias_antes
     fim = evento.startDate
-    return False, inicio, fim
+    return prazo, inicio, fim
 
 
 

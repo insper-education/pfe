@@ -246,6 +246,16 @@ def lanca_descontos(ano=None, semestre=None):
         "mas": Evento.get_eventos(sigla="MA", ano=ano, semestre=semestre),   # Mentorias Acadêmicas
         "mps": Evento.get_eventos(sigla="MP", ano=ano, semestre=semestre),   # Mentorias Profissionais
         "espn": Evento.get_evento(sigla="ESPN", ano=ano, semestre=semestre), # Entrega de Slides de Plano de Negócios (Grupo)
+        "ev": Evento.get_evento(sigla="EV", ano=ano, semestre=semestre),     # Entrega de Vídeo (Grupo)
+    }
+
+    tipos_descontos = {
+        "geral": 0.25,
+        "preliminar": 0.5,
+        "pares": 0.5,
+        "relato": 0.25,
+        "alocacao": 0.25,
+        "reuniao": 0.25,
     }
 
     descontos = []
@@ -266,33 +276,37 @@ def lanca_descontos(ano=None, semestre=None):
             atraso_dias = (data_entrega - eventos["erp"].endDate).days
             semanas_atraso = math.ceil(atraso_dias / 7)
             if semanas_atraso > 0:
-                add_desconto({"projeto": projeto}, eventos["erp"], 0.5 * semanas_atraso)
+                add_desconto({"projeto": projeto}, eventos["erp"], tipos_descontos["preliminar"] * semanas_atraso)
 
         # Entrega de Slides de Plano de Negócios
         if hoje > eventos["espn"].endDate:
             if not Documento.objects.filter(projeto=projeto, tipo_documento__sigla="PN").exists():
-                add_desconto({"projeto": projeto}, eventos["espn"], 0.25)
+                add_desconto({"projeto": projeto}, eventos["espn"], tipos_descontos["geral"])
+
+        # Entrega de Vídeo
+        if hoje > eventos["ev"].endDate:
+            if not Documento.objects.filter(projeto=projeto, tipo_documento__sigla="VP").exists():  # Vídeo do Projeto
+                add_desconto({"projeto": projeto}, eventos["ev"], tipos_descontos["geral"])
 
         # Verificar se grupo agendou mentoria acadêmica e profissional
         for evento in eventos["mas"]:
             if hoje > evento.endDate:
                 mentorias_academicas = Encontro.objects.filter(projeto=projeto, startDate__gte=evento.startDate, startDate__lte=evento.endDate + datetime.timedelta(days=1))
                 if mentorias_academicas.count() == 0:
-                    add_desconto({"projeto": projeto}, evento, 0.25)
+                    add_desconto({"projeto": projeto}, evento, tipos_descontos["reuniao"])
         for evento in eventos["mps"]:
             if hoje > evento.endDate:
                 mentorias_profissionais = Encontro.objects.filter(projeto=projeto, startDate__gte=evento.startDate, startDate__lte=evento.endDate + datetime.timedelta(days=1))
                 if mentorias_profissionais.count() == 0:
-                    add_desconto({"projeto": projeto}, evento, 0.25)
+                    add_desconto({"projeto": projeto}, evento, tipos_descontos["reuniao"])
 
         for alocacao in Alocacao.objects.filter(projeto=projeto, aluno__externo__isnull=True):
-
             # Avaliação de Pares (Intermediária e Final)
             for tipo, evento_key in [(0, "api"), (1, "apf")]:
                 evento = eventos[evento_key]
                 if evento and hoje > evento.endDate:
-                    if not Pares.objects.filter(alocacao_de=alocacao, tipo=tipo).exists():
-                        add_desconto({"alocacao": alocacao}, evento, 0.5)
+                    if not Pares.objects.filter(alocacao_de=alocacao, tipo=tipo, momento__date__lt=evento.endDate).exists():
+                        add_desconto({"alocacao": alocacao}, evento, tipos_descontos["pares"])
         
             # Relato Quinzenal
             evento_anterior = None
@@ -300,10 +314,10 @@ def lanca_descontos(ano=None, semestre=None):
                 if hoje > evento.endDate:
                     if evento_anterior:
                         if not Relato.objects.filter(alocacao=alocacao, momento__date__gt=evento_anterior.endDate, momento__date__lte=evento.endDate).exists():
-                            add_desconto({"alocacao": alocacao}, evento, 0.25)
+                            add_desconto({"alocacao": alocacao}, evento, tipos_descontos["relato"])
                     else:
                         if not Relato.objects.filter(alocacao=alocacao, momento__date__lte=evento.endDate).exists():
-                            add_desconto({"alocacao": alocacao}, evento, 0.25)
+                            add_desconto({"alocacao": alocacao}, evento, tipos_descontos["relato"])
                 evento_anterior = evento
 
             # Planejamento de Alocação Semanal
@@ -312,7 +326,7 @@ def lanca_descontos(ano=None, semestre=None):
                 atraso_dias = (agendado_horarios - eventos["pas"].endDate).days
                 semanas_atraso = math.ceil(atraso_dias / 7)
                 if semanas_atraso > 0:
-                    add_desconto({"alocacao": alocacao}, eventos["pas"], 0.25 * semanas_atraso)
+                    add_desconto({"alocacao": alocacao}, eventos["pas"], tipos_descontos["alocacao"] * semanas_atraso)
 
     return descontos
 

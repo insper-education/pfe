@@ -145,7 +145,7 @@
     </div>
 
     <div class="item_lista"><span class="circulo">{% include "circulo_estados.html" with estado=avaliacao_pares_intermediaria %}</span>
-      <a {% if fora_fase_feedback_intermediario %} class="disabled" onclick="showMessage('feedback')" {% else %}
+      <a {% if fora_fase_feedback_intermediario > prazo_feedback_geral%} class="disabled" onclick="showMessage('feedback')" {% else %}
           {% if not projeto and user.tipo_de_usuario == 1%} class="disabled" onclick="showMessage('projeto')" {% else %}
           href="{% url 'avaliacao_pares' 'intermediaria' %}" {% endif %}{% endif %} >
           {% lng "Avaliação de Pares Intermediária" "Intermediate Peer Evaluation" %}
@@ -153,7 +153,7 @@
     </div>
 
     <div class="item_lista"><span class="circulo">{% include "circulo_estados.html" with estado=avaliacao_pares_final %}</span>
-      <a {% if fora_fase_feedback_final %} class="disabled" onclick="showMessage('feedback')" {% else %}
+      <a {% if fora_fase_feedback_final > prazo_feedback_geral %} class="disabled" onclick="showMessage('feedback')" {% else %}
           {% if not projeto and user.eh_estud %} class="disabled" onclick="showMessage('projeto')" {% else %}
           href="{% url 'avaliacao_pares' 'final' %}" {% endif %}{% endif %} >
             {% lng "Avaliação de Pares Final" "Final Peer Evaluation" %}
