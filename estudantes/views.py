@@ -144,8 +144,10 @@ def alinhamentos_gerais(request):
 def alocacao_semanal(request):
     """Para passar links de alinhamentos gerais de início de semestre."""
     configuracao = get_object_or_404(Configuracao)
+    ano = configuracao.ano
+    semestre = configuracao.semestre
     if request.user.eh_estud:  # Estudante
-        projeto = Projeto.objects.filter(alocacao__aluno=request.user.aluno, ano=configuracao.ano , semestre=configuracao.semestre).last()
+        projeto = Projeto.objects.filter(alocacao__aluno=request.user.aluno, ano=ano , semestre=semestre).last()
         if not projeto:
             context = {
                 "area_principal": True,
@@ -153,7 +155,7 @@ def alocacao_semanal(request):
             }
             return render(request, "generic_ml.html", context=context)
     elif request.user.eh_prof_a:  # Professor ou Administrador
-        projeto = Projeto.objects.filter(orientador=request.user.professor, ano=configuracao.ano , semestre=configuracao.semestre).last()
+        projeto = Projeto.objects.filter(orientador=request.user.professor, ano=ano , semestre=semestre).last()
     else:
         context = {
             "area_principal": True,
@@ -161,10 +163,17 @@ def alocacao_semanal(request):
         }
         return render(request, "generic_ml.html", context=context)
     
+
+    horarios_trab_grupo_aulas = Estrutura.loads(nome="Horarios Trabalho em Grupo e Aulas")
+    edicoes_disponiveis = sorted([(int(k.split(".")[0]), int(k.split(".")[1])) for k in horarios_trab_grupo_aulas], reverse=True,)
+    melhor_edicao = next((e for e in edicoes_disponiveis if e <= (ano, semestre)), None)
+    trab_grupo_aulas = horarios_trab_grupo_aulas[f"{melhor_edicao[0]}.{melhor_edicao[1]}"] if melhor_edicao else {}
+
     context = {
         "titulo": {"pt": "Alocação Semanal", "en": "Weekly Allocation"},
         "projeto": projeto,
         "horarios": Estrutura.loads(nome="Horarios Semanais"),
+        "trab_grupo_aulas": trab_grupo_aulas,
     }
     return render(request, "estudantes/alocacao_semanal.html", context)
 
