@@ -16,12 +16,40 @@
     border: none;
     font-size: 14px;
   }
+  .sem_b {
+    width: 100%;
+    table-layout: fixed;
+  }
+  .sem_b td:first-child {
+    width: 28px;
+  }
+  .sem_b td:last-child {
+    width: calc(100% - 28px);
+    min-width: 0;
+  }
   .ar_in {
     padding: 0px 3px 0px 3px;
   }
   .ar_la {
-    line-height:0.6em;
+    line-height: 1.2em;
     margin-bottom: 0px;
+    display: flex;
+    width: 100%;
+    max-width: 100%;
+    flex-wrap: nowrap;
+    align-items: center;
+    column-gap: 6px;
+    row-gap: 3px;
+  }
+
+  .area-titulo {
+    flex: 0 1 auto;
+    display: block;
+    max-width: 100%;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   #bordar_areas {
@@ -64,7 +92,7 @@
   }
 
   .nivel-interesse {
-    margin-left: 6px;
+    margin-left: 0;
     font-size: 11px;
     font-weight: 600;
     color: #334155;
@@ -72,6 +100,23 @@
     border-radius: 10px;
     padding: 1px 7px;
     white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  @media (max-width: 575.98px) {
+    .ar_la {
+      flex-wrap: wrap;
+      align-items: flex-start;
+    }
+
+    .nivel-interesse {
+      flex-basis: 100%;
+      display: inline-block;
+      width: 220px;
+      max-width: 100%;
+      box-sizing: border-box;
+      text-align: center;
+    }
   }
 
   textarea {
@@ -131,7 +176,7 @@
                   {% endif %}
                   >
                   <label for="{{area.id}}" class="ar_la">
-                    {% lng area.titulo area.titulo_en %}
+                    <span class="area-titulo">{% lng area.titulo area.titulo_en %}</span>
                     {% if nivel %}<span class="nivel-interesse">{{ nivel }}</span>{% endif %}
                   </label>
               </td>
