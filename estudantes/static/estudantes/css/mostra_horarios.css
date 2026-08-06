@@ -75,6 +75,10 @@
   background-color: lightgrey;
 }
 
+.trab_grupo {
+  background-color: #F5FEEB;
+}
+
 @media (max-width: 600px) {
   .hifen::after {
     content: "\A";

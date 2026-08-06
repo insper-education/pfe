@@ -2379,6 +2379,11 @@ def alocacoes_semanais(request, todos=None):
             projetos = projetos.filter(ano=ano, semestre=semestre)
         
         horarios_struct = Estrutura.loads(nome="Horarios Semanais")
+        horarios_trab_grupo_aulas = Estrutura.loads(nome="Horarios Trabalho em Grupo e Aulas")
+        edicoes_disponiveis = sorted([(int(k.split(".")[0]), int(k.split(".")[1])) for k in horarios_trab_grupo_aulas], reverse=True,)
+        melhor_edicao = next((e for e in edicoes_disponiveis if e <= (ano, semestre)), None)
+        trab_grupo_aulas = horarios_trab_grupo_aulas[f"{melhor_edicao[0]}.{melhor_edicao[1]}"] if melhor_edicao else {}
+
         stats = calculate_allocation_statistics(projetos, horarios_struct)
         
         context = {
@@ -2386,11 +2391,12 @@ def alocacoes_semanais(request, todos=None):
             "projetos": projetos,
             "edicao": edicao,
             "horarios": horarios_struct,
+            "trab_grupo_aulas": trab_grupo_aulas,
             "n_todos": n_todos,
-            "stats_alunos": stats.get('alunos', []),
-            "stats_projetos": stats.get('projetos', []),
-            "histogram_alunos": stats.get('histogram_alunos', {}),
-            "histogram_projetos": stats.get('histogram_projetos', {}),
+            "stats_alunos": stats.get("alunos", []),
+            "stats_projetos": stats.get("projetos", []),
+            "histogram_alunos": stats.get("histogram_alunos", {}),
+            "histogram_projetos": stats.get("histogram_projetos", {}),
         }
 
     else:

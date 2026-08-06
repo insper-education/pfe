@@ -7,6 +7,7 @@
 
 {% load static %}
 {% load linguas %}
+{% load dictionary %}
 <link rel="stylesheet" href="{% static 'estudantes/css/mostra_horarios.css' %}">
 
 <style>
@@ -59,10 +60,6 @@
     .horas {font-size: 0.7em; font-weight: 600;}
     .espaco {display: none;}
   }
-    
-  
-
-
 </style>
 
 <div id="horarios_proj_{{projeto.id}}">
@@ -111,9 +108,16 @@
             {% with hora=forloop.counter0 %}
             <td {% if dark %}class="overlay"{% endif %} ><span class="horas">{{inicio}}<span class="espaco"> </span><span class="hifen"></span><span class="espaco"> </span>{{fim}}</span></td>
             {% for i in "01234" %}
-              {% if i == "4" and hora == 1 %}
+              {% with dia_dict=trab_grupo_aulas|get_value:i %}
+              {% with hora_str=hora|stringformat:"s" %}
+              {% with tipo=dia_dict|get_value:hora_str %}
+              {% if tipo == "grupo" %}
+                <td colspan="{{alocacoes|length}}" class="trab_grupo">
+                  {% lng "Trab. em Grupo" "Group Work" %}
+                </td>
+              {% elif tipo == "aula" %}
                 <td colspan="{{alocacoes|length}}" class="aula_regular">
-                  {% lng "Aula Regular" "Regular Class" %}
+                  {% lng "Aula Regular" "Regular Class" %} T{{hora|add:"1"}}
                 </td>
               {% else %}
                 {% for alocacao in alocacoes %}
@@ -130,6 +134,9 @@
                   <td></td>
                 {% endfor %}
               {% endif %}
+              {% endwith %}
+              {% endwith %}
+              {% endwith %}
             {% endfor %}
             {% endwith %}
           </tr>
@@ -178,12 +185,12 @@
       <div class="orientacoes-title">{% lng "Orientações" "Guidelines" %}</div>
       <ul>
         <li>
-          {% lng "Mínimo de 22 horas de dedicação na semana (segunda a sexta)" "Minimum of 22 hours of dedication in the week (Monday to Friday)" %}
+          {% lng "Mínimo de 24 horas de dedicação na semana (segunda a sexta)" "Minimum of 24 hours of dedication in the week (Monday to Friday)" %}
           <ul>
             <li>{% lng "2 horas de aula regular as sexta-feiras." "2 hours of regular class on Fridays." %}</li>
             <li>{% lng "~2 horas de reuniões com o professor orientador." "~2 hours of meetings with the advising professor." %}</li>
             <li>{% lng "~2 horas de reuniões com a organização parceira." "~2 hours of meetings with the partner organization." %}</li>
-            <li>{% lng "~16 horas dedicadas ao desenvolvimento do projeto." "~16 hours dedicated to project development." %}</li>
+            <li>{% lng "~18 horas dedicadas ao desenvolvimento do projeto." "~18 hours dedicated to project development." %}</li>
           </ul>
         </li>
         <li>
@@ -193,7 +200,7 @@
             <li>{% lng "Propor reuniões com a organização parceira no período diurno." "Propose meetings with the partner organization during daytime hours." %}</li>
           </ul>
         </li>
-        <li>{% lng "Mínimo 8 horas para todos os membros do grupo trabalharem juntos." "Minimum of 8 hours for all group members to work together." %}</li>
+        <li>{% lng "Mínimo 10 horas para todos os membros do grupo trabalharem juntos." "Minimum of 10 hours for all group members to work together." %}</li>
       </ul>
     </div>
   {% endif %}
@@ -201,10 +208,10 @@
   {% if request.user.eh_estud %}
     <b style="font-size: 1.05em;">{% lng "Suas horas alocadas" "Your allocated hours" %}:</b>
     <span id="horas_alocadas" style="margin-left: 8px;font-size: 1.05em;">
-      <span id="horas_alocadas_diurno">0</span>
-      {% lng "horas periodo diurno (total = " "hours daytime period (total = " %}
       <span id="horas_alocadas_total">0</span>
-      {% lng " horas)" " hours)" %}
+      {% lng "horas (" "hours (" %}
+      <span id="horas_alocadas_diurno">0</span>
+      {% lng "horas periodo diurno )" "hours daytime period )" %}
     </span>
     <br>
   {% endif %}
@@ -217,6 +224,7 @@
   </span>		
 
   <script>
+  (function() {
 
     let refreshHorasIntervalId = null;
     let refreshHorasFailureCount = 0;
@@ -300,7 +308,7 @@
         if(!horas_alocadas) {
           return;
         }
-        if(horas_comerciais < 22/2) {
+        if(horas_comerciais+horas_outras < 24/2) {
           horas_alocadas.style.color = "red";
         } else {
           horas_alocadas.style.color = "green";
@@ -323,7 +331,7 @@
     function confere_juntos() {
       let container = get_refresh_container();
       if (!container) return;
-      contador = 0;
+      contador = 0;  // Vai estar dobrado, mas ok
       for (let i = 0; i < 5; i++) {  // Dias da semana (seg, ter, qua, qui, sex)
         for (let j = 0; j < {{horarios|length}}; j++) {
           if(allElementsHaveHighlight(`h_${i}_${j}`)) {
@@ -343,7 +351,6 @@
         }
       }
       {% if alocacoes %}
-        contador--; // descontando aula regular
         horas_juntos_total = container.querySelector("#horas_juntos_total");
         if(!horas_juntos_total) {
           return;
@@ -387,7 +394,7 @@
 
           // Identificando os horários selecionados
           const horarios = [];
-          var horas_comerciais = 0;
+          var horas_comerciais = 6; // a partir de 2026.2, a aula e atividade em grupo é contabilizada como 12 horas diurnas
           var horas_outras = 0;
           for (let i = 0; i < 5; i++) {
             for (let j = 0; j < {{horarios|length}}; j++) {
@@ -435,7 +442,7 @@
       {% if alocacao.horarios %}
         {% if request.user == alocacao.aluno.user %}
           horarios = {{ alocacao.horarios|safe }};
-          var horas_comerciais = 0;
+          var horas_comerciais = 6;
           var horas_outras = 0;
           for (let i = 0; i < horarios.length; i++) {
             const [dia, horario] = horarios[i];
@@ -592,6 +599,7 @@
     refreshHorasIntervalId = setInterval(refresh_horas, {% if request.user.eh_estud %}8000{% else %}60000{% endif %} );
     refresh_horas();
 
+  })();
   </script>
 
 </div>
