@@ -100,7 +100,6 @@ def configuracao_pares_vencida(estudante, sigla, antes=10, depois=7):
     evento = Evento.objects.filter(tipo_evento__sigla=sigla, startDate__gte=hoje-dias_depois, startDate__lt=hoje+dias_antes).last()
 
     prazo = (hoje - evento.startDate).days if evento else 0
-    print(prazo)
 
     if not evento:
         return 180, None, None  # Vencido
