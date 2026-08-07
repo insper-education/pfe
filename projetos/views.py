@@ -488,6 +488,7 @@ def projetos_lista(request):
                           { "pt": "Estudantes", "en": "Students" },
                           { "pt": "Média CR", "en": "Average GPA" },
                           { "pt": "Período", "en": "Semester" },
+                          { "pt": "Horários", "en": "Hours" },
                           { "pt": "Orientador", "en": "Advisor" },
                           { "pt": "Organização", "en": "Sponsor" },]
             context = {

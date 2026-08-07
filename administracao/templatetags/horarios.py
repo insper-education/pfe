@@ -15,11 +15,20 @@ from administracao.models import Estrutura
 register = template.Library()
 
 @register.filter
-def formata_horarios(horarios):
+def formata_horarios(horarios, formato=None):
     """Formata os horários para exibição."""
     try:
         horarios_semanais = Estrutura.loads(nome="Horarios Semanais")
         horarios = json.loads(horarios)
+        if formato == "curto":
+            dias_semana_pt = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"]
+            dias_semana_en = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
+            return [
+                {
+                  "pt": f"{dias_semana_pt[dia]} {horarios_semanais[hora][0]}",
+                  "en": f"{dias_semana_en[dia]} {horarios_semanais[hora][0]}"
+                }
+                for dia, hora in horarios ]
         dias_semana_pt = ["Domingo", "Segunda-feira", "Terça-feira", "Quarta-feira", "Quinta-feira", "Sexta-feira", "Sábado"]
         dias_semana_en = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
         return [

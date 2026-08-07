@@ -9,6 +9,7 @@
 {% load coeficiente_rendimento %}
 {% load linguas %}
 {% load static %}
+{% load horarios %}
 
 {% block head %}
   {% include "tabelas_includes.html" %}
@@ -26,11 +27,14 @@
                 {% include "projetos/includes/bloco_projeto.html" with projeto=projeto tit_proposta=True %}
               </th>
               <td>{% include "estudantes/includes/bloco_estudantes.html" with grupo=estudantes %}</td>
-              <td style="text-align: right;">{% with val=estudantes|media_crs %}
-                {{val.0|floatformat:2 }}&plusmn;{{val.1|floatformat:2 }}
-                {% endwith %}
-              </td>
+              <td style="text-align: right;">{% with val=estudantes|media_crs %}{{val.0|floatformat:2 }}&plusmn;{{val.1|floatformat:2 }}{% endwith %}</td>
               <td class="text-center">{{projeto.get_edicao}}</td>
+              <td class="text-center">
+                {% for horario in projeto.horario_aulas|formata_horarios:"curto" %}
+                  <div class="horario-texto">{% lng horario.pt horario.en %}</div>
+                {% endfor %}
+              
+              </td>
               <td>{% include "academica/includes/bloco_orientador.html" with orientador=projeto.orientador %}</td>
               <td>{% include "organizacoes/includes/bloco_organizacao.html" with organizacao=projeto.organizacao %}</td>
             </tr>
