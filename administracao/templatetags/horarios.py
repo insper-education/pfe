@@ -41,3 +41,10 @@ def horarios_trab_grupo_aulas(projeto):
     trab_grupo_aulas = horarios_trab_grupo_aulas[f"{melhor_edicao[0]}.{melhor_edicao[1]}"] if melhor_edicao else {}
     return trab_grupo_aulas
 
+
+@register.filter
+def get_horarios(projeto):
+    """Retorna as faixas de horários do período selecionado."""
+    horarios_semanais = Estrutura.loads(nome="Horarios Semanais")
+    return horarios_semanais
+    

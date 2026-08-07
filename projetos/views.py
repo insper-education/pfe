@@ -115,7 +115,6 @@ def projeto_infos(request, primarykey=None):
     if request.user.eh_prof_a:  # Se usuário é professor ou administrador
         context["documentos"] = Documento.objects.filter(projeto=projeto)
         context["medias_oo"] = get_medias_oa(alocacoes, usuario=request.user)
-        context["horarios"] = Estrutura.loads(nome="Horarios Semanais")
 
     context["conexoes"] = Conexao.objects.filter(projeto=projeto)
     context["coorientadores"] = Coorientador.objects.filter(projeto=projeto)

@@ -104,7 +104,7 @@
         
       </thead>
       <tbody>
-        
+        {% with horarios=projeto|get_horarios %}
         {% for inicio, fim, dark in horarios %}
           <tr>
             {% with hora=forloop.counter0 %}
@@ -145,6 +145,7 @@
             {% endwith %}
           </tr>
         {% endfor %}
+        {% endwith %}
 
       </tbody>
 

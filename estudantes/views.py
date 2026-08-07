@@ -166,7 +166,6 @@ def alocacao_semanal(request):
     context = {
         "titulo": {"pt": "Alocação Semanal", "en": "Weekly Allocation"},
         "projeto": projeto,
-        "horarios": Estrutura.loads(nome="Horarios Semanais"),
     }
     return render(request, "estudantes/alocacao_semanal.html", context)
 

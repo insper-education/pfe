@@ -2379,14 +2379,12 @@ def alocacoes_semanais(request, todos=None):
             projetos = projetos.filter(ano=ano, semestre=semestre)
         
         horarios_struct = Estrutura.loads(nome="Horarios Semanais")
-
         stats = calculate_allocation_statistics(projetos, horarios_struct)
         
         context = {
             "administracao": request.user.eh_admin,
             "projetos": projetos,
             "edicao": edicao,
-            "horarios": horarios_struct,
             "n_todos": n_todos,
             "stats_alunos": stats.get("alunos", []),
             "stats_projetos": stats.get("projetos", []),
