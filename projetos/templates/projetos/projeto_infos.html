@@ -716,6 +716,13 @@
       {% include "projetos/includes/bloco_mentorias.html" with projeto=projeto %}
     {% endif %}
 
+    <hr>
+    <h4 id="horario_aulas">
+      {% lng "Horário de Aulas" "Class Schedule" %}:
+    </h4>
+    {% include "administracao/includes/bloco_horario_aulas.html" with projeto=projeto %}
+    
+
     {% if user.eh_prof_a %}
       <hr>
       <h4 id="alocacao_semanal">

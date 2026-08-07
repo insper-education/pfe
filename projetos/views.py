@@ -2547,6 +2547,20 @@ def upload_estudantes_projeto(request, projeto_id):
     return redirect("/projetos/projeto_infos/"+str(projeto_id))
 
 
+@login_required
+def upload_horarios_aulas(request, projeto_id):
+
+    if request.method == "POST":
+        projeto = get_object_or_404(Projeto, id=projeto_id)
+        projeto.horario_aulas = request.POST.get("horario_aulas", None)
+
+        projeto.save()
+
+    if request.user.eh_estud:
+        return redirect("/projetos/meuprojeto")
+    return redirect("/projetos/projeto_infos/"+str(projeto_id))
+
+
 def grupos_formados(request):
     """Mostra os grupos formados (brincadeira)."""
     return render(request, "projetos/grupos_formados.html", context={})

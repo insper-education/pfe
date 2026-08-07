@@ -32,6 +32,44 @@
   {% include "projetos/includes/bloco_titulo_resumo_pchave.html" with projeto=projeto professor_view=True %}
   <hr>
 
+
+
+  <div>
+    <form {% if projeto %}action="{% url 'upload_horarios_aulas' projeto.id %}"{% endif %} method="post" enctype="multipart/form-data">
+
+      {% csrf_token %}
+
+      <div class="mb-3">
+        <label for="horario_aulas"><b>
+          {% lng "Horário de Aulas" "Class Schedule" %}
+        </b></label><br>
+        <textarea id="horario_aulas" name="horario_aulas" rows="1" maxlength="{% max_length Projeto 'horario_aulas' %}"
+        data-pt="Indique horario das aulas em JSON"
+        data-en="Indicate class schedule in JSON"
+        placeholder="[ [5,1], [5,0] ]"
+        class="troca_lingua"
+        {% if not alocacao and projeto.orientador.user != user and not user.eh_admin %}disabled{% endif %}
+        >{% if projeto.horario_aulas %}{{projeto.horario_aulas}}{% endif %}</textarea>
+      </div>
+
+      {% if user.eh_admin or projeto.orientador.user == user or configuracao.ano == projeto.ano and configuracao.semestre == projeto.semestre %}
+        <div class="text-right mt-2">
+          <button class="btn btn-primary btn-sm" type="submit" name="Salvar"
+            {% if not alocacao and projeto.orientador.user != user and not user.eh_admin %}disabled{% endif %}>
+            {% lng "Salvar Horário" "Save Schedule" %}
+          </button>
+        </div>
+      {% endif %}
+
+      </div>
+      
+    </form>
+  </div>
+  <hr>
+
+
+
+
   {% include "projetos/includes/bloco_site_pasta_proj.html" with projeto=projeto professor_view=True %}
   <hr>
 

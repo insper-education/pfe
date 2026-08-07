@@ -123,6 +123,9 @@ class Projeto(models.Model):
     time_misto = models.BooleanField("Time Misto", default=False,
                                      help_text="Caso o projeto conte com membros externos a instituição")
 
+    horario_aulas = models.CharField("Horário de Aulas", max_length=32, null=True, blank=True,  # Domingo=0, Segunda=1,... # Primeiro horario do dia 0.
+                                     default="[ [5,1] ]",
+                                     help_text="Horário das aulas do grupo do projeto")
 
     # -- Preenchidos pelos estudantes durante o desenvolvimento do projeto -- #
     atualizacao_estudantes = models.DateTimeField("Atualização Estudantes", null=True, blank=True,
@@ -273,8 +276,7 @@ class Projeto(models.Model):
         if externos:
             return Alocacao.objects.filter(projeto=self)
         return Alocacao.objects.filter(projeto=self, aluno__externo__isnull=True)
-        
-    
+
 class PropostaContato(models.Model):
     """Relacionamento entre Proposta e Contato."""
 

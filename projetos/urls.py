@@ -61,6 +61,7 @@ urlpatterns = [
     path("reunioes", views.reunioes, name="reunioes"),
     path("reunioes/<str:todos>", views.reunioes, name="reunioes"),
     path("upload_estudantes_projeto/<int:projeto_id>", views.upload_estudantes_projeto, name="upload_estudantes_projeto"),
+    path("upload_horarios_aulas/<int:projeto_id>", views.upload_horarios_aulas, name="upload_horarios_aulas"),
 
     path("ajax/validate_aviso/", views.validate_aviso, name="validate_aviso"),
 
