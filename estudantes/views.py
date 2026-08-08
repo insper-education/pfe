@@ -22,6 +22,7 @@ from django.db.models.functions import Lower
 from django.http import HttpResponse, JsonResponse, HttpResponseNotFound
 from django.shortcuts import render, get_object_or_404
 from django.utils import timezone
+from django.views.decorators.http import require_GET, require_POST
 #from django.views.decorators.csrf import csrf_exempt
 
 from .models import Relato, Pares, EstiloComunicacao
@@ -54,6 +55,42 @@ from .forms import EstudanteInformacoesForm
 
 # Get an instance of a logger
 logger = logging.getLogger("django")
+
+
+def _sanitiza_horarios(horarios_raw, total_horarios):
+    """Valida, normaliza e remove duplicidades do payload de horários."""
+    if not isinstance(horarios_raw, list):
+        raise ValidationError("Formato de horários inválido.")
+
+    limite = 5 * total_horarios
+    if len(horarios_raw) > limite:
+        raise ValidationError("Quantidade de horários acima do permitido.")
+
+    horarios_limpos = []
+    vistos = set()
+
+    for item in horarios_raw:
+        if not isinstance(item, (list, tuple)) or len(item) != 2:
+            raise ValidationError("Cada horário deve ser um par [dia, faixa].")
+
+        dia, faixa = item
+        if not isinstance(dia, int) or not isinstance(faixa, int):
+            raise ValidationError("Dia e faixa devem ser inteiros.")
+
+        if dia < 0 or dia > 4:
+            raise ValidationError("Dia fora do intervalo permitido.")
+
+        if faixa < 0 or faixa >= total_horarios:
+            raise ValidationError("Faixa horária fora do intervalo permitido.")
+
+        chave = (dia, faixa)
+        if chave in vistos:
+            continue
+
+        vistos.add(chave)
+        horarios_limpos.append([dia, faixa])
+
+    return horarios_limpos
 
 
 @login_required
@@ -170,29 +207,65 @@ def alocacao_semanal(request):
     return render(request, "estudantes/alocacao_semanal.html", context)
 
 @login_required
+@require_POST
 def alocacao_hora(request):
     """Ajax para definir horarios dos estudantes."""
-    if request.user.eh_estud:  # Estudante
-        configuracao = get_object_or_404(Configuracao)
-        alocacao = Alocacao.objects.filter(aluno=request.user.aluno, projeto__ano=configuracao.ano, projeto__semestre=configuracao.semestre).last()
-        if not alocacao:
-            return JsonResponse({"mensagem": "Erro ao gravar dado, estudante não alocado no semestre."}, status=404)
-        alocacao.horarios = json.loads(request.POST.get("horarios", None))
-        if not alocacao.agendado_horarios:  # Salva data do primeiro agendamento
-            alocacao.agendado_horarios = datetime.datetime.now()
-        alocacao.save()
-    else:
-        return JsonResponse({"atualizado": False}, status=500)
+    if not request.user.eh_estud:
+        return JsonResponse({"atualizado": False}, status=403)
+
+    configuracao = get_object_or_404(Configuracao)
+    alocacao = Alocacao.objects.filter(
+        aluno=request.user.aluno,
+        projeto__ano=configuracao.ano,
+        projeto__semestre=configuracao.semestre,
+    ).last()
+    if not alocacao:
+        return JsonResponse({"mensagem": "Erro ao gravar dado, estudante não alocado no semestre."}, status=404)
+
+    horarios_str = request.POST.get("horarios")
+    if horarios_str is None:
+        return JsonResponse({"mensagem": "Parâmetro 'horarios' ausente."}, status=400)
+
+    try:
+        horarios_raw = json.loads(horarios_str)
+    except (TypeError, ValueError, json.JSONDecodeError):
+        return JsonResponse({"mensagem": "Formato JSON inválido para 'horarios'."}, status=400)
+
+    total_horarios = len(Estrutura.loads(nome="Horarios Semanais"))
+    try:
+        horarios_limpos = _sanitiza_horarios(horarios_raw, total_horarios)
+    except ValidationError as erro:
+        return JsonResponse({"mensagem": str(erro)}, status=400)
+
+    alocacao.horarios = horarios_limpos
+    if not alocacao.agendado_horarios:  # Salva data do primeiro agendamento
+        alocacao.agendado_horarios = timezone.now()
+    alocacao.save(update_fields=["horarios", "agendado_horarios"])
+
     return JsonResponse({"atualizado": True,})
 
 @login_required
+@require_GET
 def refresh_hora(request):
     """Ajax para definir horarios dos estudantes."""
     if request.user.tipo_de_usuario == 3:
         return HttpResponse("Você não possui acesso.", status=401)
-    
-    projeto_id = request.GET.get("projeto_id", None)
+
+    projeto_id = request.GET.get("projeto_id")
+    if not projeto_id:
+        return JsonResponse({"mensagem": "Parâmetro 'projeto_id' ausente."}, status=400)
+
     projeto = get_object_or_404(Projeto, pk=projeto_id)
+
+    if request.user.eh_estud:
+        configuracao = get_object_or_404(Configuracao)
+        alocacao_estudante = Alocacao.objects.filter(
+            aluno=request.user.aluno,
+            projeto__ano=configuracao.ano,
+            projeto__semestre=configuracao.semestre,
+        ).last()
+        if not alocacao_estudante or alocacao_estudante.projeto_id != projeto.id:
+            return HttpResponse("Você não possui acesso a esse projeto.", status=403)
 
     alocacoes = Alocacao.objects.filter(projeto=projeto)
     if not alocacoes:
