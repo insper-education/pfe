@@ -5,12 +5,13 @@ Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
 Data: 6 de Agosto de 2026
 """
 
-from django import template
-
 import json
 
-from administracao.models import Estrutura
+from django import template
+from django.shortcuts import get_object_or_404
 
+from administracao.models import Estrutura
+from projetos.models import Configuracao
 
 register = template.Library()
 
@@ -44,9 +45,17 @@ def formata_horarios(horarios, formato=None):
 @register.filter
 def horarios_trab_grupo_aulas(projeto):
     """Retorna os horários de trabalho em grupo e aulas do período selecionado."""
+    if projeto:
+        ano = projeto.ano
+        semestre = projeto.semestre
+    else:
+        configuracao = get_object_or_404(Configuracao)
+        ano = configuracao.ano
+        semestre = configuracao.semestre
+
     horarios_trab_grupo_aulas = Estrutura.loads(nome="Horarios Trabalho em Grupo e Aulas")
     edicoes_disponiveis = sorted([(int(k.split(".")[0]), int(k.split(".")[1])) for k in horarios_trab_grupo_aulas], reverse=True,)
-    melhor_edicao = next((e for e in edicoes_disponiveis if e <= (projeto.ano, projeto.semestre)), None)
+    melhor_edicao = next((e for e in edicoes_disponiveis if e <= (ano, semestre)), None)
     trab_grupo_aulas = horarios_trab_grupo_aulas[f"{melhor_edicao[0]}.{melhor_edicao[1]}"] if melhor_edicao else {}
     return trab_grupo_aulas
 
