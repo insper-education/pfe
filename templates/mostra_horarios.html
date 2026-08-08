@@ -527,32 +527,34 @@
     // Definindo Valores Iniciais
     {% for alocacao in alocacoes %}
       {% if alocacao.horarios %}
-        {% if request.user == alocacao.aluno.user %}
-          const horarios = {{ alocacao.horarios|safe }};
-          const { horas_comerciais, horas_outras } = calcula_horas(horarios, 6);
-          for (let i = 0; i < horarios.length; i++) {
-            const [dia, horario] = horarios[i];
-            let element = get_refresh_container()?.querySelector(`#h_${dia}_${horario}`);
-            if (element) {
-              element.classList.add("highlight");
-            }
-          }
-          set_horas(horas_comerciais, horas_outras);
-
-        {% else %}
-          const horarios = {{ alocacao.horarios|safe }};
-          const alocacaoId = {{ alocacao.id }};
-          var initContainer = get_refresh_container();
-          if (initContainer) {
+        {
+          {% if request.user == alocacao.aluno.user %}
+            const horarios = {{ alocacao.horarios|safe }};
+            const { horas_comerciais, horas_outras } = calcula_horas(horarios, 6);
             for (let i = 0; i < horarios.length; i++) {
               const [dia, horario] = horarios[i];
-              let element = initContainer.querySelector(`#h_${dia}_${horario}_${alocacaoId}`);
+              let element = get_refresh_container()?.querySelector(`#h_${dia}_${horario}`);
               if (element) {
                 element.classList.add("highlight");
+              }
             }
+            set_horas(horas_comerciais, horas_outras);
+
+          {% else %}
+            const horarios = {{ alocacao.horarios|safe }};
+            const alocacaoId = {{ alocacao.id }};
+            const initContainer = get_refresh_container();
+            if (initContainer) {
+              for (let i = 0; i < horarios.length; i++) {
+                const [dia, horario] = horarios[i];
+                let element = initContainer.querySelector(`#h_${dia}_${horario}_${alocacaoId}`);
+                if (element) {
+                  element.classList.add("highlight");
+                }
+              }
             }
-          }
-        {% endif %}
+          {% endif %}
+        }
       {% endif %}
     {% endfor %}
     confere_juntos();
