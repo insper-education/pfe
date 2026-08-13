@@ -7,13 +7,10 @@
 {% load static %}
 {% load linguas %}
 
-{% if areas %}
-  {% for area in areas %}
-    {% if area.outras %}
-      {{area.outras}};
-    {% else %}
-      {{area.area}};
-    {% endif %}
-  {% endfor %}
-{% endif %}
-    
+{% for area in areas %}
+  {% if area.outras %}
+    {{area.outras}};
+  {% else %}
+    {{area.area}};
+  {% endif %}
+{% endfor %}
