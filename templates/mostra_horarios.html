@@ -619,7 +619,7 @@
                 const horariosSet = cria_horarios_set(horarios);
 
                 {% if request.user.tipo_de_usuario != 1 %}
-                  const { horas_comerciais, horas_outras } = calcula_horas(horarios, 0);
+                  const { horas_comerciais, horas_outras } = calcula_horas(horarios, 6);
 
                   let aElement = freshContainer.querySelector("#a"+id);
                   if(aElement) {
