@@ -32,8 +32,6 @@
   {% include "projetos/includes/bloco_titulo_resumo_pchave.html" with projeto=projeto professor_view=True %}
   <hr>
 
-
-
   <div>
     <form {% if projeto %}action="{% url 'upload_horarios_aulas' projeto.id %}"{% endif %} method="post" enctype="multipart/form-data">
 
@@ -60,15 +58,10 @@
           </button>
         </div>
       {% endif %}
-
-      </div>
       
     </form>
   </div>
   <hr>
-
-
-
 
   {% include "projetos/includes/bloco_site_pasta_proj.html" with projeto=projeto professor_view=True %}
   <hr>
