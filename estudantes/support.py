@@ -105,7 +105,7 @@ def check_alocacao_semanal(alocacao, ano, semestre, PRAZO):
     cor = 'b'
     prazo = None
     hoje = datetime.date.today()
-    if alocacao and alocacao.horarios and len(alocacao.horarios) >= 11*8:
+    if alocacao and alocacao.horarios and len(alocacao.horarios) >= 7:  # Precisa preencher pelo menos 1 horário (que dá 8 caracteres).
         cor = 'g'
     else:
         evento = Evento.get_evento(sigla="PAS", ano=ano, semestre=semestre)  # Preenchimento de Alocação Semanal
