@@ -2502,6 +2502,13 @@ def relato_avaliar(request, projeto_id, evento_id):
                     if relato.momento_avaliacao is None:  # Se o relato não tiver sido avaliado ainda
                         relato.momento_avaliacao = datetime.datetime.now()
 
+                # Trata o caso de relato inaceitável, que não é uma nota, mas sim um status do relato
+                inaceitavel = request.POST.get("boxInac" + str(relato.id), None)
+                if inaceitavel:
+                    relato.inaceitavel = True
+                else:
+                    relato.inaceitavel = False
+
                 feedback = request.POST.get("feedback" + str(relato.id), None)
                 if feedback and feedback != "" and feedback != relato.feedback:
                     relato.feedback = feedback
@@ -2517,7 +2524,9 @@ def relato_avaliar(request, projeto_id, evento_id):
                     corpo_email += "&nbsp;&nbsp;&nbsp;&nbsp;Por favor, observe com muita atenção a fim de melhor entender como você está se saindo no projeto.<br>\n<br>\n"
                     corpo_email += "A percepção do seu desempenho no projeto é: "
                     if relato:
-                        if relato.avaliacao > 0:
+                        if relato.inaceitavel:
+                            corpo_email += "<b>Inaceitável</b>"
+                        elif relato.avaliacao > 0:
                             corpo_email += "<b>Adequada</b>"
                         elif relato.avaliacao < 0:
                             pass

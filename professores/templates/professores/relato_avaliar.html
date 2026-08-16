@@ -47,7 +47,21 @@
       font-size: 0.7em;
       color: #007BFF;
     }
+
+    .box_inac {
+      display: inline-block;
+      margin-left: 10px;
+    }
     
+    .selector {
+      display: inline-block;
+      margin: 4px 6px;
+      background-color: #e8f9fa;
+      padding: 4px 2px;
+      height: 2em;
+      border-radius: 5px;
+    }
+
   </style>
 
 {% endblock %}
@@ -145,35 +159,82 @@
         
         <textarea id="relato_{{relato.id}}" name="relato" rows="10" cols="160" disabled>{{relato.texto}}</textarea>
         <div id="feedback-validator-message_{{relato.id}}"></div>
-        <div style="width: 98%; display: block; margin-left: 8px; margin-right: 8px; " {% if not relato %}data-toggle="tooltip" data-html="true" animation="true" title="Estudante não entregou relato"{% endif %}>
+        <div style="width: 98%; display: block; margin: 2px;" {% if not relato %}data-toggle="tooltip" data-html="true" animation="true" title="Estudante não entregou relato"{% endif %}>
           
-          <label>
-            {% lng "Desempenho" "Performance" %}
-          </label>:
-          <div class="custom-control custom-radio custom-control-inline">
-            <input type="radio" id="customRadioInline0{{relato.id}}" name="op.{{relato.id}}" class="custom-control-input"
-                    value="1" {% if relato.avaliacao > 0 %}checked="checked"{% endif %} {% if not relato or not editor %}disabled {% endif %}>
-            <label class="custom-control-label" for="customRadioInline0{{relato.id}}">
-              {% lng "Adequado" "Adequate" %}
-            </label>
+          <div class="selector troca_lingua_title" 
+                      data-title_pt="Indique se o desempenho apresentado no projeto está de acordo com o esperado para o período."
+                      data-title_en="Indicate whether the performance presented in the project is in accordance with what is expected for the period."
+                      title="Indique se o desempenho apresentado no projeto está de acordo com o esperado para o período."
+                      data-toggle="tooltip" data-html="true" animation="true"
+          >
+            <span>{% lng "Desempenho" "Performance" %}</span>:
+            <div class="custom-control custom-radio custom-control-inline">
+              <input type="radio" id="customRadioInline0{{relato.id}}" name="op.{{relato.id}}" class="custom-control-input"
+                      value="1" {% if relato.avaliacao > 0 %}checked="checked"{% endif %} {% if not relato or not editor %}disabled {% endif %}>
+              <label class="custom-control-label" for="customRadioInline0{{relato.id}}">
+                {% lng "Adequado" "Adequate" %}
+              </label>
+            </div>
+            <div class="custom-control custom-radio custom-control-inline">
+              <input type="radio" id="customRadioInline1{{relato.id}}" name="op.{{relato.id}}" class="custom-control-input"
+                      value="0" {% if relato.avaliacao == 0 %}checked="checked"{% endif %} {% if not relato or not editor %}disabled {% endif %}>
+              <label class="custom-control-label" for="customRadioInline1{{relato.id}}">
+                {% lng "Inadequado" "Inadequate" %}
+              </label>
+            </div>
           </div>
-          <div class="custom-control custom-radio custom-control-inline">
-            <input type="radio" id="customRadioInline1{{relato.id}}" name="op.{{relato.id}}" class="custom-control-input"
-                    value="0" {% if relato.avaliacao == 0 %}checked="checked"{% endif %} {% if not relato or not editor %}disabled {% endif %}>
-            <label class="custom-control-label" for="customRadioInline1{{relato.id}}">
-              {% lng "Inadequado" "Inadequate" %}
-            </label>
+
+          <div class="selector troca_lingua_title" 
+                      data-title_pt="Use esse recurso caso o estudante não tenha escrito o relato de forma adequada."
+                      data-title_en="Use this resource if the student has not written the report properly."
+                      title="Use esse recurso caso o estudante não tenha escrito o relato de forma adequada."
+                      data-toggle="tooltip" data-html="true" animation="true"
+          >
+            <span>{% lng "Texto" "Text" %}</span>:
+            <div class="box_inac">
+              <input type="checkbox" id="boxInac{{relato.id}}" name="boxInac{{relato.id}}"
+                      value="1" {% if relato.inaceitavel %}checked="checked"{% endif %} {% if not relato or not editor %}disabled {% endif %}>
+              <label for="boxInac{{relato.id}}">
+                {% lng "Inaceitável" "Unacceptable" %}
+              </label>
+            </div>
           </div>
+
+          <script>
+            $(document).ready(function() {
+              $('#boxInac{{relato.id}}').change(function() {
+                if ($(this).is(':checked')) {
+                  $('#customRadioInline0{{relato.id}}').prop('checked', false);
+                  $('#customRadioInline0{{relato.id}}').prop('disabled', true).addClass('auto-locked-by-box-inac');
+                  $('#customRadioInline1{{relato.id}}').prop('checked', true);
+                  $('#customRadioInline1{{relato.id}}').prop('disabled', true).addClass('auto-locked-by-box-inac');
+                } else {
+                  $('#customRadioInline0{{relato.id}}').prop('disabled', false).removeClass('auto-locked-by-box-inac');
+                  $('#customRadioInline1{{relato.id}}').prop('disabled', false).removeClass('auto-locked-by-box-inac');
+                }
+              });
+
+              // Garante estado consistente quando o checkbox ja vem marcado do backend.
+              $('#boxInac{{relato.id}}').trigger('change');
+            });
+          </script>
  
           {% if relato %}
-            <div style="width: 100%; display: inline; margin-left: 8px;">
-              <label class="feedbacks" for="customFeedback{{relato.id}}">
-                Feedback ({% lng "opcional" "optional" %})
-                {% if relato.feedback %}<span class="seta seta-cima">{% else %}<span class="seta seta-baixo">{% endif %}</span></label>
-              <div id="customFeedback{{relato.id}}" style="{% if not relato.feedback %}display: none;{% endif %} border: 2px solid red; margin-top: 10px; margin-right: 38px; width: 100%;">
-                <label style="margin: 0px 0px 0px 4px;" for="feedback{{relato.id}}">Feedback:</label>
-                <textarea id="feedback{{relato.id}}" name="feedback{{relato.id}}" rows="10" cols="180" 
-                {% if not relato or not editor %}disabled {% endif %} maxlength="{% max_length Relato 'feedback' %}">{% if relato.feedback %}{{relato.feedback}}{% endif %}</textarea>
+            <div class="selector troca_lingua_title" 
+                      data-title_pt="Opcionalmente, descreva o feedback que você deseja formalizar para o estudante."
+                      data-title_en="Optionally, describe the feedback you want to formalize for the student."
+                      title="Opcionalmente, descreva o feedback que você deseja formalizar para o estudante."
+                      data-toggle="tooltip" data-html="true" animation="true"
+          >
+              <div style="width: 100%; display: inline; margin-left: 8px;">
+                <label class="feedbacks" for="customFeedback{{relato.id}}">
+                  Feedback ({% lng "opcional" "optional" %})
+                  {% if relato.feedback %}<span class="seta seta-cima">{% else %}<span class="seta seta-baixo">{% endif %}</span></label>
+                <div id="customFeedback{{relato.id}}" style="{% if not relato.feedback %}display: none;{% endif %} border: 2px solid red; margin-top: 6px; margin-right: 38px; width: 100%;">
+                  <label style="margin: 0px 0px 0px 4px;" for="feedback{{relato.id}}">Feedback:</label>
+                  <textarea id="feedback{{relato.id}}" name="feedback{{relato.id}}" rows="10" cols="180" 
+                  {% if not relato or not editor %}disabled {% endif %} maxlength="{% max_length Relato 'feedback' %}">{% if relato.feedback %}{{relato.feedback}}{% endif %}</textarea>
+                </div>
               </div>
             </div>
           {% endif %}
@@ -241,6 +302,10 @@
 
       // Aviso se o campo geral foi preenchido
       $("form").on("submit", function(e) {
+        // Inputs desabilitados nao entram no POST; reabilita apenas os radios
+        // bloqueados automaticamente pelo checkbox de texto inaceitavel.
+        $(".auto-locked-by-box-inac").prop("disabled", false);
+
         const geral = $("#observacoes").val().trim().length > 0;
         if (geral) {
           if(localStorage.getItem("lingua") == "pt") {

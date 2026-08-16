@@ -158,15 +158,15 @@
               {{prazo}} -
               <span style="white-space: nowrap;">
                 {% lng "Situação: " "Situation: " %}
-                {% if item.avaliacao == -1 %}
+                {% if item.inaceitavel %}
+                  <span class="red-bold">{% lng "inaceitável" "unacceptable" %}</span>
+                {% elif item.avaliacao == -1 %}
                   {% lng "aguardando avaliação de orientador" "awaiting advisor evaluation" %}
+                {% elif item.avaliacao == 0 %}
+                  <span class="red-bold">{% lng "desempenho abaixo do esperado" "performance below expected" %}</span>
+                {% elif item.avaliacao == 1 %}<span class="green-bold">
+                  {% lng "desempenho dentro do esperado" "performance within expected" %}</span>
                 {% endif %}
-                {% if item.avaliacao == 0 %}<span class="red-bold">
-                  {% lng "desempenho abaixo do esperado" "performance below expected" %}
-                </span>{% endif %}
-                {% if item.avaliacao == 1 %}<span class="green-bold">
-                  {% lng "desempenho dentro do esperado" "performance within expected" %}
-                </span>{% endif %}
               </span>
             {% else %}
               {% lng "Prazo inválido (não visível para orientador)" "Invalid deadline (not visible to advisor)" %}

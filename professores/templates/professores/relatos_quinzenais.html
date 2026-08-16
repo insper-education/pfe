@@ -63,6 +63,11 @@
               </span>
             </th>
             <th colspan="2">
+              <span data-toggle="tooltip" data-html="true" animation="true" title="Relato inaceitável">
+                &#9940;
+              </span>
+            </th>
+            <th colspan="2">
               <span data-toggle="tooltip" data-html="true" animation="true" title="Relato ainda não analisado">
                 &#9989;
               </span>
@@ -96,6 +101,8 @@
                 <td id="bom_{{evento.id}}_p" style="text-align: right;"></td>
                 <td id="ruim_{{evento.id}}_n" style="text-align: right;"></td>
                 <td id="ruim_{{evento.id}}_p" style="text-align: right;"></td>
+                <td id="inac_{{evento.id}}_n" style="text-align: right;"></td>
+                <td id="inac_{{evento.id}}_p" style="text-align: right;"></td>
                 <td id="entr_{{evento.id}}_n" style="text-align: right;"></td>
                 <td id="entr_{{evento.id}}_p" style="text-align: right;"></td>
                 <td id="nao_{{evento.id}}_n" style="text-align: right;"></td>
@@ -110,6 +117,8 @@
             <td id="med_bom_p" style="text-align: right;">-</td>
             <td id="med_ruim_n" style="text-align: right;">-</td>
             <td id="med_ruim_p" style="text-align: right;">-</td>
+            <td id="med_inac_n" style="text-align: right;">-</td>
+            <td id="med_inac_p" style="text-align: right;">-</td>
             <td id="med_entr_n" style="text-align: right;">-</td>
             <td id="med_entr_p" style="text-align: right;">-</td>
             <td id="med_nao_n" style="text-align: right;">-</td>
@@ -122,12 +131,13 @@
         function conta() {
           let eventosValidos = 0;
 
-          let somaBomN = 0, somaRuimN = 0, somaEntrN = 0, somaNaoN = 0;
-          let somaBomP = 0, somaRuimP = 0, somaEntrP = 0, somaNaoP = 0;
+          let somaBomN = 0, somaRuimN = 0, somaInacN = 0, somaEntrN = 0, somaNaoN = 0;
+          let somaBomP = 0, somaRuimP = 0, somaInacP = 0, somaEntrP = 0, somaNaoP = 0;
 
           {% for evento in edicao|get_relatos_edicao %}
             var count_x1F44D = 0;
             var count_x1F44E = 0;
+            var count_9940 = 0;
             var count_9989 = 0;
             var count_10060 = 0;
 
@@ -135,15 +145,17 @@
             eventos.forEach(element => {
               if (element.innerHTML.includes('👍')) count_x1F44D++;
               if (element.innerHTML.includes('👎')) count_x1F44E++;
+              if (element.innerHTML.includes('⛔')) count_9940++;
               if (element.innerHTML.includes('✅')) count_9989++;
               if (element.innerHTML.includes('❌')) count_10060++;
             });
 
-            var total = count_x1F44D + count_x1F44E + count_9989 + count_10060;
+            var total = count_x1F44D + count_x1F44E + count_9940 + count_9989 + count_10060;
 
             if (total > 0) {
               const bomP = (100 * count_x1F44D / total);
               const ruimP = (100 * count_x1F44E / total);
+              const inacP = (100 * count_9940 / total);
               const entrP = (100 * count_9989 / total);
               const naoP = (100 * count_10060 / total);
 
@@ -151,6 +163,8 @@
               document.getElementById("bom_{{evento.id}}_p").innerText = bomP.toFixed(1) + "%";
               document.getElementById("ruim_{{evento.id}}_n").innerText = count_x1F44E;
               document.getElementById("ruim_{{evento.id}}_p").innerText = ruimP.toFixed(1) + "%";
+              document.getElementById("inac_{{evento.id}}_n").innerText = count_9940;
+              document.getElementById("inac_{{evento.id}}_p").innerText = inacP.toFixed(1) + "%";
               document.getElementById("entr_{{evento.id}}_n").innerText = count_9989;
               document.getElementById("entr_{{evento.id}}_p").innerText = entrP.toFixed(1) + "%";
               document.getElementById("nao_{{evento.id}}_n").innerText = count_10060;
@@ -159,6 +173,7 @@
               eventosValidos++;
               somaBomN += count_x1F44D; somaBomP += bomP;
               somaRuimN += count_x1F44E; somaRuimP += ruimP;
+              somaInacN += count_9940;  somaInacP += inacP;
               somaEntrN += count_9989;  somaEntrP += entrP;
               somaNaoN += count_10060;  somaNaoP += naoP;
             } else {
@@ -166,6 +181,8 @@
               document.getElementById("bom_{{evento.id}}_p").innerText = "-";
               document.getElementById("ruim_{{evento.id}}_n").innerText = "-";
               document.getElementById("ruim_{{evento.id}}_p").innerText = "-";
+              document.getElementById("inac_{{evento.id}}_n").innerText = "-";
+              document.getElementById("inac_{{evento.id}}_p").innerText = "-";
               document.getElementById("entr_{{evento.id}}_n").innerText = "-";
               document.getElementById("entr_{{evento.id}}_p").innerText = "-";
               document.getElementById("nao_{{evento.id}}_n").innerText = "-";
@@ -178,6 +195,8 @@
             document.getElementById("med_bom_p").innerText = (somaBomP / eventosValidos).toFixed(1) + "%";
             document.getElementById("med_ruim_n").innerText = (somaRuimN / eventosValidos).toFixed(1);
             document.getElementById("med_ruim_p").innerText = (somaRuimP / eventosValidos).toFixed(1) + "%";
+            document.getElementById("med_inac_n").innerText = (somaInacN / eventosValidos).toFixed(1);
+            document.getElementById("med_inac_p").innerText = (somaInacP / eventosValidos).toFixed(1) + "%";
             document.getElementById("med_entr_n").innerText = (somaEntrN / eventosValidos).toFixed(1);
             document.getElementById("med_entr_p").innerText = (somaEntrP / eventosValidos).toFixed(1) + "%";
             document.getElementById("med_nao_n").innerText = (somaNaoN / eventosValidos).toFixed(1);

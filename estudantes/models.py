@@ -34,6 +34,9 @@ class Relato(models.Model):
     feedback = models.TextField("Feedback", max_length=2100, null=True, blank=True,
                                    help_text="Possível feedback do orientador para os estudantes")
 
+    inaceitavel = models.BooleanField("Inaceitável", default=False,
+                                   help_text="Se o relato foi considerado inaceitável pelo orientador")
+
     def __str__(self):
         return str(self.alocacao) + " (" + str(self.momento) + ") "
     

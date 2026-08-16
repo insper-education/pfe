@@ -313,10 +313,12 @@ def lanca_descontos(ano=None, semestre=None):
             for evento in eventos["rqs"]:
                 if hoje > evento.endDate:
                     if evento_anterior:
-                        if not Relato.objects.filter(alocacao=alocacao, momento__date__gt=evento_anterior.endDate, momento__date__lte=evento.endDate).exists():
+                        relat = Relato.objects.filter(alocacao=alocacao, momento__date__gt=evento_anterior.endDate, momento__date__lte=evento.endDate) 
+                        if not relat.exists() or relat.last().inaceitavel:
                             add_desconto({"alocacao": alocacao}, evento, tipos_descontos["relato"])
                     else:
-                        if not Relato.objects.filter(alocacao=alocacao, momento__date__lte=evento.endDate).exists():
+                        relat = Relato.objects.filter(alocacao=alocacao, momento__date__lte=evento.endDate)
+                        if not relat.exists() or relat.last().inaceitavel:
                             add_desconto({"alocacao": alocacao}, evento, tipos_descontos["relato"])
                 evento_anterior = evento
 

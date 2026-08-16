@@ -63,7 +63,9 @@
                   {% with ultimo=relato|last %}
                     <script>
                       {% comment %} O primeiro relato deveria ser o último avaliado pelo orientador (não está ordenado por data de avaliação) {% endcomment %}
-                      {% if ultimo.avaliacao > 0 %}
+                      {% if ultimo.inaceitavel %}
+                        $("#s{{alocacao.aluno.id}}_e{{evento.id}}").html("&#9940;");
+                      {% elif ultimo.avaliacao > 0 %}
                         $("#s{{alocacao.aluno.id}}_e{{evento.id}}").html("&#x1F44D;");
                       {% elif ultimo.avaliacao == 0 %}
                         $("#s{{alocacao.aluno.id}}_e{{evento.id}}").html("&#x1F44E;");

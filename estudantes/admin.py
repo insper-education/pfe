@@ -18,6 +18,7 @@ class RelatoAdmin(admin.ModelAdmin):
 
     list_display = ("momento", "alocacao", "avaliacao")
     list_filter = ("momento",)
+    ordering = ("-momento",)
     search_fields = ["alocacao__aluno__user__first_name",
                      "alocacao__aluno__user__last_name",
                      "alocacao__aluno__user__username",]
@@ -49,5 +50,3 @@ class FeedbackParesAdmin(admin.ModelAdmin):
     """Exibição no sistema de administração do Django para FeedbackPares."""
 
     list_display = ("momento", "alocacao",)
-    #list_filter = ("momento",)
-    #search_fields = []
