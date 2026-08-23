@@ -126,7 +126,7 @@
         {% endif %}
       </div>
       
-      {% if user.eh_prof_a and reuniao %}
+      {% if user.eh_prof_a and reuniao and reuniao.id %}
         <div class="form-floating mb-2">
           <label for="criacao" class="form_label" style="font-size:0.97em;">{% lng "Data de Criação" "Creation Date" %}</label>
           <span class="audit-date">
@@ -144,10 +144,10 @@
 
 
       {% endif %}
-
+        
       <div class="form-floating mb-2">
         <label for="data_hora" class="form_label" style="font-size:0.97em;">{% lng "Data da reunião" "Meeting date" %}</label>
-        <input type="datetime-local" id="data_hora" name="data_hora" class="form-control-sm compact-input ptravar" min="2018-08-01T00:00"
+        <input type="datetime-local" id="data_hora" name="data_hora" class="form-control-sm compact-input ptravar" min="2018-08-01T00:00" max="9999-12-31T23:59"
               value="{% if reuniao.data_hora %}{{reuniao.data_hora|date:"Y-m-d\TH:i"}}{% endif %}" required>
       </div>
 
@@ -225,8 +225,6 @@
 
     </form>
   </div>
-
-
 
   <script>
     function toggleTravado() {

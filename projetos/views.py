@@ -1073,7 +1073,7 @@ def reuniao(request, reuniao_id_g=None):  # Id da reunião para editar, None par
         "Reuniao": Reuniao,
         "envolvidos": {},
     }
-    
+
     reuniao = get_object_or_404(Reuniao, id=int(reuniao_id_g)) if (reuniao_id_g and reuniao_id_g != "todos") else None
 
     if request.user.eh_estud:  # Estudante
@@ -1157,9 +1157,31 @@ def reuniao(request, reuniao_id_g=None):  # Id da reunião para editar, None par
             return render(request, "generic_ml.html", context=context)
 
         reuniao.titulo = request.POST.get("titulo", "")
-        reuniao.data_hora = datetime.datetime.strptime(request.POST["data_hora"], "%Y-%m-%dT%H:%M")
         reuniao.local = request.POST.get("local", "")
         reuniao.anotacoes = request.POST.get("anotacoes", None)
+
+        data_hora_raw = request.POST.get("data_hora", "").strip()
+
+        if "-" in data_hora_raw:
+            ano_raw, _ = data_hora_raw.split("-", 1)
+            if len(ano_raw) == 5 and ano_raw.isdigit():
+                context["mensagem_aviso"] = {
+                    "pt": "Ano da data da reunião inválido. Verifique o campo e tente novamente.",
+                    "en": "Invalid meeting date year. Please check the field and try again.",
+                }
+                context["reuniao"] = reuniao
+                return render(request, "projetos/reuniao.html", context=context)
+
+        try:
+            reuniao.data_hora = datetime.datetime.strptime(data_hora_raw, "%Y-%m-%dT%H:%M")
+        except ValueError:
+            context["mensagem_aviso"] = {
+                "pt": "Data e hora da reunião inválidas. Verifique o campo e tente novamente.",
+                "en": "Invalid meeting date and time. Please check the field and try again.",
+            }
+            context["reuniao"] = reuniao
+            return render(request, "projetos/reuniao.html", context=context)
+
         reuniao.travado = "travado" in request.POST
         if reuniao.usuario:
             reuniao.atualizado_por = request.user
