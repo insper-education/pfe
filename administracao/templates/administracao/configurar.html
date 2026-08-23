@@ -425,7 +425,7 @@
         </div>
 
         <div class="field">
-          <label for="contatos">{% lng "Responsável pelos Contatos" "Responsible for Contacts" %}</label>
+          <label for="contatos">{% lng "Responsável pelos Contatos com Organizações Parceiras" "Responsible for Contacts with Partner Organizations" %}</label>
           <select name="contatos" id="contatos" class="troca_lingua_title" 
            data-title_pt="Responsável pelos Contatos" data-title_en="Responsible for Contacts"
            title="Selecione responsável pelos contatos" required>
@@ -437,7 +437,26 @@
           </select>
           <div class="help">{% lng "Operação pode ser um administrador ou funcionário do Insper." "Operation can be an administrator or employee of Insper." %}</div>
         </div>
+      
+        <div class="field">
+          <label for="prof_auxiliar">{% lng "Professor Auxiliar" "Auxiliary Professor" %}</label>
+          <select name="prof_auxiliar" id="prof_auxiliar" class="troca_lingua_title" 
+           data-title_pt="Professor Auxiliar" data-title_en="Auxiliary Professor"
+           title="Selecione professor auxiliar do Capstone">
+            <option value="" {% if not configuracao.prof_auxiliar %}selected{% endif %}>
+              {% lng "Nenhum" "None" %}
+            </option>
+            {% for prof in operacionalizadores %}
+              <option value="{{prof.id}}" {% if configuracao.prof_auxiliar and prof.id == configuracao.prof_auxiliar.id %}selected{% endif %}>
+                {{prof.get_full_name}}
+              </option>
+            {% endfor %}
+          </select>
+          <div class="help">{% lng "Professor auxiliar do Capstone, caso haja." "Auxiliary professor of Capstone, if any." %}</div>
+      
       </div>
+
+      
       
 
     </section>

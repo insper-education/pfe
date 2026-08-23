@@ -606,6 +606,10 @@ class Configuracao(models.Model):
                                  related_name="contatos",
                                  help_text="responsável pelos contatos com empresas e organizações")
 
+    prof_auxiliar = models.ForeignKey("users.PFEUser", null=True, blank=True, on_delete=models.SET_NULL,
+                                 related_name="prof_auxiliar",
+                                 help_text="professor auxiliar do Capstone")
+
     lingua = models.CharField(max_length=2, blank=True, default="pt",
                               help_text="Língua deafult do sistema")
 
@@ -2385,6 +2389,9 @@ class Reuniao(models.Model):
                                 help_text="Projeto relacionado à reunião")
     travado = models.BooleanField("Travado", default=False,
                                              help_text="Se a reunião está travada")
+
+    visita_externa = models.BooleanField("Visita Externa", default=False,
+                                        help_text="Se a reunião é uma visita externa")
 
     def __str__(self):
         return f"{self.titulo}: {self.data_hora.strftime('%d/%m/%Y %H:%M')}"

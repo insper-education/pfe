@@ -1159,6 +1159,7 @@ def reuniao(request, reuniao_id_g=None):  # Id da reunião para editar, None par
         reuniao.titulo = request.POST.get("titulo", "")
         reuniao.local = request.POST.get("local", "")
         reuniao.anotacoes = request.POST.get("anotacoes", None)
+        reuniao.visita_externa = "visita_externa" in request.POST
 
         data_hora_raw = request.POST.get("data_hora", "").strip()
 
@@ -1190,6 +1191,19 @@ def reuniao(request, reuniao_id_g=None):  # Id da reunião para editar, None par
         reuniao.save()
 
         participantes = anota_participacao(request.POST, reuniao=reuniao)
+
+        if "visita_externa" in request.POST:
+            subject = "Capstone | Abono de Falta por Visita Externa"
+            recipient_list = []
+            recipient_list.append(str(configuracao.coordenacao.user.email))
+            recipient_list.append(str(configuracao.prof_auxiliar.email))
+            message = "O grupo do projeto " + reuniao.projeto.get_titulo_org() + " realizou uma visita externa no dia " + reuniao.data_hora.strftime('%d/%m/%Y às %H:%M') + ".<br><br>"
+            message = "Validar e abonar faltas<br><br>" 
+            message += "Participantes:<br>"
+            for participante in participantes:
+                usuario, situacao = participante
+                message += "&bull; " + usuario.get_full_name() + " (" + situacao["pt"] + ")<br>"
+            email(subject, recipient_list, message)
         
         if "enviar_mensagem" in request.POST:
             if reuniao.projeto:
@@ -1204,9 +1218,8 @@ def reuniao(request, reuniao_id_g=None):  # Id da reunião para editar, None par
                     recipient_list.append(coorientador.usuario.email)
                 for participante in participantes:
                     usuario, situacao = participante
-                    if situacao == "Presente" and  usuario.email not in recipient_list:
+                    if situacao["pt"] == "Presente" and  usuario.email not in recipient_list:
                         recipient_list.append(usuario.email)
-                # recipient_list.append(str(configuracao.coordenacao.user.email))
 
                 context_email = {
                     "reuniao": reuniao,

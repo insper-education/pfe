@@ -99,6 +99,7 @@
       opacity: 0.75;
       font-size: 0.95em;
     }
+
   </style>
 
 {% endblock %}
@@ -145,10 +146,21 @@
 
       {% endif %}
         
-      <div class="form-floating mb-2">
-        <label for="data_hora" class="form_label" style="font-size:0.97em;">{% lng "Data da reunião" "Meeting date" %}</label>
-        <input type="datetime-local" id="data_hora" name="data_hora" class="form-control-sm compact-input ptravar" min="2018-08-01T00:00" max="9999-12-31T23:59"
-              value="{% if reuniao.data_hora %}{{reuniao.data_hora|date:"Y-m-d\TH:i"}}{% endif %}" required>
+      <div class="d-flex flex-column flex-lg-row align-items-start align-items-lg-center gap-2 mb-2">
+        <div class="d-flex flex-nowrap align-items-center gap-1 mr-4">
+          <label for="data_hora" class="form_label mb-0 text-nowrap flex-shrink-0" style="color:#888;">{% lng "Data da reunião" "Meeting date" %}</label>
+          <input type="datetime-local" id="data_hora" name="data_hora" class="form-control form-control-sm compact-input ptravar" min="2018-08-01T00:00" max="9999-12-31T23:59"
+                value="{% if reuniao.data_hora %}{{reuniao.data_hora|date:"Y-m-d\TH:i"}}{% endif %}" required>
+        </div>
+        <div class="form-check m-0 ms-lg-2 ps-2 ps-lg-0 troca_lingua_title"
+          data-title_pt="Marque esta opção se você precisa abonar uma falta pois estava em visita na empresa do projeto em horário de atividades presenciais."
+          data-title_en="Check this option if you need to excuse an absence because you were visiting the project company during in-person activity hours."
+          title="Marque esta opção se você precisa abonar uma falta pois estava em visita na empresa do projeto em horário de atividades presenciais."
+          data-toggle="tooltip" data-html="true" animation="true"
+        >
+          <input class="form-check-input ms-0" type="checkbox" id="visita_externa" name="visita_externa" {% if reuniao.visita_externa %}checked{% endif %}>
+          <label for="visita_externa" class="form-check-label form_label mb-0" style="font-size:0.97em; width:auto; color:#888;">{% lng "Visita externa em período de atividades presenciais" "External visit during in-person activities" %}</label>
+        </div>
       </div>
 
       <div class="form-floating mb-2">
