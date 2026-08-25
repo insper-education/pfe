@@ -1050,6 +1050,7 @@ def reunioes(request, todos=None):
                 {"pt": "Projeto", "en": "Project"},
                 {"pt": "Criação", "en": "Creation", "tipo": "data_hora"},
                 {"pt": "Data", "en": "Date", "tipo": "data_hora"},
+                {"pt": "Abono", "en": "Excuse"},
                 {"pt": "Local", "en": "Location"},
                 {"pt": "Participantes", "en": "Participants"}
             ],
@@ -1198,7 +1199,7 @@ def reuniao(request, reuniao_id_g=None):  # Id da reunião para editar, None par
             recipient_list.append(str(configuracao.coordenacao.user.email))
             recipient_list.append(str(configuracao.prof_auxiliar.email))
             message = "O grupo do projeto " + reuniao.projeto.get_titulo_org() + " realizou uma visita externa no dia " + reuniao.data_hora.strftime('%d/%m/%Y às %H:%M') + ".<br><br>"
-            message = "Validar e abonar faltas<br><br>" 
+            message += "Validar e abonar faltas<br><br>" 
             message += "Participantes:<br>"
             for participante in participantes:
                 usuario, situacao = participante

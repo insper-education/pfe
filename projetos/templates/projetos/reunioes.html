@@ -23,11 +23,12 @@
         <td><a href="{% url 'projeto_infos' reuniao.projeto.id %}">{{reuniao.projeto}}</a></td>
         <td>{{reuniao.criacao|date:"d/m/Y"}}{% if user.eh_prof_a %}<br>[{{reuniao.usuario.get_full_name}}]{% endif %}</td>
         <td data-sort="{{reuniao.data_hora|date:'Y-m-d\TH:i:s' }}">{{reuniao.data_hora|date:"d/m/Y H:i"}}</td>
+        <td class="text-center">{% if reuniao.visita_externa %}<span class="badge bg-success" title="Sim" aria-label="Sim">&#10003;</span>{% endif %}</td>
         <td>{{reuniao.local}}</td>
         <td><div style="line-height: 1.10; font-size: 0.8em;">
           {% for rp in reuniao.participantes_reuniao.all %}
             {% if rp.situacao == 1 %}
-              &bull; {{ rp.participante.get_full_name }}<br>
+              &bull; {{ rp.participante.get_full_name }} ({{ rp.participante.get_tipo_de_usuario_display }})<br>
             {% endif %}
           {% endfor %}
         </div></td>
