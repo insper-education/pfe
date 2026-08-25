@@ -200,26 +200,26 @@
             </div>
           </div>
 
-          <script>
-            $(document).ready(function() {
-              $('#boxInac{{relato.id}}').change(function() {
-                if ($(this).is(':checked')) {
-                  $('#customRadioInline0{{relato.id}}').prop('checked', false);
-                  $('#customRadioInline0{{relato.id}}').prop('disabled', true).addClass('auto-locked-by-box-inac');
-                  $('#customRadioInline1{{relato.id}}').prop('checked', true);
-                  $('#customRadioInline1{{relato.id}}').prop('disabled', true).addClass('auto-locked-by-box-inac');
-                } else {
-                  $('#customRadioInline0{{relato.id}}').prop('disabled', false).removeClass('auto-locked-by-box-inac');
-                  $('#customRadioInline1{{relato.id}}').prop('disabled', false).removeClass('auto-locked-by-box-inac');
-                }
-              });
-
-              // Garante estado consistente quando o checkbox ja vem marcado do backend.
-              $('#boxInac{{relato.id}}').trigger('change');
-            });
-          </script>
- 
           {% if relato %}
+            <script>
+              $(document).ready(function() {
+                $('#boxInac{{relato.id}}').change(function() {
+                  if ($(this).is(':checked')) {
+                    $('#customRadioInline0{{relato.id}}').prop('checked', false);
+                    $('#customRadioInline0{{relato.id}}').prop('disabled', true).addClass('auto-locked-by-box-inac');
+                    $('#customRadioInline1{{relato.id}}').prop('checked', true);
+                    $('#customRadioInline1{{relato.id}}').prop('disabled', true).addClass('auto-locked-by-box-inac');
+                  } else {
+                    $('#customRadioInline0{{relato.id}}').prop('disabled', false).removeClass('auto-locked-by-box-inac');
+                    $('#customRadioInline1{{relato.id}}').prop('disabled', false).removeClass('auto-locked-by-box-inac');
+                  }
+                });
+
+                // Garante estado consistente quando o checkbox ja vem marcado do backend.
+                $('#boxInac{{relato.id}}').trigger('change');
+              });
+            </script>
+ 
             <div class="selector troca_lingua_title" 
                       data-title_pt="Opcionalmente, descreva o feedback que você deseja formalizar para o estudante."
                       data-title_en="Optionally, describe the feedback you want to formalize for the student."
