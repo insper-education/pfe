@@ -392,6 +392,51 @@
     .status-pendente { background: #e0f2fe; color: #0284c7; }
     .status-aprovado { background: #dcfce7; color: #16a34a; }
     .status-reprovado { background: #fee2e2; color: #dc2626; }
+
+    .norma-info-card {
+      margin-top: 1rem;
+      border: 1px solid #bfdbfe;
+      background: linear-gradient(180deg, #eff6ff 0%, #f8fafc 100%);
+      border-radius: 12px;
+      padding: 1rem 1.1rem;
+      color: #1e3a8a;
+    }
+
+    .norma-info-title {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin: 0 0 0.6rem 0;
+      font-size: 1rem;
+      font-weight: 700;
+      color: #1e40af;
+    }
+
+    .norma-info-list {
+      margin: 0;
+      padding-left: 1.15rem;
+    }
+
+    .norma-info-list li {
+      margin-bottom: 0.5rem;
+      line-height: 1.45;
+    }
+
+    .norma-info-list li:last-child {
+      margin-bottom: 0;
+    }
+
+    .norma-link {
+      color: #1d4ed8;
+      font-weight: 600;
+      text-decoration: none;
+      border-bottom: 1px dashed #93c5fd;
+    }
+
+    .norma-link:hover {
+      color: #1e3a8a;
+      border-bottom-color: #1e3a8a;
+    }
     
     .history-content {
       border-top: 1px solid var(--border-color);
@@ -548,7 +593,7 @@
             {% endfor %}
             
             <div class="nav-item history-btn" onclick="switchTab('historico', this)">
-              <span class="nav-icon">📋</span>
+              <span class="nav-icon">🗃️</span>
               <span>{% lng "Meus Pedidos" "My Requests" %}</span>
             </div>
           </nav>
@@ -886,6 +931,54 @@
                 <div class="form-group">
                   <label class="form-label">{% lng "Sugestões de Horário" "Suggested Times" %} <span class="required-asterisk">*</span></label>
                   <textarea name="reuniao_horarios" class="form-control" placeholder="Ex: Segunda 14h, Terça 10h..." required></textarea>
+                </div>
+
+                <button type="submit" class="btn-submit">
+                  {% lng "Enviar Solicitação" "Submit Request" %}
+                </button>
+              
+            </div>
+          </div>
+
+          <!-- Normas Section -->
+          <div id="norma" class="tab-pane">
+            <div class="content-header">
+              <h2 class="content-title">{% lng "Solicitar Norma Técnica" "Request Technical Standard" %}</h2>
+              <p class="form-text">{% lng "Solicite a aplicação de uma norma técnica específica" "Request the application of a specific technical standard" %}</p>
+
+              <div class="norma-info-card" role="note" aria-label="Informações importantes sobre normas técnicas">
+                <h3 class="norma-info-title">📐 {% lng "Antes de solicitar" "Before requesting" %}</h3>
+                <ul class="norma-info-list">
+                  <li>
+                    {% lng "Verifique se a norma já não está disponível no repositório do Insper." "Check whether the standard is already available in Insper's repository." %}
+                  </li>
+                  <li>
+                    {% lng "As normas técnicas da ABNT podem ser consultadas no Target GEDWeb:" "ABNT technical standards can be consulted at Target GEDWeb:" %}
+                    <a class="norma-link" href="https://www.gedweb.com.br/insper/" target="_blank" rel="noopener noreferrer">gedweb.com.br/insper</a>
+                  </li>
+                  <li>
+                    {% lng "O Insper também possui normas para consulta física na biblioteca:" "Insper also has standards available for physical consultation at the library:" %}
+                    <a class="norma-link" href="{% url 'doc' %}NDF">{% lng "Ver lista" "View list" %}</a>
+                  </li>
+                </ul>
+              </div>
+
+            </div>
+            <div class="content-body">
+              
+                <div class="form-group">
+                  <label class="form-label">{% lng "Código e Nome da Norma" "Standard Code and Name" %} <span class="required-asterisk">*</span></label>
+                  <input type="text" name="norma_nome" class="form-control" required>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">{% lng "Link ou Referência da Norma" "Standard Link or Reference" %} <span class="required-asterisk">*</span></label>
+                  <input type="text" name="norma_referencia" class="form-control" required>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">{% lng "Observações" "Notes" %}</label>
+                  <textarea name="observacoes" class="form-control" style="min-height: 80px;" placeholder="Informações adicionais..."></textarea>
                 </div>
 
                 <button type="submit" class="btn-submit">

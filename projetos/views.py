@@ -838,6 +838,10 @@ def pedir_recursos(request, primarykey=None):
             dados["llm_estimativa"] = request.POST.get("llm_estimativa")
             dados["llm_justificativa"] = request.POST.get("llm_justificativa")
 
+        elif tipo == "norma":
+            dados["norma_nome"] = request.POST.get("norma_nome")
+            dados["norma_referencia"] = request.POST.get("norma_referencia")
+
         if tipo:
             observacoes = request.POST.get("observacoes", "")
             pedido = Pedido.objects.create(
@@ -876,7 +880,21 @@ def pedir_recursos(request, primarykey=None):
 
             email(email_subject, email_recipients, email_message, reply_to=[configuracao.tecnico.email])
 
-            return redirect("pedir_recursos")
+            print(f"Pedido de recurso criado: {pedido} - Tipo: {tipo} - Projeto: {projeto.proposta.titulo}")
+            print(f"Detalhes do pedido: {pedido.get_detalhes_completos()}")
+            print(f"E-mail enviado para: {', '.join(email_recipients)}")
+            print(f"Assunto do e-mail: {email_subject}")
+            print(f"Conteúdo do e-mail: {email_message}")
+
+
+            context = {
+                "area_principal": True,
+                "mensagem": {
+                    "pt": "Pedido de recurso criado com sucesso.",
+                    "en": "Resource request created successfully."
+                }
+            }
+            return render(request, "generic_ml.html", context=context)
 
     # Recupera pedidos anteriores
     pedidos = Pedido.objects.filter(projeto=projetos.last()).order_by("-data_solicitacao")

@@ -2492,6 +2492,7 @@ class Pedido(models.Model):
         ("equipamento", "Equipamento"),
         ("compra", "Compra"),
         ("reuniao", "Reunião"),
+        ("norma", "Norma Técnica"),
     )
 
     TIPO_PEDIDO_ICONES = {
@@ -2503,6 +2504,7 @@ class Pedido(models.Model):
         "equipamento": "🧰",
         "compra": "🛒",
         "reuniao": "📅",
+        "norma": "📋",
     }
 
     TIPO_PEDIDO_MENU = {
@@ -2514,6 +2516,7 @@ class Pedido(models.Model):
         "equipamento": {"pt": "Equipamentos", "en": "Equipment"},
         "compra": {"pt": "Compras", "en": "Purchases"},
         "reuniao": {"pt": "Reunião", "en": "Meeting"},
+        "norma": {"pt": "Norma Técnica", "en": "Technical Standard"},
     }
     tipo = models.CharField(max_length=20, choices=TIPO_PEDIDO)
     
@@ -2637,6 +2640,10 @@ class Pedido(models.Model):
             html += f"<li>Motivo: {d.get('reuniao_motivo', '')}</li>"
             html += f"<li>Descrição: {d.get('reuniao_descricao', '')}</li>"
             html += f"<li>Horários: {d.get('reuniao_horarios', '')}</li>"
+
+        elif self.tipo == "norma":
+            html += f"<li>Norma: {d.get('norma_nome', '')}</li>"
+            html += f"<li>Referência: {d.get('norma_referencia', '')}</li>"
 
         html += f"<li>Observações: {self.observacoes or 'Nenhuma'}</li>"            
         html += "</ul>"
