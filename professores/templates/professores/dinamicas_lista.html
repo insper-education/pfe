@@ -179,6 +179,12 @@
                 {% lng "Horário Livre" "Available Time" %}<br><br>
               {% endif %}
 
+              <span class="editar esconder mt-1" style="float: left;">
+                <a data-url="{% url 'agendamento_encontro' e.id %}" href="{% url 'agendamento_encontro' e.id %}">
+                  <button class="btn btn-secondary btn-sm">{% lng "Enviar Convite" "Send Invite" %}</button>
+                </a>
+              </span>
+
               <span class="editar esconder mt-1" style="float: right;">
                 <a class="open-modal" data-url="{% url 'dinamicas_editar' e.id %}" href="{% url 'dinamicas_editar' e.id %}"> 
                   <button class="btn btn-primary">{% lng "Editar" "Edit" %}</button>

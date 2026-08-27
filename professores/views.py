@@ -29,7 +29,7 @@ from django.core.exceptions import PermissionDenied
 from .support import coleta_membros_banca, editar_banca, mensagem_orientador
 from .support import recupera_orientadores_por_semestre, get_edicoes_orientador
 from .support import recupera_coorientadores_por_semestre
-from .support import move_avaliacoes, ver_pendencias_professor, mensagem_edicao_banca
+from .support import move_avaliacoes, ver_pendencias_professor, mensagem_edicao_banca, mensagem_convite_encontro
 from .support3 import resultado_projetos_intern, puxa_encontros, puxa_bancas, calculate_allocation_statistics
 
 from academica.models import Exame, Composicao, Peso
@@ -1148,6 +1148,18 @@ def bancas_criar(request, data=None):
 
     context = _get_bancas_context(request, data=data)
     return render(request, "professores/bancas_view.html", context)
+
+
+
+@login_required
+@permission_required("users.altera_professor", raise_exception=True)
+def agendamento_encontro(request, encontro_id):
+    """Cria um agendamento eletrônic de e-mail para uma dinâmica de mentoria."""
+    encontro = get_object_or_404(Encontro, pk=encontro_id)
+    mensagem_convite_encontro( encontro=encontro, enviar=True)
+    mensagem = {"pt": "Agendamento de e-mail para mentoria enviado com sucesso!", "en": "Mentorship dynamic e-mail scheduling sent successfully!"}
+    atualizado = True
+    return JsonResponse({"atualizado": atualizado, "mensagem": mensagem})
 
 
 @login_required

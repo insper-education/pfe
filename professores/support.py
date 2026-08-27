@@ -178,6 +178,145 @@ def _calendar_invite_banca(banca, subject, recipient_list, mensagem, atualizada=
         "content": "\r\n".join(lines) + "\r\n",
     }
 
+
+
+
+
+def _calendar_invite_encontro(encontro, subject, recipient_list, mensagem, atualizada=False, excluida=False,
+                           organizer_email=None, organizer_name=None):
+    projeto = encontro.get_projeto()
+
+    domain = settings.EMAIL_HOST_USER.split("@")[-1] if "@" in settings.EMAIL_HOST_USER else "localhost"
+    uid = encontro.calendar_uid or f"encontro-{encontro.id}@{domain}"
+    method = "CANCEL" if excluida else "REQUEST"
+    status = "CANCELLED" if excluida else "CONFIRMED"
+    organizer_mail = organizer_email or settings.EMAIL_HOST_USER
+    organizer_cn = organizer_name or "Capstone"
+
+    start_dt = _ics_format_dt(encontro.startDate)
+    end_reference = encontro.endDate
+    if not end_reference and encontro.startDate:
+        end_reference = encontro.startDate + datetime.timedelta(hours=1)
+    end_dt = _ics_format_dt(end_reference)
+
+    if not start_dt or not end_dt:
+        return None
+
+    sequence_base = encontro.calendar_sequence or 0
+    sequence = sequence_base + 1 if (atualizada or excluida) else sequence_base
+
+    if projeto:
+        link_projeto = settings.SERVER + reverse("projeto_infos", args=[projeto.id])
+    else:
+        link_projeto = None
+
+    # estudantes = []
+    # if encontro.alocacao:
+    #     estudantes = [encontro.alocacao.aluno]
+    # else:
+    #     estudantes = list(Aluno.objects.filter(alocacao__projeto=projeto).filter(trancado=False).distinct())
+
+    if projeto:
+        descricao_linhas = [f"Mentoria de Projeto {projeto.get_titulo_org()}"]
+    else:
+        descricao_linhas = [f"Mentoria de Projeto"]
+
+    # if encontro.link:
+    #     descricao_linhas.append("")
+    #     descricao_linhas.append(f"Link: {encontro.link}")
+
+    if projeto and projeto.orientador and projeto.orientador.user:
+        descricao_linhas.append("")
+        descricao_linhas.append(f"Orientador: {projeto.orientador.user.get_full_name()}")
+
+    descricao_linhas.append(f"Facilitador: {encontro.facilitador.get_full_name() if encontro.facilitador else 'A definir'}")
+
+    # membros = encontro.membros()
+    # if membros:
+    #     descricao_linhas.append("")
+    #     descricao_linhas.append("Membros da encontro:")
+    #     for membro in membros:
+    #         membro_linha = f"- {membro.get_full_name()}"
+    #         if projeto.orientador and membro == projeto.orientador.user:
+    #             membro_linha += " [orientador]"
+    #         descricao_linhas.append(membro_linha)
+
+    # if estudantes:
+    #     descricao_linhas.append("")
+    #     descricao_linhas.append("Estudantes:")
+    #     for estudante in estudantes:
+    #         descricao_linhas.append(f"- {estudante.user.get_full_name()}")
+
+    descricao_linhas.append("")
+
+    if projeto:
+        descricao_linhas.append(f"Projeto: {projeto.get_titulo_org()}")
+        descricao_linhas.append(f"Link do projeto: {link_projeto}")
+
+    descricao = "\n".join(descricao_linhas)
+
+    attendees_by_email = {}
+    # for membro in membros:
+    #     if membro and membro.email:
+    #         attendees_by_email[membro.email] = membro.get_full_name()
+
+    # for estudante in estudantes:
+    #     if estudante and estudante.user and estudante.user.email:
+    #         attendees_by_email[estudante.user.email] = estudante.user.get_full_name()
+
+    if encontro.facilitador and encontro.facilitador.email:
+        attendees_by_email[encontro.facilitador.email] = encontro.facilitador.get_full_name()
+
+    for email_dest in recipient_list:
+        if email_dest and email_dest not in attendees_by_email:
+            attendees_by_email[email_dest] = email_dest
+
+    attendees = []
+    for email_dest, nome in sorted(attendees_by_email.items(), key=lambda item: item[0]):
+        attendees.append(
+            f"ATTENDEE;CN={_ics_escape(nome)};ROLE=REQ-PARTICIPANT;RSVP=FALSE:mailto:{email_dest}"
+        )
+
+    location_parts = []
+    # if encontro.location:
+    #     location_parts.append(encontro.location)
+    # if encontro.link:
+    #     location_parts.append(encontro.link)
+    # location = " | ".join(location_parts) if location_parts else "A definir"
+    location = ""
+
+    lines = [
+        "BEGIN:VCALENDAR",
+        "PRODID:-//Insper//Capstone PFE//PT-BR",
+        "VERSION:2.0",
+        "CALSCALE:GREGORIAN",
+        f"METHOD:{method}",
+        "BEGIN:VEVENT",
+        f"UID:{uid}",
+        f"SEQUENCE:{sequence}",
+        f"DTSTAMP:{_ics_format_dt(timezone.now())}",
+        f"DTSTART:{start_dt}",
+        f"DTEND:{end_dt}",
+        f"SUMMARY:{_ics_escape(subject)}",
+        f"DESCRIPTION:{_ics_escape(descricao)}",
+        f"LOCATION:{_ics_escape(location)}",
+        f"STATUS:{status}",
+        f"URL:{_ics_escape(link_projeto)}",
+        f"ORGANIZER;CN={_ics_escape(organizer_cn)}:mailto:{organizer_mail}",
+        "X-MICROSOFT-ISRESPONSEREQUESTED:FALSE",
+        *attendees,
+        "END:VEVENT",
+        "END:VCALENDAR",
+    ]
+
+    return {
+        "filename": f"encontro_{encontro.id}.ics",
+        "method": method,
+        "uid": uid,
+        "sequence": sequence,
+        "content": "\r\n".join(lines) + "\r\n",
+    }
+
 def calcula_interseccao_bancas(banca, startDate, endDate, limite_salas_bancas):
     """Calcula se a banca intersecta com outras bancas (e trata se for criada ou editada)."""
     
@@ -798,6 +937,76 @@ def mensagem_edicao_banca(banca, atualizada=False, excluida=False, enviar=False)
             banca.calendar_last_method = calendar_invite.get("method")
             banca.calendar_last_sent_at = timezone.now()
             banca.save(update_fields=[
+                "calendar_uid",
+                "calendar_sequence",
+                "calendar_last_method",
+                "calendar_last_sent_at",
+            ])
+
+
+
+def mensagem_convite_encontro(encontro, atualizada=False, excluida=False, enviar=False):
+
+    subject = "Capstone | Mentoria - " + encontro.tematica.nome + " "
+    if excluida:
+        subject += " - Cancelada"
+    else:
+        subject += " - Atualizada" if atualizada else "Agendada"
+
+    projeto = encontro.get_projeto()
+    if projeto:
+        subject += " [" + projeto.organizacao.nome + "] " + projeto.get_titulo()
+        link = settings.SERVER + reverse("projeto_infos", args=[projeto.id])
+    else:
+        link = None
+
+    recipient_list = []
+    if encontro.facilitador and encontro.facilitador.email:
+        recipient_list.append(encontro.facilitador.email)
+
+    configuracao = get_object_or_404(Configuracao)
+    # recipient_list.extend(alocacao.aluno.user.email for alocacao in projeto.alocacao_set.all())
+    if configuracao.coordenacao:
+        recipient_list.append(configuracao.coordenacao.user.email)
+    # if configuracao.operacao:
+    #     recipient_list.append(configuracao.operacao.email)
+
+    context_carta = {
+        "encontro": encontro,
+        "atualizada": atualizada,
+        "excluida": excluida,
+        "enviar": enviar,
+        "link": link,
+    }
+
+    mensagem = render_message("Convite Mentoria", context_carta, urlize=False)
+
+    if enviar:
+        reply_to = None
+        organizer_email = None
+        organizer_name = None
+        if projeto and projeto.orientador and projeto.orientador.user and projeto.orientador.user.email:
+            organizer_email = projeto.orientador.user.email
+            organizer_name = projeto.orientador.user.get_full_name()
+            reply_to = [organizer_email]
+
+        calendar_invite = _calendar_invite_encontro(
+            encontro=encontro,
+            subject=subject,
+            recipient_list=recipient_list,
+            mensagem=mensagem,
+            atualizada=atualizada,
+            excluida=excluida,
+            organizer_email=organizer_email,
+            organizer_name=organizer_name,
+        )
+        email(subject, recipient_list, mensagem, calendar_invite=calendar_invite, reply_to=reply_to)
+        if calendar_invite:
+            encontro.calendar_uid = calendar_invite.get("uid")
+            encontro.calendar_sequence = calendar_invite.get("sequence", encontro.calendar_sequence)
+            encontro.calendar_last_method = calendar_invite.get("method")
+            encontro.calendar_last_sent_at = timezone.now()
+            encontro.save(update_fields=[
                 "calendar_uid",
                 "calendar_sequence",
                 "calendar_last_method",

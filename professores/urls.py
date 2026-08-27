@@ -15,6 +15,7 @@ from . import ajax_views
 urlpatterns = [
     path("", views.index_professores, name="index_professores"),  # pagina inicial
     path("professores", views.index_professores, name="professores"),
+    path("agendamento_encontro/<int:encontro_id>", views.agendamento_encontro, name="agendamento_encontro"),
     path("avaliacoes_pares/", views.avaliacoes_pares, name="avaliacoes_pares"),
     path("avaliacoes_pares/<str:prof_id>", views.avaliacoes_pares, name="avaliacoes_pares"),
     path("avaliacoes_pares/<str:prof_id>/<str:proj_id>", views.avaliacoes_pares, name="avaliacoes_pares"),
