@@ -757,15 +757,6 @@ def banca_avaliar(request, slug, documento_id=None):
                     doc_url = request.scheme + "://" + request.get_host() + documento.documento.url
                     data_envio = datetime.datetime.now().strftime("%d/%m/%Y %H:%M")
 
-                    # mensagem_anot = "Anotações em Relatório de Banca<br>\n<br>\n"
-                    # mensagem_anot += "Anotações realizadas por: " + avaliador.get_full_name() + "<br>\n"
-                    # mensagem_anot += "Banca: " + exame.titulo + "<br>\n"
-                    # mensagem_anot += "Projeto: " + projeto.get_titulo_org() + "<br>\n"
-                    # mensagem_anot += "Data: " + str(datetime.datetime.now()) + "<br>\n<br>\n<br>\n"
-                    # mensagem_anot += "Documento com Anotações: "
-                    # mensagem_anot += "<a href='" + request.scheme + "://" + request.get_host() + documento.documento.url + "' target='_blank' rel='noopener noreferrer'>"
-                    # mensagem_anot += request.scheme + "://" + request.get_host() + documento.documento.url + "</a><br>\n<br>\n<br>\n"
-
                     mensagem_anot = f"""
                     <div style='font-family: Arial, sans-serif; color:#1f2937; line-height:1.5;'>
                         <div style='font-size:16px; font-weight:700; color:#0f172a; margin-bottom:10px;'>
@@ -797,7 +788,6 @@ def banca_avaliar(request, slug, documento_id=None):
                     recipient_list = [alocacao.aluno.user.email for alocacao in projeto.alocacao_set.all()]
                     recipient_list.append(avaliador.email)
                     recipient_list.append(projeto.orientador.user.email)
-                    #recipient_list.append(configuracao.coordenacao.user.email)
                     email(subject, recipient_list, mensagem_anot)
 
 

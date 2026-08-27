@@ -2388,10 +2388,13 @@ class Reuniao(models.Model):
     projeto = models.ForeignKey(Projeto, null=True, blank=True, on_delete=models.SET_NULL,
                                 help_text="Projeto relacionado à reunião")
     travado = models.BooleanField("Travado", default=False,
-                                             help_text="Se a reunião está travada")
+                                  help_text="Se a reunião está travada")
 
     visita_externa = models.BooleanField("Visita Externa", default=False,
-                                        help_text="Se a reunião é uma visita externa")
+                                         help_text="Se a reunião é uma visita externa")
+
+    anexo = models.ForeignKey("projetos.Documento", null=True, blank=True, on_delete=models.SET_NULL,
+                               help_text="Documento anexado a reunião")
 
     def __str__(self):
         return f"{self.titulo}: {self.data_hora.strftime('%d/%m/%Y %H:%M')}"

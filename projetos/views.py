@@ -51,6 +51,8 @@ from academica.support4 import get_banca_estudante
 from administracao.models import Estrutura, Despesa
 from administracao.support import usuario_sem_acesso
 
+from calendario.support import cria_material_documento
+
 from operacional.models import Curso
 
 from professores.support3 import puxa_encontros
@@ -1202,6 +1204,15 @@ def reuniao(request, reuniao_id_g=None):  # Id da reunião para editar, None par
             context["reuniao"] = reuniao
             return render(request, "projetos/reuniao.html", context=context)
 
+        if "arquivo" in request.FILES:
+                documento = cria_material_documento(request, "arquivo", sigla="AAR", confidencial=True,
+                                                    projeto=reuniao.projeto, usuario=request.user,
+                                                    prefix="anot_reun_"+str(request.user.first_name)+"_")
+                if documento:
+                    documento.anotacao = reuniao.titulo
+                    documento.save()
+                    reuniao.anexo = documento
+
         reuniao.travado = "travado" in request.POST
         if reuniao.usuario:
             reuniao.atualizado_por = request.user
@@ -1211,6 +1222,11 @@ def reuniao(request, reuniao_id_g=None):  # Id da reunião para editar, None par
 
         participantes = anota_participacao(request.POST, reuniao=reuniao)
 
+        if reuniao.anexo:
+            doc_url = request.scheme + "://" + request.get_host() + reuniao.anexo.documento.url
+        else:
+            doc_url = None
+
         if "visita_externa" in request.POST:
             subject = "Capstone | Abono de Falta por Visita Externa"
             recipient_list = []
@@ -1218,16 +1234,15 @@ def reuniao(request, reuniao_id_g=None):  # Id da reunião para editar, None par
                 recipient_list.append(configuracao.coordenacao.user.email)
             if configuracao.prof_auxiliar and configuracao.prof_auxiliar.email:
                 recipient_list.append(configuracao.prof_auxiliar.email)
-            message = "Validar e abonar faltas para os estudantes que participaram de reunião externa acompanhados:<br><br>" 
-            message += "Grupo: <b>" + reuniao.projeto.get_titulo_org() + "</b><br>"
-            message += "Momento da visita: <b>" + reuniao.data_hora.strftime('%d/%m/%Y às %H:%M') + "</b><br>"
-            message += "Local: <b>" + reuniao.local if reuniao.local else "Não informado" + "</b><br>"
-            message += "<br><br>"
-            message += "Participantes:<br>"
-            for participante in participantes:
-                usuario, situacao = participante
-                message += "&bull; " + usuario.get_full_name() + " (" + usuario.get_tipo_de_usuario_display() + ") - [" + situacao["pt"] + "]<br>"
+            context_email = {
+                "reuniao": reuniao,
+                "configuracao": configuracao,
+                "anexo": doc_url,
+            }
+            message = render_message("Abono de Faltas", context_email)
+
             email(subject, recipient_list, message)
+            
         
         if "enviar_mensagem" in request.POST:
             if reuniao.projeto:
@@ -1247,7 +1262,8 @@ def reuniao(request, reuniao_id_g=None):  # Id da reunião para editar, None par
 
                 context_email = {
                     "reuniao": reuniao,
-                    "configuracao": configuracao
+                    "configuracao": configuracao,
+                    "anexo": doc_url,
                 }
                 message = render_message("Anotações de Reunião", context_email)
 

@@ -23,6 +23,7 @@
       padding: 1.5rem 1rem 1rem 1rem;
       position: relative;
       overflow: hidden;
+      margin-top: 1rem;
     }
     .form-floating label {
       color: #888;
@@ -107,7 +108,7 @@
 {% block content %}
 
   <div class="modern-card">
-    <form method="post" autocomplete="off">
+    <form method="post" autocomplete="off" enctype="multipart/form-data">
       {% csrf_token %}
 
       <div class="form-floating mb-2">
@@ -185,6 +186,25 @@
         <textarea id="anotacoes" name="anotacoes" rows="10" maxlength="{% max_length Reuniao "anotacoes" %}"
           class="form-control form-control-sm ptravar"
           style="width:100%;">{% if reuniao.anotacoes %}{{reuniao.anotacoes}}{% endif %}</textarea>
+      </div>
+
+      <div style="background: #eefdfe; border: 1.5px dashed #1976d2; border-radius: 7px; padding: 2px 7px; margin-top: 1px; margin-bottom: 4px; display: flex; align-items: center; gap: 2px;">
+        <span style="font-size: 1.0em; color: #1976d2; margin: 5px;">
+          <i class="fas fa-paperclip" aria-hidden="true"></i>
+        </span>
+        <div style="flex: 1;">
+          <label for="arquivo" style="font-size: 0.88em; color: #1976d2;">
+            {% lng "Você pode anexar um arquivo à sua reunião (opcional)" "You can attach a file to your meeting (optional)" %}
+          </label>
+          <input id="arquivo" type="file" name="arquivo" style="font-size: 0.8em; margin: 5px;" {% include "formatos_suportados.html" %}>
+          {% if reuniao.anexo %}
+            <div style="font-size: 0.8em; margin-bottom: 4px; line-height: 1.0;">
+              <input type="hidden" id="documentos" name="documentos" value="{{reuniao.anexo.id}}"/>
+              Arquivo atual:
+              <a href="{{request.scheme}}://{{request.get_host}}{{reuniao.anexo.documento.url}}" target="_blank" rel="noopener noreferrer">{{reuniao.anexo.filename}} ({{reuniao.anexo.data}})</a>
+            </div>
+          {% endif %}
+        </div>
       </div>
 
       <div class="form-floating mb-2">
