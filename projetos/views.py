@@ -1214,13 +1214,15 @@ def reuniao(request, reuniao_id_g=None):  # Id da reunião para editar, None par
         if "visita_externa" in request.POST:
             subject = "Capstone | Abono de Falta por Visita Externa"
             recipient_list = []
-            recipient_list.append(str(configuracao.coordenacao.user.email))
-            recipient_list.append(str(configuracao.prof_auxiliar.email))
+            if configuracao.coordenacao and configuracao.coordenacao.user and configuracao.coordenacao.user.email:
+                recipient_list.append(configuracao.coordenacao.user.email)
+            if configuracao.prof_auxiliar and configuracao.prof_auxiliar.email:
+                recipient_list.append(configuracao.prof_auxiliar.email)
             message = "Validar e abonar faltas para os estudantes que participaram de reunião externa acompanhados:<br><br>" 
             message += "Grupo: <b>" + reuniao.projeto.get_titulo_org() + "</b><br>"
             message += "Momento da visita: <b>" + reuniao.data_hora.strftime('%d/%m/%Y às %H:%M') + "</b><br>"
-            message += "Local: <b>" + reuniao.local + "</b><br>"
-
+            message += "Local: <b>" + reuniao.local if reuniao.local else "Não informado" + "</b><br>"
+            message += "<br><br>"
             message += "Participantes:<br>"
             for participante in participantes:
                 usuario, situacao = participante
