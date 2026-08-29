@@ -13,7 +13,7 @@ import logging
 from urllib.parse import urlparse
 
 from google.oauth2.credentials import Credentials
-from google.auth.transport.requests import Request
+from google.auth.transport.requests import AuthorizedSession, Request
 from googleapiclient.discovery import build
 import uuid as _uuid
 
@@ -62,28 +62,28 @@ def configurar_meet_como_aberto(creds, join_url):
     if not meeting_code:
         raise ValueError(f"Link do Google Meet inválido: {join_url}")
 
-    meet_service = build(
-        "meet",
-        "v2",
-        credentials=creds,
-        cache_discovery=False,
-    )
-
     # O GET aceita o código amigável (abc-defg-hij) e devolve o nome
     # canônico do espaço, que é necessário para realizar o PATCH.
-    space = meet_service.spaces().get(
-        name=f"spaces/{meeting_code}",
-    ).execute()
+    with AuthorizedSession(creds) as session:
+        response = session.get(
+            f"https://meet.googleapis.com/v2/spaces/{meeting_code}",
+            timeout=30,
+        )
+        response.raise_for_status()
+        space = response.json()
 
-    updated_space = meet_service.spaces().patch(
-        name=space["name"],
-        updateMask="config.accessType",
-        body={
-            "config": {
-                "accessType": "OPEN",
+        response = session.patch(
+            f"https://meet.googleapis.com/v2/{space['name']}",
+            params={"updateMask": "config.accessType"},
+            json={
+                "config": {
+                    "accessType": "OPEN",
+                },
             },
-        },
-    ).execute()
+            timeout=30,
+        )
+        response.raise_for_status()
+        updated_space = response.json()
 
     access_type = updated_space.get("config", {}).get("accessType")
     if access_type != "OPEN":
