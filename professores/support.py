@@ -55,7 +55,7 @@ GOOGLE_SCOPES = [
     "https://www.googleapis.com/auth/calendar",
     "https://www.googleapis.com/auth/meetings.space.settings",
 ]
-
+GOOGLE_CALENDAR_ID = "pfeinsper@gmail.com"
 
 def configurar_meet_como_aberto(creds, join_url):
     """Configura um Google Meet para permitir entrada sem aprovação."""
@@ -132,6 +132,16 @@ def criar_reuniao_meet(subject, start_dt, end_dt, description="", recipient_list
             cache_discovery=False,
         )
 
+        primary_calendar = calendar_service.calendars().get(
+            calendarId="primary",
+        ).execute()
+
+        logger.info(
+            "Calendário Google autenticado: id=%s, resumo=%s",
+            primary_calendar.get("id"),
+            primary_calendar.get("summary"),
+        )
+
         event = {
             "summary": subject,
             "description": description,
@@ -146,10 +156,17 @@ def criar_reuniao_meet(subject, start_dt, end_dt, description="", recipient_list
             },
         }
         created = calendar_service.events().insert(
-            calendarId="primary",
+            calendarId=settings.GOOGLE_CALENDAR_ID,
             body=event,
             conferenceDataVersion=1,
         ).execute()
+
+        logger.info(
+            "Evento Google criado: id=%s, organizer=%s, htmlLink=%s",
+            created.get("id"),
+            created.get("organizer", {}).get("email"),
+            created.get("htmlLink"),
+        )
 
         entry_points = created.get("conferenceData", {}).get("entryPoints", [])
         join_url = next((ep["uri"] for ep in entry_points if ep.get("entryPointType") == "video"), None)
