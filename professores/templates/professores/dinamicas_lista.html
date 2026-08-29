@@ -150,16 +150,16 @@
 
               {% if e.location %}
                 <div class="local" style="margin: 4px 0px 4px 0px;">
-                  <b>Local/Link:</b>
-                  {% if e.url_location %}<a href="{{e.location}}">{% endif %}
-                  <span style="word-break: break-all; overflow-wrap: break-word;">{{e.location}}</span>
-                  {% if e.url_location %}</a>{% endif %}
+                  <b>Local:</b> {{e.location}}
                 </div>
               {% endif %}
 
               {% if e.link %}
                 <div class="link" style="margin: 4px 0px 4px 0px;">
-                  <b>Link:</b> <a href="{{e.link}}" target="_blank" rel="noopener noreferrer">{{e.link}}</a>
+                  <b>Link:</b>
+                  <a href="{{e.link}}" target="_blank" rel="noopener noreferrer">
+                  <span style="word-break: break-all; overflow-wrap: break-word;">{{e.link}}</span>
+                  </a>
                 </div>
               {% endif %}
 

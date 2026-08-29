@@ -1364,11 +1364,11 @@ class Encontro(models.Model):
         return self.endDate.strftime("%H:%M")
     hora_fim.short_description = "Hora Fim"
 
-    def url_location(self):
-        """Checa se link."""
-        if self.location[:4] == "http":
-            return True
-        return False
+    # def url_location(self):
+    #     """Checa se link."""
+    #     if self.location[:4] == "http":
+    #         return True
+    #     return False
     
     def periodo(self):
         configuracao = get_object_or_404(Configuracao)

@@ -29,19 +29,18 @@
               </span>
             {% endif %}
             {% if dinamica.location %}
-              {% if dinamica.url_location %}
-                <a class="badge badge-pill badge-light border troca_lingua_title" href="{{dinamica.location}}" 
-                 data-title_pt="Link de videoconferência" data-title_en="Videoconference link"
-                 title="Link de videoconferência">
-                  <i class="fas fa-video"></i> {% lng "videoconferência" "videoconference" %}
-                </a>
-              {% else %}
                 <span class="badge badge-pill badge-light border troca_lingua_title" 
                  data-title_pt="Localização" data-title_en="Location"
                  title="Localização">
                   <i class="fas fa-map-marker-alt"></i> {{dinamica.location}}
                 </span>
-              {% endif %}
+            {% endif %}
+            {% if dinamica.link %}
+              <a class="badge badge-pill badge-light border troca_lingua_title" href="{{dinamica.link}}" 
+                data-title_pt="Link de videoconferência" data-title_en="Videoconference link"
+                title="Link de videoconferência">
+                <i class="fas fa-video"></i> {% lng "videoconferência" "videoconference" %}
+              </a>
             {% endif %}
             {% if dinamica.facilitador %}
               <a class="badge badge-pill badge-light border troca_lingua_title" href="{% url 'user_detail' dinamica.facilitador.id %}" 

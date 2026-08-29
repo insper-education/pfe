@@ -38,13 +38,13 @@
             
             {% if e.location %}
               <div class="local" style="margin-top: 8px;">
-                <b>Local:</b> 
-                {% if e.url_location %}
-                  <a href="{{e.location}}">{{e.location}}</a>
-                {% else %}
-                  {{e.location}}
-                {% endif %}
-                <br>
+                <b>Local:</b> {{e.location}}
+              </div>
+            {% endif %}
+
+            {% if e.link %}
+              <div class="link" style="margin-top: 8px;">
+                <b>Link:</b> <a href="{{e.link}}" target="_blank" rel="noopener noreferrer">{{e.link}}</a>
               </div>
             {% endif %}
 
