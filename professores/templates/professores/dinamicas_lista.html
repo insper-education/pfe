@@ -157,6 +157,12 @@
                 </div>
               {% endif %}
 
+              {% if e.link %}
+                <div class="link" style="margin: 4px 0px 4px 0px;">
+                  <b>Link:</b> <a href="{{e.link}}" target="_blank" rel="noopener noreferrer">{{e.link}}</a>
+                </div>
+              {% endif %}
+
               {% if e.projeto %}
                 {% include "cabecalho_projeto.html" with projeto=e.projeto %}
 
