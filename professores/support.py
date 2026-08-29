@@ -55,7 +55,6 @@ GOOGLE_SCOPES = [
     "https://www.googleapis.com/auth/calendar",
     "https://www.googleapis.com/auth/meetings.space.settings",
 ]
-GOOGLE_CALENDAR_ID = "pfeinsper@gmail.com"
 
 def configurar_meet_como_aberto(creds, join_url):
     """Configura um Google Meet para permitir entrada sem aprovação."""

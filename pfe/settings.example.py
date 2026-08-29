@@ -172,6 +172,11 @@ EMAIL_HOST_PASSWORD = "XXXXXXXXX"
 EMAIL_USER = "PFE Insper"
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
+GOOGLE_CALENDAR_ID = "XXXX"
+GOOGLE_CLIENT_ID = "XXXXX" 
+GOOGLE_CLIENT_SECRET = "XXXXX"
+GOOGLE_REFRESH_TOKEN = "XXXXX"
+
 class TimingFormatter(logging.Formatter):
     def format(self, record):
         if hasattr(record, "duration"):
