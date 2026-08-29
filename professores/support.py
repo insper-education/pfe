@@ -997,11 +997,11 @@ def mensagem_edicao_banca(banca, atualizada=False, excluida=False, enviar=False)
 
 def mensagem_convite_encontro(encontro, atualizada=False, excluida=False, enviar=False):
 
-    subject = "Capstone | Mentoria - " + encontro.tematica.nome + " "
-    if excluida:
-        subject += " - Cancelada"
-    else:
-        subject += " - Atualizada" if atualizada else "Agendada"
+    configuracao = get_object_or_404(Configuracao)
+
+    tema = encontro.tematica.nome if encontro.tematica else "Encontro"
+    status = "Cancelada" if excluida else "Atualizada" if atualizada else "Agendada"
+    subject = f"Capstone | Mentoria - {tema} - {status}"
 
     projeto = encontro.get_projeto()
     if projeto:
@@ -1013,35 +1013,26 @@ def mensagem_convite_encontro(encontro, atualizada=False, excluida=False, enviar
     recipient_list = []
     if encontro.facilitador and encontro.facilitador.email:
         recipient_list.append(encontro.facilitador.email)
-
-    configuracao = get_object_or_404(Configuracao)
-    # recipient_list.extend(alocacao.aluno.user.email for alocacao in projeto.alocacao_set.all())
+    if projeto and projeto.alocacao_set.exists():
+        recipient_list.extend(alocacao.aluno.user.email for alocacao in projeto.alocacao_set.all())
     if configuracao.coordenacao:
         recipient_list.append(configuracao.coordenacao.user.email)
     # if configuracao.operacao:
     #     recipient_list.append(configuracao.operacao.email)
-
-    context_carta = {
-        "encontro": encontro,
-        "atualizada": atualizada,
-        "excluida": excluida,
-        "enviar": enviar,
-        "link": link,
-    }
-
-    mensagem = render_message("Convite Mentoria", context_carta, urlize=False)
 
     if enviar:
         reply_to = None
         organizer_email = None
         organizer_name = None
         if projeto and projeto.orientador and projeto.orientador.user and projeto.orientador.user.email:
-            organizer_email = projeto.orientador.user.email
-            organizer_name = projeto.orientador.user.get_full_name()
+            # organizer_email = encontro.facilitador.email
+            # organizer_name = encontro.facilitador.get_full_name()
+            organizer_email = "pfeinsper@gmail.com"
+            organizer_name = "Capstone Insper"
             reply_to = [organizer_email]
 
         if not excluida and not encontro.link:
-            end_ref = encontro.endDate or (encontro.startDate + datetime.timedelta(hours=1) if encontro.startDate else None)
+            end_ref = encontro.endDate or (encontro.startDate + datetime.timedelta(hours=1) if encontro.startDate else None)  # define data de término como 1 hora após início se não houver fim definido
             if encontro.startDate and end_ref:
                 join_url, _ = criar_reuniao_meet(subject, encontro.startDate, end_ref)
                 if join_url:
@@ -1058,6 +1049,18 @@ def mensagem_convite_encontro(encontro, atualizada=False, excluida=False, enviar
             organizer_email=organizer_email,
             organizer_name=organizer_name,
         )
+
+        context_carta = {
+            "encontro": encontro,
+            "projeto": projeto,
+            "atualizada": atualizada,
+            "excluida": excluida,
+            "enviar": enviar,
+            "link": link,
+        }
+
+        mensagem = render_message("Convite Mentoria", context_carta, urlize=False)
+
         email(subject, recipient_list, mensagem, calendar_invite=calendar_invite, reply_to=reply_to)
         if calendar_invite:
             encontro.calendar_uid = calendar_invite.get("uid")
