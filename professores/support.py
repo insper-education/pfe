@@ -1039,17 +1039,6 @@ def mensagem_convite_encontro(encontro, atualizada=False, excluida=False, enviar
                     encontro.link = join_url
                     encontro.save(update_fields=["link"])
 
-        calendar_invite = _calendar_invite_encontro(
-            encontro=encontro,
-            subject=subject,
-            recipient_list=recipient_list,
-            mensagem=mensagem,
-            atualizada=atualizada,
-            excluida=excluida,
-            organizer_email=organizer_email,
-            organizer_name=organizer_name,
-        )
-
         context_carta = {
             "encontro": encontro,
             "projeto": projeto,
@@ -1060,6 +1049,17 @@ def mensagem_convite_encontro(encontro, atualizada=False, excluida=False, enviar
         }
 
         mensagem = render_message("Convite Mentoria", context_carta, urlize=False)
+
+        calendar_invite = _calendar_invite_encontro(
+            encontro=encontro,
+            subject=subject,
+            recipient_list=recipient_list,
+            mensagem=mensagem,
+            atualizada=atualizada,
+            excluida=excluida,
+            organizer_email=organizer_email,
+            organizer_name=organizer_name,
+        )
 
         email(subject, recipient_list, mensagem, calendar_invite=calendar_invite, reply_to=reply_to)
         if calendar_invite:
