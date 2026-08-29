@@ -1328,7 +1328,7 @@ class Encontro(models.Model):
     location = models.CharField(blank=True, max_length=280,
                                 help_text="sala em que vai ocorrer a dinâmica")
 
-    link = models.CharField(max_length=512, blank=True, null=True, on_delete=models.SET_NULL,
+    link = models.CharField(max_length=512, blank=True, null=True,
                                 help_text="Link para video-conferência se houver")
     
     startDate = models.DateTimeField(default=datetime.datetime.now,
