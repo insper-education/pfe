@@ -1916,6 +1916,7 @@ def dinamicas_criar(request, data=None):
             vezes = form.cleaned_data.get("vezes", 1)
             intervalo = form.cleaned_data.get("intervalo", 0)
             local = form.cleaned_data.get("local")
+            link = form.cleaned_data.get("link")
             tematica = form.cleaned_data.get("tematica")
             projeto = form.cleaned_data.get("projeto")
             facilitador = form.cleaned_data.get("facilitador")
@@ -1931,6 +1932,8 @@ def dinamicas_criar(request, data=None):
                     encontro.tematica = tematica
                 if local:
                     encontro.location = local
+                if link:
+                    encontro.link = link
                 if projeto:
                     encontro.projeto = projeto
                 if facilitador:
@@ -2026,6 +2029,7 @@ def dinamicas_editar(request, primarykey=None):
             encontro.startDate = form.cleaned_data["inicio"]
             encontro.endDate = form.cleaned_data["fim"]
             encontro.location = form.cleaned_data.get("local")
+            encontro.link = form.cleaned_data.get("link")
             encontro.tematica = form.cleaned_data.get("tematica")
             encontro.projeto = form.cleaned_data.get("projeto")
             encontro.facilitador = form.cleaned_data.get("facilitador")
@@ -2114,7 +2118,8 @@ def dinamicas_editar_edicao(request, edicao):
 
         encontros = puxa_encontros(edicao)
         for encontro in encontros:
-            encontro.location = request.POST.get("local")
+            encontro.location = request.POST.get("local", "")
+            encontro.link = request.POST.get("link", "")
             encontro.tematica = request.POST.get("tematica")
             facilitador_id = request.POST.get("facilitador")
             if facilitador_id:
