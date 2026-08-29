@@ -10,6 +10,13 @@ import datetime
 import dateutil.parser
 import logging
 
+from urllib.parse import urlparse
+
+from google.oauth2.credentials import Credentials
+from google.auth.transport.requests import Request
+from googleapiclient.discovery import build
+import uuid as _uuid
+
 from django.conf import settings
 from django.db.models import Q
 from django.db.models.functions import Lower
@@ -44,20 +51,67 @@ from users.support import adianta_semestre, ordena_nomes
 
 logger = logging.getLogger("django")  # Para marcar mensagens de log
 
+GOOGLE_SCOPES = [
+    "https://www.googleapis.com/auth/calendar",
+    "https://www.googleapis.com/auth/meetings.space.settings",
+]
 
-def criar_reuniao_meet(subject, start_dt, end_dt, description=""):
+
+def configurar_meet_como_aberto(creds, join_url):
+    """Configura um Google Meet para permitir entrada sem aprovação."""
+    meeting_code = urlparse(join_url).path.strip("/")
+    if not meeting_code:
+        raise ValueError(f"Link do Google Meet inválido: {join_url}")
+
+    meet_service = build(
+        "meet",
+        "v2",
+        credentials=creds,
+        cache_discovery=False,
+    )
+
+    # O GET aceita o código amigável (abc-defg-hij) e devolve o nome
+    # canônico do espaço, que é necessário para realizar o PATCH.
+    space = meet_service.spaces().get(
+        name=f"spaces/{meeting_code}",
+    ).execute()
+
+    updated_space = meet_service.spaces().patch(
+        name=space["name"],
+        updateMask="config.accessType",
+        body={
+            "config": {
+                "accessType": "OPEN",
+            },
+        },
+    ).execute()
+
+    access_type = updated_space.get("config", {}).get("accessType")
+    if access_type != "OPEN":
+        raise RuntimeError(
+            f"O Google Meet não confirmou acesso OPEN: {access_type}"
+        )
+
+    logger.info(
+        "Google Meet %s configurado com acesso OPEN.",
+        join_url,
+    )
+
+    return updated_space
+
+
+def criar_reuniao_meet(subject, start_dt, end_dt, description="", recipient_list=None):
     """Cria evento no Google Calendar com Meet e retorna (join_url, event_id). Retorna (None, None) se falhar."""
+
     try:
-        from google.oauth2.credentials import Credentials
-        from google.auth.transport.requests import Request
-        from googleapiclient.discovery import build
-        import uuid as _uuid
+        recipient_list = recipient_list or []
 
         if not all([
             getattr(settings, "GOOGLE_CLIENT_ID", None),
             getattr(settings, "GOOGLE_CLIENT_SECRET", None),
             getattr(settings, "GOOGLE_REFRESH_TOKEN", None),
         ]):
+            logger.error("Credenciais do Google Calendar/Meet não configuradas.")
             return None, None
 
         creds = Credentials(
@@ -66,16 +120,24 @@ def criar_reuniao_meet(subject, start_dt, end_dt, description=""):
             token_uri="https://oauth2.googleapis.com/token",
             client_id=settings.GOOGLE_CLIENT_ID,
             client_secret=settings.GOOGLE_CLIENT_SECRET,
-            scopes=["https://www.googleapis.com/auth/calendar"],
+            scopes=GOOGLE_SCOPES,
         )
         creds.refresh(Request())
 
-        service = build("calendar", "v3", credentials=creds)
+        #service = build("calendar", "v3", credentials=creds)
+        calendar_service = build(
+            "calendar",
+            "v3",
+            credentials=creds,
+            cache_discovery=False,
+        )
+
         event = {
             "summary": subject,
             "description": description,
             "start": {"dateTime": start_dt.isoformat(), "timeZone": "America/Sao_Paulo"},
             "end":   {"dateTime": end_dt.isoformat(),   "timeZone": "America/Sao_Paulo"},
+            "attendees": [{"email": email} for email in set(recipient_list) if email],
             "conferenceData": {
                 "createRequest": {
                     "requestId": str(_uuid.uuid4()),
@@ -83,7 +145,7 @@ def criar_reuniao_meet(subject, start_dt, end_dt, description=""):
                 }
             },
         }
-        created = service.events().insert(
+        created = calendar_service.events().insert(
             calendarId="primary",
             body=event,
             conferenceDataVersion=1,
@@ -91,6 +153,24 @@ def criar_reuniao_meet(subject, start_dt, end_dt, description=""):
 
         entry_points = created.get("conferenceData", {}).get("entryPoints", [])
         join_url = next((ep["uri"] for ep in entry_points if ep.get("entryPointType") == "video"), None)
+
+        if not join_url:
+            logger.error(
+                "Evento %s foi criado, mas o Google não retornou o link do Meet.",
+                created.get("id"),
+            )
+            return None, created.get("id")
+
+        try:
+            configurar_meet_como_aberto(creds, join_url)
+        except Exception:
+            # O evento já existe. Não retornamos None para evitar que uma nova
+            # tentativa crie outro evento duplicado.
+            logger.exception(
+                "Meet criado, mas não foi possível configurar acesso OPEN: %s",
+                join_url,
+            )
+
         return join_url, created.get("id")
     except Exception as exc:
         logger.error("Erro ao criar reunião Google Meet: %s", exc)
@@ -1034,7 +1114,7 @@ def mensagem_convite_encontro(encontro, atualizada=False, excluida=False, enviar
         if not excluida and not encontro.link:
             end_ref = encontro.endDate or (encontro.startDate + datetime.timedelta(hours=1) if encontro.startDate else None)  # define data de término como 1 hora após início se não houver fim definido
             if encontro.startDate and end_ref:
-                join_url, _ = criar_reuniao_meet(subject, encontro.startDate, end_ref)
+                join_url, _ = criar_reuniao_meet(subject, encontro.startDate, end_ref, recipient_list=recipient_list)
                 if join_url:
                     encontro.link = join_url
                     encontro.save(update_fields=["link"])
