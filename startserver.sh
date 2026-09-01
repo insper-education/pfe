@@ -27,12 +27,20 @@ MANAGE="$PROJECT_PATH/manage.py"
 echo "Ativando o virtual environment..."
 source "$VENV_PATH/bin/activate"
 
-# Descomente se precisar iniciar o PostgreSQL
-# echo "Iniciando o PostgreSQL..."
-# sudo systemctl start postgresql.service
-# sudo systemctl enable postgresql.service
+echo "Iniciando o PostgreSQL..."
+if ! pg_lsclusters | grep -q "10.*main.*online"; then
+    sudo pg_ctlcluster 10 main start
+fi
+
+echo "Aguardando o PostgreSQL aceitar conexões..."
+for i in $(seq 1 30); do
+    pg_isready -q && break
+    sleep 1
+done
+pg_isready || { echo "PostgreSQL não respondeu a tempo. Abortando."; exit 1; }
 
 echo "Preparando os arquivos de log..."
+mkdir -p "$LOG_FOLDER"
 touch "$DJANGO_LOG" "$CELERY_WORKER_LOG" "$CELERY_BEAT_LOG"
 
 sudo chown -R $DJANGO_USER:www-data "$LOG_FOLDER"
