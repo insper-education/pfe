@@ -73,7 +73,7 @@ def remove_old_backups():
     backup_dir = settings.BACKUP_FOLDER
 
     now = time.time()
-    cutoff = now - days * 86400  # 60 days in seconds
+    cutoff = now - days * 86400  # days in seconds
 
     if not os.path.isdir(backup_dir):
         msg = f"Diretório de Backup: {backup_dir}, não existe."
