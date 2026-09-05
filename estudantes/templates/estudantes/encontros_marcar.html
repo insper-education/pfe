@@ -114,12 +114,12 @@
                         {{e.facilitador.get_full_name}}</div>{% endif %}
                       {% if e.location %}
                         <div class="bot_tag">
-                          Local:
-                          {% if e.url_location %}
-                            {% lng "Vídeo-conferência" "Video-conference" %}
-                          {% else %}
-                            {{e.location}}
-                          {% endif %}
+                          Local: {{e.location}}
+                        </div>
+                      {% endif %}
+                      {% if e.link %}
+                        <div class="bot_tag">
+                          Link: <a href="{{e.link}}" target="_blank" rel="noopener noreferrer">{{e.link}}</a>
                         </div>
                       {% endif %}
                       {% if e.projeto and e.projeto == projeto %}

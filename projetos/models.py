@@ -1327,6 +1327,9 @@ class Encontro(models.Model):
 
     location = models.CharField(blank=True, max_length=280,
                                 help_text="sala em que vai ocorrer a dinâmica")
+
+    link = models.CharField(max_length=512, blank=True, null=True,
+                                help_text="Link para video-conferência se houver")
     
     startDate = models.DateTimeField(default=datetime.datetime.now,
                                      help_text="Inicio da Dinâmica")
@@ -1361,11 +1364,11 @@ class Encontro(models.Model):
         return self.endDate.strftime("%H:%M")
     hora_fim.short_description = "Hora Fim"
 
-    def url_location(self):
-        """Checa se link."""
-        if self.location[:4] == "http":
-            return True
-        return False
+    # def url_location(self):
+    #     """Checa se link."""
+    #     if self.location[:4] == "http":
+    #         return True
+    #     return False
     
     def periodo(self):
         configuracao = get_object_or_404(Configuracao)

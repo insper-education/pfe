@@ -10,6 +10,13 @@ import datetime
 import dateutil.parser
 import logging
 
+from urllib.parse import urlparse
+
+from google.oauth2.credentials import Credentials
+from google.auth.transport.requests import AuthorizedSession, Request
+from googleapiclient.discovery import build
+import uuid as _uuid
+
 from django.conf import settings
 from django.db.models import Q
 from django.db.models.functions import Lower
@@ -32,7 +39,8 @@ from estudantes.models import Pares
 
 from projetos.messages import email, render_message
 from projetos.models import Organizacao, Projeto, Banca, Encontro
-from projetos.models import ObjetivosDeAprendizagem, Avaliacao2, Observacao
+#from projetos.models import ObjetivosDeAprendizagem
+from projetos.models import Avaliacao2, Observacao
 from projetos.models import Avaliacao_Velha, Observacao_Velha
 from projetos.models import Configuracao, Documento, Evento
 from projetos.support2 import busca_relatos
@@ -42,6 +50,147 @@ from users.support import adianta_semestre, ordena_nomes
 
 
 logger = logging.getLogger("django")  # Para marcar mensagens de log
+
+GOOGLE_SCOPES = [
+    "https://www.googleapis.com/auth/calendar",
+    "https://www.googleapis.com/auth/meetings.space.settings",
+]
+
+def configurar_meet_como_aberto(creds, join_url):
+    """Configura um Google Meet para permitir entrada sem aprovação."""
+    meeting_code = urlparse(join_url).path.strip("/")
+    if not meeting_code:
+        raise ValueError(f"Link do Google Meet inválido: {join_url}")
+
+    # O GET aceita o código amigável (abc-defg-hij) e devolve o nome
+    # canônico do espaço, que é necessário para realizar o PATCH.
+    with AuthorizedSession(creds) as session:
+        response = session.get(
+            f"https://meet.googleapis.com/v2/spaces/{meeting_code}",
+            timeout=30,
+        )
+        response.raise_for_status()
+        space = response.json()
+
+        response = session.patch(
+            f"https://meet.googleapis.com/v2/{space['name']}",
+            params={"updateMask": "config.accessType"},
+            json={
+                "config": {
+                    "accessType": "OPEN",
+                },
+            },
+            timeout=30,
+        )
+        response.raise_for_status()
+        updated_space = response.json()
+
+    access_type = updated_space.get("config", {}).get("accessType")
+    if access_type != "OPEN":
+        raise RuntimeError(
+            f"O Google Meet não confirmou acesso OPEN: {access_type}"
+        )
+
+    logger.info(
+        "Google Meet %s configurado com acesso OPEN.",
+        join_url,
+    )
+
+    return updated_space
+
+
+def criar_reuniao_meet(subject, start_dt, end_dt, description="", recipient_list=None):
+    """Cria evento no Google Calendar com Meet e retorna (join_url, event_id). Retorna (None, None) se falhar."""
+
+    try:
+        recipient_list = recipient_list or []
+
+        if not all([
+            getattr(settings, "GOOGLE_CLIENT_ID", None),
+            getattr(settings, "GOOGLE_CLIENT_SECRET", None),
+            getattr(settings, "GOOGLE_REFRESH_TOKEN", None),
+        ]):
+            logger.error("Credenciais do Google Calendar/Meet não configuradas.")
+            return None, None
+
+        creds = Credentials(
+            token=None,
+            refresh_token=settings.GOOGLE_REFRESH_TOKEN,
+            token_uri="https://oauth2.googleapis.com/token",
+            client_id=settings.GOOGLE_CLIENT_ID,
+            client_secret=settings.GOOGLE_CLIENT_SECRET,
+            scopes=GOOGLE_SCOPES,
+        )
+        creds.refresh(Request())
+
+        #service = build("calendar", "v3", credentials=creds)
+        calendar_service = build(
+            "calendar",
+            "v3",
+            credentials=creds,
+            cache_discovery=False,
+        )
+
+        primary_calendar = calendar_service.calendars().get(
+            calendarId="primary",
+        ).execute()
+
+        logger.info(
+            "Calendário Google autenticado: id=%s, resumo=%s",
+            primary_calendar.get("id"),
+            primary_calendar.get("summary"),
+        )
+
+        event = {
+            "summary": subject,
+            "description": description,
+            "start": {"dateTime": start_dt.isoformat(), "timeZone": "America/Sao_Paulo"},
+            "end":   {"dateTime": end_dt.isoformat(),   "timeZone": "America/Sao_Paulo"},
+            "attendees": [{"email": email} for email in set(recipient_list) if email],
+            "conferenceData": {
+                "createRequest": {
+                    "requestId": str(_uuid.uuid4()),
+                    "conferenceSolutionKey": {"type": "hangoutsMeet"},
+                }
+            },
+        }
+        created = calendar_service.events().insert(
+            calendarId=settings.GOOGLE_CALENDAR_ID,
+            body=event,
+            conferenceDataVersion=1,
+        ).execute()
+
+        logger.info(
+            "Evento Google criado: id=%s, organizer=%s, htmlLink=%s",
+            created.get("id"),
+            created.get("organizer", {}).get("email"),
+            created.get("htmlLink"),
+        )
+
+        entry_points = created.get("conferenceData", {}).get("entryPoints", [])
+        join_url = next((ep["uri"] for ep in entry_points if ep.get("entryPointType") == "video"), None)
+
+        if not join_url:
+            logger.error(
+                "Evento %s foi criado, mas o Google não retornou o link do Meet.",
+                created.get("id"),
+            )
+            return None, created.get("id")
+
+        try:
+            configurar_meet_como_aberto(creds, join_url)
+        except Exception:
+            # O evento já existe. Não retornamos None para evitar que uma nova
+            # tentativa crie outro evento duplicado.
+            logger.exception(
+                "Meet criado, mas não foi possível configurar acesso OPEN: %s",
+                join_url,
+            )
+
+        return join_url, created.get("id")
+    except Exception as exc:
+        logger.error("Erro ao criar reunião Google Meet: %s", exc)
+        return None, None
 
 
 def _ics_escape(text):
@@ -221,9 +370,9 @@ def _calendar_invite_encontro(encontro, subject, recipient_list, mensagem, atual
     else:
         descricao_linhas = [f"Mentoria de Projeto"]
 
-    # if encontro.link:
-    #     descricao_linhas.append("")
-    #     descricao_linhas.append(f"Link: {encontro.link}")
+    if encontro.link:
+        descricao_linhas.append("")
+        descricao_linhas.append(f"Link: {encontro.link}")
 
     if projeto and projeto.orientador and projeto.orientador.user:
         descricao_linhas.append("")
@@ -278,12 +427,9 @@ def _calendar_invite_encontro(encontro, subject, recipient_list, mensagem, atual
         )
 
     location_parts = []
-    # if encontro.location:
-    #     location_parts.append(encontro.location)
-    # if encontro.link:
-    #     location_parts.append(encontro.link)
-    # location = " | ".join(location_parts) if location_parts else "A definir"
-    location = ""
+    if encontro.link:
+        location_parts.append(encontro.link)
+    location = " | ".join(location_parts) if location_parts else ""
 
     lines = [
         "BEGIN:VCALENDAR",
@@ -947,11 +1093,11 @@ def mensagem_edicao_banca(banca, atualizada=False, excluida=False, enviar=False)
 
 def mensagem_convite_encontro(encontro, atualizada=False, excluida=False, enviar=False):
 
-    subject = "Capstone | Mentoria - " + encontro.tematica.nome + " "
-    if excluida:
-        subject += " - Cancelada"
-    else:
-        subject += " - Atualizada" if atualizada else "Agendada"
+    configuracao = get_object_or_404(Configuracao)
+
+    tema = encontro.tematica.nome if encontro.tematica else "Encontro"
+    status = "Cancelada" if excluida else "Atualizada" if atualizada else "Agendada"
+    subject = f"Capstone | Mentoria - {tema} - {status}"
 
     projeto = encontro.get_projeto()
     if projeto:
@@ -963,32 +1109,42 @@ def mensagem_convite_encontro(encontro, atualizada=False, excluida=False, enviar
     recipient_list = []
     if encontro.facilitador and encontro.facilitador.email:
         recipient_list.append(encontro.facilitador.email)
-
-    configuracao = get_object_or_404(Configuracao)
-    # recipient_list.extend(alocacao.aluno.user.email for alocacao in projeto.alocacao_set.all())
+    if projeto and projeto.alocacao_set.exists():
+        recipient_list.extend(alocacao.aluno.user.email for alocacao in projeto.alocacao_set.all())
     if configuracao.coordenacao:
         recipient_list.append(configuracao.coordenacao.user.email)
     # if configuracao.operacao:
     #     recipient_list.append(configuracao.operacao.email)
-
-    context_carta = {
-        "encontro": encontro,
-        "atualizada": atualizada,
-        "excluida": excluida,
-        "enviar": enviar,
-        "link": link,
-    }
-
-    mensagem = render_message("Convite Mentoria", context_carta, urlize=False)
 
     if enviar:
         reply_to = None
         organizer_email = None
         organizer_name = None
         if projeto and projeto.orientador and projeto.orientador.user and projeto.orientador.user.email:
-            organizer_email = projeto.orientador.user.email
-            organizer_name = projeto.orientador.user.get_full_name()
+            # organizer_email = encontro.facilitador.email
+            # organizer_name = encontro.facilitador.get_full_name()
+            organizer_email = "pfeinsper@gmail.com"
+            organizer_name = "Capstone Insper"
             reply_to = [organizer_email]
+
+        if not excluida and not encontro.link:
+            end_ref = encontro.endDate or (encontro.startDate + datetime.timedelta(hours=1) if encontro.startDate else None)  # define data de término como 1 hora após início se não houver fim definido
+            if encontro.startDate and end_ref:
+                join_url, _ = criar_reuniao_meet(subject, encontro.startDate, end_ref, recipient_list=recipient_list)
+                if join_url:
+                    encontro.link = join_url
+                    encontro.save(update_fields=["link"])
+
+        context_carta = {
+            "encontro": encontro,
+            "projeto": projeto,
+            "atualizada": atualizada,
+            "excluida": excluida,
+            "enviar": enviar,
+            "link": link,
+        }
+
+        mensagem = render_message("Convite Mentoria", context_carta, urlize=False)
 
         calendar_invite = _calendar_invite_encontro(
             encontro=encontro,
@@ -1000,6 +1156,7 @@ def mensagem_convite_encontro(encontro, atualizada=False, excluida=False, enviar
             organizer_email=organizer_email,
             organizer_name=organizer_name,
         )
+
         email(subject, recipient_list, mensagem, calendar_invite=calendar_invite, reply_to=reply_to)
         if calendar_invite:
             encontro.calendar_uid = calendar_invite.get("uid")

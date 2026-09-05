@@ -38,18 +38,26 @@ smmap==5.0.0  # para mapear arquivos grandes na memória
 
 # HTTP e web
 requests==2.32.3  # requisições HTTP
-urllib3==2.3.0  # manipulação de URLs
+urllib3==1.26.20  # manipulação de URLs
 
 # Character encoding
 charset_normalizer==3.4.1  # normalização de caracteres
 idna==3.7  # conversão entre nomes de domínio internacionalizados e ASCII
 webencodings==0.5.1  # algoritmos de codificação de caracteres
-chardet==3.0.4  # detecção de codificação de caracteres
+chardet==5.0.0  # detecção de codificação de caracteres
 
 # Segurança
 certifi==2025.1.31  # certificados SSL
 django-ratelimit==3.0.1  # limitar número de requisições a views
 qrcode==7.3.1  # geração de códigos QR
+
+# Google
+google-auth==2.22.0  # biblioteca para autenticação com Google APIs
+google-api-core==2.8.2  # biblioteca para comunicação com Google APIs
+google-api-python-client==2.52.0  # biblioteca para comunicação com Google APIs
+google-auth-httplib2==0.2.0  # biblioteca para autenticação com Google APIs
+google-auth-oauthlib==1.2.2  # biblioteca para autenticação com Google APIs
+googleapis-common-protos==1.56.3  # biblioteca para comunicação com Google APIs
 
 # Outros
 bleach==4.1.0  # Para limpar o HTML
@@ -60,3 +68,10 @@ pyparsing==3.1.4  # manipulação de expressões regulares
 six==1.13.0  # compatibilidade com Python 2
 typing_extensions==4.1.1  # extensões para o módulo typing
 django-log-viewer==1.1.8  # visualização de logs do Django
+setuptools-rust==1.1.2  # para compilar pacotes Python com código Rust
+semantic_version==2.10.0  # manipulação de versões semânticas
+oauthlib==3.2.2  # biblioteca para OAuth
+requests-oauthlib==2.0.0  # biblioteca para OAuth com requests
+uritemplate==4.1.1  # biblioteca para manipulação de URIs
+httplib2==0.31.2  # biblioteca para requisições HTTP
+cachetools==4.2.4  # biblioteca para cache
