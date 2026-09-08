@@ -25,11 +25,15 @@
           <td>
             <ul>
             {% for composicao in composicoes %}
-              <li><span style="display: inline-block; width: 30em;">{{composicao.exame}}
+              <li><span style="display: inline-block; width: 34em;">{{composicao.exame}}
                 ({% lng_d composicao.data_inicial " até" " to" %}
                 {% if composicao.data_final%}
                   {% lng_d composicao.data_final %}{% else %}{% lng "o momento" "currently" %}{% endif %}):</span>
-                
+                <span style="display: inline-block; width: 6em;">
+                  {% if composicao.exame.grupo %}[{% lng "Grupo" "Group" %}]
+                  {% else %}[{% lng "Individual" "Individual" %}]
+                  {% endif %}
+                </span>
                 <span style="display: inline-block; width: 34em;">
                   <b id="m{{ano}}{{semestre}}{{forloop.counter0}}" style="display: inline-block; width: 4em; text-align:right;"></b>
                   <script> peso_tmp = 0; </script>
