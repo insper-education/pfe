@@ -11,6 +11,8 @@ from django.contrib import admin
 
 from .models import *
 
+from projetos.support_admin import dup_entrada
+
 
 @admin.register(Relato)
 class RelatoAdmin(admin.ModelAdmin):
@@ -22,6 +24,8 @@ class RelatoAdmin(admin.ModelAdmin):
     search_fields = ["alocacao__aluno__user__first_name",
                      "alocacao__aluno__user__last_name",
                      "alocacao__aluno__user__username",]
+    actions = [dup_entrada]
+    
 
 @admin.register(Pares)
 class ParesAdmin(admin.ModelAdmin):
