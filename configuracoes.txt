@@ -42,6 +42,13 @@ dropdb pfe
 createdb pfe 
 psql -U pfe -h localhost < backup.sql
 
+# Backup dos arquivos psql.bin
+set PGPASSWORD=XXXXXXX
+dropdb -U pfe -h 127.0.0.1 pfe
+createdb -U pfe -h 127.0.0.1 pfe
+pg_restore --dbname=pfe --host=127.0.0.1 --port=5432 --username=pfe --no-password "d:\projects\backups\default-ip-172-31-91-71-2026-09-08-003000.psql.bin"
+
+
 # Backup pelo Django (para windows soh consegui assim)
 PUXAR (servidor)> python manage.py dumpdata --natural-primary --natural-foreign > dump.json
 SUBIR (cliente)> python manage.py flush --no-input

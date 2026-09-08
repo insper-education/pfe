@@ -66,7 +66,7 @@
   {% include "projetos/includes/bloco_site_pasta_proj.html" with projeto=projeto professor_view=True %}
   <hr>
 
-  <form method="post"> {% csrf_token %}  
+  <form method="post" id="form_equipe"> {% csrf_token %}  
 
     <div style="max-width: 560px;">
       <div style="margin-bottom: 6px;">
@@ -126,5 +126,16 @@
     
   </form>
 
+  <script>
+    document.getElementById("form_equipe").addEventListener("submit", function (evento) {
+      var lingua_atual = localStorage.getItem("lingua");
+      var mensagem = (lingua_atual === "en")
+        ? "Warning: any removed student who has allocation data (reports, meetings, evaluations, etc.) will lose that data. If a student is already allocated to another project this semester, their allocation will be moved to this project. Continue?"
+        : "Atenção: os estudantes removidos que já possuam dados de alocação (relatos, reuniões, avaliações, etc.) irão perder esses dados. Caso um estudante já esteja alocado em outro projeto neste semestre, sua alocação será movida para este projeto. Deseja continuar?";
+      if (!confirm(mensagem)) {
+        evento.preventDefault();
+      }
+    });
+  </script>
 
 {% endblock %}

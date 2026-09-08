@@ -1240,7 +1240,7 @@ def reuniao(request, reuniao_id_g=None):  # Id da reunião para editar, None par
                 "anexo": doc_url,
             }
             message = render_message("Abono de Faltas", context_email)
-
+            print(message)
             email(subject, recipient_list, message)
             
         
@@ -2496,9 +2496,15 @@ def editar_projeto(request, primarykey):
         # Aloca os estudantes que não estavam alocados
         for estudante_user_id in estudantes_user_ids:
             if not Alocacao.objects.filter(projeto=projeto, aluno__user__id=estudante_user_id).exists():
-                estudante = get_object_or_404(Aluno, user__id=estudante_user_id)
-                alocacao = Alocacao(aluno=estudante, projeto=projeto)
-                alocacao.save()
+                alocacao_antiga = Alocacao.objects.filter(aluno__user__id=estudante_user_id, projeto__ano=projeto.ano, projeto__semestre=projeto.semestre).first()
+                # Se o estudante já estava alocado em outro projeto no mesmo semestre, realoca para o projeto atual
+                if alocacao_antiga:
+                    alocacao_antiga.projeto = projeto
+                    alocacao_antiga.save()
+                else:
+                    estudante = get_object_or_404(Aluno, user__id=estudante_user_id)
+                    alocacao = Alocacao(aluno=estudante, projeto=projeto)
+                    alocacao.save()
 
         # Define projeto com time misto (estudantes de outras instituições)
         projeto.time_misto = "time_misto" in request.POST
