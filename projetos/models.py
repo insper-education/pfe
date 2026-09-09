@@ -1347,6 +1347,13 @@ class Encontro(models.Model):
     observacoes_estudantes = models.TextField(max_length=5000, null=True, blank=True,
                                    help_text="Observações a serem compartilhadas com os estudantes do projeto")
 
+    anexo_estudantes = models.ForeignKey("projetos.Documento", null=True, blank=True, on_delete=models.SET_NULL,
+                                         related_name="anexo_estudantes",
+                                         help_text="Anexo a ser compartilhado com os estudantes do projeto")
+
+    anexo_orientador = models.ForeignKey("projetos.Documento", null=True, blank=True, on_delete=models.SET_NULL,
+                                         related_name="anexo_orientador",
+                                         help_text="Anexo a ser compartilhado com o orientador do projeto")
 
     participantes = models.ManyToManyField("users.PFEUser", verbose_name="Participantes", blank=True, help_text="Participantes do encontro", through="EncontroParticipante")
 

@@ -77,6 +77,24 @@ class EncontroFeedbackForm(forms.Form):
         required=False,
         label="Observações para o Orientador"
     )
+    anexo_estudantes = forms.FileField(
+        required=False,
+        label="Anexo para Estudantes",
+        widget=forms.ClearableFileInput(attrs={
+            "id": "anexo_estudantes",
+            "style": "font-size: 0.8em; margin: 5px;",
+            "accept": "text/plain,application/pdf,application/zip,application/x-zip,application/x-zip-compressed,.zip,.rar,.7zip,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.presentationml.presentation,image/*,video/mp4,video/x-m4v,video/webm,video/x-matroska,video/*,.mkv",
+        })
+    )
+    anexo_orientador = forms.FileField(
+        required=False,
+        label="Anexo para Orientador",
+        widget=forms.ClearableFileInput(attrs={
+            "id": "anexo_orientador",
+            "style": "font-size: 0.8em; margin: 5px;",
+            "accept": "text/plain,application/pdf,application/zip,application/x-zip,application/x-zip-compressed,.zip,.rar,.7zip,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.presentationml.presentation,image/*,video/mp4,video/x-m4v,video/webm,video/x-matroska,video/*,.mkv",
+        })
+    )
 
     def clean(self):
         cleaned = super().clean()

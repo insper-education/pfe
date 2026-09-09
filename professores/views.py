@@ -507,7 +507,7 @@ def encontro_feedback(request, pk):
     envolvidos = recupera_envolvidos(encontro.projeto, encontro=encontro, filtro=['E'])
 
     if request.method == "POST":
-        form = EncontroFeedbackForm(request.POST)
+        form = EncontroFeedbackForm(request.POST, request.FILES)
         if not form.is_valid():
             context = {
                 "titulo": {"pt": "Feedback de Mentoria", "en": "Mentoring Feedback"},
@@ -521,6 +521,25 @@ def encontro_feedback(request, pk):
         # Salva as observações
         encontro.observacoes_estudantes = form.cleaned_data.get("observacoes_estudantes", "")
         encontro.observacoes_orientador = form.cleaned_data.get("observacoes_orientador", "")
+
+        if form.cleaned_data.get("anexo_estudantes"):
+            documento = cria_material_documento(request, "anexo_estudantes", sigla="AME", confidencial=True,
+                                                projeto=encontro.projeto, usuario=request.user,
+                                                prefix="anot_ment_"+str(request.user.first_name)+"_")
+            if documento:
+                documento.anotacao = encontro.tematica.nome + " - Anotações de Mentoria - " + encontro.projeto.get_titulo_org()
+                documento.save()
+                encontro.anexo_estudantes = documento
+
+        if form.cleaned_data.get("anexo_orientador"):
+            documento = cria_material_documento(request, "anexo_orientador", sigla="AMO", confidencial=True,
+                                                projeto=encontro.projeto, usuario=request.user,
+                                                prefix="anot_ment_"+str(request.user.first_name)+"_")
+            if documento:
+                documento.anotacao = encontro.tematica.nome + " - Anotações de Mentoria - " + encontro.projeto.get_titulo_org()
+                documento.save()
+                encontro.anexo_orientador = documento
+
         encontro.save()
 
         participantes = anota_participacao(request.POST, encontro=encontro)
@@ -539,10 +558,12 @@ def encontro_feedback(request, pk):
             "encontro": encontro,
             "participantes": participantes,
             "configuracao": configuracao,
+            "request": request,
         }
 
         mensagem = render_message("Anotações de Mentoria", context_email)
         email(subject, recipient_list, mensagem)
+        print(mensagem)
 
         if request.user.is_authenticated:
             return redirect("dinamicas_lista")

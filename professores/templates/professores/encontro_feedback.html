@@ -144,6 +144,29 @@
           {% if form.observacoes_estudantes.errors %}
             <div class="alert alert-danger mt-2 mb-0">{{ form.observacoes_estudantes.errors }}</div>
           {% endif %}
+          
+          <div style="background: #eefdfe; border: 1.5px dashed #1976d2; border-radius: 7px; padding: 2px 7px; margin-top: 1px; margin-bottom: 4px; display: flex; align-items: center; gap: 2px;">
+            <span style="font-size: 1.0em; color: #1976d2; margin: 5px;">
+              <i class="fas fa-paperclip" aria-hidden="true"></i>
+            </span>
+            <div style="flex: 1;">
+              <label for="{{ form.anexo_estudantes.id_for_label }}" style="font-size: 0.88em; color: #1976d2;">
+                {% lng "Você pode anexar um arquivo para passar para os alunos (opcional)" "You can attach a file to share with the students (optional)" %}
+              </label>
+              {{ form.anexo_estudantes }}
+              {% if encontro.anexo_estudantes %}
+                <div style="font-size: 0.8em; margin-bottom: 4px; line-height: 1.0;">
+                  <input type="hidden" id="documento_estudantes" name="documento_estudantes" value="{{encontro.anexo_estudantes.id}}"/>
+                  Arquivo atual:
+                  <a href="{{request.scheme}}://{{request.get_host}}{{encontro.anexo_estudantes.documento.url}}" target="_blank" rel="noopener noreferrer">{{encontro.anexo_estudantes.filename}} ({{encontro.anexo_estudantes.data}})</a>
+                </div>
+              {% endif %}
+              {% if form.anexo_estudantes.errors %}
+                <div class="alert alert-danger mt-2 mb-0">{{ form.anexo_estudantes.errors }}</div>
+              {% endif %}
+            </div>
+          </div>
+
         </div>
 
         {% comment %} Observações somente para leitura de orientador/coordenador {% endcomment %}
@@ -158,6 +181,29 @@
           {% if form.observacoes_orientador.errors %}
             <div class="alert alert-danger mt-2 mb-0">{{ form.observacoes_orientador.errors }}</div>
           {% endif %}
+
+          <div style="background: #eefdfe; border: 1.5px dashed #1976d2; border-radius: 7px; padding: 2px 7px; margin-top: 1px; margin-bottom: 4px; display: flex; align-items: center; gap: 2px;">
+            <span style="font-size: 1.0em; color: #1976d2; margin: 5px;">
+              <i class="fas fa-paperclip" aria-hidden="true"></i>
+            </span>
+            <div style="flex: 1;">
+              <label for="{{ form.anexo_estudantes.id_for_label }}" style="font-size: 0.88em; color: #1976d2;">
+                {% lng "Você pode anexar um arquivo para passar para o orientador (opcional)" "You can attach a file to share with the advisor (optional)" %}
+              </label>
+              {{ form.anexo_orientador }}
+              {% if encontro.anexo_orientador %}
+                <div style="font-size: 0.8em; margin-bottom: 4px; line-height: 1.0;">
+                  <input type="hidden" id="documento_orientador" name="documento_orientador" value="{{encontro.anexo_orientador.id}}"/>
+                  Arquivo atual:
+                  <a href="{{request.scheme}}://{{request.get_host}}{{encontro.anexo_orientador.documento.url}}" target="_blank" rel="noopener noreferrer">{{encontro.anexo_orientador.filename}} ({{encontro.anexo_orientador.data}})</a>
+                </div>
+              {% endif %}
+              {% if form.anexo_orientador.errors %}
+                <div class="alert alert-danger mt-2 mb-0">{{ form.anexo_orientador.errors }}</div>
+              {% endif %}
+            </div>
+          </div>
+          
         </div>
       </div>
 
