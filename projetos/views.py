@@ -882,13 +882,6 @@ def pedir_recursos(request, primarykey=None):
 
             email(email_subject, email_recipients, email_message, reply_to=[configuracao.tecnico.email])
 
-            print(f"Pedido de recurso criado: {pedido} - Tipo: {tipo} - Projeto: {projeto.proposta.titulo}")
-            print(f"Detalhes do pedido: {pedido.get_detalhes_completos()}")
-            print(f"E-mail enviado para: {', '.join(email_recipients)}")
-            print(f"Assunto do e-mail: {email_subject}")
-            print(f"Conteúdo do e-mail: {email_message}")
-
-
             context = {
                 "area_principal": True,
                 "mensagem": {
@@ -1240,7 +1233,6 @@ def reuniao(request, reuniao_id_g=None):  # Id da reunião para editar, None par
                 "anexo": doc_url,
             }
             message = render_message("Abono de Faltas", context_email)
-            print(message)
             email(subject, recipient_list, message)
             
         
