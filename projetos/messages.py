@@ -316,6 +316,9 @@ def email(subject, recipient_list, message, aviso_automatica=True, delay_seconds
     except Exception as e:
         error_message = "Problema no envio de e-mail, subject=" + subject + ", message=" + message + ", recipient_list=" + str(recipient_list) + ", error=" + str(e)
         logger.error(error_message)
+        return {"sent": 0, "failed": [{"reason": "exception", "error": str(e)}], "invalid": recipient_list, "invalid_reply_to": reply_to}
+
+    return None  # Sucesso, mas não há contagem de envio imediato
 
 
 def create_message(estudante, ano, semestre):

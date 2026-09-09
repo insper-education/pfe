@@ -1180,10 +1180,13 @@ def bancas_criar(request, data=None):
 def agendamento_encontro(request, encontro_id):
     """Cria um agendamento eletrônic de e-mail para uma dinâmica de mentoria."""
     encontro = get_object_or_404(Encontro, pk=encontro_id)
-    mensagem_convite_encontro( encontro=encontro, enviar=True)
-    mensagem = {"pt": "Agendamento de e-mail para mentoria enviado com sucesso!", "en": "Mentorship dynamic e-mail scheduling sent successfully!"}
-    atualizado = True
-    return JsonResponse({"atualizado": atualizado, "mensagem": mensagem})
+    error = mensagem_convite_encontro( encontro=encontro, enviar=True)
+    if error:
+        mensagem = {"pt": "Erro ao enviar agendamento de e-mail para mentoria: "+str(error), "en": "Error sending mentorship dynamic e-mail scheduling: "+str(error)}
+        return render(request, "generic_ml.html", context={"area_principal": True, "mensagem_erro": mensagem_erro})
+    else:
+        mensagem = {"pt": "Agendamento de e-mail para mentoria enviado com sucesso!", "en": "Mentorship dynamic e-mail scheduling sent successfully!"}
+        return render(request, "generic_ml.html", context={"area_principal": True, "mensagem": mensagem})
 
 
 @login_required

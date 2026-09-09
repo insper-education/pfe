@@ -1158,7 +1158,7 @@ def mensagem_convite_encontro(encontro, atualizada=False, excluida=False, enviar
             organizer_name=organizer_name,
         )
 
-        email(subject, recipient_list, mensagem, calendar_invite=calendar_invite, reply_to=reply_to)
+        error = email(subject, recipient_list, mensagem, calendar_invite=calendar_invite, reply_to=reply_to)
         if calendar_invite:
             encontro.calendar_uid = calendar_invite.get("uid")
             encontro.calendar_sequence = calendar_invite.get("sequence", encontro.calendar_sequence)
@@ -1170,6 +1170,9 @@ def mensagem_convite_encontro(encontro, atualizada=False, excluida=False, enviar
                 "calendar_last_method",
                 "calendar_last_sent_at",
             ])
+    
+        return error
+        
 
 
 # Mensagem preparada para o orientador/coordenador
@@ -1177,6 +1180,8 @@ def mensagem_orientador(banca, geral=False):
 
     exame = get_object_or_404(Exame, sigla=banca.sigla)
     composicao = Composicao.objects.filter(exame=exame, data_inicial__lte=banca.startDate).order_by("-data_inicial").first()
+    if not composicao:
+        return None
     objetivos = composicao.pesos.all()
     objetivos_individuais = []
     if not banca.alocacao and banca.sigla == "BI":
