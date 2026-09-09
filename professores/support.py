@@ -146,7 +146,7 @@ def criar_reuniao_meet(subject, start_dt, end_dt, description="", recipient_list
             "description": description,
             "start": {"dateTime": start_dt.isoformat(), "timeZone": "America/Sao_Paulo"},
             "end":   {"dateTime": end_dt.isoformat(),   "timeZone": "America/Sao_Paulo"},
-            "attendees": [{"email": email} for email in set(recipient_list) if email],
+            #"attendees": [{"email": email} for email in set(recipient_list) if email],   # acaba enviando convite em duplicata para essas pessoas, então não vamos enviar convite automático
             "conferenceData": {
                 "createRequest": {
                     "requestId": str(_uuid.uuid4()),
@@ -158,6 +158,7 @@ def criar_reuniao_meet(subject, start_dt, end_dt, description="", recipient_list
             calendarId=settings.GOOGLE_CALENDAR_ID,
             body=event,
             conferenceDataVersion=1,
+            sendUpdates="none",
         ).execute()
 
         logger.info(
