@@ -201,6 +201,26 @@
           </button>
         </div>
       {% endif %}
+    {% elif messages %}
+      <div id="mensagem_aviso" role="status" aria-live="polite" aria-atomic="true">
+        <i class="fas fa-check-circle" aria-hidden="true"></i>
+        {% for message in messages %}
+          {% if "lang-en" in message.tags %}
+            <span lang="en" style="display:none">{{ message }}</span>
+          {% elif "lang-pt" in message.tags %}
+            <span lang="pt">{{ message }}</span>
+          {% else %}
+            <span>{{ message }}</span>
+          {% endif %}
+        {% endfor %}
+      </div>
+      <script>
+        setTimeout(function() {
+          var msg = document.getElementById("mensagem_aviso");
+          if (msg) msg.style.opacity = "0";
+          setTimeout(function() { if (msg) msg.remove(); }, 300);
+        }, 8000);
+      </script>
     {% elif mensagem_alerta_fade %}
       {% if mensagem_alerta_fade.pt or mensagem_alerta_fade.en %}
         <div id="mensagem_aviso" role="alert" aria-live="polite" aria-atomic="true">
@@ -212,7 +232,7 @@
             var msg = document.getElementById("mensagem_aviso");
             if (msg) msg.style.opacity = "0";
             setTimeout(function() { if (msg) msg.remove(); }, 300);
-          }, 5000);
+          }, 8000);
         </script>
       {% endif %}
     {% endif %}

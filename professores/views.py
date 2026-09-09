@@ -16,6 +16,7 @@ from collections import defaultdict
 from urllib.parse import unquote
 
 from django.conf import settings
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required, permission_required
 from django.db import transaction
 from django.db.models import Case, When, Value, F, Func, FloatField, Max, Prefetch, Q
@@ -565,6 +566,9 @@ def encontro_feedback(request, pk):
         email(subject, recipient_list, mensagem)
 
         if request.user.is_authenticated:
+            destinatarios = ", ".join(recipient_list)
+            messages.success(request,"Observações da mentoria enviadas para: " + destinatarios,extra_tags="lang-pt")
+            messages.success(request,"Mentoring notes sent to: " + destinatarios, extra_tags="lang-en")
             return redirect("dinamicas_lista")
         else:
             context = {"mensagem": {"pt": "Observações Enviadas, Obrigado", "en": "Notes Sent, Thank you"}}
