@@ -100,9 +100,11 @@ class EncontroFeedbackForm(forms.Form):
         cleaned = super().clean()
         obs_estudantes = cleaned.get("observacoes_estudantes", "").strip()
         obs_orientador = cleaned.get("observacoes_orientador", "").strip()
-        
-        # Pelo menos um campo deve ser preenchido
-        if not obs_estudantes and not obs_orientador:
-            raise ValidationError("Pelo menos uma observação deve ser preenchida.")
+        anexo_estudantes = cleaned.get("anexo_estudantes")
+        anexo_orientador = cleaned.get("anexo_orientador")
+
+        # Pelo menos uma observação ou um anexo deve ser preenchido
+        if not obs_estudantes and not obs_orientador and not anexo_estudantes and not anexo_orientador:
+            raise ValidationError("Pelo menos uma observação ou um anexo deve ser preenchido.")
         
         return cleaned
