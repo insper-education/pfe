@@ -470,14 +470,20 @@ def pedido_view(request, pedido_id):
         pedido_id = request.POST.get("pedido_id") or pedido_id
         acao = request.POST.get("acao")
         resposta = request.POST.get("resposta", "")
+        anotacoes_internas = request.POST.get("anotacoes_internas", "").strip()
 
         pedido = get_object_or_404(Pedido, id=pedido_id)
         anotacao = ""
+        status_anterior = pedido.status
 
         if acao == "aprovar":
             pedido.status = "aprovado"
         elif acao == "reprovar":
             pedido.status = "reprovado"
+        elif acao == "atualizar_anotacoes":
+            pass
+        else:
+            return JsonResponse({"atualizado": False, "erro": "Ação inválida."}, status=400)
 
         # Atualizar campos específicos do projeto quando aprovado
         projeto = pedido.projeto
@@ -525,16 +531,27 @@ def pedido_view(request, pedido_id):
             
             projeto.save()
         
-        historico_atual = pedido.historico_respostas or ""
-        separador = "\n" if historico_atual else ""
-        pedido.historico_respostas = (
-            f"{historico_atual}{separador}"
-            f"• {request.user.username} [{datetime.datetime.now().strftime('%d/%m %H:%M')}] ({pedido.get_status()}) : {resposta}"
-        )
-        pedido.resposta = resposta
-        pedido.data_resposta = datetime.datetime.now()
-        pedido.respondente = request.user
+        pedido.anotacoes_internas = anotacoes_internas
+
+        if acao in ("aprovar", "reprovar"):
+            historico_atual = pedido.historico_respostas or ""
+            separador = "\n" if historico_atual else ""
+            pedido.historico_respostas = (
+                f"{historico_atual}{separador}"
+                f"• {request.user.username} [{datetime.datetime.now().strftime('%d/%m %H:%M')}] ({pedido.get_status()}) : {resposta}"
+            )
+            pedido.resposta = resposta
+            pedido.data_resposta = datetime.datetime.now()
+            pedido.respondente = request.user
+
         pedido.save()
+
+        if acao == "atualizar_anotacoes":
+            return JsonResponse({
+                "atualizado": True,
+                "pedido_id": pedido.id,
+                "mensagem": "Anotações internas atualizadas com sucesso.",
+            })
 
         email_subject = f"Resposta de Pedido de Recurso: {pedido.tipo.capitalize()} - Projeto {pedido.projeto.proposta.titulo}"
         email_recipients = [request.user.email]
@@ -576,10 +593,14 @@ def pedido_view(request, pedido_id):
 
         email(email_subject, email_recipients, email_message, reply_to=[configuracao.tecnico.email])
 
+        mensagem_retorno = "Pedido atualizado com sucesso."
+        if pedido.status != status_anterior:
+            mensagem_retorno = f"Pedido {pedido.status} com sucesso."
+
         return JsonResponse({
             "atualizado": True,
             "pedido_id": pedido.id,
-            "mensagem": f"Pedido {pedido.status} com sucesso.",
+            "mensagem": mensagem_retorno,
         })
 
     context = {

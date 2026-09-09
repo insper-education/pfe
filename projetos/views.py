@@ -762,9 +762,16 @@ def pedir_recursos(request, primarykey=None):
             projeto = projetos.get(pk=projeto_id)
         
         tipo = request.POST.get("tipo_recurso")
+        tipos_validos = {codigo for codigo, _ in Pedido.TIPO_PEDIDO}
+        if tipo not in tipos_validos:
+            return HttpResponse("Tipo de recurso inválido.", status=400)
+
         dados = {}
+
+        requer_autorizacao = True
         
         if tipo == "github":
+            requer_autorizacao = False
             dados["repo_nome"] = request.POST.get("repo_nome")
             dados["repo_descricao"] = request.POST.get("repo_descricao")
 
@@ -805,6 +812,7 @@ def pedir_recursos(request, primarykey=None):
             dados["rede_justificativa"] = request.POST.get("rede_justificativa")
 
         elif tipo == "overleaf":
+            requer_autorizacao = False
             dados["overleaf_nome"] = request.POST.get("overleaf_nome")
             dados["overleaf_descricao"] = request.POST.get("overleaf_descricao")
             
@@ -856,20 +864,35 @@ def pedir_recursos(request, primarykey=None):
 
             email_subject = f"Pedido de Recurso: {tipo.capitalize()} - Projeto {projeto.proposta.titulo}"
             email_recipients = [request.user.email]
-            email_recipients += [configuracao.coordenacao.user.email]
             email_recipients += [configuracao.tecnico.email]
-            email_recipients += [projeto.orientador.user.email] if projeto.orientador else []
-            for alocacao in Alocacao.objects.filter(projeto=projeto):
+
+            if requer_autorizacao:
+                email_recipients += [projeto.orientador.user.email] if projeto.orientador else []
+                email_recipients += [configuracao.coordenacao.user.email]
+
+            alocacoes_projeto = Alocacao.objects.filter(projeto=projeto)
+
+            for alocacao in alocacoes_projeto:
                 email_recipients.append(alocacao.aluno.user.email)
-            email_message = f"""
-                Orientador{"a" if projeto.orientador.user.genero == 'F' else ""} {projeto.orientador.user.get_full_name() if projeto.orientador else ""},<br><br>
-                &nbsp;&nbsp;&nbsp;&nbsp;Por favor, responda esse e-mail autorizando o pedido de recurso.<br><br>
+
+            if requer_autorizacao:
+                email_message = f"""
+                    Orientador{"a" if projeto.orientador.user.genero == 'F' else ""} {projeto.orientador.user.get_full_name() if projeto.orientador else ""},<br><br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;Por favor, responda esse e-mail autorizando o pedido de recurso.<br><br>
+                """
+            else:
+                email_message = f"""
+                    {configuracao.tecnico.user.get_full_name()},<br><br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;Por favor, processe esse pedido de recurso.<br><br>
+                """
+
+            email_message += f"""
                 &nbsp;&nbsp;&nbsp;&nbsp;Tipo de Recurso: <b>{tipo.capitalize()}</b><br>
                 &nbsp;&nbsp;&nbsp;&nbsp;Projeto: {projeto.proposta.titulo}<br>
                 &nbsp;&nbsp;&nbsp;&nbsp;Estudantes:<br>
                 <div style="margin-left: 20px;">
             """
-            for alocacao in Alocacao.objects.filter(projeto=projeto):
+            for alocacao in alocacoes_projeto:
                 email_message += f"&bull; {alocacao.aluno.user.get_full_name()} &lt;{alocacao.aluno.user.email}&gt;<br>"
             email_message += f"""
                 </div><br>

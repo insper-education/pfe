@@ -27,6 +27,8 @@
   .btn-approve:hover { background: #059669; }
   .btn-reject { background: #ef4444; color: #fff; }
   .btn-reject:hover { background: #dc2626; }
+  .btn-update { background: #0ea5e9; color: #fff; }
+  .btn-update:hover { background: #0284c7; }
 
   .modal-footer-acoes {
     display: flex;
@@ -176,6 +178,11 @@
                   <label style="display: block; margin-bottom: 0.3rem; font-weight: 500; font-size: 0.9rem;">{% lng "Resposta / Justificativa" "Response / Justification" %}</label>
                   <textarea name="resposta" class="form-control form-control-sm" rows="3" style="width: 100%; border-radius: 6px; padding: 0.5rem;" placeholder="Opcionalmente, insira uma resposta..."></textarea>
                 </div>
+
+                <div class="form-group" style="margin-bottom: 1rem;">
+                  <label style="display: block; margin-bottom: 0.3rem; font-weight: 500; font-size: 0.9rem;">{% lng "Anotações Internas" "Internal Notes" %}</label>
+                  <textarea name="anotacoes_internas" class="form-control form-control-sm" rows="3" style="width: 100%; border-radius: 6px; padding: 0.5rem;" placeholder="Ex: Equipamento emprestado no dia DD/MM, aguardando devolução.">{% if pedido.anotacoes_internas %}{{ pedido.anotacoes_internas }}{% endif %}</textarea>
+                </div>
                 
               </div>
           </div>
@@ -277,11 +284,18 @@
                               style="border-radius: 6px; font-size: 0.85rem;"></textarea>
                   </div>
                 {% endif %}
-                
+
                 <div class="troca-decisao">
                   <textarea name="resposta" class="form-control form-control-sm" rows="1" style="flex:1; border-radius: 6px; padding: 0.5rem; font-size: 0.85rem;" placeholder="Nova resposta..."></textarea>
                 </div>
-              
+
+                <div style="margin-bottom: 0.5rem; margin-top: 1rem;">
+                  <strong>{% lng "Anotações Internas" "Internal Notes" %}</strong>
+                </div>
+
+                <div class="form-group" style="margin-bottom: 0.5rem;">
+                  <textarea name="anotacoes_internas" class="form-control form-control-sm" rows="2" style="border-radius: 6px; padding: 0.5rem; font-size: 0.85rem;" placeholder="Anotações internas (somente equipe)">{% if pedido.anotacoes_internas %}{{ pedido.anotacoes_internas }}{% endif %}</textarea>
+                </div>
 
             </div>
         </div>
@@ -292,6 +306,9 @@
   <div class="modal-footer">
     <button type="button" class="btn btn-secondary" data-dismiss="modal">{% lng "Fechar" "Close" %}</button>
     <div class="modal-footer-acoes">
+      <button type="button" class="btn-action btn-update acao-submit" data-acao="atualizar_anotacoes">
+        {% lng "Salvar Anotações" "Save Notes" %}
+      </button>
       {% if pedido.status != 'aprovado' %}
         <button type="button" class="btn-action btn-approve acao-submit" data-acao="aprovar">
           {% lng "Aprovar" "Approve" %}
@@ -318,7 +335,7 @@
       e.preventDefault();
 
       if (!$("#acao_pedido").val()) {
-        alert("Selecione uma ação: Aprovar ou Reprovar.");
+        alert("Selecione uma ação: Salvar Anotações, Aprovar ou Reprovar.");
         return false;
       }
 

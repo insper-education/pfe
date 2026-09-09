@@ -2551,6 +2551,8 @@ class Pedido(models.Model):
     status = models.CharField(max_length=20, choices=STATUS_PEDIDO, default="pendente")
     
     observacoes = models.TextField("Observações", max_length=3000, null=True, blank=True)
+    anotacoes_internas = models.TextField("Anotações Internas", max_length=5000, null=True, blank=True,
+                                          help_text="Anotações internas para acompanhamento do pedido pela equipe responsável.")
     
     resposta = models.TextField("Resposta da Coordenação/Equipe", max_length=3000, null=True, blank=True)
     historico_respostas = models.TextField("Histórico de Respostas", max_length=5000, null=True, blank=True,
