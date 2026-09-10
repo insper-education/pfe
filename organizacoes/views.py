@@ -13,7 +13,7 @@ import logging
 from django.core.exceptions import RequestDataTooBig
 from django.conf import settings
 from django.contrib.auth.decorators import login_required, permission_required
-from django.db import transaction
+from django.db import transaction, IntegrityError
 from django.db.models import Q
 from django.http import HttpResponseNotFound, JsonResponse, HttpResponseBadRequest
 from django.http import HttpResponse
@@ -834,6 +834,46 @@ def todos_usuarios(request):
 @permission_required("users.altera_professor", raise_exception=True)
 def seleciona_conexoes(request):
     """Exibe todas os parceiros de uma organização específica."""
+
+    def get_or_merge_conexao(parceiro, projeto):
+        """Recupera uma conexão única e mescla duplicatas legadas."""
+        conexoes = list(
+            Conexao.objects.select_for_update()
+            .filter(parceiro=parceiro, projeto=projeto)
+            .order_by("id")
+        )
+
+        if not conexoes:
+            try:
+                return Conexao.objects.create(parceiro=parceiro, projeto=projeto)
+            except IntegrityError:
+                # Em concorrência, outra transação pode criar antes desta.
+                return Conexao.objects.select_for_update().get(parceiro=parceiro, projeto=projeto)
+
+        conexao_principal = conexoes[0]
+        if len(conexoes) == 1:
+            return conexao_principal
+
+        for conexao_duplicada in conexoes[1:]:
+            conexao_principal.gestor_responsavel = (
+                conexao_principal.gestor_responsavel or conexao_duplicada.gestor_responsavel
+            )
+            conexao_principal.mentor_tecnico = (
+                conexao_principal.mentor_tecnico or conexao_duplicada.mentor_tecnico
+            )
+            conexao_principal.recursos_humanos = (
+                conexao_principal.recursos_humanos or conexao_duplicada.recursos_humanos
+            )
+            conexao_principal.colaboracao = (
+                conexao_principal.colaboracao or conexao_duplicada.colaboracao
+            )
+            if (not conexao_principal.observacao) and conexao_duplicada.observacao:
+                conexao_principal.observacao = conexao_duplicada.observacao
+
+        conexao_principal.save()
+        Conexao.objects.filter(id__in=[conexao.id for conexao in conexoes[1:]]).delete()
+        return conexao_principal
+
     # Passado o id do projeto
     projeto_id = request.GET.get("projeto", None)
     projeto = get_object_or_404(Projeto, id=projeto_id)
@@ -844,8 +884,7 @@ def seleciona_conexoes(request):
             parceiro_id = request.POST.get("parceiro_id", None)
             parceiro = get_object_or_404(Parceiro, id=parceiro_id)
 
-            conexao, _ = Conexao.objects.get_or_create(parceiro=parceiro,
-                                                                projeto=projeto)
+            conexao = get_or_merge_conexao(parceiro=parceiro, projeto=projeto)
 
             if "gestor_responsavel" == request.POST["tipo"]:
                 conexao.gestor_responsavel = (request.POST["checked"] == "true")
@@ -868,7 +907,7 @@ def seleciona_conexoes(request):
             colaboracao = request.POST.get("colaboracao", None)
             if colaboracao and colaboracao != "":
                 parceiro = Parceiro.objects.get(id=colaboracao)
-                conexao, _ = Conexao.objects.get_or_create(parceiro=parceiro, projeto=projeto)
+                conexao = get_or_merge_conexao(parceiro=parceiro, projeto=projeto)
                 conexao.colaboracao = True
                 conexao.save()
             else:

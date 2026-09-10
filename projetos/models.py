@@ -1838,6 +1838,12 @@ class Conexao(models.Model):
     class Meta:
         verbose_name = "Conexão"
         verbose_name_plural = "Conexões"
+        constraints = [
+            models.UniqueConstraint(
+                fields=["parceiro", "projeto"],
+                name="unique_conexao_parceiro_projeto",
+            )
+        ]
 
 
 class Coorientador(models.Model):
