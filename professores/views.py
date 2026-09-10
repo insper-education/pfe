@@ -1167,7 +1167,7 @@ def bancas_criar(request, data=None):
         mensagem, banca = editar_banca(None, request)
         atualizado = mensagem is None
         if atualizado:
-            mensagem_edicao_banca(banca, enviar=("enviar_mensagem" in request.POST))
+            mensagem_edicao_banca(banca, enviar=("enviar_mensagem" in request.POST), bloquear_interseccao=not request.user.eh_admin)
         return JsonResponse({"atualizado": atualizado, "mensagem": mensagem})
 
     context = _get_bancas_context(request, data=data)
@@ -1201,21 +1201,33 @@ def bancas_editar(request, primarykey=None):
     if request.headers.get("X-Requested-With") == "XMLHttpRequest" and request.method == "POST":
         atualizado = True
         mensagem = ""
-        
+        error = None
+        excluido = "excluir" in request.POST
+        enviar_mensagem = "enviar_mensagem" in request.POST
+
         if "atualizar" in request.POST:
             mensagem, _ = editar_banca(banca, request)
             if mensagem is None:
-                mensagem_edicao_banca(banca, True, enviar=("enviar_mensagem" in request.POST))
+                error = mensagem_edicao_banca(banca, True, enviar=enviar_mensagem, bloquear_interseccao=not request.user.eh_admin)
             else:
                 atualizado = False
-        elif "excluir" in request.POST:
-            mensagem_edicao_banca(banca, True, True, enviar=("enviar_mensagem" in request.POST))
+        elif excluido:
+            error = mensagem_edicao_banca(banca, True, True, enviar=enviar_mensagem, bloquear_interseccao=not request.user.eh_admin)
             if "projeto" in request.POST:
                 banca.delete()
         else:
             return HttpResponse("Atualização não realizada.", status=401)
 
-        return JsonResponse({"atualizado": atualizado, "mensagem": mensagem})
+        confirmacao = None
+        if atualizado:
+            if excluido:
+                confirmacao = {"pt": "Banca excluída com sucesso!", "en": "Examination board deleted successfully!"}
+            elif enviar_mensagem and not error:
+                confirmacao = {"pt": "Banca atualizada e mensagem enviada aos envolvidos!", "en": "Examination board updated and message sent to those involved!"}
+            else:
+                confirmacao = {"pt": "Banca atualizada com sucesso!", "en": "Examination board updated successfully!"}
+
+        return JsonResponse({"atualizado": atualizado, "error": error, "mensagem": mensagem, "confirmacao": confirmacao})
     
     context = _get_bancas_context(request, banca=banca)
     return render(request, "professores/bancas_view.html", context)

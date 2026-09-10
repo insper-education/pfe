@@ -1009,7 +1009,7 @@ def ver_pendencias_professor(user, ano, semestre):
     return context
 
 
-def mensagem_edicao_banca(banca, atualizada=False, excluida=False, enviar=False):
+def mensagem_edicao_banca(banca, atualizada=False, excluida=False, enviar=False, bloquear_interseccao=True):
 
     subject = "Capstone | Banca - " + banca.tipo_evento.nome + " "
     if excluida:
@@ -1022,7 +1022,8 @@ def mensagem_edicao_banca(banca, atualizada=False, excluida=False, enviar=False)
         subject += " - Estudante: " + banca.alocacao.aluno.user.get_full_name()
     subject += " [" + projeto.organizacao.nome + "] " + projeto.get_titulo()
 
-    BLOQUEAR = True
+    # Administradores já podem agendar bancas intersectadas em editar_banca, então não bloqueia o envio aqui.
+    BLOQUEAR = bloquear_interseccao
     configuracao = get_object_or_404(Configuracao)
     interseccao = False
     if not excluida:
@@ -1058,6 +1059,8 @@ def mensagem_edicao_banca(banca, atualizada=False, excluida=False, enviar=False)
 
     mensagem = render_message("Agendamento Banca", context_carta, urlize=False)
 
+    error = None
+
     if enviar:
         reply_to = None
         organizer_email = None
@@ -1077,7 +1080,8 @@ def mensagem_edicao_banca(banca, atualizada=False, excluida=False, enviar=False)
             organizer_email=organizer_email,
             organizer_name=organizer_name,
         )
-        email(subject, recipient_list, mensagem, calendar_invite=calendar_invite, reply_to=reply_to)
+        error = email(subject, recipient_list, mensagem, calendar_invite=calendar_invite, reply_to=reply_to)
+        
         if calendar_invite:
             banca.calendar_uid = calendar_invite.get("uid")
             banca.calendar_sequence = calendar_invite.get("sequence", banca.calendar_sequence)
@@ -1089,6 +1093,8 @@ def mensagem_edicao_banca(banca, atualizada=False, excluida=False, enviar=False)
                 "calendar_last_method",
                 "calendar_last_sent_at",
             ])
+
+    return error
 
 
 

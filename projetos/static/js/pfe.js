@@ -62,3 +62,48 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
 });
+
+// Exibe um aviso de sucesso transitório (usado para confirmar ações feitas via AJAX,
+// já que o django messages framework não é exibido em respostas JSON).
+function mostrarAvisoSucesso(mensagemPt, mensagemEn) {
+    var main = document.getElementById("main-content");
+    if (!main) {
+        return;
+    }
+
+    var antigo = document.getElementById("mensagem_sucesso");
+    if (antigo) {
+        antigo.remove();
+    }
+
+    var div = document.createElement("div");
+    div.id = "mensagem_sucesso";
+    div.setAttribute("role", "status");
+    div.setAttribute("aria-live", "polite");
+    div.setAttribute("aria-atomic", "true");
+    div.innerHTML =
+        '<i class="fas fa-check-circle" aria-hidden="true"></i>' +
+        '<span lang="pt">' + mensagemPt + '</span>' +
+        '<span lang="en">' + mensagemEn + '</span>' +
+        '<button type="button" class="close-alert" aria-label="Fechar aviso">' +
+        '<i class="fas fa-times" aria-hidden="true"></i></button>';
+
+    main.insertBefore(div, main.firstChild);
+
+    if (typeof jQuery !== "undefined") {
+        jQuery("#mensagem_sucesso [lang]").each(function() {
+            jQuery(this).css("display", "none");
+        });
+        var lingua = localStorage.getItem("lingua") === "en" ? "en" : "pt";
+        jQuery("#mensagem_sucesso [lang='" + lingua + "']").css("display", "initial");
+    }
+
+    div.querySelector(".close-alert").addEventListener("click", function() {
+        div.remove();
+    });
+
+    setTimeout(function() {
+        div.style.opacity = "0";
+        setTimeout(function() { div.remove(); }, 300);
+    }, 6000);
+}

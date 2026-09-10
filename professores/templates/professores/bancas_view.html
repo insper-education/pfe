@@ -940,6 +940,9 @@
           $("#submit").hide();
           $("#excluir").hide();
           $("#popup").modal("hide");
+          if (response.confirmacao) {
+            mostrarAvisoSucesso(response.confirmacao.pt, response.confirmacao.en);
+          }
           loadContent( "#atualizar", "{{ root_page_url }}", "#atualizar" );
         } else {
           alert(response.mensagem);
