@@ -177,7 +177,7 @@ def emails_semestre(request):
         data["Estudantes"] = list(estudantes.values_list("user__first_name", "user__last_name", "user__email"))
 
         # Estudantes do semestre do Insper
-        estudantesInsper = Aluno.objects.filter(alocacao__projeto__ano=ano, alocacao__projeto__semestre=semestre, curso2__curso_do_insper=True).select_related("user")
+        estudantesInsper = Aluno.objects.filter(alocacao__projeto__ano=ano, alocacao__projeto__semestre=semestre, externo__isnull=True).select_related("user")
         data["EstudantesInsper"] = list(estudantesInsper.values_list("user__first_name", "user__last_name", "user__email"))
 
         # Estudantes do semestre, mas que não estão alocados
