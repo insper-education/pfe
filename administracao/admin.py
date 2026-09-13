@@ -128,4 +128,11 @@ class EstruturaAdmin(admin.ModelAdmin):
     ordering = ("nome",)
     search_fields = ["nome", "sigla", "descricao", "json",]
     actions = [dup_entrada]
-    
+
+
+@admin.register(TextgraderAccessLog)
+class TextgraderAccessLogAdmin(admin.ModelAdmin):
+    list_display = ('access_id', 'user_id', 'model', 'datetime', 'response_type')
+    search_fields = ('user_id', 'unique_query_id', 'model')
+    list_filter = ('model', 'response_type', 'datetime')
+    ordering = ('-access_id',)
