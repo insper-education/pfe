@@ -66,12 +66,21 @@
   {% include "projetos/includes/bloco_site_pasta_proj.html" with projeto=projeto professor_view=True %}
   <hr>
 
+  <h5 class="mb-3">
+      {% lng "Equipe do Projeto" "Project Team" %}
+      <a href="{% url 'cadastrar_usuario' %}" target="_blank" rel="noopener noreferrer"
+        class="troca_lingua_title"
+        data-toggle="tooltip" title="Cadastrar novo usuário / Register new user"
+        data-title_pt="Cadastrar novo usuário" data-title_en="Register new user"
+        aria-label="Cadastrar novo usuário / Register new user">
+        <i class="fas fa-user-plus fa-sm" aria-hidden="true"></i>
+      </a>
+  </h5>
   <form method="post" id="form_equipe"> {% csrf_token %}  
-
     <div style="max-width: 560px;">
       <div style="margin-bottom: 6px;">
         <label for="orientador" style="width: 6em;">
-          {% lng "Orientador(a):" "Advisor:" %}
+          {% lng "Orientador(a)" "Advisor" %}:
         </label>
         <select class="selectpicker show-tick" name="orientador" id="orientador" title="Selecione orientador do projeto"
          data-live-search="true" data-width="81%" data-size="10">
