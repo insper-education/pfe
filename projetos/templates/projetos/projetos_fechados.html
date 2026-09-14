@@ -228,6 +228,8 @@
                     {% endif %}
                   </p>
                 </div>
+
+                <div class="ml-1 mb-1">{% include "tipo_projeto.html" with com_tipo=True %}</div>
                 
 
               <div class="projblock" style="display: none;">
@@ -265,10 +267,6 @@
                 {% if projeto.proposta.departamento %}
                   <div class="apresentacao_departamento apresentacao linha-concisa mt-1"><b>{% lng "Apresentação do Departamento:" "Department Presentation:" %}</b> <p class="texto-alinhado">{{projeto.proposta.departamento}}</p></div>
                 {% endif %}
-
-                <div class="ml-1 mb-1">
-                  {% include "tipo_projeto.html" with com_tipo=True %}
-                </div>
 
                 <p class="semestre ml-1" style="display: none;">
                   <b>{% lng "Semestre:" "Semester:" %}</b> {{projeto.ano}}.{{projeto.semestre}}
