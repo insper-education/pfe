@@ -8,6 +8,7 @@ Data: 16 de Junho de 2023
 
 import json
 from django.db import models
+from django.contrib.postgres.fields import JSONField
 
 
 class Carta(models.Model):
@@ -201,3 +202,25 @@ class Estrutura(models.Model):
         verbose_name = "Estrutura"
         verbose_name_plural = "Estruturas"
         ordering = ["nome",]
+
+
+
+class TextgraderAccessLog(models.Model):
+    access_id = models.BigAutoField(primary_key=True)
+    user_id = models.TextField()
+    user_input = models.TextField()
+    datetime = models.DateTimeField()
+    llm_time = models.FloatField()
+    response_type = models.TextField()
+    feedback_json = JSONField()
+    prompt_tokens = models.IntegerField()
+    response_tokens = models.IntegerField()
+    model = models.TextField()
+    unique_query_id = models.TextField()
+    query_created_by = models.TextField()
+    reference_query = models.BigIntegerField(null=True, blank=True)
+
+    class Meta:
+        managed = False
+        db_table = 'textgrader"."access_log'
+        ordering = ["-access_id"]
