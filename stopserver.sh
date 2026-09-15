@@ -6,8 +6,16 @@
 
 
 echo "Parando o Celery..."
-sudo pkill -9 -f 'celery worker'
-sudo pkill -9 -f 'celery beat'
+CELERY_PATTERN='/home/ubuntu/pfe/env/bin/celery (worker|beat) -A pfe'
+sudo pkill -TERM -u ubuntu -f "$CELERY_PATTERN" || true
+for _ in $(seq 1 60); do
+    sudo pgrep -u ubuntu -f "$CELERY_PATTERN" >/dev/null || break
+    sleep 1
+done
+if sudo pgrep -u ubuntu -f "$CELERY_PATTERN" >/dev/null; then
+    echo "Celery não encerrou em 60 segundos; forçando."
+    sudo pkill -KILL -u ubuntu -f "$CELERY_PATTERN"
+fi
 
 timeout=30
 elapsed=0

@@ -55,19 +55,17 @@ sudo chmod 664 "$CELERY_BEAT_LOG"
 [ -L "$LOG_FOLDER/apache_error.log" ] || ln -s /var/log/apache2/error.log "$LOG_FOLDER/apache_error.log"
 [ -L "$LOG_FOLDER/apache_access.log" ] || ln -s /var/log/apache2/access.log "$LOG_FOLDER/apache_access.log"
 
-
-echo "Iniciando o Celery Worker..."
-sudo -u $DJANGO_USER $VENV_PATH/bin/celery worker -A pfe -l info >> "$CELERY_WORKER_LOG" 2>&1 &
-echo "Iniciando o Celery Beat..."
-sudo -u $DJANGO_USER $VENV_PATH/bin/celery beat -A pfe -l info >> "$CELERY_BEAT_LOG" 2>&1 &
-#rabbitmqctl purge_queue celery
-
 echo "Preparando o Django..."
 sudo -u $DJANGO_USER python3 "$MANAGE" axes_reset
 sudo -u $DJANGO_USER python3 "$MANAGE" makemigrations
 sudo -u $DJANGO_USER python3 "$MANAGE" migrate
 sudo -u $DJANGO_USER python3 "$MANAGE" collectstatic --no-input
 
+echo "Iniciando o Celery Worker..."
+sudo -u $DJANGO_USER $VENV_PATH/bin/celery worker -A pfe -l info >> "$CELERY_WORKER_LOG" 2>&1 &
+echo "Iniciando o Celery Beat..."
+sudo -u $DJANGO_USER $VENV_PATH/bin/celery beat -A pfe -l info >> "$CELERY_BEAT_LOG" 2>&1 &
+#rabbitmqctl purge_queue celery
 
 echo "Iniciando o servidor Apache..."
 sudo a2enmod headers
