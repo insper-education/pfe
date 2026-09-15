@@ -888,7 +888,7 @@ def pedir_recursos(request, primarykey=None):
 
             email_message += f"""
                 &nbsp;&nbsp;&nbsp;&nbsp;Tipo de Recurso: <b>{tipo.capitalize()}</b><br>
-                &nbsp;&nbsp;&nbsp;&nbsp;Projeto: {projeto.proposta.titulo}<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;Projeto: {projeto.get_titulo_org()}<br>
                 &nbsp;&nbsp;&nbsp;&nbsp;Estudantes:<br>
                 <div style="margin-left: 20px;">
             """
