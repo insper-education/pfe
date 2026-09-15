@@ -882,7 +882,7 @@ def pedir_recursos(request, primarykey=None):
                 """
             else:
                 email_message = f"""
-                    {configuracao.tecnico.user.get_full_name()},<br><br>
+                    {configuracao.tecnico.get_full_name()},<br><br>
                     &nbsp;&nbsp;&nbsp;&nbsp;Por favor, processe esse pedido de recurso.<br><br>
                 """
 
