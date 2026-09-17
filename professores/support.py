@@ -1096,7 +1096,6 @@ def mensagem_edicao_banca(banca, atualizada=False, excluida=False, enviar=False,
     }
 
     mensagem = render_message("Agendamento Banca", context_carta, urlize=False)
-    print(mensagem)
 
     error = None
 
