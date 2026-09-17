@@ -494,8 +494,10 @@ def calcula_interseccao_bancas(banca, startDate, endDate, limite_salas_bancas):
 def editar_banca(banca, request):
     """Edita os valores de uma banca por um request Http."""
 
+    atualizacao = []
+
     if "tipo" not in request.POST or request.POST["tipo"] == "":
-        return "Tipo de banca não informado!", None
+        return "Tipo de banca não informado!", None, atualizacao
     
     if not request.user.eh_admin:  # Caso não Administrador
         # Verifica se a banca não intersecta com outras bancas
@@ -504,61 +506,94 @@ def editar_banca(banca, request):
             endDate = dateutil.parser.parse(request.POST["fim"])
             configuracao = get_object_or_404(Configuracao)
             if calcula_interseccao_bancas(banca, startDate, endDate, configuracao.limite_salas_bancas):
-                return f"Mais de {configuracao.limite_salas_bancas} bancas agendadas para o mesmo horário! Agendamento não realizado.", None
+                return f"Mais de {configuracao.limite_salas_bancas} bancas agendadas para o mesmo horário! Agendamento não realizado.", None, atualizacao
         else:
-            return "Data de início ou fim não informada!", None
+            return "Data de início ou fim não informada!", None, atualizacao
 
     if banca is None:
         banca = Banca()
 
     try:
-        banca.tipo_evento = get_object_or_404(TipoEvento, sigla=request.POST["tipo"])
+        tipo = get_object_or_404(TipoEvento, sigla=request.POST["tipo"])
+        if banca.tipo_evento != tipo:
+            atualizacao += ["Tipo de banca"]
+            banca.tipo_evento = tipo
     except Http404:
-        return "Tipo de evento não encontrado!", None
+        return "Tipo de evento não encontrado!", None, atualizacao
     
     if "projeto" in request.POST and request.POST["projeto"] != "":
         try:
-            banca.projeto = Projeto.objects.get(id=request.POST.get("projeto"))
+            projeto = Projeto.objects.get(id=request.POST.get("projeto"))
+            if banca.projeto != projeto:
+                atualizacao += ["Projeto"]
+                banca.projeto = projeto
         except Projeto.DoesNotExist:
-            return "Projeto não encontrado!", None
+            return "Projeto não encontrado!", None, atualizacao
     
     if "alocacao" in request.POST and request.POST["alocacao"] != "":
         try:
-            banca.alocacao = Alocacao.objects.get(id=request.POST.get("alocacao"))
+            alocacao = Alocacao.objects.get(id=request.POST.get("alocacao"))
+            if banca.alocacao != alocacao:
+                atualizacao += ["Alocação"]
+                banca.alocacao = alocacao
         except Alocacao.DoesNotExist:
-            return "Alocação não encontrada!", None
+            return "Alocação não encontrada!", None, atualizacao
     
     try:
-        banca.startDate = dateutil.parser.parse(request.POST.get("inicio"))
+        startDate = dateutil.parser.parse(request.POST.get("inicio"))
+        if banca.startDate != startDate:
+            atualizacao += ["Data de início"]
+            banca.startDate = startDate
     except (ValueError, OverflowError):
         banca.startDate = None
     try:
-        banca.endDate = dateutil.parser.parse(request.POST.get("fim"))
+        endDate = dateutil.parser.parse(request.POST.get("fim"))
+        if banca.endDate != endDate:
+            atualizacao += ["Data de fim"]
+            banca.endDate = endDate
     except (ValueError, OverflowError):
         banca.endDate = None
 
-    banca.location = request.POST.get("local")
-    banca.link = request.POST.get("link")
+    try:
+        location = request.POST.get("local")
+        if banca.location != location:
+            atualizacao += ["Local"]
+            banca.location = location
+        link = request.POST.get("link")
+        if banca.link != link:
+            atualizacao += ["Link"]
+            banca.link = link
+    except Exception as e:
+        return f"Erro ao atualizar local ou link: {e}", None, atualizacao
 
     try:
         if "membro1" in request.POST and request.POST["membro1"].isnumeric():
-            banca.membro1 = PFEUser.objects.get(id=int(request.POST["membro1"]))
+            membro1 = PFEUser.objects.get(id=int(request.POST["membro1"]))
+            if banca.membro1 != membro1:
+                atualizacao += ["1º Membro da banca"]
+                banca.membro1 = membro1
         else:
             banca.membro1 = None
         if "membro2" in request.POST and request.POST["membro2"].isnumeric():
-            banca.membro2 = PFEUser.objects.get(id=int(request.POST["membro2"]))
+            membro2 = PFEUser.objects.get(id=int(request.POST["membro2"]))
+            if banca.membro2 != membro2:
+                atualizacao += ["2º Membro da banca"]
+                banca.membro2 = membro2
         else:
             banca.membro2 = None
         if "membro3" in request.POST and request.POST["membro3"].isnumeric():
-            banca.membro3 = PFEUser.objects.get(id=int(request.POST["membro3"]))
+            membro3 = PFEUser.objects.get(id=int(request.POST["membro3"]))
+            if banca.membro3 != membro3:
+                atualizacao += ["3º Membro da banca"]
+                banca.membro3 = membro3
         else:
             banca.membro3 = None
     except PFEUser.DoesNotExist:
-        return "Membro da banca não encontrado!", None
+        return "Membro da banca não encontrado!", None, atualizacao
 
     banca.save()
 
-    return None, banca
+    return None, banca, atualizacao
 
 
 def coleta_membros_banca(banca=None):
@@ -1009,7 +1044,8 @@ def ver_pendencias_professor(user, ano, semestre):
     return context
 
 
-def mensagem_edicao_banca(banca, atualizada=False, excluida=False, enviar=False, bloquear_interseccao=True):
+
+def mensagem_edicao_banca(banca, atualizada=False, excluida=False, enviar=False, bloquear_interseccao=True, request=None, atualizacao=None):
 
     subject = "Capstone | Banca - " + banca.tipo_evento.nome + " "
     if excluida:
@@ -1054,10 +1090,13 @@ def mensagem_edicao_banca(banca, atualizada=False, excluida=False, enviar=False,
         "link": settings.SERVER + reverse("projeto_infos", args=[projeto.id]),
         "interseccao": interseccao,
         "orientador": projeto.orientador,
-        "membros": membros
+        "membros": membros,
+        "request": request,
+        "atualizacao": atualizacao,
     }
 
     mensagem = render_message("Agendamento Banca", context_carta, urlize=False)
+    print(mensagem)
 
     error = None
 

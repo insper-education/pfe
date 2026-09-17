@@ -1164,10 +1164,10 @@ def _get_bancas_context(request, banca=None, data=None):
 def bancas_criar(request, data=None):
     """Cria uma banca de avaliação para o projeto."""
     if request.headers.get("X-Requested-With") == "XMLHttpRequest" and request.method == "POST":
-        mensagem, banca = editar_banca(None, request)
+        mensagem, banca, _ = editar_banca(None, request)
         atualizado = mensagem is None
         if atualizado:
-            mensagem_edicao_banca(banca, enviar=("enviar_mensagem" in request.POST), bloquear_interseccao=not request.user.eh_admin)
+            mensagem_edicao_banca(banca, enviar=("enviar_mensagem" in request.POST), bloquear_interseccao=not request.user.eh_admin, request=request)
         return JsonResponse({"atualizado": atualizado, "mensagem": mensagem})
 
     context = _get_bancas_context(request, data=data)
@@ -1204,15 +1204,16 @@ def bancas_editar(request, primarykey=None):
         error = None
         excluido = "excluir" in request.POST
         enviar_mensagem = "enviar_mensagem" in request.POST
+        atualizacao = []
 
         if "atualizar" in request.POST:
-            mensagem, _ = editar_banca(banca, request)
+            mensagem, _, atualizacao = editar_banca(banca, request)
             if mensagem is None:
-                error = mensagem_edicao_banca(banca, True, enviar=enviar_mensagem, bloquear_interseccao=not request.user.eh_admin)
+                error = mensagem_edicao_banca(banca, atualizada=atualizado, enviar=enviar_mensagem, bloquear_interseccao=not request.user.eh_admin, request=request, atualizacao=atualizacao)
             else:
                 atualizado = False
         elif excluido:
-            error = mensagem_edicao_banca(banca, True, True, enviar=enviar_mensagem, bloquear_interseccao=not request.user.eh_admin)
+            error = mensagem_edicao_banca(banca, atualizada=atualizado, excluida=True, enviar=enviar_mensagem, bloquear_interseccao=not request.user.eh_admin, request=request)
             if "projeto" in request.POST:
                 banca.delete()
         else:
