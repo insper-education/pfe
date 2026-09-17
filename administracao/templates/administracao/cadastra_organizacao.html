@@ -123,8 +123,18 @@
         </div>
 
         <div class="campo-com-label">
-          <label for="origem">{% lng "Origem da abertura de contato" "Source of contact opening" %}</label>
+          <label for="origem">{% lng "Origem da abertura de contato" "Source of contact opening" %}:</label>
           <textarea class="form-control" id="origem" name="origem" rows="2" maxlength="{% max_length organizacao "origem" %}">{% if organizacao.origem %}{% slice_max_length organizacao "origem" %}{% elif proposta.origem %}{% slice_other_max_length proposta.origem organizacao "origem" %}{% endif %}</textarea>
+        </div>
+
+        <div class="campo-com-label">
+          <label for="chamar">{% lng "Chamar organização para enviar propostas de projetos" "Call organization to submit project proposals" %}</label>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="chamar" name="chamar" value="True" {% if organizacao.chamar %}checked{% endif %}>
+            <label class="form-check-label" for="chamar">
+              {% lng "Sim, chamar a organização para enviar propostas de projetos." "Yes, call the organization to submit project proposals." %}
+            </label>
+          </div>
         </div>
 
       </div>

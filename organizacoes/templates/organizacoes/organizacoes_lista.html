@@ -24,6 +24,14 @@
         <a href="{% url 'organizacao_completo' organizacao.id %}">{{organizacao.nome}}</a>
       </th>
 
+      <td class="text-center">
+        {% if organizacao.chamar %}
+          <span class="badge badge-success">{% lng "Sim" "Yes" %}</span>
+        {% else %}
+          <span class="badge badge-secondary">{% lng "Não" "No" %}</span>
+        {% endif %}
+      </td>
+
       <td>
         {% if organizacao.segmento %}
           <span class="texto-longo">{% lng organizacao.segmento.nome organizacao.segmento.nome_en %} </span>

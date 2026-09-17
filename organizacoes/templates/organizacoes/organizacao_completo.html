@@ -577,6 +577,21 @@
     </div>
   </section>
 
+  <div tooltip="true" data-html="true" animation="true" class="mb-3" data-toggle="tooltip" data-placement="top"
+       title="empresas que não retornam ou deram problemas não devem ser chamadas novamente">
+    {% if organizacao.chamar %}
+      <p>
+        <i class="far fa-check-square" aria-hidden="true"></i>
+        {% lng "Esta organização será lembrada para enviar propostas de projetos." "This organization will be reminded to submit project proposals." %}
+      </p>
+    {% else %}
+      <p>
+        <i class="far fa-square" aria-hidden="true"></i>
+        {% lng "Esta organização não precisa ser lembrada para enviar propostas de projetos." "This organization should not be reminded to submit project proposals." %}
+      </p>
+    {% endif %}
+  </div>
+
   <hr>
   <span class="d-flex align-items-center justify-content-between flex-wrap">
     <h3>

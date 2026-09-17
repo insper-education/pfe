@@ -82,6 +82,8 @@ class Organizacao(models.Model):
     segmento = models.ForeignKey("organizacoes.Segmento", null=True, blank=True,
                                  on_delete=models.SET_NULL, help_text="Segmento da organização parceira")
 
+    chamar = models.BooleanField("Chamar", default=True, help_text="Se a organização deve ser relembrada para enviar propostas de projetos") # empresas que não retornam ou deram problemas não devem ser chamadas novamente
+
     class Meta:
         ordering = [ "nome",]
         verbose_name = "Organização"

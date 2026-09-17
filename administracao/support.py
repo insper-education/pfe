@@ -116,6 +116,7 @@ def registra_organizacao(request, organizacao=None):
     organizacao.endereco = request.POST.get("endereco", None)
     organizacao.informacoes = request.POST.get("informacoes", None)
     organizacao.origem = request.POST.get("origem", None)
+    organizacao.chamar = request.POST.get("chamar", "False") == "True"
 
     segmento = request.POST.get("segmento", None)
     if segmento:
