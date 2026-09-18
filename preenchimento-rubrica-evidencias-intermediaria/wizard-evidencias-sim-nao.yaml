@@ -1,0 +1,46 @@
+schema_version: "1.0"
+rubric:
+  id: execucao_tecnica
+  title: "Avaliação por evidências"
+  description: "Perguntas adaptativas para limitar as menções por objetivo."
+  estimated_time_minutes: 3
+  start_node: exec_testes
+  presentation: conditional_boolean
+  scale:
+    - { id: I, rank: 1, label: "I", descriptor: "Evidências insuficientes." }
+    - { id: D, rank: 2, label: "D", descriptor: "Evidências iniciais." }
+    - { id: C, rank: 3, label: "C", descriptor: "Evidências parciais." }
+    - { id: C_PLUS, rank: 3.5, label: "C+", descriptor: "Transição para B." }
+    - { id: B, rank: 4, label: "B", descriptor: "Evidências consistentes." }
+    - { id: B_PLUS, rank: 4.5, label: "B+", descriptor: "Transição para A." }
+    - { id: A, rank: 5, label: "A", descriptor: "Evidências fortes." }
+    - { id: A_PLUS, rank: 5.5, label: "A+", descriptor: "Sem limite imposto pelo fluxo." }
+  dimensions:
+    - { id: exec, label: "Execução Técnica", weight: 1 }
+    - { id: org, label: "Organização", weight: 1 }
+    - { id: design, label: "Design", weight: 1 }
+    - { id: atitude, label: "Atitude Empreendedora", weight: 1 }
+  nodes:
+    - { id: exec_testes, dimension: exec, objective: "Execução Técnica", type: single_choice, title: "Execução Técnica", question: "O grupo apresentou algum tipo de testes e/ou validações?", required: true, options: [{id: nao, label: "Não", score: 1, maximum_grade: I, next: org_metodologia}, {id: sim, label: "Sim", score: 5, next: exec_prototipo}] }
+    - { id: exec_prototipo, dimension: exec, objective: "Execução Técnica", type: single_choice, title: "Execução Técnica", question: "O projeto possui um protótipo?", required: true, options: [{id: nao, label: "Não", score: 1, maximum_grade: D, next: org_metodologia}, {id: sim, label: "Sim", score: 5, next: exec_documentacao}] }
+    - { id: exec_documentacao, dimension: exec, objective: "Execução Técnica", type: single_choice, title: "Execução Técnica", question: "O projeto possui documentação técnica além da que está no relatório?", required: true, options: [{id: nao, label: "Não", score: 1, maximum_grade: B, next: org_metodologia}, {id: sim, label: "Sim", score: 5, next: org_metodologia}] }
+    - { id: org_metodologia, dimension: org, objective: "Organização", type: single_choice, title: "Organização", question: "O grupo apresenou uma metodologia de trabalho?", required: true, options: [{id: nao, label: "Não", score: 1, maximum_grade: I, next: design_necessidades}, {id: sim, label: "Sim", score: 5, next: org_ferramentas}] }
+    - { id: org_ferramentas, dimension: org, objective: "Organização", type: single_choice, title: "Organização", question: "O grupo utiliza ferramentas de organização de projeto?", required: true, options: [{id: nao, label: "Não", score: 1, maximum_grade: D, next: design_necessidades}, {id: sim, label: "Sim", score: 5, maximum_grade: A_PLUS, next: design_necessidades}] }
+    - { id: design_necessidades, dimension: design, objective: "Design", type: single_choice, title: "Design", question: "O grupo levantou e sabe das necessidades do projeto?", required: true, options: [{id: nao, label: "Não", score: 1, maximum_grade: I, next: atitude_stakeholders}, {id: sim, label: "Sim", score: 5, next: design_viabilidade}] }
+    - { id: design_viabilidade, dimension: design, objective: "Design", type: single_choice, title: "Design", question: "O grupo realizou estudo de viabilidade do projeto?", required: true, options: [{id: nao, label: "Não", score: 1, maximum_grade: D, next: atitude_stakeholders}, {id: sim, label: "Sim", score: 5, next: design_comparativo}] }
+    - { id: design_comparativo, dimension: design, objective: "Design", type: single_choice, title: "Design", question: "O grupo comparou mais de uma solução a fim de decidir a melhor?", required: true, options: [{id: nao, label: "Não", score: 1, maximum_grade: C, next: atitude_stakeholders}, {id: sim, label: "Sim", score: 5, maximum_grade: A_PLUS, next: atitude_stakeholders}] }
+    - { id: atitude_stakeholders, dimension: atitude, objective: "Atitude Empreendedora", type: single_choice, title: "Atitude Empreendedora", question: "Os grupo tem claro os riscos dos projetos e os stakeholders sabem deles?", required: true, options: [{id: nao, label: "Não", score: 1, maximum_grade: I, next: revisao}, {id: sim, label: "Sim", score: 5, next: atitude_riscos}] }
+    - { id: atitude_riscos, dimension: atitude, objective: "Atitude Empreendedora", type: single_choice, title: "Atitude Empreendedora", question: "O grupo possui um plano para gerenciar esses riscos?", required: true, options: [{id: nao, label: "Não", score: 1, maximum_grade: D, next: revisao}, {id: sim, label: "Sim", score: 5, next: atitude_cenarios}] }
+    - { id: atitude_cenarios, dimension: atitude, objective: "Atitude Empreendedora", type: single_choice, title: "Atitude Empreendedora", question: "O grupo apresentou e negociou com o parceiro os riscos?", required: true, options: [{id: nao, label: "Não", score: 1, maximum_grade: C, next: revisao}, {id: sim, label: "Sim", score: 5, maximum_grade: B_PLUS, next: atitude_stakeholders_cientes}] }
+    - { id: atitude_stakeholders_cientes, dimension: atitude, objective: "Atitude Empreendedora", type: single_choice, title: "Atitude Empreendedora", question: "O grupo apresentou diferentes cenários para mitigar os possíveis riscos?", required: true, options: [{id: nao, label: "Não", score: 1, maximum_grade: C, next: revisao}, {id: sim, label: "Sim", score: 5, maximum_grade: A_PLUS, next: revisao}] }
+
+    - { id: revisao, type: review, title: "Concluído" }
+  recommendation:
+    dimension_score: { clamp: [1, 5], rounding: nearest_half }
+    predominant_rule: { aggregate: median }
+    caps: []
+    plus_grades: {}
+    insufficient_evidence: { flag: insufficient_evidence, message: "" }
+  review:
+    actions: []
+    confirmation_text: ""

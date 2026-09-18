@@ -2202,6 +2202,56 @@ class Observacao(models.Model):
         verbose_name_plural = "Observações"
 
 
+class RubricaEvidenciaAvaliacao(models.Model):
+    """Rascunho e auditoria de avaliação assistida por evidências."""
+
+    STATUS_CHOICES = (
+        ("draft", "Rascunho"),
+        ("confirmed", "Confirmada"),
+    )
+
+    banca = models.ForeignKey(Banca, null=True, blank=True, on_delete=models.SET_NULL,
+                              help_text="Banca avaliada pelo fluxo assistido")
+    exame = models.ForeignKey("academica.Exame", null=True, blank=True, on_delete=models.SET_NULL,
+                              help_text="Exame associado à avaliação")
+    projeto = models.ForeignKey(Projeto, null=True, blank=True, on_delete=models.SET_NULL,
+                                help_text="Projeto avaliado")
+    alocacao = models.ForeignKey("users.Alocacao", null=True, blank=True, on_delete=models.SET_NULL,
+                                 help_text="Alocação avaliada, quando aplicável")
+    objetivo = models.ForeignKey(ObjetivosDeAprendizagem, null=True, blank=True, on_delete=models.SET_NULL,
+                                 help_text="Objetivo de aprendizagem associado à rubrica")
+    avaliador = models.ForeignKey("users.PFEUser", null=True, blank=True, on_delete=models.SET_NULL,
+                                  help_text="Professor avaliador")
+
+    rubric_id = models.CharField(max_length=80, help_text="ID da rubrica configurada")
+    schema_version = models.CharField(max_length=32, help_text="Versão do schema da rubrica")
+    config_hash = models.CharField(max_length=64, blank=True, help_text="Hash do arquivo de configuração usado")
+
+    answers_json = models.TextField(default="{}", blank=True, help_text="Respostas selecionadas por nó")
+    path_json = models.TextField(default="[]", blank=True, help_text="Caminho percorrido no fluxo")
+    evidence_json = models.TextField(default="[]", blank=True, help_text="Evidências registradas")
+    dimension_results_json = models.TextField(default="[]", blank=True, help_text="Resultados por dimensão")
+    applied_caps_json = models.TextField(default="[]", blank=True, help_text="Limites aplicados")
+    warnings_json = models.TextField(default="[]", blank=True, help_text="Alertas gerados")
+    rationale_json = models.TextField(default="[]", blank=True, help_text="Racional determinístico da recomendação")
+
+    recommended_grade = models.CharField(max_length=16, blank=True, help_text="Menção recomendada originalmente")
+    final_grade = models.CharField(max_length=16, blank=True, help_text="Menção final escolhida pelo professor")
+    override_reason = models.TextField(blank=True, help_text="Justificativa quando a menção final difere da recomendação")
+    status = models.CharField(max_length=16, choices=STATUS_CHOICES, default="draft")
+    confirmed_at = models.DateTimeField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = "Rubrica por Evidências"
+        verbose_name_plural = "Rubricas por Evidências"
+        ordering = ["-updated_at"]
+
+    def __str__(self):
+        return "{0} > {1} > {2}".format(self.rubric_id, self.projeto, self.avaliador)
+
+
 class Observacao_Velha(models.Model):
     """Quando Observações de banca são refeitas, as antigas vem para essa base de dados."""
 
