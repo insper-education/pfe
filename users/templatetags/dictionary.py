@@ -31,3 +31,14 @@ def has_key(dictionary, key):
 @register.filter
 def to_range(value):
     return range(1, value + 1)
+
+
+@register.filter
+def has_forbidden_grade(allowed_grades, siglas):
+    """Indica se uma faixa contém alguma menção acima do teto orientado."""
+    if not allowed_grades:
+        return False
+    return any(
+        (sigla.get("letra") if isinstance(sigla, dict) else sigla.letra) not in allowed_grades
+        for sigla in siglas
+    )

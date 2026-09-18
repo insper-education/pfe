@@ -37,6 +37,7 @@ urlpatterns = [
     path("bancas_editar/", views.bancas_editar, name="bancas_editar"),
     path("bancas_editar/<int:primarykey>", views.bancas_editar, name="bancas_editar"),
     path("banca/<slug:slug>", views.banca, name="banca"),
+    path("banca_avaliar/<slug:slug>/wizard/", views.rubrica_evidencias, name="rubrica_evidencias"),
     path("banca_avaliar/<slug:slug>", views.banca_avaliar, name="banca_avaliar"),
     path("banca_avaliar/<slug:slug>/<int:documento_id>", views.banca_avaliar, name="banca_avaliar"),
     path("coorientacoes_alocadas/", views.coorientacoes_alocadas, name="coorientacoes_alocadas"),

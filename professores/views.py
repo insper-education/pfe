@@ -11,6 +11,7 @@ import datetime
 import logging
 import requests
 import json
+import unicodedata
 
 from collections import defaultdict
 from urllib.parse import unquote
@@ -50,7 +51,7 @@ from estudantes.models import Relato, Pares, FeedbackPares
 
 from professores.support3 import get_banca_incompleta
 
-from projetos.models import Coorientador, ObjetivosDeAprendizagem, Avaliacao2, Observacao
+from projetos.models import Coorientador, ObjetivosDeAprendizagem, Avaliacao2, Observacao, RubricaEvidenciaAvaliacao
 from projetos.models import Banca, Evento, Encontro, Documento, TematicaEncontro
 from projetos.models import Projeto, Configuracao, Acompanhamento
 from projetos.support4 import get_objetivos_atuais_cache
@@ -62,6 +63,22 @@ from users.models import PFEUser, Professor, Alocacao
 from users.support import get_edicoes
 
 from .forms import DinamicasForm, EncontroFeedbackForm
+from .rubricas_evidencias import (
+    RubricConfigError,
+    calculate_path,
+    calculate_maximum_grade,
+    calculate_maximum_grades,
+    calculate_rubric_recommendation,
+    collect_answer_details,
+    get_nodes,
+    is_node_answer_valid,
+    load_rubric_config,
+    prune_answers_to_path,
+    rubric_id_to_slug,
+    rubric_state_from_json,
+    rubric_state_to_json,
+    update_answer,
+)
 
 
 # Get an instance of a logger
@@ -626,6 +643,331 @@ def encontro_feedback(request, pk):
     return render(request, "professores/encontro_feedback.html", context=context)
 
 
+def _normaliza_busca(texto):
+    texto = unicodedata.normalize("NFKD", texto or "")
+    texto = "".join([char for char in texto if not unicodedata.combining(char)])
+    return texto.lower()
+
+
+def _get_banca_composicao(banca):
+    exame = get_object_or_404(Exame, sigla=banca.sigla)
+    composicao = get_object_or_404(
+        Composicao.objects.filter(exame=exame, data_inicial__lte=banca.startDate).order_by("-data_inicial")
+    )
+    pesos = Peso.objects.filter(composicao=composicao).select_related("objetivo")
+    return exame, composicao, pesos
+
+
+def _find_objetivo_rubrica(pesos, rubric_config):
+    rubric_title = rubric_config["rubric"].get("title", "")
+    rubric_id = rubric_config["rubric"].get("id", "")
+    targets = [_normaliza_busca(rubric_title), _normaliza_busca(rubric_id.replace("_", " "))]
+    for peso in pesos:
+        objetivo = peso.objetivo
+        haystack = _normaliza_busca("{0} {1}".format(objetivo.titulo, objetivo.objetivo))
+        if any(target and target in haystack for target in targets):
+            return objetivo
+    return None
+
+
+def _scale_grade_label(config, grade_id):
+    for item in config["rubric"]["scale"]:
+        if item["id"] == grade_id:
+            return item["label"]
+    return grade_id
+
+
+def _allowed_grade_ids(config, maximum_grade):
+    """Retorna as menções que não ultrapassam o limite configurado."""
+    maximum_rank = next(
+        float(grade["rank"]) for grade in config["rubric"]["scale"] if grade["id"] == maximum_grade
+    )
+    return [
+        grade["id"] for grade in config["rubric"]["scale"]
+        if float(grade["rank"]) <= maximum_rank
+    ]
+
+
+def _rubric_allowed_grades(banca, projeto, exame, avaliador, pesos):
+    """Converte os tetos do wizard em letras permitidas na avaliação da banca."""
+    record = RubricaEvidenciaAvaliacao.objects.filter(
+        banca=banca, projeto=projeto, exame=exame, avaliador=avaliador,
+        rubric_id="execucao_tecnica", status="draft",
+    ).first()
+    if not record:
+        return {}
+    maximum_grades = rubric_state_from_json(record.applied_caps_json, default={})
+    allowed_by_maximum = {
+        "I": ["I"], "D": ["I", "D"], "C": ["I", "D", "C"],
+        "B": ["I", "D", "C", "B"], "A": ["I", "D", "C", "B", "A"],
+        "A_PLUS": ["I", "D", "C", "CX", "B", "BX", "A", "AX"],
+    }
+    result = {}
+    for peso in pesos:
+        maximum = maximum_grades.get(peso.objetivo.titulo)
+        if maximum:
+            result[peso.objetivo.id] = allowed_by_maximum[maximum]
+    return result
+
+
+def _save_rubric_record(record, config, answers):
+    answers = prune_answers_to_path(config, answers)
+    path = calculate_path(config, answers)
+    evidence = [
+        {"question": detail["node"]["question"], "answer": detail["options"][0]["label"]}
+        for detail in collect_answer_details(config, answers)
+    ]
+
+    record.schema_version = config["schema_version"]
+    record.config_hash = config.get("_config_hash", "")
+    record.answers_json = rubric_state_to_json(answers)
+    record.path_json = rubric_state_to_json(path)
+    record.evidence_json = rubric_state_to_json(evidence)
+    record.dimension_results_json = rubric_state_to_json([])
+    record.applied_caps_json = rubric_state_to_json(calculate_maximum_grades(config, answers))
+    record.warnings_json = rubric_state_to_json([])
+    record.rationale_json = rubric_state_to_json([])
+    record.recommended_grade = ""
+    record.final_grade = ""
+    record.override_reason = ""
+    record.status = "draft"
+    record.save()
+
+
+@login_required
+@transaction.atomic
+def rubrica_evidencias(request, slug):
+    """Fluxo configurável de avaliação assistida por evidências."""
+    banca = get_object_or_404(Banca, slug=slug)
+    projeto = banca.get_projeto()
+
+    try:
+        config = load_rubric_config("execucao-tecnica")
+    except RubricConfigError as error:
+        return HttpResponse("<h1>Configuração de rubrica inválida</h1><pre>{0}</pre>".format(error), status=500)
+
+    exame, composicao, pesos = _get_banca_composicao(banca)
+    objetivo = _find_objetivo_rubrica(pesos, config)
+    if not objetivo:
+        return HttpResponseNotFound("<h1>Objetivo de aprendizagem não encontrado para esta rubrica.</h1>")
+
+    record = RubricaEvidenciaAvaliacao.objects.filter(
+        banca=banca,
+        projeto=projeto,
+        alocacao=banca.alocacao,
+        exame=exame,
+        objetivo=objetivo,
+        avaliador=request.user,
+        rubric_id=config["rubric"]["id"],
+        status="draft",
+    ).first()
+    if not record:
+        record = RubricaEvidenciaAvaliacao.objects.create(
+            banca=banca,
+            projeto=projeto,
+            alocacao=banca.alocacao,
+            exame=exame,
+            objetivo=objetivo,
+            avaliador=request.user,
+            rubric_id=config["rubric"]["id"],
+            schema_version=config["schema_version"],
+            config_hash=config.get("_config_hash", ""),
+        )
+
+    answers = rubric_state_from_json(record.answers_json)
+    nodes = get_nodes(config)
+    single_page_sliders = False
+    conditional_boolean = True
+    question_nodes = []
+    validation_error = ""
+
+    if request.method == "GET" and request.GET.get("restart") == "1":
+        answers = {}
+        _save_rubric_record(record, config, answers)
+        return redirect("{0}?intro=1".format(request.path))
+
+    if request.method == "POST":
+        action = request.POST.get("action", "continue")
+        current_node_id = request.POST.get("node_id") or config["rubric"]["start_node"]
+
+        if action == "start":
+            return redirect("{0}?node={1}".format(request.path, config["rubric"]["start_node"]))
+
+        if action == "restart":
+            answers = {}
+            _save_rubric_record(record, config, answers)
+            return redirect("{0}?intro=1".format(request.path))
+
+        if action == "review_suggestion":
+            return redirect("{0}?node={1}&review=full".format(request.path, current_node_id))
+
+        if action == "back":
+            path = calculate_path(config, answers)
+            if current_node_id in path:
+                current_index = path.index(current_node_id)
+                if current_index == 0:
+                    return redirect("{0}?intro=1".format(request.path))
+                return redirect("{0}?node={1}".format(request.path, path[current_index - 1]))
+            return redirect(request.path)
+
+        if action == "submit_all" and single_page_sliders:
+            submitted_answers = {}
+            invalid_nodes = []
+            for node in question_nodes:
+                option_id = request.POST.get("answer_{0}".format(node["id"]))
+                valid_option_ids = {option["id"] for option in node.get("options", [])}
+                if option_id not in valid_option_ids:
+                    invalid_nodes.append(node["title"])
+                else:
+                    submitted_answers[node["id"]] = [option_id]
+            if invalid_nodes:
+                validation_error = "Selecione uma opção válida para todas as afirmações."
+            else:
+                answers = submitted_answers
+                _save_rubric_record(record, config, answers)
+                return redirect("{0}?node=revisao".format(request.path))
+
+        if action in ("continue", "save_draft"):
+            node = nodes.get(current_node_id)
+            selected_ids = request.POST.getlist("option")
+            if node and not is_node_answer_valid(node, selected_ids):
+                validation_error = "Selecione uma alternativa antes de continuar."
+            elif node and node.get("type") != "review":
+                answers = update_answer(config, answers, current_node_id, selected_ids)
+                _save_rubric_record(record, config, answers)
+                if action == "save_draft":
+                    return redirect(request.path)
+                path = calculate_path(config, answers)
+                next_index = path.index(current_node_id) + 1 if current_node_id in path else len(path) - 1
+                next_node_id = path[min(next_index, len(path) - 1)]
+                if conditional_boolean and nodes[next_node_id].get("type") == "review":
+                    return redirect("{0}?avaliador={1}".format(
+                        reverse("banca_avaliar", kwargs={"slug": slug}), request.user.id
+                    ))
+                return redirect("{0}?node={1}".format(request.path, next_node_id))
+
+        if action == "edit_answers":
+            path = calculate_path(config, answers)
+            return redirect("{0}?node={1}".format(request.path, path[0]))
+
+        if action == "save_draft" and nodes.get(current_node_id, {}).get("type") == "review":
+            recommendation = calculate_rubric_recommendation(config, answers)
+            maximum_grade = calculate_maximum_grade(config, answers) if conditional_boolean else recommendation["recommendedGrade"]
+            final_grade = request.POST.get("final_grade") or record.final_grade
+            if final_grade not in _allowed_grade_ids(config, maximum_grade):
+                final_grade = None
+            override_reason = request.POST.get("override_reason", "")
+            _save_rubric_record(record, config, answers, final_grade=final_grade, override_reason=override_reason)
+            return redirect("{0}?node={1}".format(request.path, current_node_id))
+
+        if action == "confirm":
+            recommendation = calculate_rubric_recommendation(config, answers)
+            maximum_grade = calculate_maximum_grade(config, answers) if conditional_boolean else recommendation["recommendedGrade"]
+            final_grade = request.POST.get("final_grade")
+            override_reason = request.POST.get("override_reason", "")
+            if conditional_boolean and final_grade not in _allowed_grade_ids(config, maximum_grade):
+                validation_error = "Escolha uma menção dentro do limite máximo permitido pelas evidências."
+            elif final_grade == "A_PLUS" and not override_reason.strip():
+                validation_error = config["rubric"]["recommendation"].get("plus_grades", {}).get("A_PLUS", {}).get(
+                    "prompt", "Registre a justificativa para confirmar A+."
+                )
+            else:
+                _save_rubric_record(record, config, answers, final_grade=final_grade, override_reason=override_reason, status="confirmed")
+
+                avaliacao = Avaliacao2.objects.filter(
+                    projeto=projeto,
+                    exame=exame,
+                    avaliador=request.user,
+                    alocacao=banca.alocacao,
+                    objetivo=objetivo,
+                ).order_by("-momento").first()
+                if not avaliacao:
+                    avaliacao = Avaliacao2(
+                        projeto=projeto,
+                        exame=exame,
+                        avaliador=request.user,
+                        alocacao=banca.alocacao,
+                        objetivo=objetivo,
+                        primeiro_momento=timezone.now(),
+                    )
+                final_label = _scale_grade_label(config, final_grade)
+                avaliacao.na = False
+                avaliacao.nota = converte_conceito(final_label)
+                try:
+                    avaliacao.peso = pesos.get(objetivo=objetivo).peso
+                except Peso.DoesNotExist:
+                    avaliacao.peso = 0.0
+                avaliacao.momento = timezone.now()
+                avaliacao.save()
+
+                return redirect("{0}?avaliador={1}".format(reverse("banca_avaliar", kwargs={"slug": slug}), request.user.id))
+
+    if request.GET.get("intro") == "1" or (
+        request.method == "GET" and not answers and request.GET.get("node") is None
+    ):
+        mode = "intro"
+        current_node = None
+        path = calculate_path(config, answers)
+    else:
+        path = calculate_path(config, answers)
+        requested_node = request.GET.get("node")
+        current_node = nodes.get(requested_node) if requested_node in path else nodes[path[-1]]
+        if single_page_sliders and current_node.get("type") != "review":
+            mode = "questionnaire"
+        elif current_node.get("type") == "review":
+            mode = "review" if conditional_boolean or request.GET.get("review") == "full" else "summary"
+        else:
+            mode = "card"
+
+    recommendation = calculate_rubric_recommendation(config, answers)
+    answer_details = collect_answer_details(config, answers)
+    selected_answers = answers.get(current_node["id"], []) if current_node else []
+    maximum_grade = calculate_maximum_grade(config, answers) if conditional_boolean else None
+    allowed_grade_ids = _allowed_grade_ids(config, maximum_grade) if maximum_grade else []
+    selected_final_grade = record.final_grade if record.final_grade in allowed_grade_ids or not conditional_boolean else ""
+    if not selected_final_grade and not conditional_boolean:
+        selected_final_grade = recommendation["recommendedGrade"]
+    if validation_error and request.method == "POST" and request.POST.get("final_grade"):
+        selected_final_grade = request.POST.get("final_grade")
+    completed_dimensions = []
+    for detail in answer_details:
+        dimension = detail["node"].get("dimension")
+        if dimension and dimension not in completed_dimensions:
+            completed_dimensions.append(dimension)
+
+    for node in question_nodes:
+        node["selected_answer"] = (answers.get(node["id"]) or [""])[0]
+        node["slider_step"] = 4 if node.get("boolean") else 1
+
+    context = {
+        "titulo": {"pt": config["rubric"].get("title"), "en": config["rubric"].get("title")},
+        "mode": mode,
+        "banca": banca,
+        "projeto": projeto,
+        "composicao": composicao,
+        "objetivo": objetivo,
+        "rubric": config["rubric"],
+        "rubric_slug": rubric_id_to_slug(config["rubric"]["id"]),
+        "current_node": current_node,
+        "question_nodes": question_nodes,
+        "selected_answers": selected_answers,
+        "path": path,
+        "answers": answers,
+        "answer_details": answer_details,
+        "completed_dimensions": completed_dimensions,
+        "recommendation": recommendation,
+        "maximum_grade": maximum_grade,
+        "maximum_grade_label": _scale_grade_label(config, maximum_grade) if maximum_grade else "",
+        "allowed_grade_ids": allowed_grade_ids,
+        "conditional_boolean": conditional_boolean,
+        "final_grade": selected_final_grade,
+        "override_reason": record.override_reason,
+        "validation_error": validation_error,
+        "review_actions": config["rubric"].get("review", {}).get("actions", []),
+    }
+    return render(request, "professores/rubrica_evidencias.html", context=context)
+
+
 @transaction.atomic
 def banca_avaliar(request, slug, documento_id=None):
     """Cria uma tela para preencher avaliações de bancas."""
@@ -710,7 +1052,6 @@ def banca_avaliar(request, slug, documento_id=None):
         if "avaliador" in request.POST:
 
             avaliador = get_object_or_404(PFEUser, pk=int(request.POST["avaliador"]))
-
             # Identifica que uma avaliação/observação já foi realizada anteriormente
             avaliacoes_anteriores = Avaliacao2.objects.filter(projeto=projeto, avaliador=avaliador, exame=exame)
             observacoes_anteriores = Observacao.objects.filter(projeto=projeto, avaliador=avaliador, exame=exame)
@@ -730,9 +1071,10 @@ def banca_avaliar(request, slug, documento_id=None):
             for i, aval in enumerate(avaliacoes):
 
                 pk_objetivo, conceito = request.POST[aval].split('.')
+                objetivo_avaliado = get_object_or_404(ObjetivosDeAprendizagem, pk=pk_objetivo)
                 julgamento[i] = Avaliacao2.objects.create(projeto=projeto, exame=exame, avaliador=avaliador)
                 julgamento[i].alocacao = banca.alocacao  # Caso Probation
-                julgamento[i].objetivo = get_object_or_404(ObjetivosDeAprendizagem, pk=pk_objetivo)
+                julgamento[i].objetivo = objetivo_avaliado
 
                 if conceito == "NA":
                     julgamento[i].na = True
@@ -993,6 +1335,9 @@ def banca_avaliar(request, slug, documento_id=None):
             "testar": testar,
             "implementar": implementar,
             "evento": evento,
+            "rubric_allowed_grades": {} if request.GET.get("sem_indicacoes_wizard") == "1" else _rubric_allowed_grades(
+                banca, projeto, exame, request.user, pesos
+            ),
         }
 
         if mensagem:
