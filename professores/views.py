@@ -901,6 +901,15 @@ def rubrica_evidencias(request, slug):
 
                 return redirect("{0}?avaliador={1}".format(reverse("banca_avaliar", kwargs={"slug": slug}), request.user.id))
 
+    if request.method == "GET" and request.GET.get("node") is None and answers:
+        completed_path = calculate_path(config, answers)
+        if completed_path:
+            tail_node = nodes.get(completed_path[-1], {})
+            if tail_node.get("type") == "review":
+                return redirect("{0}?avaliador={1}".format(
+                    reverse("banca_avaliar", kwargs={"slug": slug}), request.user.id
+                ))
+
     if request.GET.get("intro") == "1" or (
         request.method == "GET" and not answers and request.GET.get("node") is None
     ):
