@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block content %}
+<style>
+  .evidence-wizard { max-width: 760px; margin: 2rem auto; }
+  .wizard-panel { background: #fff; border: 1px solid #dfe5e8; border-radius: 14px; padding: 2rem; box-shadow: 0 6px 20px rgba(0,0,0,.05); }
+  .wizard-note { background: #edf6ff; border-radius: 8px; padding: 1rem; margin: 1.25rem 0; }
+  .wizard-options, .answer-options { display: flex; gap: 1rem; }
+  .wizard-option, .answer-option { position: relative; overflow: hidden; display: flex; flex: 1; align-items: center; justify-content: center; min-height: 88px; border: 2px solid #cbd5db; border-radius: 10px; color: #263238; background: #fff; text-align: center; cursor: pointer; text-decoration: none; }
+  .wizard-option.primary { border-color: #218838; background: #28a745; color: #fff; }
+  .wizard-option small { display: block; margin-top: .4rem; }
+  .answer-option input { position: absolute; opacity: 0; }
+  .answer-option > span { position: relative; z-index: 1; font-size: 1.3rem; font-weight: 600; }
+  .answer-option.selected.sim { --progress-color: #a8d9b5; border-color: #6eaa7d; }
+  .answer-option.selected.nao { --progress-color: #efb8b8; border-color: #c98282; }
+  .answer-option.selected { background: linear-gradient(to right, var(--progress-color) var(--progress, 100%), #fff var(--progress, 100%)); }
+  .wizard-kicker { color: #607d8b; font-size: .9rem; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; }
+  .wizard-question { font-size: 1.45rem; line-height: 1.35; margin: .75rem 0 2rem; }
+  @media (max-width: 575px) { .wizard-options, .answer-options { flex-direction: column; } .evidence-wizard { margin: 1rem; } }
+</style>
+
+<main class="evidence-wizard">
+  {% if mode == "intro" %}
+    <section class="wizard-panel">
+      <p>Algumas perguntas serão realizadas para facilitar o preenchimento das notas da banca. Você pode usar as evidências apresentadas pela equipe como apoio ou seguir diretamente para a avaliação.</p>
+      <div class="wizard-note">O sistema indica níveis das rubricas com base nas evidências, mas não sugere notas. A decisão final permanece com o professor.</div>
+      <form method="post" class="wizard-options">
+        {% csrf_token %}
+        <button class="wizard-option primary" type="submit" name="action" value="start"><span><strong>INICIAR</strong><small>Leva menos de 3 minutos.</small></span></button>
+        <a class="wizard-option" href="{% url 'banca_avaliar' banca.slug %}?avaliador={{ request.user.id }}&sem_indicacoes_wizard=1"><span><strong>Ir direto para as notas</strong><small>Preencher a avaliação sem indicações do wizard.</small></span></a>
+      </form>
+    </section>
+  {% else %}
+    <form method="post" class="wizard-panel" id="evidence-form">
+      {% csrf_token %}
+      <input type="hidden" name="node_id" value="{{ current_node.id }}">
+      <h1 class="wizard-question">{{ current_node.question }}</h1>
+      {% if current_node.help_text %}<p>{{ current_node.help_text }}</p>{% endif %}
+      {% if validation_error %}<p class="text-danger">{{ validation_error }}</p>{% endif %}
+      <div class="answer-options">
+        {% for option in current_node.options %}
+          <label class="answer-option {{ option.id }}{% if option.id in selected_answers %} selected{% endif %}" data-option="{{ option.id }}">
+            <input type="radio" name="option" value="{{ option.id }}" {% if option.id in selected_answers %}checked{% endif %}>
+            <span>{{ option.label }}</span>
+          </label>
+        {% endfor %}
+      </div>
+      <button class="btn btn-link mt-4 p-0" type="submit" name="action" value="back">Voltar</button>
+    </form>
+  {% endif %}
+</main>
+
+<script>
+var tempo_de_espera = 1000; // 1 segundos
+function bindEvidenceWizard() {
+  var form = document.getElementById("evidence-form"), timer, animationFrame, chosen;
+  if (!form) return;
+  function resetProgress() {
+    cancelAnimationFrame(animationFrame);
+    form.querySelectorAll(".answer-option").forEach(function (item) {
+      item.style.removeProperty("--progress");
+    });
+  }
+  function startProgress(option) {
+    resetProgress();
+    option.style.setProperty("--progress", "0%");
+    var startedAt = performance.now();
+    function fill(now) {
+      option.style.setProperty("--progress", Math.min(100, ((now - startedAt) / tempo_de_espera) * 100) + "%");
+      if (now - startedAt < tempo_de_espera) animationFrame = requestAnimationFrame(fill);
+    }
+    animationFrame = requestAnimationFrame(fill);
+  }
+  form.querySelectorAll(".answer-option").forEach(function (label) {
+    label.addEventListener("click", function (event) {
+      event.preventDefault();
+      var input = label.querySelector("input");
+      if (chosen === label) { clearTimeout(timer); resetProgress(); chosen = null; label.classList.remove("selected"); input.checked = false; return; }
+      clearTimeout(timer);
+      form.querySelectorAll(".answer-option").forEach(function (item) { item.classList.remove("selected"); });
+      input.checked = true; label.classList.add("selected"); chosen = label;
+      startProgress(label);
+      timer = setTimeout(function () {
+        var data = new FormData(form); data.append("action", "continue");
+        fetch(form.getAttribute("action") || window.location.href, { method: "POST", body: data, credentials: "same-origin" })
+          .then(function (response) { return response.text().then(function (html) { return { html: html, url: response.url }; }); })
+          .then(function (result) {
+            var documentResult = new DOMParser().parseFromString(result.html, "text/html");
+            var next = documentResult.querySelector(".evidence-wizard");
+            if (!next) { window.location.assign(result.url); return; }
+            document.querySelector(".evidence-wizard").replaceWith(next);
+            window.history.pushState({}, "", result.url);
+            bindEvidenceWizard();
+          });
+      }, tempo_de_espera);
+    });
+  });
+}
+document.addEventListener("DOMContentLoaded", bindEvidenceWizard);
+</script>
+{% endblock %}

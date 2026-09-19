@@ -5,6 +5,7 @@
 {% endcomment %}
 
 {% load linguas %}
+{% load dictionary %}
 
 <style>
   .tab_avaliacao th, .tab_avaliacao td {
@@ -25,6 +26,67 @@
     margin: 12px 0;
   }
 
+  .rubric-objective-card {
+    border: 1px solid #d8dee8;
+    border-radius: 8px;
+    background: #fff;
+    padding: 12px;
+    margin: 10px 0 14px;
+  }
+
+  .rubric-objective-card > b {
+    color: inherit;
+  }
+
+  .rubric-objective-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 6px;
+  }
+
+  .rubric-objective-title {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  .rubric-objective-card .tab_avaliacao th {
+    background: #f8fafc;
+    border-color: lightgray;
+  }
+
+  .rubric-objective-card .tab_avaliacao td {
+    background: #fff;
+  }
+
+  .rubric-limit-warning {
+    border: 3px solid #dc2626 !important;
+    background: #fff1f2 !important;
+  }
+
+  .rubric-limit-legend {
+    border: 1px solid #fecaca;
+    border-left: 4px solid #dc2626;
+    border-radius: 6px;
+    background: #fff1f2;
+    color: #991b1b;
+    margin: 8px 0 12px;
+    padding: 9px 12px;
+  }
+
+  .rubric-wizard-entry {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    border: 1px solid #d8dee8;
+    border-radius: 6px;
+    background: #f8fafc;
+    margin: 8px 0 12px;
+    padding: 9px 12px;
+  }
+
 </style>
 
 {% if pesos %}
@@ -34,9 +96,26 @@
       <u>{% lng "Objetivos de Aprendizagem" "Learning Goals" %}
       {% if tipo_de_avaliacao %}{{ tipo_de_avaliacao }}{% endif %}</u>
     </div>
+    {% if rubric_allowed_grades and not individual %}
+      <div class="rubric-limit-legend">
+        Os conceitos marcados com borda vermelha merecem atenção ao serem escolhidos, pois detectamos falta de evidência nas respostas às perguntas realizadas anteriormente.
+        Caso queira refazer as respostas, <a href="{% url 'rubrica_evidencias' banca.slug %}?restart=1">entre aqui</a>.
+      </div>
+    {% elif not individual and banca %}
+      <div class="rubric-wizard-entry">
+        <span>Use as evidências apresentadas para receber indicações de nível antes de preencher as notas.</span>
+        <a class="btn btn-sm btn-outline-secondary" href="{% url 'rubrica_evidencias' banca.slug %}?restart=1">Usar wizard de evidências</a>
+      </div>
+    {% endif %}
     {% for peso in pesos %}
-      <b>{% lng peso.objetivo.titulo peso.objetivo.titulo_en %}</b>:
-      {% lng peso.objetivo.objetivo  peso.objetivo.objetivo_en %}
+      {% with allowed_grades=rubric_allowed_grades|get_value:peso.objetivo.id %}
+      <div class="rubric-objective-card">
+      <div class="rubric-objective-header">
+        <div class="rubric-objective-title">
+          <b>{% lng peso.objetivo.titulo peso.objetivo.titulo_en %}</b>:
+          {% lng peso.objetivo.objetivo  peso.objetivo.objetivo_en %}
+        </div>
+      </div>
       
       <div class="table-responsive mb-1">
       <table style="width:100%;" class="tab_avaliacao">
@@ -44,7 +123,7 @@
         <tr>
           {% for nivel in niveis_objetivos %}
             {% if exame_sigla != nivel.esconde %}  {% comment %} Esconde em certas avaliações {% endcomment %}
-              <th class="nav-side-wrapper th_objetivos {% if bindividual %}bindividual{{bindividual.id}}{% endif %}tabela{{peso.objetivo.id}} {% for s in nivel.siglas %}{% if bindividual %}bindividual{{bindividual.id}}{% endif %}objetivo{{peso.objetivo.id}}{{s.escape}} {% endfor %} {% if atrasado and peso.bloqueio_atraso < nivel.nota %} vermelho_forte{% endif %} {% if nivel.nota > 0 and sem_documentos %} vermelho_forte{% endif %}" 
+              <th class="nav-side-wrapper th_objetivos {% if bindividual %}bindividual{{bindividual.id}}{% endif %}tabela{{peso.objetivo.id}} {% for s in nivel.siglas %}{% if bindividual %}bindividual{{bindividual.id}}{% endif %}objetivo{{peso.objetivo.id}}{{s.escape}} {% endfor %} {% if not individual and allowed_grades|has_forbidden_grade:nivel.siglas %}rubric-limit-warning{% endif %} {% if atrasado and peso.bloqueio_atraso < nivel.nota %} vermelho_forte{% endif %} {% if nivel.nota > 0 and sem_documentos %}vermelho_forte{% endif %}"
               style="width:18%">
                 <div class="nav-side">
                   {% for s in nivel.siglas %}
@@ -135,6 +214,8 @@
       {% endif %}
 
       </div>
+      </div>
+      {% endwith %}
 
       {% if not forloop.last %}
         <hr class="divisor_objetivo">
