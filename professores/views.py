@@ -22,7 +22,7 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.db import transaction
 from django.db.models import Case, When, Value, F, Func, FloatField, Max, Prefetch, Q
 from django.db.models.functions import Lower
-from django.http import HttpResponse, HttpResponseNotFound, JsonResponse
+from django.http import HttpResponse, HttpResponseNotFound, JsonResponse, HttpResponseForbidden
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.utils import timezone
@@ -732,10 +732,17 @@ def _save_rubric_record(record, config, answers):
     record.save()
 
 
-@login_required
-@transaction.atomic
 def rubrica_evidencias(request, slug):
     """Fluxo configurável de avaliação assistida por evidências."""
+
+    if request.user.is_anonymous or not request.user.is_authenticated:
+        resposta = """
+            <h1>É necessário estar logado para página de avaliação por evidências.</h1>
+            Acesso ao Formulário: <a href="{0}">{0}</a>
+        """
+        resposta = resposta.format(request.scheme + "://" + request.get_host() + reverse("banca_avaliar", kwargs={"slug": slug}))
+        return HttpResponseForbidden(resposta)
+
     banca = get_object_or_404(Banca, slug=slug)
     projeto = banca.get_projeto()
 
@@ -1315,6 +1322,11 @@ def banca_avaliar(request, slug, documento_id=None):
             {"path": f"{base_url}?implementar={{valor}}", "method": "GET", "description": "Preenche o nível de 'Implementar'."},
         ]
 
+        if request.user.is_authenticated and not request.user.is_anonymous and requests.request.GET.get("sem_indicacoes_wizard") != "1":
+            rubric_allowed_grades = _rubric_allowed_grades(banca, projeto, exame, request.user, pesos)
+        else:
+            rubric_allowed_grades = {} 
+
         context = {
             "titulo": {"pt": "Formulário de Avaliação de Bancas", "en": "Examination Board Evaluation Form"},
             "projeto": projeto,
@@ -1343,9 +1355,7 @@ def banca_avaliar(request, slug, documento_id=None):
             "testar": testar,
             "implementar": implementar,
             "evento": evento,
-            "rubric_allowed_grades": {} if request.GET.get("sem_indicacoes_wizard") == "1" else _rubric_allowed_grades(
-                banca, projeto, exame, request.user, pesos
-            ),
+            "rubric_allowed_grades": rubric_allowed_grades,
         }
 
         if mensagem:
