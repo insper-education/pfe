@@ -651,9 +651,7 @@ def _normaliza_busca(texto):
 
 def _get_banca_composicao(banca):
     exame = get_object_or_404(Exame, sigla=banca.sigla)
-    composicao = get_object_or_404(
-        Composicao.objects.filter(exame=exame, data_inicial__lte=banca.startDate).order_by("-data_inicial")
-    )
+    composicao = Composicao.objects.filter(exame=exame, data_inicial__lte=banca.startDate).order_by("-data_inicial").first()
     pesos = Peso.objects.filter(composicao=composicao).select_related("objetivo")
     return exame, composicao, pesos
 
@@ -747,6 +745,7 @@ def rubrica_evidencias(request, slug):
         return HttpResponse("<h1>Configuração de rubrica inválida</h1><pre>{0}</pre>".format(error), status=500)
 
     exame, composicao, pesos = _get_banca_composicao(banca)
+        
     objetivo = _find_objetivo_rubrica(pesos, config)
     if not objetivo:
         return HttpResponseNotFound("<h1>Objetivo de aprendizagem não encontrado para esta rubrica.</h1>")
