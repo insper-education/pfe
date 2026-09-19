@@ -52,6 +52,7 @@
 </main>
 
 <script>
+var tempo_de_espera = 1000; // 1 segundos
 function bindEvidenceWizard() {
   var form = document.getElementById("evidence-form"), timer, animationFrame, chosen;
   if (!form) return;
@@ -66,8 +67,8 @@ function bindEvidenceWizard() {
     option.style.setProperty("--progress", "0%");
     var startedAt = performance.now();
     function fill(now) {
-      option.style.setProperty("--progress", Math.min(100, ((now - startedAt) / 2000) * 100) + "%");
-      if (now - startedAt < 2000) animationFrame = requestAnimationFrame(fill);
+      option.style.setProperty("--progress", Math.min(100, ((now - startedAt) / tempo_de_espera) * 100) + "%");
+      if (now - startedAt < tempo_de_espera) animationFrame = requestAnimationFrame(fill);
     }
     animationFrame = requestAnimationFrame(fill);
   }
@@ -92,7 +93,7 @@ function bindEvidenceWizard() {
             window.history.pushState({}, "", result.url);
             bindEvidenceWizard();
           });
-      }, 2000);
+      }, tempo_de_espera);
     });
   });
 }
