@@ -1322,7 +1322,7 @@ def banca_avaliar(request, slug, documento_id=None):
             {"path": f"{base_url}?implementar={{valor}}", "method": "GET", "description": "Preenche o nível de 'Implementar'."},
         ]
 
-        if request.user.is_authenticated and not request.user.is_anonymous and requests.request.GET.get("sem_indicacoes_wizard") != "1":
+        if request.user.is_authenticated and not request.user.is_anonymous and request.GET.get("sem_indicacoes_wizard") != "1":
             rubric_allowed_grades = _rubric_allowed_grades(banca, projeto, exame, request.user, pesos)
         else:
             rubric_allowed_grades = {} 
