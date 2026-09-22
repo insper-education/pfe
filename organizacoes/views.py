@@ -573,12 +573,32 @@ def organizacoes_projetos(request):
 @permission_required("users.altera_professor", raise_exception=True)
 def organizacoes_lista(request):
     """Exibe todas as organizações que já submeteram propostas de projetos."""
-    organizacoes = Organizacao.objects.all()
-
-    # Prefetch dos objetos relacionados
-    propostas_prefetch = Prefetch("proposta_set", queryset=Proposta.objects.order_by("ano", "semestre"))
-    anotacoes_prefetch = Prefetch("anotacao_set", queryset=Anotacao.objects.order_by("momento"))
-    organizacoes = organizacoes.prefetch_related(propostas_prefetch, anotacoes_prefetch)
+    alocacoes_prefetch = Prefetch(
+        "alocacao_set",
+        queryset=Alocacao.objects.select_related("aluno__curso2"),
+    )
+    projetos_prefetch = Prefetch(
+        "projeto_set",
+        queryset=Projeto.objects.prefetch_related(alocacoes_prefetch),
+    )
+    propostas_prefetch = Prefetch(
+        "proposta_set",
+        queryset=Proposta.objects.order_by("ano", "semestre").prefetch_related(projetos_prefetch),
+    )
+    anotacoes_prefetch = Prefetch(
+        "anotacao_set",
+        queryset=Anotacao.objects.order_by("momento"),
+        to_attr="anotacoes_carregadas",
+    )
+    parceiros_prefetch = Prefetch(
+        "parceiro_set",
+        queryset=Parceiro.objects.filter(user__is_active=True).select_related("user"),
+    )
+    organizacoes = Organizacao.objects.select_related("segmento").prefetch_related(
+        propostas_prefetch,
+        anotacoes_prefetch,
+        parceiros_prefetch,
+    )
 
     fechados = []
     desde = []
@@ -586,26 +606,33 @@ def organizacoes_lista(request):
     grupos = []
 
     for organizacao in organizacoes:
-        propostas = organizacao.proposta_set.all()
+        propostas = list(organizacao.proposta_set.all())
         if propostas:
-            desde.append(f"{propostas.first().ano}.{propostas.first().semestre}")
+            primeira_proposta = propostas[0]
+            desde.append(f"{primeira_proposta.ano}.{primeira_proposta.semestre}")
         else:
             desde.append("---------")
 
-        anot = organizacao.anotacao_set.last()
-        if anot:
-            contato.append(anot)
+        if organizacao.anotacoes_carregadas:
+            contato.append(organizacao.anotacoes_carregadas[-1])
         else:
             contato.append("---------")
 
-        projetos = Projeto.objects.filter(proposta__organizacao=organizacao)
-        fechados.append(projetos.count())
+        projetos = [
+            projeto
+            for proposta in propostas
+            for projeto in proposta.projeto_set.all()
+        ]
+        fechados.append(len(projetos))
 
-        tipo_estudantes = ""
+        tipo_estudantes = []
         for projeto in projetos:
-            estudantes = Aluno.objects.filter(alocacao__projeto=projeto)
-            tipos = [estudante.curso2.sigla_curta for estudante in estudantes]
-            tipo_estudantes += "[" + "|".join(tipos) + "] "
+            tipos = [
+                alocacao.aluno.curso2.sigla_curta
+                for alocacao in projeto.alocacao_set.all()
+                if alocacao.aluno.curso2
+            ]
+            tipo_estudantes.append("[" + "|".join(tipos) + "] ")
         grupos.append(tipo_estudantes)
 
     organizacoes_list = zip(organizacoes, fechados, desde, contato, grupos)
@@ -615,14 +642,15 @@ def organizacoes_lista(request):
 
 
     cabecalhos = [
-        {"pt": "Organização", "en": "Company", },
-        {"pt": "Chamar", "en": "Call", },
-        {"pt": "Segmento", "en": "Segment", },
-        {"pt": "Último <br>Contato", "en": "Last <br>Contact", },
-        {"pt": "Parceira <br>Desde", "en": "Partner <br>Since", },
-        {"pt": "Propostas <br>Enviadas", "en": "Submitted <br>Proposals", },
-        {"pt": "Projetos <br>Fechados", "en": "Closed <br>Projects", },
-        {"pt": "Grupos de Estudantes", "en": "Group of Students", },    
+        {"pt": "Organização", "en": "Company" },
+        {"pt": "Chamar", "en": "Call" },
+        {"pt": "Segmento", "en": "Segment" },
+        {"pt": "Último <br>Contato", "en": "Last <br>Contact" },
+        {"pt": "Parceira <br>Desde", "en": "Partner <br>Since" },
+        {"pt": "Propostas <br>Enviadas", "en": "Submitted <br>Proposals" },
+        {"pt": "Projetos <br>Fechados", "en": "Closed <br>Projects" },
+        {"pt": "Grupos de Estudantes", "en": "Group of Students", "esconder": True },
+        {"pt": "Lista de Contatos Ativos", "en": "List of Active Contacts" },
     ]
 
     captions = []
