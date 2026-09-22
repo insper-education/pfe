@@ -1,0 +1,24 @@
+{% comment %}
+  Desenvolvido para o Projeto Final de Engenharia
+  Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+  Data: 21 de Setembro de 2026
+{% endcomment %}
+
+{% load linguas %}
+
+<div class="row align-items-start mb-2" style="display: inline-block; margin-right: 3px;">
+  <div class="ml-3">
+    <div class="input-group input-group-sm">
+        <div class="input-group-prepend">
+          <label class="to_label input-group-text" for="ativos">
+            <span class="to_hide">{% lng "Ativos" "Active" %}</span>
+          </label>
+        </div>
+        <div class="input-group-append">
+          <div class="input-group-text bg-white">
+            <input type="checkbox" id="ativos" class="selectpicker form-control form-control-sm" checked>
+          </div>
+        </div>
+    </div>
+  </div>
+</div>

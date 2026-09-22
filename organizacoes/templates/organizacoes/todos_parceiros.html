@@ -15,9 +15,9 @@
 {% block content %}
 
   {% include "edicoes.html" with com_cursos=True %}
+  {% include "ativos.html" %}<br>
 
   {% if user.eh_prof_a %}
-    {% comment %} <a href="{% url 'cadastrar_usuario' %}?tipo=parceiro&organizacao={{projeto.organizacao.id}}"> {% endcomment %}
     {% include "botao_adiciona.html" with url_add="cadastrar_usuario" url_path="?tipo=parceiro" txt_pt="Cadastrar Novo Parceiro" txt_en="Register New Partner" %}
   {% endif %}
 
@@ -25,7 +25,8 @@
 
     {% include "tabelas_top_ml.html" with tabela="Parceiros" cabecalhos=cabecalhos %}
       {% for parceiro in parceiros %}
-        <tr class="item" {% if not parceiro.user.is_active %} style="color: lightgrey;" {% endif %}>
+        <tr class="item" {% if not parceiro.user.is_active %} style="color: lightgrey;" {% endif %}
+          data-valor="{{ parceiro.user.is_active|yesno:'true,false' }}">
           <th scope="row" data-sort="{{parceiro.user.get_full_name}}">
             <a href="{% url 'parceiro_detail' parceiro.id %}"
               {% if not parceiro.user.is_active %} style="color: LightBlue;" {% endif %}>
@@ -84,8 +85,13 @@
   </div>
 
   <script>
+    {% include "check_linha_tabelas.html" with checkbox="ativos" tabela="Parceiros" data="valor" %}
+    function carrega_pagina(){
+      {% include "tabelas_scripts.html" with tabela="Parceiros" %}
+    }
     function carrega_site() {
       {% include "edicao_puxar_local_ou_versao.js" %}
+      carrega_pagina();
     }
     window.onload = carrega_site
   </script>

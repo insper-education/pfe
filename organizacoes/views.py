@@ -816,6 +816,19 @@ def todos_parceiros(request):
             else:
                 return HttpResponseNotFound("<h1>Curso não encontrado!</h1>")
 
+    if parceiros is not None:
+        conexoes_prefetch = Conexao.objects.select_related("projeto")
+        if edicao != "todas":
+            ano, semestre = map(int, edicao.split('.'))
+            conexoes_prefetch = conexoes_prefetch.filter(
+                projeto__ano=ano,
+                projeto__semestre=semestre,
+            )
+
+        parceiros = parceiros.select_related("user", "organizacao").prefetch_related(
+            Prefetch("conexao_set", queryset=conexoes_prefetch)
+        )
+
     cabecalhos = [{ "pt": "Nome", "en": "Name", }, 
                   { "pt": "Gênero", "en": "Gender", "esconder": True},
                   { "pt": "Cargo", "en": "Position", }, 
