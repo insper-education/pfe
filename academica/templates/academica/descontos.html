@@ -12,6 +12,12 @@
 
 {% block head %}
   {% include "tabelas_includes.html" %}
+  <style>
+    .botao {
+      margin: 2px;
+      width: 5rem;
+    }
+  </style>
 {% endblock %}
 
 {% block content %}
@@ -34,7 +40,7 @@
     
     {% include "tabelas_top_ml.html" with tabela="Descontos" cabecalhos=cabecalhos %}
       {% for desconto in descontos %}
-        <tr>
+        <tr class="{% if desconto.abonado %}table-success"{% else %}table-warning{% endif %}">
           <td>{{ desconto.get_data|date:"SHORT_DATE_FORMAT" }}</td>
           <td>
             {% if desconto.projeto %}
@@ -45,11 +51,20 @@
           </td>
           <td>{{ desconto.get_referencia }}</td>
           <td data-order="{% if desconto.nota %}{{ desconto.nota|unlocalize }}{% else %}0{% endif %}">
-            {{ desconto.nota|floatformat:2}}
+            <span 
+              {% if desconto.abonado %} 
+                title="Abonado por {{ desconto.abonado }}"
+              {% endif %}
+            >
+              {{ desconto.nota|floatformat:2}}
+            </span>
           </td>
           {% if perms.users.altera_desconto %}
             <td>
-              <button type="button" class="btn btn-sm btn-danger remove-desconto" data-id="{{ desconto.id }}">
+              <button type="button" class="botao btn btn-sm btn-warning abonar-desconto" data-id="{{ desconto.id }}">
+                {% lng "Abonar" "Waive" %}
+              </button>
+              <button type="button" class="botao btn btn-sm btn-danger remove-desconto" data-id="{{ desconto.id }}">
                 {% lng "Remover" "Remove" %}
               </button>
             </td>
@@ -62,15 +77,17 @@
 
   <script>
     function carrega_pagina() {
-      $(document).off('click', '.remove-desconto').on('click', '.remove-desconto', function() {
-        var descontoId = $(this).data('id');
+
+      /* Remover desconto */
+      $(document).off("click", ".remove-desconto").on("click", ".remove-desconto", function() {
+        var descontoId = $(this).data("id");
         if (confirm("Tem certeza que deseja remover este desconto?")) {
           $.ajax({
             url: "{% url 'remove_desconto' %}",
             method: "POST",
             data: {
-              'desconto_id': descontoId,
-              'csrfmiddlewaretoken': '{{ csrf_token }}'
+              "desconto_id": descontoId,
+              "csrfmiddlewaretoken": "{{ csrf_token }}"
             },
             success: function(response) {
               if (response.success) {
@@ -85,6 +102,32 @@
           });
         }
       });
+
+      /* Abonar desconto */
+      $(document).off("click", ".abonar-desconto").on("click", ".abonar-desconto", function() {
+        var descontoId = $(this).data("id");
+        if (confirm("Tem certeza que deseja abonar este desconto?")) {
+          $.ajax({
+            url: "{% url 'abonar_desconto' %}",
+            method: "POST",
+            data: {
+              "desconto_id": descontoId,
+              "csrfmiddlewaretoken": "{{ csrf_token }}"
+            },
+            success: function(response) {
+              if (response.success) {
+                location.reload();  // Recarrega a página para atualizar a tabela
+              } else {
+                alert("Erro ao abonar o desconto.");
+              }
+            },
+            error: function() {
+              alert("Erro na requisição.");
+            }
+          });
+        }
+      });
+
     }
 
     $(document).ready(function() {

@@ -2501,6 +2501,9 @@ class Desconto(models.Model):
     encontro = models.ForeignKey(Encontro, null=True, blank=True, on_delete=models.SET_NULL,
                                   help_text="Encontro que gerou o desconto")
 
+    abonado = models.ForeignKey("users.PFEUser", on_delete=models.SET_NULL, null=True, blank=True,
+                                help_text="Se o desconto foi abonado (não aplicado) por quem")
+
     # Para Entregas em Grupo (Relatório Preliminar)
     projeto = models.ForeignKey(Projeto, null=True, blank=True, on_delete=models.SET_NULL,
                                 help_text="projeto em questão")

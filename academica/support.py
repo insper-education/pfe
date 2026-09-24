@@ -289,12 +289,12 @@ def lanca_descontos(ano=None, semestre=None):
                 add_desconto({"projeto": projeto}, eventos["ev"], tipos_descontos["geral"])
 
         # Verificar se grupo agendou mentoria acadêmica e profissional
-        for evento in eventos["mas"]:
+        for evento in eventos["mas"]:  # Acadeêmicas
             if hoje > evento.endDate:
                 mentorias_academicas = Encontro.objects.filter(projeto=projeto, startDate__gte=evento.startDate, startDate__lte=evento.endDate + datetime.timedelta(days=1))
                 if mentorias_academicas.count() == 0:
                     add_desconto({"projeto": projeto}, evento, tipos_descontos["reuniao"])
-        for evento in eventos["mps"]:
+        for evento in eventos["mps"]:  # Profissionais
             if hoje > evento.endDate:
                 mentorias_profissionais = Encontro.objects.filter(projeto=projeto, startDate__gte=evento.startDate, startDate__lte=evento.endDate + datetime.timedelta(days=1))
                 if mentorias_profissionais.count() == 0:

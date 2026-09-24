@@ -13,8 +13,7 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.core.exceptions import PermissionDenied
 from django.db.models import Q
 from django.shortcuts import render, get_object_or_404
-from django.http import HttpResponse, JsonResponse
-
+from django.http import HttpResponse, JsonResponse, HttpResponseNotFound
 from academica.support import lanca_descontos
 
 from estudantes.models import Relato, Pares
@@ -227,4 +226,19 @@ def remove_desconto(request):
     if not request.user.has_perm("users.altera_desconto"):
         raise PermissionDenied
     desconto.delete()
+    return JsonResponse({"success": True})
+
+@login_required
+@permission_required("users.view_administrador", raise_exception=True)
+def abonar_desconto(request):
+    """Abona um desconto específico."""
+    if request.headers.get("X-Requested-With") != "XMLHttpRequest" or request.method != "POST": # Ajax check
+        return HttpResponseNotFound("Requisição inválida.")
+    desconto_id = request.POST.get("desconto_id")
+    desconto = get_object_or_404(Desconto, id=desconto_id)
+    if not request.user.has_perm("users.altera_desconto"):
+        raise PermissionDenied
+    desconto.abonado = request.user
+    desconto.nota = 0
+    desconto.save()
     return JsonResponse({"success": True})
