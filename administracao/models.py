@@ -221,6 +221,6 @@ class TextgraderAccessLog(models.Model):
     reference_query = models.BigIntegerField(null=True, blank=True)
 
     class Meta:
-        managed = False
+        #managed = False  # O próprio Django pode gerenciar a tabela
         db_table = 'textgrader"."access_log'
         ordering = ["-access_id"]

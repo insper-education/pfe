@@ -305,7 +305,7 @@ def lanca_descontos(ano=None, semestre=None):
             for tipo, evento_key in [(0, "api"), (1, "apf")]:
                 evento = eventos[evento_key]
                 if evento and hoje > evento.endDate:
-                    if not Pares.objects.filter(alocacao_de=alocacao, tipo=tipo, momento__date__lt=evento.endDate).exists():
+                    if not Pares.objects.filter(alocacao_de=alocacao, tipo=tipo, momento__date__lt=evento.endDate + datetime.timedelta(days=1)).exists():
                         add_desconto({"alocacao": alocacao}, evento, tipos_descontos["pares"])
         
             # Relato Quinzenal
