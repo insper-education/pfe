@@ -11,6 +11,7 @@ import json
 
 from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404
+from django.db.models import Q
 
 from projetos.models import Banca, Encontro
 
@@ -273,6 +274,29 @@ def puxa_encontros(edicao):
     return context
 
 
+def _otimiza_bancas(queryset):
+    """Carrega de uma vez os relacionamentos exibidos na lista de bancas."""
+    return queryset.select_related(
+        "tipo_evento",
+        "membro1",
+        "membro2",
+        "membro3",
+        "projeto__proposta__organizacao",
+        "projeto__orientador__user",
+        "alocacao__aluno__user",
+        "alocacao__aluno__curso2",
+        "alocacao__projeto__proposta__organizacao",
+        "alocacao__projeto__orientador__user",
+    ).prefetch_related(
+        "projeto__coorientador_set__usuario",
+        "projeto__alocacao_set__aluno__user",
+        "projeto__alocacao_set__aluno__curso2",
+        "alocacao__projeto__coorientador_set__usuario",
+        "alocacao__projeto__alocacao_set__aluno__user",
+        "alocacao__projeto__alocacao_set__aluno__curso2",
+    )
+
+
 def puxa_bancas(edicao):
     """Puxa as bancas de acordo com a edição selecionada."""
     sem_banca = []
@@ -285,23 +309,30 @@ def puxa_bancas(edicao):
 
         # checando se projetos atuais tem banca marcada
         projetos = Projeto.objects.filter(ano=configuracao.ano, semestre=configuracao.semestre)
-        for banca in bancas:
-            if banca.projeto:
-                projetos = projetos.exclude(id=banca.projeto.id)
-        sem_banca = projetos
+        projetos_agendados = set()
+        for projeto_id, projeto_alocacao_id in bancas.values_list(
+                "projeto_id", "alocacao__projeto_id"):
+            if projeto_id:
+                projetos_agendados.add(projeto_id)
+            if projeto_alocacao_id:
+                projetos_agendados.add(projeto_alocacao_id)
+        sem_banca = projetos.exclude(id__in=projetos_agendados)
 
     elif edicao == "todas":
         bancas = Banca.objects.all().order_by("startDate")
 
     elif '.' in edicao:
         ano, semestre = map(int, edicao.split('.'))
-        bancas_p = Banca.objects.filter(projeto__ano=ano, projeto__semestre=semestre)
-        bancas_a = Banca.objects.filter(alocacao__projeto__ano=ano, alocacao__projeto__semestre=semestre)
-        bancas = (bancas_p | bancas_a).order_by("startDate")
+        bancas = Banca.objects.filter(
+            Q(projeto__ano=ano, projeto__semestre=semestre) |
+            Q(alocacao__projeto__ano=ano, alocacao__projeto__semestre=semestre)
+        ).order_by("startDate")
 
     else:
         projeto = get_object_or_404(Projeto, id=edicao)
         bancas = Banca.objects.filter(projeto=projeto).order_by("startDate")
+
+    bancas = _otimiza_bancas(bancas)
 
     context = {
         "bancas": bancas,

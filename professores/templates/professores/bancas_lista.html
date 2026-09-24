@@ -45,6 +45,7 @@
         {% for banca in bancas %} 
           <tr class="item b_{{banca.sigla}}">{% comment %} className {% endcomment %}
             <td>
+              {% with projeto_banca=banca.get_projeto membros=banca.membros %}
 
               {% if banca.startDate %}
                 <b>{% lng "Horário:" "Time:" %}</b>
@@ -90,25 +91,25 @@
                 {% endif %}
               </div>
               
-              {% if banca.get_projeto %}
-                {% include "cabecalho_projeto.html" with projeto=banca.get_projeto %}
+              {% if projeto_banca %}
+                {% include "cabecalho_projeto.html" with projeto=projeto_banca %}
               {% endif %}
               
-              {% if banca.membros %}
+              {% if membros %}
                 <div class="banca" style="margin-top: 8px;">
                   <b>{% lng "Membros da Banca da Avaliação:" "Examination Board Members:" %}</b>
-                  <a class="email" href="mailto:{% for membro in banca.membros %}{{membro.email}}{% if not forloop.last %};{% endif %}{% endfor %}?subject=Capstone%20Insper%20-%20Projeto:%20{{banca.get_projeto}}&body={% for membro in banca.membros %}{% if not forloop.first %}{% if forloop.last %}%20e{% else %},{% endif %}%20{% endif %}{{membro.get_full_name}}{% endfor %},%0D%0A%0D%0" target="_blank">
+                  <a class="email" href="mailto:{% for membro in membros %}{{membro.email}}{% if not forloop.last %};{% endif %}{% endfor %}?subject=Capstone%20Insper%20-%20Projeto:%20{{projeto_banca}}&body={% for membro in membros %}{% if not forloop.first %}{% if forloop.last %}%20e{% else %},{% endif %}%20{% endif %}{{membro.get_full_name}}{% endfor %},%0D%0A%0D%0" target="_blank">
                     <i class="fas fa-mail-bulk"></i>
                   </a>
                   <ol style="margin-bottom:0px;">
-                    {% with coorientadores=banca.get_projeto.get_coorientadores_ids %}
-                      {% for membro in banca.membros %}
+                    {% with coorientadores=projeto_banca.get_coorientadores_ids %}
+                      {% for membro in membros %}
                         <li>
                           <a class="imprimir" href="{% url 'user_detail' membro.id %}">
                             {{membro.get_full_name}}
                           </a>
-                          {% if banca.get_projeto.orientador.user == membro %}
-                            [{% lng_g banca.get_projeto.orientador.user.genero "orientador" "orientadora" "advisor" %}]
+                          {% if projeto_banca.orientador.user == membro %}
+                            [{% lng_g projeto_banca.orientador.user.genero "orientador" "orientadora" "advisor" %}]
                           {% endif %}
                           {% if membro.id in coorientadores %}
                             [{% lng_g membro.genero "Coorientador" "Coorientadora" "Co-Advisor" %}]
@@ -127,7 +128,7 @@
                   <b>{% lng "Estudante:" "Student:" %}</b>
                   {% include "mostra_estudante.html" with alocacao=banca.alocacao %}  
                 {% else %}
-                  {% include "grupo_estudantes.html" with projeto=banca.get_projeto %}
+                  {% include "grupo_estudantes.html" with projeto=projeto_banca %}
                 {% endif %}
               </div>
               
@@ -152,7 +153,7 @@
                   <a class="open-modal"
                     data-url="{% url 'bancas_editar' %}{{banca.pk}}" href="{% url 'bancas_editar' banca.pk%}">
                     <button class="btn btn-primary mb-1"
-                    {% if user.tipo_de_usuario != 4 and user != banca.projeto.orientador.user %}disabled{% endif %}
+                    {% if user.tipo_de_usuario != 4 and user != projeto_banca.orientador.user %}disabled{% endif %}
                     >
                       {% lng "Editar" "Edit" %}
                     </button>
@@ -160,6 +161,8 @@
                 </div>
 
               </div>
+
+              {% endwith %}
 
             </td>
           </tr>
