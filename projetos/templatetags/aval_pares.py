@@ -22,9 +22,9 @@ def aval_pares(alocacao, momento):
 
     par = Pares.objects.filter(alocacao_de=alocacao, tipo=tipo).first()
     if par:
-        return True
+        return par.momento
     else:
-        return False
+        return None
 
 @register.filter
 def puxa_pares(alocacao, momento=None):

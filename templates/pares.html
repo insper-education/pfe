@@ -10,41 +10,81 @@
 
 <link rel="stylesheet" href="{% static 'css/tabela_reduzida_estudantes.css' %}">
 
-<table class="tabela_redu_estu table-striped"><tbody>
-  {% for alocacao in projeto.alocacao_set.all %}
-    {% if not alocacao.aluno.externo %}
-      <tr style="padding-left: 18px;">
-        {% with feita=alocacao|aval_pares:tipo_avaliacao %}
-          <td>
-            {% if feita %}<a href="{% url 'ver_pares_projeto' alocacao.projeto.id tipo_avaliacao %}">{% endif %}
-              {{alocacao.aluno}}
-            {% if feita %}</a>{% endif %}
-          </td>
-          <td>
-            {% if feita %}
-              <span class="aval_entreg_{% if tipo_avaliacao == 'final' %}f{% else %}i{% endif %}">
-                {% if tipo_avaliacao == "intermediaria" and alocacao.avaliacao_intermediaria %}
-                  <a href="{% url 'ver_pares_projeto' alocacao.projeto.id tipo_avaliacao %}#{{alocacao.aluno.user.username}}" style="color:green">
-                    {% lng "Avaliação de Pares Verificada" "Peer Evaluation Verified" %}
-                  </a>
-                {% elif tipo_avaliacao == "final" and alocacao.avaliacao_final %}
-                  <a href="{% url 'ver_pares_projeto' alocacao.projeto.id tipo_avaliacao %}#{{alocacao.aluno.user.username}}" style="color:green">
-                    {% lng "Avaliação de Pares Verificada" "Peer Evaluation Verified" %}
-                  </a>
-                {% else %}
-                  <a href="{% url 'ver_pares_projeto' alocacao.projeto.id tipo_avaliacao %}#{{alocacao.aluno.user.username}}" style="color:brown">
-                    {% lng "Aguardando Confirmação de Orientador" "Waiting for Advisor Confirmation" %}
-                  </a>
-                {% endif %}
-              </span>
-            {% else %}
-              <span style="color:#DDB300" class="aval_nentreg_{% if tipo_avaliacao == 'final' %}f{% else %}i{% endif %}">
-                {% lng "Aguardando Estudante Preencher" "Waiting for Student to Fill" %}
-              </span>
-            {% endif %}
-          </td>
-        {% endwith %}
-      </tr>
-    {% endif %}
-  {% endfor %}
-</tbody></table>
+<style>
+  .tabela_redu_estu thead {
+    background-color: #e8f7f7;
+  }
+
+  .tabela_redu_estu thead th {
+    padding: 0 4px;
+    color: #456;
+    text-align: center;
+    font-weight: 400;
+    border-bottom: 1px solid #cfe8e8;
+  }
+</style>
+
+<table class="tabela_redu_estu table-striped">
+  <thead>
+    <tr>
+      <th>{% lng "Estudante" "Student" %}</th>
+      <th>{% lng "Status" "Status" %}</th>
+      <th>{% lng "Submetida" "Submitted" %}</th>
+      <th>{% lng "Verificada" "Verified" %}</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for alocacao in projeto.alocacao_set.all %}
+      {% if not alocacao.aluno.externo %}
+        <tr style="padding-left: 18px;">
+          {% with feita=alocacao|aval_pares:tipo_avaliacao %}
+            <td>
+              {% if feita %}<a href="{% url 'ver_pares_projeto' alocacao.projeto.id tipo_avaliacao %}">{% endif %}
+                {{alocacao.aluno}}
+              {% if feita %}</a>{% endif %}
+            </td>
+            <td>
+              {% if feita %}
+                <span class="aval_entreg_{% if tipo_avaliacao == 'final' %}f{% else %}i{% endif %}">
+                  {% if tipo_avaliacao == "intermediaria" and alocacao.avaliacao_intermediaria %}
+                    <a href="{% url 'ver_pares_projeto' alocacao.projeto.id tipo_avaliacao %}#{{alocacao.aluno.user.username}}" style="color:green">
+                      {% lng "Avaliação de Pares Verificada" "Peer Evaluation Verified" %}
+                    </a>
+                  {% elif tipo_avaliacao == "final" and alocacao.avaliacao_final %}
+                    <a href="{% url 'ver_pares_projeto' alocacao.projeto.id tipo_avaliacao %}#{{alocacao.aluno.user.username}}" style="color:green">
+                      {% lng "Avaliação de Pares Verificada" "Peer Evaluation Verified" %}
+                    </a>
+                  {% else %}
+                    <a href="{% url 'ver_pares_projeto' alocacao.projeto.id tipo_avaliacao %}#{{alocacao.aluno.user.username}}" style="color:brown">
+                      {% lng "Aguardando Confirmação de Orientador" "Waiting for Advisor Confirmation" %}
+                    </a>
+                  {% endif %}
+                </span>
+              {% else %}
+                <span style="color:#DDB300" class="aval_nentreg_{% if tipo_avaliacao == 'final' %}f{% else %}i{% endif %}">
+                  {% lng "Aguardando Estudante Preencher" "Waiting for Student to Fill" %}
+                </span>
+              {% endif %}
+            </td>
+            <td>
+              <a href="{% url 'ver_pares_projeto' alocacao.projeto.id tipo_avaliacao %}">
+                {{feita|date:"d/m/y H:i"}}
+              </a>
+            </td>
+            <td>
+              {% if feita %}
+                <a href="{% url 'ver_pares_projeto' alocacao.projeto.id tipo_avaliacao %}">
+                  {% if tipo_avaliacao == "intermediaria" and alocacao.avaliacao_intermediaria %}
+                    {{alocacao.avaliacao_intermediaria|date:"d/m/y H:i"}}
+                  {% elif tipo_avaliacao == "final" and alocacao.avaliacao_final %}
+                    {{alocacao.avaliacao_final|date:"d/m/y H:i"}}
+                  {% endif %}
+                </a>
+              {% endif %}
+            </td>
+          {% endwith %}
+        </tr>
+      {% endif %}
+    {% endfor %}
+  </tbody>
+</table>
