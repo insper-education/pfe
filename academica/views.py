@@ -8,12 +8,15 @@ Data: 10 de Abril de 2023
 
 
 from datetime import timedelta
+from decimal import Decimal
 
 from django.contrib.auth.decorators import login_required, permission_required
 from django.core.exceptions import PermissionDenied
 from django.db.models import Q
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse, JsonResponse, HttpResponseNotFound
+from django.views.decorators.http import require_POST
+
 from academica.support import lanca_descontos
 
 from estudantes.models import Relato, Pares
@@ -217,6 +220,7 @@ def descontos(request):
 
 @login_required
 @permission_required("users.view_administrador", raise_exception=True)
+@require_POST
 def remove_desconto(request):
     """Remove um desconto específico."""
     if request.headers.get("X-Requested-With") != "XMLHttpRequest" or request.method != "POST": # Ajax check
@@ -230,6 +234,7 @@ def remove_desconto(request):
 
 @login_required
 @permission_required("users.view_administrador", raise_exception=True)
+@require_POST
 def abonar_desconto(request):
     """Abona um desconto específico."""
     if request.headers.get("X-Requested-With") != "XMLHttpRequest" or request.method != "POST": # Ajax check
@@ -239,6 +244,6 @@ def abonar_desconto(request):
     if not request.user.has_perm("users.altera_desconto"):
         raise PermissionDenied
     desconto.abonado = request.user
-    desconto.nota = 0
+    desconto.nota = Decimal("0.00")
     desconto.save()
     return JsonResponse({"success": True})
