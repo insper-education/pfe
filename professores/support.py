@@ -559,12 +559,24 @@ def editar_banca(banca, request):
         if banca.location != location:
             atualizacao += ["Local"]
             banca.location = location
+        else:
+            if "Data de início" in atualizacao and banca.location and banca.location != "":
+                # Se a data mudou, mas o local não, informar que o local também deveria mudar
+                banca.location = "DATA ATUALIZADA, VERIFICAR LOCAL (" + banca.location + ")"
         link = request.POST.get("link")
         if banca.link != link:
             atualizacao += ["Link"]
             banca.link = link
     except Exception as e:
         return f"Erro ao atualizar local ou link: {e}", None, atualizacao
+
+    try:
+        observacoes = request.POST.get("observacoes")
+        if banca.observacoes != observacoes:
+            atualizacao += ["Observações"]
+            banca.observacoes = observacoes
+    except Exception as e:
+        return f"Erro ao atualizar observações: {e}", None, atualizacao
 
     try:
         if "membro1" in request.POST and request.POST["membro1"].isnumeric():

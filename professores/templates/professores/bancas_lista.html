@@ -73,6 +73,14 @@
                 </span>
               {% endif %}
 
+              {% if banca.observacoes %}
+                <span class="observacoes">
+                  <b>{% lng "Observações:" "Observations:" %}</b>
+                  {{banca.observacoes}}
+                  <br>
+                </span>
+              {% endif %}
+
               <div>
                 <b>{% lng "Tipo:" "Type:" %}</b>
                 {% if banca.tipo_evento is not None %}

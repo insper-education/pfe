@@ -1816,7 +1816,7 @@ def bancas_lista(request, edicao=None):
         }
         return render(request, "generic_ml.html", context=context)
 
-    else:
+    else:  # GET request
         context["informacoes"] = [
                 (".local", "local", "local"),
                 (".link", "video-conferência", "video-conference"),

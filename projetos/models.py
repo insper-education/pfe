@@ -955,6 +955,9 @@ class Banca(models.Model):
     data_marcacao = models.DateField(default=datetime.date.today, blank=True,
                                      help_text="Data em que a banca foi marcada")
 
+    observacoes = models.TextField("Observações", max_length=2000, null=True, blank=True,
+                                   help_text="Observações sobre a banca")
+
 
     ### Dados para integração com calendário (iCal, Google Calendar, etc.) ###
     calendar_uid = models.CharField(max_length=255, null=True, blank=True, help_text="UID persistente para convites de calendário")

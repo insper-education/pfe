@@ -390,118 +390,127 @@
 
     <div class="secao-card secao-card-compact mb-2">
 
-    <div class="mb-3">
-        <label for="inicio" style="white-space: nowrap; display:inline-block; margin-bottom: 3px; margin-right: 18px;">
-          <span style="display:inline-block; width:5.5ex; text-align:right;">
-            {% lng "Início:" "Start:" %}
-          </span>
-          <input id="inicio" type="datetime-local" name="inicio" class="horario_banca" min="2018-08-01T00:00" max="9999-12-31T23:59"
-          {% if banca and banca.projeto.orientador.user != request.user and request.user.tipo_de_usuario != 4 %}disabled{% endif %}
-          {% if banca %}
-            value="{{banca.startDate|date:'Y-m-d\TH:i:s'}}"
-          {% elif data %}
-            value="{{data}}T00:00"
-          {% endif %} 
-          required>
-        </label>
-      
-        <label for="fim" style="white-space: nowrap; display:inline-block; margin-bottom: 3px;">
-          <span style="display:inline-block; width:5.5ex; text-align:right">
-            {% lng "Fim:" "End:" %}
-          </span>
-          <input id="fim" type="datetime-local" name="fim" class="horario_banca" min="2018-08-01T00:00" max="9999-12-31T23:59"
-          {% if banca and banca.projeto.orientador.user != request.user and request.user.tipo_de_usuario != 4 %}disabled{% endif %}
-          {% if banca %}
-            value="{{banca.endDate|date:'Y-m-d\TH:i:s'}}"
-          {% elif data %}
-            value="{{data}}T00:00"
-          {% endif %} 
-          required>
-        </label>
+      <div class="mb-3">
+          <label for="inicio" style="white-space: nowrap; display:inline-block; margin-bottom: 3px; margin-right: 18px;">
+            <span style="display:inline-block; width:5.5ex; text-align:right;">
+              {% lng "Início:" "Start:" %}
+            </span>
+            <input id="inicio" type="datetime-local" name="inicio" class="horario_banca" min="2018-08-01T00:00" max="9999-12-31T23:59"
+            {% if banca and banca.projeto.orientador.user != request.user and request.user.tipo_de_usuario != 4 %}disabled{% endif %}
+            {% if banca %}
+              value="{{banca.startDate|date:'Y-m-d\TH:i:s'}}"
+            {% elif data %}
+              value="{{data}}T00:00"
+            {% endif %} 
+            required>
+          </label>
+        
+          <label for="fim" style="white-space: nowrap; display:inline-block; margin-bottom: 3px;">
+            <span style="display:inline-block; width:5.5ex; text-align:right">
+              {% lng "Fim:" "End:" %}
+            </span>
+            <input id="fim" type="datetime-local" name="fim" class="horario_banca" min="2018-08-01T00:00" max="9999-12-31T23:59"
+            {% if banca and banca.projeto.orientador.user != request.user and request.user.tipo_de_usuario != 4 %}disabled{% endif %}
+            {% if banca %}
+              value="{{banca.endDate|date:'Y-m-d\TH:i:s'}}"
+            {% elif data %}
+              value="{{data}}T00:00"
+            {% endif %} 
+            required>
+          </label>
 
-        <span id="aviso_horario" style="color: red; font-weight: bold; display: block;" aria-live="polite" role="status"></span>
+          <span id="aviso_horario" style="color: red; font-weight: bold; display: block;" aria-live="polite" role="status"></span>
 
-    </div>
+      </div>
 
-    <script>
-      // https://webreflection.medium.com/using-the-input-datetime-local-9503e7efdce
-      Date.prototype.toDatetimeLocal =
-        function toDatetimeLocal() {
-          var
-            date = this,
-            ten = function (i) {
-              return (i < 10 ? '0' : '') + i;
-            },
-            YYYY = date.getFullYear(),
-            MM = ten(date.getMonth() + 1),
-            DD = ten(date.getDate()),
-            HH = ten(date.getHours()),
-            II = ten(date.getMinutes()),
-            SS = ten(date.getSeconds())
-          ;
-          return YYYY + '-' + MM + '-' + DD + 'T' +
-                  HH + ':' + II + ':' + SS;
-        };
-
-      // Já ajusta o horário final para o padrão de minutos
-      $("#inicio").change(function() {
-        var data = new Date($(this).val());
-        data.setMinutes(data.getMinutes() + minutos);
-        $("#fim").val(data.toDatetimeLocal());
-      });
-
-      $("#fim").change(function() {
-        // AVISO DE HORÁRIO FORA DO PADRÃO
-        var data_inicio = new Date($("#inicio").val());
-        var data_fim = new Date($(this).val());
-        var diff = (data_fim - data_inicio) / 60000; // diferença em minutos
-
-        if (diff < minutos) {
-          $("#aviso_horario").html("Duração do bloco menor que o padrão de " + minutos + " minutos");
-        } else {
-          $("#aviso_horario").html("");
-        }
-      });
-
-    </script>
-
-    <div class="mb-3">
-      <label for="local">{% lng "Local:" "Local:" %}</label> 
-      <input id="local" name="local" type="text" size="36" maxlength="{% max_length Banca "location" %}" class="troca_lingua"
-      {% if banca and banca.projeto.orientador.user != request.user and request.user.tipo_de_usuario != 4 %}disabled{% endif %}
-      placeholder="" data-pt="alocado pela equipe de reservas" data-en="allocated by the facilities team"
-      {% if banca and banca.location %}
-        value="{{banca.location}}"
-      {% endif %}
-      />
-      <span id="aviso_local" style="color: red;" aria-live="polite" role="status"></span>
-    </div>
-
-    {% if banca.location %}
       <script>
-        $(".horario_banca").change(function() {
-          if($("#local").val()) {
-            $("#aviso_local").html("[Local desatualizado, remover]");
-          }
-        });
-        $("#local").on("input", function() {
-          if(!$("#local").val()) {
-            $("#aviso_local").html("");
-          }
-        });
-      </script>
-    {% endif %}
+        // https://webreflection.medium.com/using-the-input-datetime-local-9503e7efdce
+        Date.prototype.toDatetimeLocal =
+          function toDatetimeLocal() {
+            var
+              date = this,
+              ten = function (i) {
+                return (i < 10 ? '0' : '') + i;
+              },
+              YYYY = date.getFullYear(),
+              MM = ten(date.getMonth() + 1),
+              DD = ten(date.getDate()),
+              HH = ten(date.getHours()),
+              II = ten(date.getMinutes()),
+              SS = ten(date.getSeconds())
+            ;
+            return YYYY + '-' + MM + '-' + DD + 'T' +
+                    HH + ':' + II + ':' + SS;
+          };
 
-    <div class="mb-3">
-      <label for="link">{% lng "Vídeo-conferência:" "Video-conference:" %}</label>
-      <input id="link" name="link" type="text" size="36" maxlength="{% max_length Banca "link" %}" class="troca_lingua"
-      {% if banca and banca.projeto.orientador.user != request.user and request.user.tipo_de_usuario != 4 %}disabled{% endif %}
-      placeholder="" data-pt="somente se necessário" data-en="only if necessary"
-      {% if banca and banca.link %}
-        value="{{banca.link}}"
-      {% endif %} 
-      />
-    </div>
+        // Já ajusta o horário final para o padrão de minutos
+        $("#inicio").change(function() {
+          var data = new Date($(this).val());
+          data.setMinutes(data.getMinutes() + minutos);
+          $("#fim").val(data.toDatetimeLocal());
+        });
+
+        $("#fim").change(function() {
+          // AVISO DE HORÁRIO FORA DO PADRÃO
+          var data_inicio = new Date($("#inicio").val());
+          var data_fim = new Date($(this).val());
+          var diff = (data_fim - data_inicio) / 60000; // diferença em minutos
+
+          if (diff < minutos) {
+            $("#aviso_horario").html("Duração do bloco menor que o padrão de " + minutos + " minutos");
+          } else {
+            $("#aviso_horario").html("");
+          }
+        });
+
+      </script>
+
+      <div class="mb-3">
+        <label for="local" style="display: inline-block; width: 2.5em;">{% lng "Local:" "Local:" %}</label> 
+        <input id="local" name="local" type="text" size="79" maxlength="{% max_length Banca "location" %}" class="troca_lingua"
+        {% if banca and banca.projeto.orientador.user != request.user and request.user.tipo_de_usuario != 4 %}disabled{% endif %}
+        placeholder="" data-pt="alocado pela equipe de reservas" data-en="allocated by the facilities team"
+        {% if banca and banca.location %}
+          value="{{banca.location}}"
+        {% endif %}
+        />
+        <span id="aviso_local" style="color: red;" aria-live="polite" role="status"></span>
+      </div>
+
+      {% if banca.location %}
+        <script>
+          $(".horario_banca").change(function() {
+            if($("#local").val()) {
+              var aviso = (lingua_atual === "en") ? "[Local outdated]" : "[Local desatualizado]";          
+              $("#aviso_local").html(aviso);
+            }
+          });
+          $("#local").on("input", function() {
+            if(!$("#local").val()) {
+              $("#aviso_local").html("");
+            }
+          });
+        </script>
+      {% endif %}
+
+      <div class="mb-3">
+        <label for="link" style="display: inline-block; width: 8.4em;">{% lng "Vídeo-conferência:" "Video-conference:" %}</label>
+        <input id="link" name="link" type="text" size="66" maxlength="{% max_length Banca "link" %}" class="troca_lingua"
+        {% if banca and banca.projeto.orientador.user != request.user and request.user.tipo_de_usuario != 4 %}disabled{% endif %}
+        placeholder="" data-pt="somente se necessário" data-en="only if necessary"
+        {% if banca and banca.link %}
+          value="{{banca.link}}"
+        {% endif %} 
+        />
+      </div>
+
+      <div class="mb-3">
+        <label for="observacoes" style="display: inline-block; width: 6.1em;">{% lng "Observações:" "Observations:" %}</label>
+        <input id="observacoes" name="observacoes" type="text" size="71" maxlength="{% max_length Banca "observacoes" %}" class="troca_lingua"
+        {% if banca and banca.projeto.orientador.user != request.user and request.user.tipo_de_usuario != 4 %}disabled{% endif %}
+        placeholder="" data-pt="Qualquer observação para a banca" data-en="Any observation for the examination board"
+        {% if banca and banca.observacoes %}value="{{banca.observacoes}}"{% endif %}>
+      </div>
 
     </div>
     
