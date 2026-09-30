@@ -96,6 +96,9 @@
       <u>{% lng "Objetivos de Aprendizagem" "Learning Goals" %}
       {% if tipo_de_avaliacao %}{{ tipo_de_avaliacao }}{% endif %}</u>
     </div>
+
+    {% comment %} 
+    WIZARD PARA SUPORTE A AVALIAÇÕES
     {% if rubric_allowed_grades and not individual %}
       <div class="rubric-limit-legend">
         Os conceitos marcados com borda vermelha merecem atenção ao serem escolhidos, pois detectamos falta de evidência nas respostas às perguntas realizadas anteriormente.
@@ -107,6 +110,9 @@
         <a class="btn btn-sm btn-outline-secondary" href="{% url 'rubrica_evidencias' banca.slug %}?restart=1">Usar wizard de evidências</a>
       </div>
     {% endif %}
+    {% endcomment %}
+
+
     {% for peso in pesos %}
       {% with allowed_grades=rubric_allowed_grades|get_value:peso.objetivo.id %}
       <div class="rubric-objective-card">
