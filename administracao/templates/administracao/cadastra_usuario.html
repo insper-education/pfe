@@ -220,7 +220,7 @@
         
         <div class="row">
           <div class="col-md-12 campo-com-label">
-            <label for="observacao">{% lng "Observações:" "Observations:" %}</label>
+            <label for="observacao">{% lng "Observações" "Observations" %}:</label>
             <textarea class="form-control" id="observacao" name="observacao" rows="4" maxlength="{% max_length PFEUser "observacao" %}">{% if usuario.observacoes %}{{usuario.observacoes}}{% endif %}</textarea>
           </div>
         </div>
@@ -232,11 +232,11 @@
 
         <div class="row">
           <div class="col-md-3 campo-com-label">
-            <label for="matricula">{% lng "Matrícula:" "Student ID:" %}</label>
+            <label for="matricula">{% lng "Matrícula" "Student ID" %}:</label>
             <input class="form-control" type="text" maxlength="{% max_length Estudante 'matricula' %}" id="matricula" name="matricula" {% if usuario and usuario.aluno and usuario.aluno.matricula %}value="{{usuario.aluno.matricula}}"{% endif %}>
           </div>
           <div class="col-md-5 campo-com-label">
-            <label for="curso">{% lng "Curso:" "Program:" %}</label>
+            <label for="curso">{% lng "Curso" "Program" %}:</label>
             <select class="form-control troca_lingua_title" id="curso" name="curso" 
               data-title_pt="Curso" data-title_en="Program" title="Curso">
               <option disabled selected value class="troca_lingua" data-pt="-- selecione curso --" data-en="-- select program --">-- selecione curso --</option>
@@ -246,11 +246,11 @@
             </select>
           </div>
           <div class="col-md-2 campo-com-label">
-            <label for="ano">{% lng "Ano Capstone:" "Capstone Year:" %}</label>
+            <label for="ano">{% lng "Ano Capstone" "Capstone Year" %}:</label>
             <input class="form-control" type="number" id="ano" name="ano" min="2018" max="3018" {% if usuario.aluno.ano %}value="{{usuario.aluno.ano}}"{% endif %}>
           </div>
           <div class="col-md-2 campo-com-label">
-            <label for="semestre">{% lng "Semestre:" "Semester:" %}</label>
+            <label for="semestre">{% lng "Semestre" "Semester" %}:</label>
             <input class="form-control" type="number" id="semestre" name="semestre" min="1" max="2" {% if usuario.aluno.semestre %}value="{{usuario.aluno.semestre}}"{% endif %}>
           </div>
         </div>

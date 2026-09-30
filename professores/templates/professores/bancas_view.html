@@ -390,7 +390,7 @@
 
     <div class="secao-card secao-card-compact mb-2">
 
-      <div class="mb-3">
+      <div class="mb-2">
           <label for="inicio" style="white-space: nowrap; display:inline-block; margin-bottom: 3px; margin-right: 18px;">
             <span style="display:inline-block; width:5.5ex; text-align:right;">
               {% lng "Início:" "Start:" %}
@@ -465,8 +465,8 @@
 
       </script>
 
-      <div class="mb-3">
-        <label for="local" style="display: inline-block; width: 2.5em;">{% lng "Local:" "Local:" %}</label> 
+      <div class="mb-2">
+        <label for="local" style="display: inline-block; width: 2.6em;">{% lng "Local:" "Local:" %}</label> 
         <input id="local" name="local" type="text" size="79" maxlength="{% max_length Banca "location" %}" class="troca_lingua"
         {% if banca and banca.projeto.orientador.user != request.user and request.user.tipo_de_usuario != 4 %}disabled{% endif %}
         placeholder="" data-pt="alocado pela equipe de reservas" data-en="allocated by the facilities team"
@@ -493,8 +493,8 @@
         </script>
       {% endif %}
 
-      <div class="mb-3">
-        <label for="link" style="display: inline-block; width: 8.4em;">{% lng "Vídeo-conferência:" "Video-conference:" %}</label>
+      <div class="mb-2">
+        <label for="link" style="display: inline-block; width: 8.7em;">{% lng "Vídeo-conferência:" "Video-conference:" %}</label>
         <input id="link" name="link" type="text" size="66" maxlength="{% max_length Banca "link" %}" class="troca_lingua"
         {% if banca and banca.projeto.orientador.user != request.user and request.user.tipo_de_usuario != 4 %}disabled{% endif %}
         placeholder="" data-pt="somente se necessário" data-en="only if necessary"
@@ -504,8 +504,8 @@
         />
       </div>
 
-      <div class="mb-3">
-        <label for="observacoes" style="display: inline-block; width: 6.1em;">{% lng "Observações:" "Observations:" %}</label>
+      <div class="mb-2">
+        <label for="observacoes" style="display: inline-block; width: 6.2em;">{% lng "Observações:" "Observations:" %}</label>
         <input id="observacoes" name="observacoes" type="text" size="71" maxlength="{% max_length Banca "observacoes" %}" class="troca_lingua"
         {% if banca and banca.projeto.orientador.user != request.user and request.user.tipo_de_usuario != 4 %}disabled{% endif %}
         placeholder="" data-pt="Qualquer observação para a banca" data-en="Any observation for the examination board"
