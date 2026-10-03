@@ -8,6 +8,8 @@
 {% load static %}
 {% load documentos %}
 {% load linguas %}
+{% load certificados %}
+
 
 {% block head %}
   <link rel="stylesheet" href="{% static 'bootstrap-select-1.13.14/dist/css/bootstrap-select.min.css' %}">
@@ -27,7 +29,15 @@
             <tr class="item" data-lingua="{{ publicos.RPU.lng }}">
               <td>
                 {% include "projetos/includes/bloco_projeto.html" with projeto=projeto %}
-                <small>{% if publicos.first.lng == "pt" %}{% lng "" "(portuguese)" %}{% elif publicos.first.lng ==  "en" %}{% lng "(inglês)" "" %}{% endif %}</small>
+                <small>{% if publicos.RPU.lng == "pt" %}{% lng "" "(portuguese)" %}{% elif publicos.RPU.lng ==  "en" %}{% lng "(inglês)" "" %}{% endif %}</small>
+                {% with certificado_falconi=projeto|certificado_falconi %}
+                    <span class="badge
+                      {% if certificado_falconi.tipo_certificado.sigla == "EF" %}badge-success
+                      {% elif certificado_falconi.tipo_certificado.sigla == "DF" %}badge-info
+                      {% endif %}">
+                      {{ certificado_falconi.tipo_certificado.titulo }}
+                    </span>
+                {% endwith %}
               </td>
               <td>{% include "estudantes/includes/bloco_estudantes.html" with grupo=projeto.alocacao_set.all pequeno=True %}</td>
               <td>{% include "academica/includes/bloco_orientador.html" with orientador=projeto.orientador %}</td>
