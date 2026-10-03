@@ -30,7 +30,7 @@ from django.core.exceptions import PermissionDenied
 
 from .support import coleta_membros_banca, editar_banca, mensagem_orientador
 from .support import recupera_orientadores_por_semestre, get_edicoes_orientador
-from .support import recupera_coorientadores_por_semestre
+from .support import recupera_coorientadores_por_semestre, bloqueia_avaliacao
 from .support import move_avaliacoes, ver_pendencias_professor, mensagem_edicao_banca, mensagem_convite_encontro
 from .support3 import resultado_projetos_intern, puxa_encontros, puxa_bancas, calculate_allocation_statistics
 
@@ -1301,6 +1301,8 @@ def banca_avaliar(request, slug, documento_id=None):
         if destaque is not None:
             destaque = True if destaque == "True" else False
 
+        atrasado, sem_documentos = bloqueia_avaliacao(documentos, evento)
+
         entender = request.GET.get("entender", None)
         idear = request.GET.get("idear", None)
         prototipar = request.GET.get("prototipar", None)
@@ -1355,6 +1357,8 @@ def banca_avaliar(request, slug, documento_id=None):
             "testar": testar,
             "implementar": implementar,
             "evento": evento,
+            "atrasado": atrasado,
+            "sem_documentos": sem_documentos,
             "rubric_allowed_grades": rubric_allowed_grades,
         }
 
@@ -2171,17 +2175,7 @@ def entrega_avaliar(request, composicao_id, projeto_id, estudante_id=None):
             observacao = Observacao.objects.filter(projeto=projeto, exame=composicao.exame,
                                                     avaliador=projeto.orientador.user, alocacao=alocacao).last()
 
-        hoje = datetime.datetime.now()
-
-        primeiro_documento = documentos.first()  # primeiro é o último entregue por data
-        atrasado = hoje.date() > evento.endDate  # USADO PARA BLOQUEAR NOTAS EM OBJETIVOS DE APRENDIZAGEM
-        sem_documentos = False
-        if atrasado:
-            if primeiro_documento:
-                if primeiro_documento.data and primeiro_documento.data.date() <= evento.endDate:
-                    atrasado = False
-            else:
-                sem_documentos = True  # Documentos já deveriam ter sido entregues
+        atrasado, sem_documentos = bloqueia_avaliacao(documentos, evento)
 
         niveis_objetivos = Estrutura.loads(nome="Níveis de Objetivos")
 
@@ -2196,7 +2190,7 @@ def entrega_avaliar(request, composicao_id, projeto_id, estudante_id=None):
             "evento": evento,
             "periodo_para_rubricas": composicao.exame.periodo_para_rubricas,
             "pesos": pesos,
-            "today": hoje,
+            "today": datetime.datetime.now(),
             "conceitos": conceitos,
             "observacao": observacao,
             "editor": editor,

@@ -1338,3 +1338,18 @@ def get_edicoes_orientador(orientador, configuracao_ate):
             break
 
     return edicoes, ano, semestre
+
+
+def bloqueia_avaliacao(documentos, evento):
+    """Bloqueia avaliação se estiver atrasado ou sem documentos."""
+    hoje = datetime.datetime.now()
+    primeiro_documento = documentos.first()  # primeiro é o último entregue por data
+    atrasado = hoje.date() > evento.endDate  # USADO PARA BLOQUEAR NOTAS EM OBJETIVOS DE APRENDIZAGEM
+    sem_documentos = False
+    if atrasado:
+        if primeiro_documento:
+            if primeiro_documento.data and primeiro_documento.data.date() <= evento.endDate:
+                atrasado = False
+        else:
+            sem_documentos = True  # Documentos já deveriam ter sido entregues
+    return atrasado, sem_documentos
