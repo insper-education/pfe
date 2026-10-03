@@ -41,12 +41,14 @@
         {% endif %}
         {% if item.composicao.tipo_documento %}
           <a id="adiciona"
-            class="open-modal {% if dias_ate > dias %}lightgrey{% endif %}"
+            class="troca_lingua_title open-modal {% if dias_ate > dias %}lightgrey{% endif %}"
             data-toggle="tooltip" data-html="true" animation="true"
             {% if item.documentos.last %}
+              data-title_pt="Substitui documento" data-title_en="Replaces document"
               title="Substitui documento"
               data-url="{% url 'adiciona_documento_estudante' item.composicao.tipo_documento.sigla item.documentos.last.id %}"
             {% else %}
+              data-title_pt="Adicionar documento" data-title_en="Add document"
               title="Adicionar documento"
               data-url="{% url 'adiciona_documento_estudante' item.composicao.tipo_documento.sigla %}"
             {% endif %}
@@ -125,7 +127,23 @@
       data_prazo = new Date(prazo);
       const now = new Date();
       if(now-data_prazo>0) {
-        return alert("A entrega será fora do prazo!");
+        aviso_pt = [
+            "Atenção: esta entrega será registrada fora do prazo.",
+            "Se houver algum tipo de punição para entregas fora do prazo, ela será aplicada.",
+            "Clique em OK para continuar."
+          ].join("\n")
+        aviso_en = [
+            "Warning: this submission will be recorded after the deadline.",
+            "If there is any type of penalty for late submissions, it will be applied.",
+            "Click OK to continue."
+          ].join("\n")
+        var lang = localStorage.getItem("lingua") || "pt";
+        if (lang == "pt") {
+          aviso = aviso_pt;
+        } else {
+          aviso = aviso_en;
+        }
+        return alert(aviso);
       }
     }
   </script>
