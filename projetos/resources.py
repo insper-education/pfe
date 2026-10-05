@@ -61,44 +61,12 @@ def get_ProjetosResource(field_names=None):
     return ProjetosResource()
 
 
-
-
-# class DisciplinasResource(resources.ModelResource):
-#     """Model Resource para tratar dados de Disciplinas."""
-
-#     campos = ["nome"]
-#     nome = fields.Field(attribute='nome', column_name='nome')
-
-#     def get_instance(self, instance_loader, row):
-#         return False
-
-#     def before_import_row(self, row, **kwargs):
-#         """Forma que arrumei para evitar preencher com o mesmo dado."""
-#         nome = row.get('nome')
-#         if nome is None:
-#             pass  # "Erro ao recuperar o nome da disciplina"
-#         elif nome != "":
-#             reg, _ = Disciplina.objects.get_or_create(nome=nome)
-#             row["id"] = reg.id
-
-#     def skip_row(self, instance, original):
-#         """Sempre pula linha."""
-#         return True
-
-#     class Meta:
-#         """Meta do Projeto."""
-#         model = Disciplina
-#         fields = ('nome',)
-#         export_order = fields
-#         skip_unchanged = True
-
-
 def get_DisciplinasResource(field_names=None):
 
     class DisciplinasResource(resources.ModelResource):
         """Model Resource para tratar dados de Disciplinas."""
 
-        campos = ["nome"]
+        campos = [ ["nome", "Nome da disciplina", "OBRIGATÓRIO"] ]
         nome = fields.Field(attribute='nome', column_name='nome')
 
         def get_instance(self, instance_loader, row):
@@ -146,17 +114,17 @@ def get_Avaliacoes2Resource(field_names=None):
         """Model Resource para tratar dados de Avaliações."""
 
         campos = [
-            "estudante ou user_id (primeira parte do e-mail, obrigatório)",
-            "ano",
-            "semestre",
-            "avaliação",
-            "objetivo ou criterio",
-            "peso",
-            "nota ou score (se não houver procura por desempenho)",
-            "desempenho (opcional primeiro procura a nota)",
-            "momento ou date_modified (dd/mm/aa hh:mm)",
-            "observação ou feedback",
-        ]
+                    ["estudante ou user_id", "primeira parte do e-mail", "OBRIGATÓRIO"],
+                    ["ano", "Ano", "OBRIGATÓRIO"],
+                    ["semestre", "Semestre", "OBRIGATÓRIO"],
+                    ["avaliação", "Avaliação", "OBRIGATÓRIO"],
+                    ["objetivo ou criterio", "Objetivo ou Critério", "OPCIONAL"],
+                    ["peso", "Peso", "OBRIGATÓRIO"],
+                    ["nota ou score", " se não houver procura por desempenho", "OPCIONAL"],
+                    ["desempenho", "opcional primeiro procura a nota", "OPCIONAL"],
+                    ["momento ou date_modified", "(dd/mm/aa hh:mm)", "OPCIONAL"],
+                    ["observação ou feedback", "Observação", "OPCIONAL"],
+                ]
 
         def before_import_row(self, row, **kwargs):
             """Forma que arrumei para evitar preencher com o mesmo dado."""
@@ -281,21 +249,20 @@ def get_EstudantesResource(field_names=None):
 
     class EstudantesResource(resources.ModelResource):
         """Model Resource para tratar dados de Estudantes."""
-
         campos = [
-            'email [obrigatório] (e-mail institucional, com titulo da coluna sem o traço separando "e" de "mail")',
-            "nome",
-            "sobrenome",
-            "nome_compl (somente usado se nome e sobrenome não presentes)",
-            "gênero (M|F)",
-            "curso [GRENGCOMP|GRENGMECAT|GRENGMECA|GRCIECOMP]",
-            "matrícula (número)",
-            "cr (ponto como separador decimal)",
-            "ano (ano em que o estudante cursará no Capstone, ex: 2018)",
-            "semestre (semestre em que o estudante cursará no Capstone, ex: 1 ou 2)",
-            "usuário (desnecessário, pois é pego pelo e-mail)",
-            "nome_social (opcional, mas quando usado será usado sempre que se referir ao estudante)",
-            "pronome_tratamento (opcional, por exemplo Dr. ou Dra.)",
+            ["email", 'e-mail institucional, com titulo da coluna sem o traço separando "e" de "mail"', 'OBRIGATÓRIO'],
+            ["usuário", 'desnecessário, pois é pego pelo e-mail'],
+            ["nome", 'nome do estudante'],
+            ["sobrenome", 'sobrenome do estudante'],
+            ["nome_compl", 'somente usado se nome e sobrenome não presentes'],
+            ["ano", 'ano em que o estudante cursará no Capstone, ex: 2018'],
+            ["semestre", 'semestre em que o estudante cursará no Capstone, ex: 1 ou 2'],
+            ["curso", '(GRENGCOMP|GRENGMECAT|GRENGMECA|GRCIECOMP)'],
+            ["matrícula", 'número de matrícula do estudante'],
+            ["cr", 'ponto como separador decimal'],
+            ["gênero", '(M|F)'],
+            ["nome_social", 'opcional, mas quando usado será usado sempre que se referir ao estudante'],
+            ["pronome_tratamento", 'opcional, por exemplo Dr. ou Dra.'],
         ]
 
         def __init__(self):

@@ -12,22 +12,35 @@
   <strong>- idealmente separado por vírgula (evitar ponto e vírgula)</strong><br>
   <strong>- não mudar o maiúscula e minúscula dos nomes das colunas, nem deixar espaços em branco ao redor</strong><br>
   <strong>- se o campo já existir (ex: já tem o estudante), não será criada uma cópia, porém os dados atualizados
-    (serão informados os criados e os atualizados)
+    (depois será informado os criados e os atualizados)
   </strong><br>
 
   <br>
   <h6>{% lng "Campos Permitidos" "Allowed Fields" %}:</h6>
   <ul>
   {% for campo in campos_permitidos %}
-    <li>{{campo}}</li>
+    <li><b>{{campo.0}}</b> - {{campo.1}} {% if campo.2 %}<b style="color: red;">[{{campo.2}}]</b>{% endif %}</li>
   {% endfor %}
   </ul>
   <br>
   <form method="post" enctype="multipart/form-data">{% csrf_token %}
     {% include "selecionar_arquivo.html" with arquivo_nome="arquivo" arquivo_accept=".csv" %}<br><br>
-    <button class="btn btn-primary mb-1" type="submit">
+    <button class="btn btn-primary mb-1" type="submit" id="carregar-arquivo" disabled>
       {% lng "Carregar Arquivo" "Load File" %}
     </button>
   </form>
+
+  <script>
+    const arquivoInput = document.getElementById("arquivo");
+    const carregarArquivoButton = document.getElementById("carregar-arquivo");
+
+    function atualizaBotaoCarregar() {
+      carregarArquivoButton.disabled = !(arquivoInput.files && arquivoInput.files.length > 0);
+    }
+
+    arquivoInput.addEventListener("change", atualizaBotaoCarregar);
+    window.addEventListener("pageshow", atualizaBotaoCarregar);
+    atualizaBotaoCarregar();
+  </script>
 
 {% endblock %}
