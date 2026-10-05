@@ -129,6 +129,14 @@ class Projeto(models.Model):
                                      default="[ [5,1] ]",
                                      help_text="Horário das aulas do grupo do projeto")
 
+    horario_videoconf_apres_exec_intermediaria = models.DateTimeField(null=True, blank=True, help_text="Data e hora da vídeoconferência de apresentação executiva intermediária do projeto")
+    link_videoconf_apres_exec_intermediaria = models.CharField("Link de Videoconferência da Apresentação da Execução Intermediária", max_length=300, null=True, blank=True,
+                                        help_text="Link de Videoconferência da Apresentação Executiva Intermediária do projeto")
+
+    horario_videoconf_apres_exec_final = models.DateTimeField(null=True, blank=True, help_text="Data e hora da vídeoconferência de apresentação executiva final do projeto")
+    link_videoconf_apres_exec_final = models.CharField("Link de Videoconferência da Apresentação da Execução Final", max_length=300, null=True, blank=True,
+                                        help_text="Link de Videoconferência da Apresentação Executiva Final do projeto")
+
     # -- Preenchidos pelos estudantes durante o desenvolvimento do projeto -- #
     atualizacao_estudantes = models.DateTimeField("Atualização Estudantes", null=True, blank=True,
                                                   help_text="Data da última atualização dos dados do projeto pelos estudantes")
