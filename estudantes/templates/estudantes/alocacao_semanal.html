@@ -17,8 +17,9 @@
     <b>{% lng "Projeto" "Project" %}:</b> {{ projeto }}
   </div>
   <hr>
-  <b id="horario_aulas">{% lng "Horário de Aulas" "Class Schedule" %}:</b><br>
+  <h4 id="horario_aulas">{% lng "Horário de Aulas" "Class Schedule" %}:</h4>
   {% include "administracao/includes/bloco_horario_aulas.html" with projeto=projeto %}
   <hr>
+  <h4 id="alocacao_semanal">{% lng "Horários de Atividades e Aulas" "Activities and Classes Schedule" %}:</h4>
   {% include "mostra_horarios.html" with com_orientacoes=True %}
 {% endblock %}

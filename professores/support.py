@@ -329,9 +329,6 @@ def _calendar_invite_banca(banca, subject, recipient_list, mensagem, atualizada=
     }
 
 
-
-
-
 def _calendar_invite_encontro(encontro, subject, recipient_list, mensagem, atualizada=False, excluida=False,
                            organizer_email=None, organizer_name=None):
     projeto = encontro.get_projeto()
@@ -463,6 +460,104 @@ def _calendar_invite_encontro(encontro, subject, recipient_list, mensagem, atual
         "sequence": sequence,
         "content": "\r\n".join(lines) + "\r\n",
     }
+
+
+def _calendar_invite_reuniao(reuniao, subject, recipient_list, mensagem, atualizada=False, excluida=False,
+                           organizer_email=None, organizer_name=None):
+    projeto = reuniao.get_projeto()
+
+    domain = settings.EMAIL_HOST_USER.split("@")[-1] if "@" in settings.EMAIL_HOST_USER else "localhost"
+    uid = reuniao.calendar_uid or f"reuniao-{reuniao.id}@{domain}"
+    method = "CANCEL" if excluida else "REQUEST"
+    status = "CANCELLED" if excluida else "CONFIRMED"
+    organizer_mail = organizer_email or settings.EMAIL_HOST_USER
+    organizer_cn = organizer_name or "Capstone"
+
+    start_dt = _ics_format_dt(reuniao.data_hora)
+    end_reference = reuniao.data_hora + datetime.timedelta(hours=1) if reuniao.data_hora else None
+    end_dt = _ics_format_dt(end_reference)
+
+    if not start_dt or not end_dt:
+        return None
+
+    sequence_base = reuniao.calendar_sequence or 0
+    sequence = sequence_base + 1 if (atualizada or excluida) else sequence_base
+
+    if projeto:
+        link_projeto = settings.SERVER + reverse("projeto_infos", args=[projeto.id])
+    else:
+        link_projeto = None
+
+    if projeto:
+        descricao_linhas = [f"Reunião de Projeto {projeto.get_titulo_org()}"]
+    else:
+        descricao_linhas = [f"Reunião de Projeto"]
+
+    if reuniao.local:
+        descricao_linhas.append("")
+        descricao_linhas.append(f"Local: {reuniao.local}")
+
+    if projeto and projeto.orientador and projeto.orientador.user:
+        descricao_linhas.append("")
+        descricao_linhas.append(f"Orientador: {projeto.orientador.user.get_full_name()}")
+
+    descricao_linhas.append("")
+
+    if projeto:
+        descricao_linhas.append(f"Projeto: {projeto.get_titulo_org()}")
+        descricao_linhas.append(f"Link do projeto: {link_projeto}")
+
+    descricao = "\n".join(descricao_linhas)
+
+    attendees_by_email = {}
+
+    for email_dest in recipient_list:
+        if email_dest and email_dest not in attendees_by_email:
+            attendees_by_email[email_dest] = email_dest
+
+    attendees = []
+    for email_dest, nome in sorted(attendees_by_email.items(), key=lambda item: item[0]):
+        attendees.append(
+            f"ATTENDEE;CN={_ics_escape(nome)};ROLE=REQ-PARTICIPANT;RSVP=FALSE:mailto:{email_dest}"
+        )
+
+    location_parts = []
+    if reuniao.local:
+        location_parts.append(reuniao.local)
+    location = " | ".join(location_parts) if location_parts else ""
+
+    lines = [
+        "BEGIN:VCALENDAR",
+        "PRODID:-//Insper//Capstone PFE//PT-BR",
+        "VERSION:2.0",
+        "CALSCALE:GREGORIAN",
+        f"METHOD:{method}",
+        "BEGIN:VEVENT",
+        f"UID:{uid}",
+        f"SEQUENCE:{sequence}",
+        f"DTSTAMP:{_ics_format_dt(timezone.now())}",
+        f"DTSTART:{start_dt}",
+        f"DTEND:{end_dt}",
+        f"SUMMARY:{_ics_escape(subject)}",
+        f"DESCRIPTION:{_ics_escape(descricao)}",
+        f"LOCATION:{_ics_escape(location)}",
+        f"STATUS:{status}",
+        f"URL:{_ics_escape(link_projeto)}",
+        f"ORGANIZER;CN={_ics_escape(organizer_cn)}:mailto:{organizer_mail}",
+        "X-MICROSOFT-ISRESPONSEREQUESTED:FALSE",
+        *attendees,
+        "END:VEVENT",
+        "END:VCALENDAR",
+    ]
+
+    return {
+        "filename": f"reuniao_{reuniao.id}.ics",
+        "method": method,
+        "uid": uid,
+        "sequence": sequence,
+        "content": "\r\n".join(lines) + "\r\n",
+    }
+
 
 def calcula_interseccao_bancas(banca, startDate, endDate, limite_salas_bancas):
     """Calcula se a banca intersecta com outras bancas (e trata se for criada ou editada)."""

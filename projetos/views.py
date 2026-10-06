@@ -55,6 +55,7 @@ from calendario.support import cria_material_documento
 
 from operacional.models import Curso
 
+from professores.support import criar_reuniao_meet, _calendar_invite_reuniao
 from professores.support3 import puxa_encontros
 
 
@@ -1083,7 +1084,8 @@ def reunioes(request, todos=None):
     context = {
             "cabecalhos": [
                 {"pt": "Título", "en": "Title"},
-                {"pt": "Projeto", "en": "Project"},
+                {"pt": "Tipo", "en": "Type"},
+                {"pt": "Projeto", "en": "Project", "esconder": True},
                 {"pt": "Criação", "en": "Creation", "tipo": "data_hora"},
                 {"pt": "Data", "en": "Date", "tipo": "data_hora"},
                 {"pt": "Abono", "en": "Excuse"},
@@ -1093,14 +1095,16 @@ def reunioes(request, todos=None):
             "titulo": {"pt": "Reuniões do Projeto", "en": "Project Meetings"},
             "reunioes": reunioes,
             "todos": todos if todos else "",  # Usado para o criar reunioes
+            "Reuniao": Reuniao,
         }
     return render(request, "projetos/reunioes.html", context)
 
 
+
 @login_required
 @transaction.atomic
-def reuniao(request, reuniao_id_g=None):  # Id da reunião para editar, None para criar nova ou TODOS para listar todos projetos
-    """Formulário para estudantes preencherem os anotações de reuniões."""
+def documenta_reuniao(request, reuniao_id_g=None):  # Id da reunião para editar, None para criar nova ou TODOS para listar todos projetos
+    """Formulário para estudantes preencherem as anotações de reuniões."""
     usuario_sem_acesso(request, (1, 2, 4,)) # Est, Prof, Adm
     configuracao = get_object_or_404(Configuracao)
 
@@ -1115,13 +1119,8 @@ def reuniao(request, reuniao_id_g=None):  # Id da reunião para editar, None par
 
     if request.user.eh_estud:  # Estudante
 
-        alocacao = Alocacao.objects.filter(aluno=request.user.aluno,
-                                           projeto__ano=configuracao.ano,
-                                           projeto__semestre=configuracao.semestre).last()
-
-        associados = Associado.objects.filter(estudante=request.user.aluno,
-                                             projeto__ano=configuracao.ano, 
-                                             projeto__semestre=configuracao.semestre)
+        alocacao = Alocacao.objects.filter(aluno=request.user.aluno, projeto__ano=configuracao.ano, projeto__semestre=configuracao.semestre).last()
+        associados = Associado.objects.filter(estudante=request.user.aluno, projeto__ano=configuracao.ano, projeto__semestre=configuracao.semestre)
 
         if reuniao:
             if not alocacao and not associados:
@@ -1166,7 +1165,7 @@ def reuniao(request, reuniao_id_g=None):  # Id da reunião para editar, None par
 
     if reuniao:
         context["reuniao"] = reuniao
-        context["titulo"] = {"pt": "Editar Reunião", "en": "Edit Meeting"}
+        context["titulo"] = {"pt": "Edita Registro de Reunião", "en": "Edit Meeting Record"}
 
     for projeto in context["projetos"]:
         context["envolvidos"][projeto.id] = recupera_envolvidos(projeto, reuniao=reuniao)
@@ -1197,7 +1196,8 @@ def reuniao(request, reuniao_id_g=None):  # Id da reunião para editar, None par
         reuniao.local = request.POST.get("local", "")
         reuniao.anotacoes = request.POST.get("anotacoes", None)
         reuniao.visita_externa = "visita_externa" in request.POST
-
+        reuniao.tipo_reuniao = int(request.POST.get("tipo_reuniao", 0))
+       
         data_hora_raw = request.POST.get("data_hora", "").strip()
 
         if "-" in data_hora_raw:
@@ -1289,6 +1289,220 @@ def reuniao(request, reuniao_id_g=None):  # Id da reunião para editar, None par
         return render(request, "generic_ml.html", context=context)
 
     return render(request, "projetos/reuniao.html", context=context)
+
+
+
+@login_required
+def agenda_reuniao(request, reuniao_id_g=None):  # Id da reunião para editar, None para criar nova ou TODOS para listar todos projetos
+    """Formulário para estudantes agendarem futuras reuniões."""
+    usuario_sem_acesso(request, (1, 2, 4,)) # Est, Prof, Adm
+    configuracao = get_object_or_404(Configuracao)
+
+    context = {
+        "titulo": {"pt": "Agenda Reunião", "en": "Schedule Meeting"},
+        "area_principal": True,
+        "Reuniao": Reuniao,
+        "envolvidos": {},
+    }
+
+    reuniao = get_object_or_404(Reuniao, id=int(reuniao_id_g)) if (reuniao_id_g and reuniao_id_g != "todos") else None
+
+    if request.user.eh_estud:  # Estudante
+
+        alocacao = Alocacao.objects.filter(aluno=request.user.aluno, projeto__ano=configuracao.ano, projeto__semestre=configuracao.semestre).last()
+        associados = Associado.objects.filter(estudante=request.user.aluno, projeto__ano=configuracao.ano, projeto__semestre=configuracao.semestre)
+
+        if reuniao:
+            if not alocacao and not associados:
+                context["mensagem"] = {"pt": "Você não tem permissão para visualizar/editar essa reunião.", "en": "You do not have permission to edit this meeting."}
+                return render(request, "generic_ml.html", context=context)
+            elif alocacao and reuniao.projeto != alocacao.projeto:
+                context["mensagem"] = {"pt": "Você não tem permissão para visualizar/editar essa reunião.", "en": "You do not have permission to edit this meeting."}
+                return render(request, "generic_ml.html", context=context)
+            elif associados and reuniao.projeto not in [associado.projeto for associado in associados]:
+                context["mensagem"] = {"pt": "Você não tem permissão para visualizar/editar essa reunião.", "en": "You do not have permission to edit this meeting."}
+                return render(request, "generic_ml.html", context=context)
+
+        if alocacao:
+            projetos = [alocacao.projeto]
+        elif associados:
+            projetos = [associado.projeto for associado in associados]
+        else:
+            context["mensagem"] = {"pt": "Você não está alocado em um projeto esse semestre.", "en": "You are not allocated to a project this semester."}
+            return render(request, "generic_ml.html", context=context)
+
+    elif request.user.eh_prof_a:  # Professor
+
+        if reuniao:
+            projetos = [reuniao.projeto]
+
+        else:
+            if request.user.eh_admin and reuniao_id_g == "todos":
+                projetos = Projeto.objects.filter(ano=configuracao.ano, semestre=configuracao.semestre)
+            else:
+                projetos = Projeto.objects.filter(orientador=request.user.professor, ano=configuracao.ano, semestre=configuracao.semestre)
+
+        if not projetos:
+            context["mensagem"] = {"pt": "Você não tem projetos para registrar reuniões nesse semestre.", "en": "You do not have projects to register meetings this semester."}
+            return render(request, "generic_ml.html", context=context)
+
+
+    else:  # Outros usuários (não estudantes ou professores)
+        context["mensagem"] = {"pt": "Você não tem permissão para registrar reuniões.", "en": "You do not have permission to register meetings."}
+        return render(request, "generic_ml.html", context=context)
+
+    context["projetos"] = projetos
+
+    if reuniao:
+        context["reuniao"] = reuniao
+        context["titulo"] = {"pt": "Edita Agendamento de Reunião", "en": "Edit Meeting Schedule"}
+
+    for projeto in context["projetos"]:
+        context["envolvidos"][projeto.id] = recupera_envolvidos(projeto, reuniao=reuniao)
+
+    if request.method == "POST":
+
+        if reuniao is None:
+            reuniao = Reuniao.objects.create()
+        
+        projeto_id = request.POST.get("projeto", None)
+        reuniao.projeto = get_object_or_404(Projeto, id=projeto_id)
+
+        if reuniao.projeto not in projetos:
+            context["mensagem"] = {"pt": "Você não tem permissão para agendar reuniões nesse projeto.", "en": "You do not have permission to schedulle meetings for this project."}
+            return render(request, "generic_ml.html", context=context)
+
+        if request.user.eh_estud and reuniao.travado:
+            context["mensagem"] = {"pt": "Você não pode editar reuniões travadas.", "en": "You cannot edit locked meetings."}
+            return render(request, "generic_ml.html", context=context)
+
+        reuniao.titulo = request.POST.get("titulo", "")
+        reuniao.local = request.POST.get("local", "")
+        reuniao.explicacoes = request.POST.get("explicacoes", None)
+        reuniao.tipo_reuniao = int(request.POST.get("tipo_reuniao", 0))
+        data_hora_raw = request.POST.get("data_hora", "").strip()
+        
+        if "-" in data_hora_raw:
+            ano_raw, _ = data_hora_raw.split("-", 1)
+            if len(ano_raw) == 5 and ano_raw.isdigit():
+                context["mensagem_aviso"] = {
+                    "pt": "Ano da data da reunião inválido. Verifique o campo e tente novamente.",
+                    "en": "Invalid meeting date year. Please check the field and try again.",
+                }
+                context["reuniao"] = reuniao
+                return render(request, "projetos/reuniao.html", context=context)
+
+        try:
+            reuniao.data_hora = datetime.datetime.strptime(data_hora_raw, "%Y-%m-%dT%H:%M")
+        except ValueError:
+            context["mensagem_aviso"] = {
+                "pt": "Data e hora da reunião inválidas. Verifique o campo e tente novamente.",
+                "en": "Invalid meeting date and time. Please check the field and try again.",
+            }
+            context["reuniao"] = reuniao
+            return render(request, "projetos/reuniao.html", context=context)
+
+        if "arquivo" in request.FILES:
+                documento = cria_material_documento(request, "arquivo", sigla="AAR", confidencial=True,
+                                                    projeto=reuniao.projeto, usuario=request.user,
+                                                    prefix="anot_reun_"+str(request.user.first_name)+"_")
+                if documento:
+                    documento.anotacao = reuniao.titulo
+                    documento.save()
+                    reuniao.anexo = documento
+
+        reuniao.travado = "travado" in request.POST
+        if reuniao.usuario:
+            reuniao.atualizado_por = request.user
+        else:
+            reuniao.usuario = request.user
+        reuniao.save()
+
+        participantes = anota_participacao(request.POST, reuniao=reuniao)
+
+        if reuniao.anexo:
+            doc_url = request.scheme + "://" + request.get_host() + reuniao.anexo.documento.url
+        else:
+            doc_url = None
+        
+        if "enviar_mensagem" in request.POST:
+            if reuniao.projeto:
+                subject = "Capstone | Agendamento de Reunião (" + reuniao.titulo + ")"
+                recipient_list = []
+                alocacoes = Alocacao.objects.filter(projeto=reuniao.projeto)
+                for alocacao in alocacoes:
+                    recipient_list.append(alocacao.aluno.user.email)
+                for participante in participantes:
+                    usuario, situacao = participante
+                    if situacao["pt"] == "Convidado" and  usuario.email not in recipient_list:
+                        recipient_list.append(usuario.email)
+
+                end_ref = reuniao.data_hora + datetime.timedelta(hours=1) if reuniao.data_hora else None  # define data de término como 1 hora após início
+                if reuniao.data_hora and end_ref:
+                    join_url, _ = criar_reuniao_meet(subject, reuniao.data_hora, end_ref, recipient_list=recipient_list)
+                    if join_url:
+                        reuniao.local = join_url
+                        reuniao.save(update_fields=["local"])
+
+                context_email = {
+                    "reuniao": reuniao,
+                    "configuracao": configuracao,
+                    "anexo": doc_url,
+                }
+                mensagem = render_message("Agendamento de Reunião", context_email, urlize=False)
+
+                atualizada = reuniao_id_g and reuniao_id_g != "todos"
+                excluida = "remover" in request.POST
+
+                calendar_invite = _calendar_invite_reuniao(
+                    reuniao=reuniao,
+                    subject=subject,
+                    recipient_list=recipient_list,
+                    mensagem=mensagem,
+                    atualizada=atualizada,
+                    excluida=excluida,
+                    #organizer_email=organizer_email,
+                    #organizer_name=organizer_name,
+                )
+
+                error = email(subject, recipient_list, mensagem, calendar_invite=calendar_invite)
+                if calendar_invite:
+                    reuniao.calendar_uid = calendar_invite.get("uid")
+                    reuniao.calendar_sequence = calendar_invite.get("sequence", reuniao.calendar_sequence)
+                    reuniao.calendar_last_method = calendar_invite.get("method")
+                    reuniao.calendar_last_sent_at = datetime.datetime.now()
+                    reuniao.save(update_fields=[
+                        "calendar_uid",
+                        "calendar_sequence",
+                        "calendar_last_method",
+                        "calendar_last_sent_at",
+                    ])
+
+        if "remover" in request.POST:
+            ReuniaoParticipante.objects.filter(reuniao=reuniao).delete()
+            reuniao.delete()
+            context["mensagem"] = {"pt": "Reunião removida!", "en": "Meeting removed!"}
+            return render(request, "generic_ml.html", context=context)
+
+        context["mensagem"] = {"pt": "Reunião agendada com sucesso!<br><b>Horário de recebimento:</b> " + reuniao.criacao.strftime('%d/%m/%Y, %H:%M:%S'), 
+                               "en": "Meeting successfully scheduled!<br><b>Submission time:</b> " + reuniao.criacao.strftime('%d/%m/%Y, %H:%M:%S')}
+        return render(request, "generic_ml.html", context=context)
+
+    return render(request, "projetos/agenda_reuniao.html", context=context)
+
+
+
+@login_required
+@transaction.atomic
+def edita_reuniao(request, reuniao_id_g=None):
+    """Formulário para estudantes editarem as reuniões."""
+    reuniao = get_object_or_404(Reuniao, id=int(reuniao_id_g)) if (reuniao_id_g and reuniao_id_g != "todos") else None
+    agora = datetime.datetime.now()
+    if reuniao and reuniao.data_hora and reuniao.data_hora > agora:
+        return agenda_reuniao(request, reuniao_id_g=reuniao_id_g)
+    else:
+        return documenta_reuniao(request, reuniao_id_g=reuniao_id_g)
+
 
 
 @login_required

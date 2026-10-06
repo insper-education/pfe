@@ -14,12 +14,20 @@
 
 {% block content %}
 
-  {% include "botao_adiciona.html" with url_add="cria_reuniao" url_param=todos txt_pt="Registrar Nova Reunião" txt_en="Register New Meeting" %}
+  {% include "botao_adiciona.html" with url_add="cria_reuniao" url_param=todos txt_pt="Documentar Reunião" txt_en="Document Meeting" %}
+  {% include "botao_adiciona.html" with url_add="agenda_reuniao" url_param=todos txt_pt="Agendar Reunião" txt_en="Schedule Meeting" %}
 
   {% include "tabelas_top_ml.html" with tabela="Reunioes" cabecalhos=cabecalhos %}
     {% for reuniao in reunioes %} 
       <tr class="item">
         <th scope="row"><a href="{% url 'edita_reuniao' reuniao.id %}">{{reuniao.titulo}}</a></th>
+        <td class="text-center">
+          {% for tipo in Reuniao.TIPO_REUNIAO %}
+            {% if reuniao.tipo_reuniao == tipo.0 %}
+              <span class='troca_lingua' data-pt="{{ tipo.1 }}" data-en="{{ tipo.2 }}">{{ tipo.1 }}</span>
+            {% endif %}
+          {% endfor %}
+        </td>
         <td><a href="{% url 'projeto_infos' reuniao.projeto.id %}">{{reuniao.projeto}}</a></td>
         <td>{{reuniao.criacao|date:"d/m/Y"}}{% if user.eh_prof_a %}<br>[{{reuniao.usuario.get_full_name}}]{% endif %}</td>
         <td data-sort="{{reuniao.data_hora|date:'Y-m-d\TH:i:s' }}">{{reuniao.data_hora|date:"d/m/Y H:i"}}</td>

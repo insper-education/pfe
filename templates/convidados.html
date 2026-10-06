@@ -69,11 +69,7 @@
           {% if user.eh_admin or nao_convocado %}
             <th scope="col">{% lng "Não Convocado" "Not Invited" %}</th>
           {% endif %}
-          <th scope="col">{% lng "Presente" "Present" %}</th>
-          <th scope="col">{% lng "Faltou" "Absent" %}</th>
-          {% if user.eh_admin %}
-            <th scope="col">{% lng "Falta Justificada" "Justified Absence" %}</th>
-          {% endif %}
+          <th scope="col">{% lng "Convidar" "Invite" %}</th>
         </tr>
       </thead>
       <tbody>
@@ -96,26 +92,12 @@
                   {% endif %};
                 ">
               <td>{{ envolvido.participante.get_full_name }}</td>
-              {% if user.eh_admin or nao_convocado %}
-                <td>
-                  <input type="radio" name="envolvido_{{projeto_id}}_{{ envolvido.participante.id }}" value="0" class="ptravar"
-                    {% if envolvido.situacao == 0 or envolvido.situacao == 4 %}checked{% endif %}>
-                </td>
-              {% endif %}
               <td>
-                <input type="radio" name="envolvido_{{projeto_id}}_{{ envolvido.participante.id }}" value="1" class="ptravar"
-                  {% if envolvido.situacao == 1 %}checked{% endif %}>
+                <input type="checkbox" name="envolvido_{{projeto_id}}_{{ envolvido.participante.id }}" value="4" class="ptravar"
+                  {% if envolvido.participante.eh_estud %}checked disabled{% endif %}
+                  {% if envolvido.situacao == 4 %}checked{% endif %}
+                  >
               </td>
-              <td>
-                <input type="radio" name="envolvido_{{projeto_id}}_{{ envolvido.participante.id }}" value="2" class="ptravar"
-                  {% if envolvido.situacao == 2 %}checked{% endif %}>
-              </td>
-              {% if user.eh_admin %}
-                <td>
-                  <input type="radio" name="envolvido_{{projeto_id}}_{{ envolvido.participante.id }}" value="3" class="ptravar"
-                    {% if envolvido.situacao == 3 %}checked{% endif %}>
-                </td>
-              {% endif %}
             </tr>
           {% endfor %}
         {% endfor %}

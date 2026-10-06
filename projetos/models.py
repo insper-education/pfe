@@ -129,14 +129,6 @@ class Projeto(models.Model):
                                      default="[ [5,1] ]",
                                      help_text="Horário das aulas do grupo do projeto")
 
-    horario_videoconf_apres_exec_intermediaria = models.DateTimeField(null=True, blank=True, help_text="Data e hora da vídeoconferência de apresentação executiva intermediária do projeto")
-    link_videoconf_apres_exec_intermediaria = models.CharField("Link de Videoconferência da Apresentação da Execução Intermediária", max_length=300, null=True, blank=True,
-                                        help_text="Link de Videoconferência da Apresentação Executiva Intermediária do projeto")
-
-    horario_videoconf_apres_exec_final = models.DateTimeField(null=True, blank=True, help_text="Data e hora da vídeoconferência de apresentação executiva final do projeto")
-    link_videoconf_apres_exec_final = models.CharField("Link de Videoconferência da Apresentação da Execução Final", max_length=300, null=True, blank=True,
-                                        help_text="Link de Videoconferência da Apresentação Executiva Final do projeto")
-
     # -- Preenchidos pelos estudantes durante o desenvolvimento do projeto -- #
     atualizacao_estudantes = models.DateTimeField("Atualização Estudantes", null=True, blank=True,
                                                   help_text="Data da última atualização dos dados do projeto pelos estudantes")
@@ -1265,6 +1257,7 @@ class Participante(models.Model):
         (1, "Presente", "Present", "#28a745"),
         (2, "Faltou", "Absent", "#dc3545"),
         (3, "Falta Justificada", "Excused", "#e6a000"),
+        (4, "Convidado", "Invited", "#007bff"),
     )
 
     situacao = models.PositiveSmallIntegerField(choices=[subl[:2] for subl in TIPO_PARTICIPANTE], null=True, blank=True,
@@ -2460,7 +2453,9 @@ class Reuniao(models.Model):
     titulo = models.CharField("Título", max_length=256, null=True, blank=True,
                                help_text="Título da reunião")
     anotacoes = models.TextField("Descrição", max_length=9000, null=True, blank=True,
-                                 help_text="Anotações ou descrição da reunião")
+                                 help_text="Anotações coletadas durante a reunião")
+    explicacoes = models.TextField("Explicações", max_length=9000, null=True, blank=True,
+                                   help_text="Explicações para os participantes da futura reunião")
     criacao = models.DateTimeField("Data de Criação", default=datetime.datetime.now,
                                    help_text="Data e hora de quando a reunião foi criada")
     usuario = models.ForeignKey("users.PFEUser", null=True, blank=True, on_delete=models.SET_NULL,
@@ -2482,6 +2477,23 @@ class Reuniao(models.Model):
     anexo = models.ForeignKey("projetos.Documento", null=True, blank=True, on_delete=models.SET_NULL,
                                help_text="Documento anexado a reunião")
 
+    TIPO_REUNIAO = (
+        (0, "Genérica", "Generic"),
+        (1, "Orientador", "Advisor"),
+        (2, "Organização Parceira", "Partner Organization"),
+        (3, "Executiva Intermediária", "Executive Intermediate"),
+        (4, "Executiva Final", "Executive Final"),
+    )
+    tipo_reuniao = models.IntegerField(choices=[subl[:2] for subl in TIPO_REUNIAO],
+                                       null=True, blank=True, default=0)
+
+    ### Dados para integração com calendário (iCal, Google Calendar, etc.) ###
+    calendar_uid = models.CharField(max_length=255, null=True, blank=True, help_text="UID persistente para convites de calendário")
+    calendar_sequence = models.PositiveIntegerField(default=0, help_text="Sequência de atualização do convite de calendário")
+    calendar_last_sent_at = models.DateTimeField(null=True, blank=True, help_text="Data e hora do último envio de convite")
+    calendar_last_method = models.CharField(max_length=10, null=True, blank=True, help_text="Último método do convite enviado (REQUEST/CANCEL)")
+    ### ------------------------------------------------------------------ ###
+
     def __str__(self):
         return f"{self.titulo}: {self.data_hora.strftime('%d/%m/%Y %H:%M')}"
 
@@ -2490,6 +2502,9 @@ class Reuniao(models.Model):
 
     def get_data(self):
         return self.data_hora
+
+    def get_projeto(self):
+        return self.projeto
 
     class Meta:
         verbose_name = "Reunião"
