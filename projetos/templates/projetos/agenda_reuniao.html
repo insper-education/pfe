@@ -157,6 +157,11 @@
         <label for="local" class="form_label" style="font-size:0.97em;">{% lng "Local da reunião" "Meeting location" %}</label>
         <input type="text" id="local" name="local" class="form-control-sm med-input ptravar"
               value="{% if reuniao.local %}{{reuniao.local}}{% endif %}" placeholder="Opcional (Local Físico ou Link de Videoconferência)">
+        <span style="margin-left: 0.5rem; white-space: nowrap; font-size: 0.88em; color: #555;">
+          <input type="checkbox" id="criar_link" name="criar_link" value="True">
+          {% lng "Criar Link de Videoconferência" "Create Videoconference Link" %}
+        </span>
+
       </div>
 
       <div class="form-floating mb-2">

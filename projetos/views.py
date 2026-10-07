@@ -1437,12 +1437,13 @@ def agenda_reuniao(request, reuniao_id_g=None):  # Id da reunião para editar, N
                     if situacao["pt"] == "Convidado" and  usuario.email not in recipient_list:
                         recipient_list.append(usuario.email)
 
-                end_ref = reuniao.data_hora + datetime.timedelta(hours=1) if reuniao.data_hora else None  # define data de término como 1 hora após início
-                if reuniao.data_hora and end_ref:
-                    join_url, _ = criar_reuniao_meet(subject, reuniao.data_hora, end_ref, recipient_list=recipient_list)
-                    if join_url:
-                        reuniao.local = join_url
-                        reuniao.save(update_fields=["local"])
+                if "criar_link" in request.POST:
+                    end_ref = reuniao.data_hora + datetime.timedelta(hours=1) if reuniao.data_hora else None  # define data de término como 1 hora após início
+                    if reuniao.data_hora and end_ref:
+                        join_url, _ = criar_reuniao_meet(subject, reuniao.data_hora, end_ref, recipient_list=recipient_list)
+                        if join_url:
+                            reuniao.local = join_url
+                            reuniao.save(update_fields=["local"])
 
                 context_email = {
                     "reuniao": reuniao,
