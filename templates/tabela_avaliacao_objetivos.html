@@ -114,7 +114,8 @@
 
 
     {% for peso in pesos %}
-      {% with allowed_grades=rubric_allowed_grades|get_value:peso.objetivo.id %}
+      {% with id_objetivo=peso.objetivo.id %}
+      {% with allowed_grades=rubric_allowed_grades|get_value:id_objetivo %}
       <div class="rubric-objective-card">
       <div class="rubric-objective-header">
         <div class="rubric-objective-title">
@@ -221,6 +222,7 @@
 
       </div>
       </div>
+      {% endwith %}
       {% endwith %}
 
       {% if not forloop.last %}

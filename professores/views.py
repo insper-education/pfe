@@ -317,16 +317,14 @@ def avaliar_entregas(request, prof_id=None):
                     return HttpResponse("Edição inválida.", status=400)
 
         # Coletando entregas por projeto
+        coordenacao = get_object_or_404(Configuracao).coordenacao.user == request.user
         composicoes = Composicao.objects.filter(
-            Q(entregavel=True) | Q(coordenacao=True)
+            Q(entregavel=True) | Q(coordenacao=coordenacao)
         ).select_related("exame", "tipo_documento", "tipo_evento")
         composicoes_cache = {}
         eventos_cache = {}
         avaliacoes = []
         for projeto in projetos:
-            # Antes de 2022 os relatos quinzenais eram feitos no Blackboard.
-            if projeto.ano < 2022:
-                continue
 
             chave_composicoes = (projeto.ano, projeto.semestre)
             if chave_composicoes not in composicoes_cache:
@@ -335,15 +333,8 @@ def avaliar_entregas(request, prof_id=None):
                 )
 
             avaliacoes.append((
-                projeto,
-                _filtra_entregas_precarregadas(
-                    composicoes_cache[chave_composicoes],
-                    projeto,
-                    eventos_cache,
-                )
+                projeto, _filtra_entregas_precarregadas(composicoes_cache[chave_composicoes], projeto, eventos_cache)
             ))
-
-
 
         context = {
             "avaliacoes": avaliacoes,
