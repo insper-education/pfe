@@ -372,7 +372,7 @@
       <div id="bloco_aulas" class="col-xl-auto">
 
         <div class="tit_agenda" id="titulo_aulas">
-          {% lng "Aulas" "Classes" %}
+          {% lng "Aulas/Trabalho em Grupo" "Classes/Group Work" %}
         </div>
 
         <div id="lista_aulas" class="lista_aulas" style="margin-bottom: 18px;">
@@ -566,7 +566,7 @@
                 {% regroup cerimonias|dictsort:"startDateTime" by startDateTime as aulas_por_dia %}
                   {% for grupo in aulas_por_dia %}
                     {% for aula in grupo.list %}
-                  <tr id="ev{{aula.id}}" class="lin_cerimonia ano{{aula.endDateTime.year}} semestre" data-ano="{{aula.endDateTime.year}}" data-mes="{{aula.endDateTime.month}}" data-dia="{{aula.endDateTime.day}}"
+                  <tr id="ev{{aula.id}}" class="lin_cerimonia ano{{aula.startDateTime.year}} semestre" data-ano="{{aula.startDateTime.year}}" data-mes="{{aula.startDateTime.month}}" data-dia="{{aula.startDateTime.day}}"
                    {% if aula.startDateTime|dif_dias_hoje == 0 %}style="background-color: #F0FFFF;"{% endif %}>
 
                     {% if forloop.first %}
