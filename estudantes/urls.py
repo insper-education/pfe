@@ -35,6 +35,7 @@ urlpatterns = [
     path("relato_visualizar/<int:id>", views.relato_visualizar, name="relato_visualizar"),
     path("selecao_propostas/", views.selecao_propostas, name="selecao_propostas"),
     path("submissao_documento/", views.submissao_documento, name="submissao_documento"),
+    path("atividades_aula/", views.atividades_aula, name="atividades_aula"),
     path("validate_feedback/", views.validate_feedback, name="validate_feedback"),
 
     path("ajax/opcao_temporaria/", views.opcao_temporaria, name="opcao_temporaria"),

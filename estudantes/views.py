@@ -23,14 +23,13 @@ from django.http import HttpResponse, JsonResponse, HttpResponseNotFound
 from django.shortcuts import render, get_object_or_404
 from django.utils import timezone
 from django.views.decorators.http import require_GET, require_POST
-#from django.views.decorators.csrf import csrf_exempt
 
 from .models import Relato, Pares, EstiloComunicacao
 from .support import cria_area_estudante, ver_pendencias_estudante
 from .support2 import estudante_feedback_geral
 
 from academica.models import Composicao, CodigoConduta
-from academica.support import filtra_entregas, get_respostas_estilos
+from academica.support import filtra_entregas, get_respostas_estilos, filtra_entregas_aulas
 from academica.support5 import filtra_composicoes
 
 from administracao.models import Carta, TipoEvento, Estrutura
@@ -1216,6 +1215,36 @@ def submissao_documento(request):
     context["entregas"] = entregas
 
     return render(request, "estudantes/submissao_documento.html", context)
+
+
+@login_required
+def atividades_aula(request):
+    """Submissão de documentos pelos estudantes."""
+
+    configuracao = get_object_or_404(Configuracao)
+
+    context = {"titulo": {"pt": "Atividades de Aula", "en": "Class Activities"},}
+
+    if request.user.tipo_de_usuario != 1:  # Não é Estudante
+         if request.user.tipo_de_usuario == 2 or request.user.tipo_de_usuario == 4:  # Professor
+            projeto = Projeto.objects.filter(orientador=request.user.professor).last()
+            context["mensagem_aviso"] = {
+                "pt": "Professor, esse é somente um exemplo do que os estudantes visualizam. Não envie documentos por essa página.",
+                "en": "Professor, this is just an example of what students see. Do not send documents through this page.",
+            }
+    else:
+        alocacao = Alocacao.objects.filter(aluno=request.user.aluno, projeto__ano=configuracao.ano, projeto__semestre=configuracao.semestre).last()
+        projeto = alocacao.projeto if alocacao else None
+        
+    if not projeto:
+        return HttpResponse("Você não está alocado em um projeto esse semestre.", status=401)
+
+    entregas = filtra_entregas_aulas(projeto)
+
+    context["projeto"] = projeto
+    context["entregas"] = entregas
+
+    return render(request, "estudantes/atividades_aula.html", context)
 
 
 @login_required

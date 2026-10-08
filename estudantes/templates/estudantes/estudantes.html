@@ -80,11 +80,13 @@
   </div>
 
   {% if projeto or user.eh_prof_a %}
+    
     <div class="item_lista"><span class="circulo">&#9899;</span>
       <a {% if not user.eh_prof_a and not projeto %} class="disabled" onclick="showMessage('projeto')" {% else %} href="{% url 'minhas_bancas' %}" {% endif %} >
         {% lng "Informações das Bancas" "Information of the Examination Boards" %}
       </a>
     </div>
+
     <div class="item_lista"><span class="circulo">{% include "circulo_estados.html" with estado=submissao_documento %}</span>
       <a {% comment %} Submissão de Documentos {% endcomment %}
         {% if user.eh_prof_a %}
@@ -111,7 +113,15 @@
       >
         {% lng "Alocação Semanal" "Weekly Allocation" %}
       </a>
-    </div>  
+    </div>
+
+    <div class="item_lista">
+      <span class="circulo">
+        {% include "circulo_estados.html" with estado=atividades_aula %}
+      </span>
+      <a href="{% url 'atividades_aula' %}">{% lng "Atividades de Aula" "Class Activities" %}</a>
+    </div>
+
   {% endif %}
 
   <div class="item_lista"><span class="circulo">&#9899;</span>
@@ -167,6 +177,7 @@
       </a>
     </div>
 
+{% comment %}     
     <div class="item_lista"><span class="circulo">&#9899;</span>
       {% lng "Formulários para Dinâmicas de Grupo" "Forms for Group Dynamics" %}
     </div>
@@ -186,16 +197,17 @@
         {% lng "Código de Conduta do Grupo (grupo)" "Group Code of Conduct (group)" %}
       </a>
     </div>
-    {% comment %} <div class="item_lista"><span class="return">&#x21B3;</span>
+    <div class="item_lista"><span class="return">&#x21B3;</span>
       <a {% if user.eh_estud and not semestre_alocado %}class="disabled" onclick="showMessage('periodo')" {% else %}href="{% url 'funcionalidade_grupo' %}"{% endif %}>
         {% lng "Funcionalidade de Grupo (individual)" "Group Functionality (individual)" %}
       </a>
-    </div> {% endcomment %}
+    </div>
     <div class="item_lista"><span class="return">&#x21B3;</span>
       <a {% if user.eh_estud and not semestre_alocado %}class="disabled" onclick="showMessage('periodo')" {% else %}href="{% url 'dinamica_conflitos' %}"{% endif %}>
         {% lng "Dinâmica de Conflitos (individual)" "Conflict Dynamics (individual)" %}
       </a>
-    </div>
+    </div> {% endcomment %}
+
   </div>
 {% endif %}
 

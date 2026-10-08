@@ -26,8 +26,6 @@ from estudantes.models import Relato, Pares
 from projetos.models import Documento, Evento, Avaliacao2, Observacao
 from projetos.models import Projeto, Desconto, Configuracao, Encontro
 
-
-
 from users.models import Alocacao, UsuarioEstiloComunicacao
 
 
@@ -46,7 +44,24 @@ def get_nota_peso(avaliacoes):
     else:
         nota = 0
     return nota, peso
+
+
+def filtra_entregas_aulas(projeto):  # São sempre de grupo
+    """Filtra as entregas para atividades de aula de acordo com o projeto."""
+
+    entregas = []
+    eventos = Evento.get_eventos(sigla="A", ano=projeto.ano, semestre=projeto.semestre)
+    for evento in eventos:
+        if evento.tipo_documento:
+            documentos = Documento.objects.filter(tipo_documento=evento.tipo_documento,
+                                                    projeto=projeto)
+            entregas.append({"evento": evento,
+                            "documentos": documentos,
+                            })
         
+    return entregas
+
+
 def filtra_entregas(composicoes, projeto, user=None):
     entregas = []
 

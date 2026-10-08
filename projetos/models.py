@@ -792,10 +792,16 @@ class Evento(models.Model):
 
     ## Só usado para aulas
     questao_problema_desafio = models.CharField(max_length=512, blank=True,
-                                                help_text="Questão / Problema / Desafio")
+                                                help_text="Questão / Problema / Desafio")  # Usado para dados das aulas no Blackboard
     
     evidencias_de_aprendizado = models.CharField(max_length=512, blank=True,
-                                                 help_text="Evidências de Aprendizado")
+                                                 help_text="Evidências de Aprendizado")  # Usado para dados das aulas no Blackboard
+
+    tipo_documento = models.ForeignKey("documentos.TipoDocumento", null=True, blank=True, on_delete=models.SET_NULL,
+                                       help_text="Tipo de documento para entrega de atividade em aula")
+
+    prazo_entrega_atividade_dias = models.PositiveIntegerField("Prazo de Entrega da Atividade (dias)", default=0,
+                                           help_text="Prazo de entrega da atividade em dias, caso seja uma atividade em aula")
 
     def get_title(self):
         """Retorna em string o nome do evento."""

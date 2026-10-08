@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+{% comment %}
+  Desenvolvido para o Projeto Final de Engenharia
+  Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+  Data: 8 de Outubro de 2026
+{% endcomment %}
+
+{% load static %}
+{% load date_extras %}
+{% load linguas %}
+
+{% block head %}
+  {% include "reload.html" %}
+  <link rel="stylesheet" href="{% static 'css/div_arrend.css' %}">
+{% endblock %}
+
+
+{% block content %}
+
+  {% include "cabecalho_projeto.html" with com_email=True %}<br>
+
+  {% for item in entregas %}
+    {% with dias_ate=item.evento.endDate|dif_dias_hoje dias=14 %} {% comment %} Eventos são mostrados duas semanas antes do prazo {% endcomment %}
+      <div class="div_arredondado pintern" {% if dias_ate > dias and request.user.eh_estud %}style="display:none;"{% endif %}>
+        <span class="nome_entrega" {% if dias_ate > dias %}style="color:lightgrey;"{% endif %}>
+        <b>{{item.evento.tipo_documento.nome}}</b>
+        {% if item.evento.endDate %}
+          <span class="texto-longo">
+            {% lng "[prazo" "[deadline" %}
+            {% lng_dl item.evento.endDate %}]
+          </span>
+          <span class="texto-curto">
+            {% lng "[prazo" "[deadline" %}
+            {% lng_d item.evento.endDate %}]
+          </span>
+        {% endif %}
+        {% if item.evento.tipo_documento %}
+          <a
+            class="troca_lingua_title open-modal {% if dias_ate > dias %}lightgrey{% endif %}"
+            data-toggle="tooltip" data-html="true" animation="true"
+            {% if item.documentos.last %}
+              data-title_pt="Substitui documento" data-title_en="Replaces document"
+              title="Substitui documento"
+              data-url="{% url 'adiciona_documento_estudante' item.evento.tipo_documento.sigla item.documentos.last.id %}"
+            {% else %}
+              data-title_pt="Adicionar documento" data-title_en="Add document"
+              title="Adicionar documento"
+              data-url="{% url 'adiciona_documento_estudante' item.evento.tipo_documento.sigla %}"
+            {% endif %}
+            onClick="check_prazo('{{item.evento.endDate|date:"Y-m-d"}}T23:59:59');"
+            >
+            {% if item.documentos.last %}<b><i class="fas fa-redo"></i></b>{% else %}<i class="fas fa-file-upload"></i>{% endif %}
+          </a>
+        {% endif %}<br>
+        <ul style="margin-bottom: 2px; padding-left: 22px; width: fit-content;">
+        {% for documento in item.documentos %}
+          <li style="list-style-type:'';">
+            {% if forloop.first%}<b>{% endif %}<span class="fa fa-file"></span>
+            {% if documento.documento and documento.link %}
+              {% lng "Entregue" "Delivered" %}
+              <span class="texto-longo">{% lng_dhl documento.data %}</span>
+              <span class="texto-curto">{% lng_dh documento.data %}</span>
+              <a 
+                {% if documento.usuario %} data-toggle="tooltip" data-html="true" animation="true" title="Entregue por {{documento.usuario.get_full_name}}"{% endif %}
+                class="{% if dias_ate > dias %}lightgrey{% endif %}"
+                href="{{request.scheme}}://{{request.get_host}}{{documento.documento.url}}" target="_blank" rel="noopener noreferrer">(documento)</a>
+              <a 
+                {% if documento.usuario %} data-toggle="tooltip" data-html="true" animation="true" title="Entregue por {{documento.usuario.get_full_name}}"{% endif %}
+                class="{% if dias_ate > dias %}lightgrey{% endif %}"
+                href="{{documento.link}}" target="_blank" rel="noopener noreferrer">(link)</a>
+            {% else %}
+              {% if documento.documento %}
+                <a 
+                  {% if documento.usuario %} data-toggle="tooltip" data-html="true" animation="true" title="Entregue por {{documento.usuario.get_full_name}}"{% endif %}
+                  class="{% if dias_ate > dias %}lightgrey{% endif %}"
+                  href="{{request.scheme}}://{{request.get_host}}{{documento.documento.url}}" target="_blank" rel="noopener noreferrer">
+                  {% lng "Entregue" "Delivered" %}
+                  <span class="texto-longo">{% lng_dhl documento.data %}</span>
+                  <span class="texto-curto">{% lng_dh documento.data %}</span>
+                </a>
+              {% endif %}
+              {% if documento.link %}
+                <a
+                  {% if documento.usuario %} data-toggle="tooltip" data-html="true" animation="true" title="Entregue por {{documento.usuario.get_full_name}}"{% endif %}
+                  class="{% if dias_ate > dias %}lightgrey{% endif %}"
+                  href="{{documento.link}}" target="_blank" rel="noopener noreferrer">
+                  {% lng "Entregue" "Delivered" %}
+                  <span class="texto-longo">{% lng_dhl documento.data %}</span>
+                  <span class="texto-curto">{% lng_dh documento.data %}</span>
+                </a>
+              {% endif %}
+            {% endif %}
+            {% if documento.data|diff_days:item.evento.endDate > 0 %}<span style="color: red;">
+              {% lng "[FORA DO PRAZO]" "[OVERDUE]" %}
+            </span>{% endif %}
+            {% if forloop.first%}</b>{% endif %}  
+          </li>
+          {% if item.avaliacoes and item.avaliacoes.first%}
+            {% if documento.data > item.avaliacoes.first.momento %}
+              <span style="color: red;">
+                {% lng "Avaliação desatualizada, orientador irá refazer para a nova entrega!" "Evaluation outdated, advisor will redo for the new delivery!" %}
+              </span>
+            {% endif %}
+          {% endif %}
+        {% empty %}
+          {% if item.composicao.tipo_documento %}
+            <span {% if dias_ate > dias %}style="color:lightgrey;"{% endif %}>
+              {% lng "Sem arquivos" "No files" %}
+            </span><br>
+          {% endif %}
+        {% endfor %} 
+        </ul>
+      </div>
+    {% endwith %}
+  {% endfor %} 
+
+  {% include "base-modal.html" %}
+
+  <script>
+    function check_prazo(prazo) {
+      data_prazo = new Date(prazo);
+      const now = new Date();
+      if(now-data_prazo>0) {
+        aviso_pt = [
+            "Atenção: esta entrega será registrada fora do prazo.",
+            "Se houver algum tipo de punição para entregas fora do prazo, ela será aplicada.",
+            "Clique em OK para continuar."
+          ].join("\n")
+        aviso_en = [
+            "Warning: this submission will be recorded after the deadline.",
+            "If there is any type of penalty for late submissions, it will be applied.",
+            "Click OK to continue."
+          ].join("\n")
+        var lang = localStorage.getItem("lingua") || "pt";
+        if (lang == "pt") {
+          aviso = aviso_pt;
+        } else {
+          aviso = aviso_en;
+        }
+        return alert(aviso);
+      }
+    }
+  </script>
+
+{% endblock %}
