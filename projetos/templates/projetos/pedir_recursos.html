@@ -7,6 +7,7 @@
 
 {% load static %}
 {% load linguas %}
+{% load dictionary %}
 
 {% block head %}
 
@@ -1010,7 +1011,7 @@
                       </div>
                       
                       <span class="history-status-badge status-{{ pedido.status }}">
-                        {{ pedido.get_status_display }}
+                        {% lng pedido.get_status pedido.get_status_en %}
                       </span>
                     </div>
                     
