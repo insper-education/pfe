@@ -21,17 +21,18 @@
 
   {% for item in entregas %}
     {% with dias_ate=item.evento.endDate|dif_dias_hoje dias=14 %} {% comment %} Eventos são mostrados duas semanas antes do prazo {% endcomment %}
+    {% with prazo_entrega=item.evento.endDate|adiciona_dias:item.evento.prazo_entrega_atividade_dias %}
       <div class="div_arredondado pintern" {% if dias_ate > dias and request.user.eh_estud %}style="display:none;"{% endif %}>
         <span class="nome_entrega" {% if dias_ate > dias %}style="color:lightgrey;"{% endif %}>
         <b>{{item.evento.tipo_documento.nome}}</b>
         {% if item.evento.endDate %}
           <span class="texto-longo">
             {% lng "[prazo" "[deadline" %}
-            {% lng_dl item.evento.endDate %}]
+            {% lng_dl prazo_entrega %}]
           </span>
           <span class="texto-curto">
             {% lng "[prazo" "[deadline" %}
-            {% lng_d item.evento.endDate %}]
+            {% lng_d prazo_entrega %}]
           </span>
         {% endif %}
         {% if item.evento.tipo_documento %}
@@ -47,7 +48,7 @@
               title="Adicionar documento"
               data-url="{% url 'adiciona_documento_estudante' item.evento.tipo_documento.sigla %}"
             {% endif %}
-            onClick="check_prazo('{{item.evento.endDate|date:"Y-m-d"}}T23:59:59');"
+            onClick="check_prazo('{{prazo_entrega|date:"Y-m-d"}}T23:59:59');"
             >
             {% if item.documentos.last %}<b><i class="fas fa-redo"></i></b>{% else %}<i class="fas fa-file-upload"></i>{% endif %}
           </a>
@@ -90,7 +91,7 @@
                 </a>
               {% endif %}
             {% endif %}
-            {% if documento.data|diff_days:item.evento.endDate > 0 %}<span style="color: red;">
+            {% if documento.data|diff_days:prazo_entrega > 0 %}<span style="color: red;">
               {% lng "[FORA DO PRAZO]" "[OVERDUE]" %}
             </span>{% endif %}
             {% if forloop.first%}</b>{% endif %}  
@@ -111,6 +112,7 @@
         {% endfor %} 
         </ul>
       </div>
+    {% endwith %}
     {% endwith %}
   {% endfor %} 
 

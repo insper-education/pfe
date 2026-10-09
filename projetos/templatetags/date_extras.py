@@ -70,3 +70,11 @@ def dif_agora(value):
         return (value - datetime.datetime.now()).total_seconds()
         
     return 0  # Se a data for nula, retorna 0
+
+@register.filter
+def adiciona_dias(value, days):
+    """Permite adicionar uma quantidade de dias em uma data nos arquivos de template."""
+    if value:
+        return value + datetime.timedelta(days=days)
+    return 0  # Se a data for nula, retorna 0
+

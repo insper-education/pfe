@@ -773,13 +773,13 @@ def avaliacao_pares(request, momento):
         alocacao_de = Alocacao.objects.get(projeto=projeto, aluno=estudante)
         alocacoes = Alocacao.objects.filter(projeto=projeto).exclude(aluno=estudante)
 
-        if (prazo < limite_vencimento) and request.method == "POST":
+        if request.method == "POST" and (prazo < limite_vencimento):
 
             for alocacao in alocacoes:
 
                 (par, _created) = Pares.objects.get_or_create(alocacao_de=alocacao_de,
-                                                                alocacao_para=alocacao,
-                                                                tipo=tipo)
+                                                              alocacao_para=alocacao,
+                                                              tipo=tipo)
 
                 if _created:
                     par.alocacao_de = alocacao_de
