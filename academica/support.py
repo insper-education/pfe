@@ -293,10 +293,11 @@ def lanca_descontos(ano=None, semestre=None):
             if semanas_atraso > 0:
                 add_desconto({"projeto": projeto}, eventos["erp"], tipos_descontos["preliminar"] * semanas_atraso)
 
-        # Entrega de Slides de Plano de Negócios
-        if hoje > eventos["espn"].endDate:
-            if not Documento.objects.filter(projeto=projeto, tipo_documento__sigla="PN").exists():
-                add_desconto({"projeto": projeto}, eventos["espn"], tipos_descontos["geral"])
+        # # Entrega de Slides de Plano de Negócios
+        # AGORA ESTA COMO ENTREGA DE AULA
+        # if hoje > eventos["espn"].endDate:
+        #     if not Documento.objects.filter(projeto=projeto, tipo_documento__sigla="PN").exists():
+        #         add_desconto({"projeto": projeto}, eventos["espn"], tipos_descontos["geral"])
 
         # Entrega de Vídeo
         if hoje > eventos["ev"].endDate:
