@@ -27,6 +27,18 @@
       border-left: 1px solid !important;
     }
 
+    .tab_pfe td.colu a {
+      color: inherit;
+    }
+
+    .local{cursor: pointer;}
+    .meit {max-width: 48vw;}
+    @media (max-width: 1220px) {
+      .meit {
+        max-width: 100%;
+      }
+    }
+
     /* Calendário responsivo para telas pequenas */
     @media (max-width: 430px) {
       .calendar .day .day-content {padding: 4px 5px !important;}
@@ -41,6 +53,8 @@
       .calendar .day .day-content {padding: 2px 3px !important;}
       .month-container {height: 184px !important;}
     }
+
+
   </style>
 
   <script>
@@ -287,7 +301,7 @@
             {% lng "Operação" "Operation" %}
           </div>
 
-          <div id="lista_operacao" class="lista_operacao quad_pfe">
+          <div id="lista_operacao" class="lista_operacao quad_pfe meit">
             {% if coordenacao %}
               {% nospaces %}
                 {% for evento in coordenacao|dictsort:"endDate" %} 
@@ -318,7 +332,7 @@
           {% endif %}
         </div>
         
-        <div id="lista_academico" class="lista_academico quad_pfe">
+        <div id="lista_academico" class="lista_academico quad_pfe meit">
           
           {% for tipo_evento, eventos in eventos_academicos.items %}
             {% if eventos %}
@@ -369,7 +383,7 @@
 
       </div> <!--id="bloco_eventos"-->
 
-      <div id="bloco_aulas" class="col-xl-auto">
+      <div id="bloco_aulas" class="col-xl-auto meit">
 
         <div class="tit_agenda" id="titulo_aulas">
           {% lng "Aulas" "Classes" %}
@@ -440,9 +454,9 @@
                         {% endfor %}
                       </td>
 
-                      <td class="colu local" style="cursor: pointer;">
+                      <td class="colu local">
                         {% if aula.location %}
-                          <a style="color: inherit;" href="https://www.insper.edu.br/campus/mapa-dos-andares/">{{aula.location}}</a>
+                          <a href="https://www.insper.edu.br/campus/mapa-dos-andares/">{{aula.location}}</a>
                         {% endif %}
                       </td>
                   </tr>
@@ -452,7 +466,7 @@
                   <tr id="barra_inferior" style="display: none;">
                     <th scope="row" class="cabec" style="border-top: 4px double black; border-radius: 0 0 0 8px;">Local</th>
                     <td class="colu" colspan="2" style="border-top: 4px double black; border-radius: 0 0 8px 0;">
-                      <a id="barra_local" style="color: inherit;" href="https://www.insper.edu.br/campus/mapa-dos-andares/"></a>
+                      <a id="barra_local" href="https://www.insper.edu.br/campus/mapa-dos-andares/"></a>
                     </td>
                   </tr>
                   
@@ -476,7 +490,6 @@
               <thead><tr>
                 <th scope="col" class="cabec">{% lng "Período" "Period" %}</th>
                 <th scope="col" class="cabec header_mentoria">{% lng "Mentoria" "Mentorship" %}</th>
-                {% comment %} <th scope="col" class="cabec header_local_m">Local</th> {% endcomment %}
               </tr></thead>
               <tbody>
                 {% for aula in mentorias|dictsort:"endDate" %}
@@ -525,21 +538,8 @@
                           {% endif %}
                         {% endfor %}
                       </td>
-
-
-
-                      {% comment %} <td class="colu local" style="cursor: pointer;">
-                        {% if aula.location %}
-                          <a style="color: inherit;" href="https://www.insper.edu.br/campus/mapa-dos-andares/">{{aula.location}}</a>
-                        {% endif %}
-                      </td> {% endcomment %}
                   </tr>
                 {% endfor %}
-
-                  {% comment %} <tr id="barra_inferior_m" style="display: none;"><th scope="row" class="cabec" style="border-top: 4px double black; border-radius: 0 0 0 8px;">Local</th><td class="colu" colspan="2" style="border-top: 4px double black; border-radius: 0 0 8px 0;">
-                    <a id="barra_local_m" style="color: inherit;" href="https://www.insper.edu.br/campus/mapa-dos-andares/"></a>
-                  </td></tr>
-                   {% endcomment %}
               </tbody>
             </table>
             {% endnospaces %}
@@ -619,7 +619,7 @@
                   <tr id="barra_inferior_cerimonia" style="display: none;">
                     <th scope="row" class="cabec" style="border-top: 4px double black; border-radius: 0 0 0 8px;">Local</th>
                     <td class="colu" colspan="2" style="border-top: 4px double black; border-radius: 0 0 8px 0;">
-                      <a id="barra_local_cerimonia" style="color: inherit;" href="https://www.insper.edu.br/campus/mapa-dos-andares/"></a>
+                      <a id="barra_local_cerimonia" href="https://www.insper.edu.br/campus/mapa-dos-andares/"></a>
                     </td>
                   </tr>
                   
