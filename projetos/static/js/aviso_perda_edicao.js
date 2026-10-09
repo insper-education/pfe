@@ -33,12 +33,18 @@ function aviso_perda_edicao(formSelector, warningMessage) {
       });
     });
 
-    // Warn the user if they try to leave the page with unsaved changes
+    // Warn the user if they try to leave the page with unsaved changes.
+    // Safari and modern browsers generally ignore custom text and show a default message.
     window.addEventListener("beforeunload", function(event) {
-      if (formChanged) {
-        event.returnValue = warningMessage; // For compatibility with older browsers
-        return warningMessage; // For some browsers
+      if (!formChanged) {
+        return;
       }
+
+      // Required by some browsers (including Safari) to trigger the native confirmation dialog.
+      event.preventDefault();
+      // Keep returnValue for cross-browser compatibility (custom text is ignored in modern browsers).
+      event.returnValue = warningMessage;
+      return warningMessage;
     });
 
     // Reset formChanged when the form is submitted

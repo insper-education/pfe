@@ -99,21 +99,29 @@
               {% if user.eh_admin or nao_convocado %}
                 <td>
                   <input type="radio" name="envolvido_{{projeto_id}}_{{ envolvido.participante.id }}" value="0" class="ptravar"
-                    {% if envolvido.situacao == 0 or envolvido.situacao == 4 %}checked{% endif %}>
+                    {% if request.user.is_authenticated %}
+                      {% if envolvido.situacao == 0 or envolvido.situacao == 4 %}checked{% endif %}
+                    {% endif %}>
                 </td>
               {% endif %}
               <td>
                 <input type="radio" name="envolvido_{{projeto_id}}_{{ envolvido.participante.id }}" value="1" class="ptravar"
-                  {% if envolvido.situacao == 1 %}checked{% endif %}>
+                  {% if request.user.is_authenticated %}
+                    {% if envolvido.situacao == 1 %}checked{% endif %}
+                  {% endif %}>
               </td>
               <td>
                 <input type="radio" name="envolvido_{{projeto_id}}_{{ envolvido.participante.id }}" value="2" class="ptravar"
-                  {% if envolvido.situacao == 2 %}checked{% endif %}>
+                  {% if request.user.is_authenticated %}
+                    {% if envolvido.situacao == 2 %}checked{% endif %}
+                  {% endif %}>
               </td>
               {% if user.eh_admin %}
                 <td>
                   <input type="radio" name="envolvido_{{projeto_id}}_{{ envolvido.participante.id }}" value="3" class="ptravar"
-                    {% if envolvido.situacao == 3 %}checked{% endif %}>
+                    {% if request.user.is_authenticated %}
+                      {% if envolvido.situacao == 3 %}checked{% endif %}
+                    {% endif %}>
                 </td>
               {% endif %}
             </tr>

@@ -89,7 +89,7 @@
         <div class="alert alert-danger">{{ form.non_field_errors }}</div>
       {% endif %}
 
-      {% include "cabecalho_projeto.html" with projeto=encontro.projeto com_grupo=True %}
+      {% include "cabecalho_projeto.html" with projeto=projeto com_grupo=True %}
 
       <div class="encontro-info-card">
         <div>
@@ -108,8 +108,13 @@
         <div>
           <b>{% lng "Facilitação" "Facilitation" %}:</b>
           {% if encontro.facilitador %}
-            <a class="imprimir" href="{% url 'user_detail' encontro.facilitador.id %}">{{ encontro.facilitador.get_full_name }}</a>
-            <a class="email" href="mailto:{{encontro.facilitador.email}}">&lt;{{encontro.facilitador.email}}&gt;</a>
+            <a class="imprimir" 
+              {% if request.user.is_authenticated %}href="{% url 'user_detail' encontro.facilitador.id %}"{% endif %} >
+              {{ encontro.facilitador.get_full_name }}
+            </a>
+            {% if request.user.is_authenticated %}
+              <a class="email" href="mailto:{{encontro.facilitador.email}}">&lt;{{encontro.facilitador.email}}&gt;</a>
+            {% endif %}
             {% if not request.user.is_authenticated %}
               <span class="badge badge-warning">{% lng "NÃO LOGADO, MAS OBSERVAÇOES SERÃO ENVIADAS NORMALMENTE" "NOT LOGGED IN, BUT OBSERVATIONS WILL BE SENT NORMALLY" %}</span>
             {% elif request.user != encontro.facilitador %}
@@ -158,11 +163,11 @@
                 {% lng "Você pode anexar um arquivo para passar para os alunos (opcional)" "You can attach a file to share with the students (optional)" %}
               </label>
               {{ form.anexo_estudantes }}
-              {% if encontro.anexo_estudantes %}
+              {% if form.anexo_estudantes.value %}
                 <div style="font-size: 0.8em; margin-bottom: 4px; line-height: 1.0;">
-                  <input type="hidden" id="documento_estudantes" name="documento_estudantes" value="{{encontro.anexo_estudantes.id}}"/>
-                  Arquivo atual:
-                  <a href="{{request.scheme}}://{{request.get_host}}{{encontro.anexo_estudantes.documento.url}}" target="_blank" rel="noopener noreferrer">{{encontro.anexo_estudantes.filename}} ({{encontro.anexo_estudantes.data}})</a>
+                  <input type="hidden" id="documento_estudantes" name="documento_estudantes" value="{{form.anexo_estudantes.value.id}}"/>
+                  {% lng "Arquivo atual" "Current file" %}:
+                  <a href="{{request.scheme}}://{{request.get_host}}{{form.anexo_estudantes.value.documento.url}}" target="_blank" rel="noopener noreferrer">{{form.anexo_estudantes.value.filename}} ({{form.anexo_estudantes.value.data}})</a>
                 </div>
               {% endif %}
               {% if form.anexo_estudantes.errors %}
@@ -195,11 +200,11 @@
                 {% lng "Você pode anexar um arquivo para passar para o orientador (opcional)" "You can attach a file to share with the advisor (optional)" %}
               </label>
               {{ form.anexo_orientador }}
-              {% if encontro.anexo_orientador %}
+              {% if form.anexo_orientador.value %}
                 <div style="font-size: 0.8em; margin-bottom: 4px; line-height: 1.0;">
-                  <input type="hidden" id="documento_orientador" name="documento_orientador" value="{{encontro.anexo_orientador.id}}"/>
-                  Arquivo atual:
-                  <a href="{{request.scheme}}://{{request.get_host}}{{encontro.anexo_orientador.documento.url}}" target="_blank" rel="noopener noreferrer">{{encontro.anexo_orientador.filename}} ({{encontro.anexo_orientador.data}})</a>
+                  <input type="hidden" id="documento_orientador" name="documento_orientador" value="{{form.anexo_orientador.value.id}}"/>
+                  {% lng "Arquivo atual" "Current file" %}:
+                  <a href="{{request.scheme}}://{{request.get_host}}{{form.anexo_orientador.value.documento.url}}" target="_blank" rel="noopener noreferrer">{{form.anexo_orientador.value.filename}} ({{form.anexo_orientador.value.data}})</a>
                 </div>
               {% endif %}
               {% if form.anexo_orientador.errors %}
@@ -231,7 +236,16 @@
         {% include "participantes.html" with nao_convocado=False %}
       </div>
 
-      <button class="btn btn-primary mb-1 btn-submit-feedback" type="submit">{% lng "Enviar Feedbacks" "Submit Feedbacks" %}</button>
+      <button class="btn btn-primary mb-1 mr-3 btn-submit-feedback" type="submit">{% lng "Enviar Feedbacks" "Submit Feedbacks" %}</button>
+
+      {% if user.eh_admin %}
+        <input type="checkbox" name="enviar_mensagem" value="sim" id="enviar_mensagem" checked />
+        <label for="enviar_mensagem">
+          {% lng "Enviar mensagem para envolvidos" "Send message to involved people" %}
+        </label>
+      {% else %}
+        <input type="hidden" name="enviar_mensagem" value="sim">
+      {% endif %}
 
     </form>
   </div>

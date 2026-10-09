@@ -28,6 +28,8 @@ from django.urls import reverse
 from django.utils import timezone
 from django.core.exceptions import PermissionDenied
 
+from ratelimit.decorators import ratelimit
+
 from .support import coleta_membros_banca, editar_banca, mensagem_orientador
 from .support import recupera_orientadores_por_semestre, get_edicoes_orientador
 from .support import recupera_coorientadores_por_semestre, bloqueia_avaliacao
@@ -507,6 +509,7 @@ def banca(request, slug):
 
 
 # Qualquer um consegue acessar, mesmo não logado
+@ratelimit(key="ip", rate="5/m", block=False)
 def encontro_feedback(request, pk): 
     """Cria uma tela para preencher feedbacks das mentorias."""
     encontro = get_object_or_404(Encontro, pk=pk)
@@ -553,41 +556,50 @@ def encontro_feedback(request, pk):
 
         participantes = anota_participacao(request.POST, encontro=encontro)
 
-        # Mensagem para facilitador
-        subject = "Capstone | Anotações de Mentoria - " + encontro.projeto.get_titulo_org()
-        configuracao = get_object_or_404(Configuracao)
+        if "enviar_mensagem" in request.POST:
+            # Mensagem para facilitador
+            subject = "Capstone | Anotações de Mentoria - " + encontro.projeto.get_titulo_org()
+            configuracao = get_object_or_404(Configuracao)
 
-        recipient_list = list(filter(None, [
-            getattr(encontro.facilitador, "email", None),
-            getattr(encontro.projeto and encontro.projeto.orientador and encontro.projeto.orientador.user, "email", None),
-            getattr(configuracao and configuracao.coordenacao and configuracao.coordenacao.user, "email", None)
-        ]))
+            recipient_list = list(filter(None, [
+                getattr(encontro.facilitador, "email", None),
+                getattr(encontro.projeto and encontro.projeto.orientador and encontro.projeto.orientador.user, "email", None),
+                getattr(configuracao and configuracao.coordenacao and configuracao.coordenacao.user, "email", None)
+            ]))
 
-        context_email = {
-            "encontro": encontro,
-            "participantes": participantes,
-            "configuracao": configuracao,
-            "request": request,
-        }
+            context_email = {
+                "encontro": encontro,
+                "participantes": participantes,
+                "configuracao": configuracao,
+                "request": request,
+            }
 
-        mensagem = render_message("Anotações de Mentoria", context_email)
-        email(subject, recipient_list, mensagem)
+            mensagem = render_message("Anotações de Mentoria", context_email)
+            email(subject, recipient_list, mensagem)
 
-        if request.user.is_authenticated:
-            destinatarios = ", ".join(recipient_list)
-            messages.success(request,"Observações da mentoria enviadas para: " + destinatarios,extra_tags="lang-pt")
-            messages.success(request,"Mentoring notes sent to: " + destinatarios, extra_tags="lang-en")
-            return redirect("dinamicas_lista")
-        else:
-            context = {"mensagem": {"pt": "Observações Enviadas, Obrigado", "en": "Notes Sent, Thank you"}}
-            return render(request, "generic_ml.html", context=context)
+            if request.user.is_authenticated:
+                destinatarios = ", ".join(recipient_list)
+                messages.success(request,"Observações da mentoria enviadas para: " + destinatarios,extra_tags="lang-pt")
+                messages.success(request,"Mentoring notes sent to: " + destinatarios, extra_tags="lang-en")
+                return redirect("dinamicas_lista")
+            else:
+                context = {"mensagem": {"pt": "Observações Enviadas, Obrigado", "en": "Notes Sent, Thank you"}}
+                return render(request, "generic_ml.html", context=context)
+            
+        context = {"mensagem": {"pt": "Observações Salvas, Obrigado", "en": "Notes Saved, Thank you"}}
+        return render(request, "generic_ml.html", context=context)
 
     # GET request - inicializa form com dados existentes
     initial_data = {
         "observacoes_estudantes": encontro.observacoes_estudantes or "",
         "observacoes_orientador": encontro.observacoes_orientador or "",
+        "anexo_estudantes": encontro.anexo_estudantes or None,
+        "anexo_orientador": encontro.anexo_orientador or None,
     }
-    form = EncontroFeedbackForm(initial=initial_data)
+    if request.user.is_authenticated:
+        form = EncontroFeedbackForm(initial=initial_data)
+    else:
+        form = EncontroFeedbackForm()
 
     orientacoes = {"pt": "", "en": ""}
  
@@ -607,6 +619,14 @@ def encontro_feedback(request, pk):
 
     acompanhamentos = []
     if encontro.tematica.nome[:14] == "Apoio a Grupos":
+        orientacoes["pt"] = """
+            Os estudantes foram instruídos de que a presença é obrigatória e de que o foco da conversa será o funcionamento do grupo,
+            incluindo desafios de comunicação, dinâmica de trabalho e alinhamento de expectativas entre os membros.
+        """
+        orientacoes["en"] = """
+            The students were instructed that attendance is mandatory and that the focus of the conversation will be the functioning of the group,
+            including communication challenges, work dynamics, and alignment of expectations among members.
+        """
         configuracao = get_object_or_404(Configuracao)
         if configuracao.ano == encontro.projeto.ano and configuracao.semestre == encontro.projeto.semestre:
             if encontro.projeto.semestre == 1:
@@ -624,6 +644,7 @@ def encontro_feedback(request, pk):
 
     context = {
         "titulo": {"pt": "Feedback de Mentoria", "en": "Mentoring Feedback"},
+        "projeto": encontro.projeto,
         "orientacoes": orientacoes,
         "acompanhamentos": acompanhamentos,
         "encontro": encontro,
