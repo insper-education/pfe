@@ -96,6 +96,10 @@ class EncontroFeedbackForm(forms.Form):
         })
     )
 
+    def __init__(self, *args, **kwargs):
+        self.encontro = kwargs.pop("encontro", None)
+        super().__init__(*args, **kwargs)
+
     def clean(self):
         cleaned = super().clean()
         obs_estudantes = cleaned.get("observacoes_estudantes", "").strip()
@@ -103,8 +107,29 @@ class EncontroFeedbackForm(forms.Form):
         anexo_estudantes = cleaned.get("anexo_estudantes")
         anexo_orientador = cleaned.get("anexo_orientador")
 
+        # Em edição, considera também o conteúdo já salvo no encontro.
+        obs_estudantes_existente = ""
+        obs_orientador_existente = ""
+        anexo_estudantes_existente = None
+        anexo_orientador_existente = None
+
+        if self.encontro:
+            obs_estudantes_existente = (self.encontro.observacoes_estudantes or "").strip()
+            obs_orientador_existente = (self.encontro.observacoes_orientador or "").strip()
+            anexo_estudantes_existente = self.encontro.anexo_estudantes
+            anexo_orientador_existente = self.encontro.anexo_orientador
+
         # Pelo menos uma observação ou um anexo deve ser preenchido
-        if not obs_estudantes and not obs_orientador and not anexo_estudantes and not anexo_orientador:
+        if (
+            not obs_estudantes
+            and not obs_orientador
+            and not anexo_estudantes
+            and not anexo_orientador
+            and not obs_estudantes_existente
+            and not obs_orientador_existente
+            and not anexo_estudantes_existente
+            and not anexo_orientador_existente
+        ):
             raise ValidationError("Pelo menos uma observação ou um anexo deve ser preenchido.")
         
         return cleaned

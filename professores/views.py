@@ -519,7 +519,7 @@ def encontro_feedback(request, pk):
     envolvidos = recupera_envolvidos(encontro.projeto, encontro=encontro, filtro=['E'])
 
     if request.method == "POST":
-        form = EncontroFeedbackForm(request.POST, request.FILES)
+        form = EncontroFeedbackForm(request.POST, request.FILES, encontro=encontro)
         if not form.is_valid():
             context = {
                 "titulo": {"pt": "Feedback de Mentoria", "en": "Mentoring Feedback"},
@@ -597,9 +597,9 @@ def encontro_feedback(request, pk):
         "anexo_orientador": encontro.anexo_orientador or None,
     }
     if request.user.is_authenticated:
-        form = EncontroFeedbackForm(initial=initial_data)
+        form = EncontroFeedbackForm(initial=initial_data, encontro=encontro)
     else:
-        form = EncontroFeedbackForm()
+        form = EncontroFeedbackForm(encontro=encontro)
 
     orientacoes = {"pt": "", "en": ""}
  
