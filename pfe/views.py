@@ -10,13 +10,12 @@ import logging
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required, permission_required
-from django.db.models import Count
-from django.db.models import Q
+from django.contrib.auth.views import PasswordResetView
 from django.shortcuts import render, get_object_or_404
-from django.http import HttpResponse, JsonResponse
-from django.utils.html import escape
+from django.http import HttpResponse
+from django.utils.decorators import method_decorator
+from ratelimit.decorators import ratelimit
 
-# from django.db.models import Count
 from users.models import PFEUser
 from projetos.models import Projeto
 from projetos.models import Organizacao
@@ -27,6 +26,21 @@ from administracao.models import Carta
 
 # Get an instance of a logger
 logger = logging.getLogger("django")
+
+
+class RateLimitedPasswordResetView(PasswordResetView):
+    @method_decorator(ratelimit(key="ip", rate="3/h", method="POST", block=False))
+    def dispatch(self, request, *args, **kwargs):
+        if getattr(request, "limited", False):
+            mensagem_erro = {
+                "pt": "Você tentou recuperar a senha muitas vezes. O acesso foi bloqueado.",
+                "en": "You have tried to reset your password too many times. Access is blocked.",
+            }
+            return render(request, "generic_ml.html", {
+                "voltar": True,
+                "mensagem_erro": mensagem_erro,
+            }, status=429)
+        return super().dispatch(request, *args, **kwargs)
 
 
 def index(request):
@@ -119,90 +133,12 @@ def custom_400(request, exception):
     #t.render(Context({"exception_value": value,})
     return HttpResponse(mensagem)
 
-from academica.models import Exame, ExibeNota
-from projetos.models import Documento, Evento, Avaliacao2, Observacao, Banca
-from users.models import PFEUser, Professor
-from projetos.models import Area, AreaDeInteresse
-from academica.templatetags.coeficiente_rendimento import media_crs
-
 @login_required
 @permission_required("users.view_administrador", raise_exception=True)
 def migracao(request):
     """temporário."""
     message = "Nada Feito"
     return HttpResponse(message)
-
-    # Imprimir em JSON dados de Avaliacao2
-    # dados = []
-
-    # exames = Exame.objects.filter(titulo__in=["Banca Final", "Banca Intermediária",])
-    # avaliacoes = Avaliacao2.objects.filter(exame__in=exames).order_by("-momento")
-    # for avaliacao in avaliacoes:
-    #     dados.append({
-    #         "exam_type": avaliacao.exame.titulo_en,
-    #         "timestamp": avaliacao.momento.isoformat(),
-    #         "grade": float(avaliacao.nota) if avaliacao.nota is not None else None,
-    #         "weight": avaliacao.peso,
-    #         "evaluator": avaliacao.avaliador.id,
-    #         "advisor": avaliacao.projeto.orientador.user.id == avaliacao.avaliador.id,
-    #         "project": avaliacao.projeto.id,
-    #         "year": avaliacao.projeto.ano,
-    #         "semester": avaliacao.projeto.semestre,
-    #         "learning_goal": avaliacao.objetivo.titulo_en if avaliacao.objetivo else None,
-    #         "not_evaluated": avaliacao.na is None,
-    #     })
-
-    # projetos = Projeto.objects.filter(ano__isnull=False).order_by("-ano", "-semestre")
-    # for projeto in projetos:
-    #     areas = []
-    #     for areadeinteresse in projeto.proposta.areadeinteresse_set.all():
-    #         if areadeinteresse.area:
-    #             areas.append(areadeinteresse.area.titulo_en)
-    #     estudantes=projeto.alocacao_set.all()
-    #     val=media_crs(estudantes)
-    #     data_tmp = []
-    #     for alocacao in estudantes:
-    #         if alocacao.aluno and alocacao.aluno.cr is not None and alocacao.aluno.externo is None:
-    #             data_tmp.append({
-    #                 "student": alocacao.aluno.user.id,
-    #                 "gpa": f"{alocacao.aluno.cr:.2f}",
-    #                 "areas_student": [areadeinteresse.area.titulo_en for areadeinteresse in alocacao.aluno.user.areadeinteresse_set.all() if areadeinteresse.area],
-    #             })
-    #     dados.append({
-    #         "project": projeto.id,
-    #         "year": projeto.ano,
-    #         "semester": projeto.semestre,
-    #         "advisor": projeto.orientador.user.id if projeto.orientador else None,
-    #         "areas": areas,
-    #         "gpa": f"{val[0]:.2f}",
-    #         "gpa_stddev": f"{val[1]:.2f}",
-    #         "students_count": estudantes.count(),
-    #         "students": data_tmp,
-    #     })
-
-    # professores = Professor.objects.all()
-    # for professor in professores:
-    #     areas = []
-    #     outras_areas = ""
-    #     for areadeinteresse in professor.user.areadeinteresse_set.all():
-    #         if areadeinteresse.area:
-    #             areas.append(areadeinteresse.area.titulo_en)
-    #         else:
-    #             outras_areas += escape(areadeinteresse.outras) + "; "
-    #     bancas = Banca.get_bancas_com_membro(professor.user).count()
-    #     if bancas > 0:
-    #         dados.append({
-    #             "professor": professor.user.id,
-    #             "bancas": bancas,
-    #             "areas": areas,
-    #             "outras_areas": outras_areas
-    #         })
-
-    # return JsonResponse(
-    #     dados,
-    #     safe=False,
-    #     json_dumps_params={"ensure_ascii": False, "indent": 2},
-    # )
 
 @login_required
 @permission_required("users.altera_professor", raise_exception=True)

@@ -34,6 +34,8 @@ urlpatterns = [
     path("calendario/", include("calendario.urls")),
     path("academica/", include("academica.urls")),
     path("coordenacao/", include("coordenacao.urls")),
+    path("users/password_reset/", views.RateLimitedPasswordResetView.as_view(), name="password_reset"),
+    path("accounts/password_reset/", views.RateLimitedPasswordResetView.as_view(), name="password_reset"),
     path("users/", include("users.urls")), #Transferir tudo para accounts (NO FUTURO)
     path("users/", include("django.contrib.auth.urls")), #Transferir tudo para accounts (NO FUTURO)
     path("accounts/", include("django.contrib.auth.urls")),
