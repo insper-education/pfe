@@ -752,27 +752,36 @@
       {% endif %}
     {% endwith %}
 
-
-    {% if user.eh_prof_a %}
-      <hr>
-      <h4 id="reunioes">
-        {% lng "Reuniões" "Meetings" %}:
-      </h4>
-      {% include "projetos/includes/bloco_reunioes.html" with reunioes=projeto|get_reunioes alocacao=None %}
-      <br>
-      
-      <h4 id="mentorias">
-        {% lng "Mentorias" "Mentorships" %}:
-      </h4>
-      {% include "projetos/includes/bloco_mentorias.html" with projeto=projeto %}
-    {% endif %}
-
     <hr>
-    <h4 id="horario_aulas">
-      {% lng "Horário de Aulas" "Class Schedule" %}:
-    </h4>
-    {% include "administracao/includes/bloco_horario_aulas.html" with projeto=projeto %}
+
+    <div class="mb-3">
+      <h4 id="horario_aulas">{% lng "Horário de Aulas" "Class Schedule" %}:</h4>
+      {% include "administracao/includes/bloco_horario_aulas.html" with projeto=projeto %}
+    </div>
     
+    {% if user.eh_prof_a %}
+      {% with reunioes=projeto|get_reunioes %}
+        <div class="mb-3">
+          <h4 id="reunioes">{% lng "Reuniões" "Meetings" %}:</h4>
+          {% if reunioes %}
+            {% include "projetos/includes/bloco_reunioes.html" with reunioes=reunioes alocacao=None %}
+          {% else %}
+            <p class="text-muted ml-1">{% lng "Nenhuma reunião registrada." "No meeting registered." %}</p>
+          {% endif %}
+        </div>
+      {% endwith %}
+      
+      {% with dinamicas=projeto.encontro_set.all %}
+        <div  class="mb-3">
+          <h4 id="mentorias">{% lng "Mentorias" "Mentorships" %}:</h4>
+          {% if dinamicas %}
+            {% include "projetos/includes/bloco_mentorias.html" with projeto=projeto dinamicas=dinamicas %}
+          {% else %}
+            <p class="text-muted ml-1">{% lng "Nenhuma mentoria registrada." "No mentorship registered." %}</p>
+          {% endif %}
+        </div>
+      {% endwith %}
+    {% endif %}
 
     {% if user.eh_prof_a %}
       <hr>
