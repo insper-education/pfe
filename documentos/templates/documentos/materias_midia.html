@@ -24,10 +24,10 @@
       {% for relatorio in documentos %}
         {% if relatorio.link or relatorio.documento %}
           {% if user.eh_admin or not relatorio.confidencial %}
-            <tr class="item">
+            <tr class="item {% if relatorio.confidencial %}table-danger{% endif %}">
               <td data-order="{{relatorio.data|date:"Ymd"}}">
                 {% if relatorio.data %}{{relatorio.data|date:"d/m/Y"}}{% endif %}
-                {% if relatorio.confidencial %}{% lng "CONFIDENCIAL" "CONFIDENTIAL" %}{% endif %}
+                {% if relatorio.confidencial %}<span class="badge badge-danger">{% lng "CONFIDENCIAL" "CONFIDENTIAL" %}</span>{% endif %}
               </td>
               <td>{% if relatorio.anotacao %}{{relatorio.anotacao}}{% endif %}</td>
               <td>
