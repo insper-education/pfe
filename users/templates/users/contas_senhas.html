@@ -51,8 +51,11 @@
       <br><br>
 
       <div>
-        <b>Template: <code>{{template}}</code></b><br>
+        <b>{% lng "Template" "Template" %}: <code>{{template}}</code></b><br>
+        <i>{% lng "Português" "Portuguese" %}:</i><br>
         <textarea id="texto" name="texto" rows="12" cols="100" maxlength="{% max_length Carta 'texto' %}">{% if template.texto %}{{template.texto}}{% endif %}</textarea>
+        <i>{% lng "Inglês" "English" %}:</i><br>
+        <textarea id="texto_en" name="texto_en" rows="12" cols="100" maxlength="{% max_length Carta 'texto_en' %}">{% if template.texto_en %}{{template.texto_en}}{% endif %}</textarea>
       </div>
 
       <div class="mt-3">

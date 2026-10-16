@@ -49,13 +49,11 @@ from academica.support5 import filtra_composicoes
 from administracao.models import Carta, Estrutura
 from administracao.support import get_limite_propostas, usuario_sem_acesso
 
-#from estudantes.models import EstiloComunicacao
-
 from operacional.models import Curso
 
 from projetos.models import Certificado, Configuracao, Projeto, Conexao, Evento
 from projetos.models import Area, Coorientador, Avaliacao2, Observacao, Reprovacao
-from projetos.messages import email
+from projetos.messages import email, render_message
 from projetos.support3 import calcula_objetivos, get_notas_alocacao
 from projetos.support4 import get_objetivos_atuais_cache
 
@@ -1012,6 +1010,7 @@ def contas_senhas(request, edicao=None):
             "limite_propostas": { "pt": "Data limite para envio de propostas", "en": "Deadline for proposal submission" },
             "senha": { "pt": "Nova senha criada", "en": "New password created" },
             "coordenacao": { "pt": "Conta da Coordenação do Capstone", "en": "Capstone Coordination Account" },
+            "servidor": { "pt": "Servidor de e-mail do Capstone", "en": "Capstone e-mail server" },
         }
 
         context = {
@@ -1034,6 +1033,9 @@ def envia_contas_senhas(request):
     """Envia conta e senha para todos os estudantes que estão no semestre."""
     usuario_sem_acesso(request, (4,)) # Soh Adm
 
+    urlizar = False
+    template = "Envio de Conta para Estudantes"
+
     if request.method == "POST":
 
         configuracao = get_object_or_404(Configuracao)
@@ -1041,17 +1043,19 @@ def envia_contas_senhas(request):
         limite_propostas = get_limite_propostas(configuracao)
 
         texto = request.POST.get("texto", None)
+        texto_en = request.POST.get("texto_en", None)
 
-        if "acao" in request.POST and request.POST["acao"] == "atualiza":
+        # Sempre atualiza a carta, mesmo que não seja para enviar e-mail
+        if texto or texto_en:
+            carta = get_object_or_404(Carta, template=template)
+            carta.texto = texto
+            carta.texto_en = texto_en
+            carta.save()
 
-            if texto:
-                carta = get_object_or_404(Carta, template="Envio de Conta para Estudantes")
-                carta.texto = texto
-                carta.save()
+            if "acao" in request.POST and request.POST["acao"] == "atualiza":
                 mensagem = "Carta atualizada com sucesso."
             else:
                 mensagem = "Erro ao atualizar a carta."
-
 
         if "acao" in request.POST and request.POST["acao"] == "teste":
 
@@ -1059,7 +1063,7 @@ def envia_contas_senhas(request):
             mensagem += "Enviado para: " + request.user.get_full_name() + " "+\
                         "&lt;" + request.user.email + "&gt;<br>\n"
             
-            template_carta = Template(texto)
+            #template_carta = Template(texto)
             estudante = Aluno(user=request.user, ano=configuracao.ano, semestre=configuracao.semestre)  # Apenas para teste
             senha = "SENHA"
 
@@ -1068,21 +1072,25 @@ def envia_contas_senhas(request):
                     "limite_propostas": limite_propostas.strftime("%d/%m/%Y") if limite_propostas else None,
                     "senha": senha,
                     "coordenacao": coordenacao,
+                    "servidor": settings.SERVER,
                 }
 
-            message_email = template_carta.render(Context(context_carta))
-            message_email = html.urlize(message_email) # Faz links de e-mail, outros sites funcionarem
+            # message_email = template_carta.render(Context(context_carta))
+            # if(urlizar):
+            #     message_email = html.urlize(message_email) # Faz links de e-mail, outros sites funcionarem
+            message_email = render_message(template, context_carta, urlize=urlizar)
 
             # Enviando e-mail com mensagem para usuário.
             subject = "Capstone | Conta: Exemplo de Conta"
             recipient_list = [request.user.email, ]
             email(subject, recipient_list, message_email)
+            print(message_email)
 
 
         elif "acao" in request.POST and request.POST["acao"] == "enviar":
             estudantes = request.POST.getlist("estudante", None)
             
-            template_carta = Template(texto)
+            # template_carta = Template(texto)
 
             mensagem = "Enviado para:<br>\n<br>\n"
             for estudante_id in estudantes:
@@ -1106,8 +1114,11 @@ def envia_contas_senhas(request):
                     "coordenacao": coordenacao,
                 }
                 
-                message_email = template_carta.render(Context(context_carta))
-                message_email = html.urlize(message_email) # Faz links de e-mail, outros sites funcionarem
+                # message_email = template_carta.render(Context(context_carta))
+                # if(urlizar):
+                #     message_email = html.urlize(message_email) # Faz links de e-mail, outros sites funcionarem
+                message_email = render_message(template, context_carta, urlize=urlizar)
+
 
                 # Enviando e-mail com mensagem para usuário.
                 subject = "Capstone | Conta: " + estudante.user.get_full_name()
