@@ -113,7 +113,8 @@
               {{ encontro.facilitador.get_full_name }}
             </a>
             {% if request.user.is_authenticated %}
-              <a class="email" href="mailto:{{encontro.facilitador.email}}">&lt;{{encontro.facilitador.email}}&gt;</a>
+              <span class="texto-longo emails"><a class="email" href="mailto:{{encontro.facilitador.email}}">&lt;{{encontro.facilitador.email}}&gt;</a></span>
+              <span class="texto-curto emails"><a class="email" href="mailto:{{encontro.facilitador.email}}"><i class="far fa-envelope"></i></a></span>
             {% endif %}
             {% if not request.user.is_authenticated %}
               <span class="badge badge-warning">{% lng "NÃO LOGADO, MAS OBSERVAÇOES SERÃO ENVIADAS NORMALMENTE" "NOT LOGGED IN, BUT OBSERVATIONS WILL BE SENT NORMALLY" %}</span>
@@ -239,10 +240,12 @@
       <button class="btn btn-primary mb-1 mr-3 btn-submit-feedback" type="submit">{% lng "Enviar Feedbacks" "Submit Feedbacks" %}</button>
 
       {% if user.eh_admin %}
-        <input type="checkbox" name="enviar_mensagem" value="sim" id="enviar_mensagem" checked />
-        <label for="enviar_mensagem">
-          {% lng "Enviar mensagem para envolvidos" "Send message to involved people" %}
-        </label>
+        <span style="display: inline-block; white-space: nowrap;">
+          <input type="checkbox" name="enviar_mensagem" value="sim" id="enviar_mensagem" checked />
+          <label for="enviar_mensagem">
+            {% lng "Enviar mensagem para envolvidos" "Send message to involved people" %}
+          </label>
+        </span>
       {% else %}
         <input type="hidden" name="enviar_mensagem" value="sim">
       {% endif %}
