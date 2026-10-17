@@ -29,7 +29,7 @@ logger = logging.getLogger("django")
 
 
 class RateLimitedPasswordResetView(PasswordResetView):
-    @method_decorator(ratelimit(key="ip", rate="3/h", method="POST", block=False))
+    @method_decorator(ratelimit(key="ip", rate="4/m", method="POST", block=False))  # Cuidado ao aumentar pois pode bloquear usuários legítimos
     def dispatch(self, request, *args, **kwargs):
         if getattr(request, "limited", False):
             mensagem_erro = {
