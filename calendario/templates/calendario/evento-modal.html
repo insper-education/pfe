@@ -74,7 +74,7 @@
       material: $('#event-modal select[name="event-material"]').val(),
       material2: $('#event-modal select[name="event-material2"]').val(),
       tipo_documento: $('#event-modal select[name="event-tipo_documento"]').val(),
-      prazo: $('#event-modal input[name="event-prazo"]').val(),
+      prazo_entrega_atividade_dias: $('#event-modal input[name="event-prazo"]').val(),
       startDate: $('#event-modal input[name="event-start-date"]').datepicker('getDate'),
       endDate: $('#event-modal input[name="event-end-date"]').datepicker('getDate'),
       color: $('#event-modal select[name="event-type"] option:selected').data("color"),
@@ -181,7 +181,7 @@
                 dataSource[i].material = event.material;
                 dataSource[i].material2 = event.material2;
                 dataSource[i].tipo_documento = event.tipo_documento;
-                dateSource[i].prazo = event.prazo;
+                dataSource[i].prazo_entrega_atividade_dias = event.prazo_entrega_atividade_dias;
                 dataSource[i].startDate = event.startDate;
                 dataSource[i].endDate = event.endDate;
                 dataSource[i].color = event.color;
@@ -449,7 +449,7 @@
                 {% lng "Prazo (dias)" "Deadline (days)" %}
               </label>
               <div class="col-sm-8">
-                <input type="number" name="prazo_entrega_atividade_dias" id="prazo_entrega_atividade_dias" class="form-control" 
+                <input type="number" name="event-prazo" id="event-prazo" class="form-control" 
                   placeholder="dias" min="0" max="365" step="1"
                   {% if not user.eh_admin %}disabled{% endif %}>
               </div>

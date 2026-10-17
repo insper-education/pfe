@@ -134,9 +134,13 @@ def atualiza_evento(request):
         tipo_documento = request.POST.get("event-tipo_documento", None)
         evento.tipo_documento = TipoDocumento.objects.get(id=tipo_documento) if tipo_documento else None
 
-    if "prazo_entrega_atividade_dias" in request.POST:
-        prazo_entrega_atividade_dias = request.POST.get("prazo_entrega_atividade_dias", None)
-        evento.prazo_entrega_atividade_dias = prazo_entrega_atividade_dias
+    if "event-prazo" in request.POST:
+        prazo_entrega_atividade_dias = request.POST.get("event-prazo", None)
+        if prazo_entrega_atividade_dias:
+            try:
+                prazo_entrega_atividade_dias = int(prazo_entrega_atividade_dias)
+            except ValueError:
+                prazo_entrega_atividade_dias = None
 
     evento.save()
 
