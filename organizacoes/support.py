@@ -197,6 +197,13 @@ def cria_documento(request, forca_confidencial=False, usuario=None):
     documento.lingua_do_documento = lingua_do_documento
     documento.confidencial = confidencial
 
+    # Rotina para permitir que o documento seja tolerado mesmo que entregue atrasado
+    if request.user.eh_admin:
+        if "atraso_tolerado" in request.POST and request.POST["atraso_tolerado"] == "true":
+            documento.atraso_tolerado = True
+        else:
+            documento.atraso_tolerado = False
+
     if usuario is not None:
         documento.usuario = usuario
     else:

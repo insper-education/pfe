@@ -525,6 +525,14 @@
       </div>
     {% endif %}
 
+    {% if user.eh_admin %}
+      <div class="form-check">
+        <input class="form-check-input" type="checkbox" id="atraso_tolerado" name="atraso_tolerado" value="true"
+        {% if documento and documento.atraso_tolerado %}checked{% endif %}>
+        <label class="form-check-label" for="atraso_tolerado">{% lng "Atraso Tolerado" "Tolerated Delay" %}</label>
+      </div>
+    {% endif %}
+
     {% if not travado %}
       <div class="form-check">
         <input class="form-check-input" type="checkbox" id="confidencial" name="confidencial" value="true" checked>

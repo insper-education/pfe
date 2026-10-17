@@ -1514,6 +1514,8 @@ class Documento(models.Model):
 
     lingua_do_documento = models.PositiveSmallIntegerField(choices=LINGUA_DO_DOCUMENTO, default=0)
 
+    atraso_tolerado = models.BooleanField(default=False, help_text="Se o documento é tolerado mesmo que entregue atrasado")
+
     def __str__(self):
         texto = ""
         texto += str(self.tipo_documento) + " "

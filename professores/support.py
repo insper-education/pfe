@@ -1441,9 +1441,11 @@ def bloqueia_avaliacao(documentos, evento):
     primeiro_documento = documentos.first()  # primeiro é o último entregue por data
     atrasado = hoje.date() > evento.endDate  # USADO PARA BLOQUEAR NOTAS EM OBJETIVOS DE APRENDIZAGEM
     sem_documentos = False
+    if primeiro_documento.atraso_tolerado:
+        atrasado = False
     if atrasado:
         if primeiro_documento:
-            if primeiro_documento.data and primeiro_documento.data.date() <= evento.endDate:
+            if primeiro_documento.data and primeiro_documento.data.date() <= evento.endDate:  # Entregue até a data limite
                 atrasado = False
         else:
             sem_documentos = True  # Documentos já deveriam ter sido entregues
