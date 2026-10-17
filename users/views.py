@@ -1075,9 +1075,6 @@ def envia_contas_senhas(request):
                     "servidor": settings.SERVER,
                 }
 
-            # message_email = template_carta.render(Context(context_carta))
-            # if(urlizar):
-            #     message_email = html.urlize(message_email) # Faz links de e-mail, outros sites funcionarem
             message_email = render_message(template, context_carta, urlize=urlizar)
 
             # Enviando e-mail com mensagem para usuário.
@@ -1088,8 +1085,6 @@ def envia_contas_senhas(request):
 
         elif "acao" in request.POST and request.POST["acao"] == "enviar":
             estudantes = request.POST.getlist("estudante", None)
-            
-            # template_carta = Template(texto)
 
             mensagem = "Enviado para:<br>\n<br>\n"
             for estudante_id in estudantes:
@@ -1114,11 +1109,7 @@ def envia_contas_senhas(request):
                     "servidor": settings.SERVER,
                 }
                 
-                # message_email = template_carta.render(Context(context_carta))
-                # if(urlizar):
-                #     message_email = html.urlize(message_email) # Faz links de e-mail, outros sites funcionarem
                 message_email = render_message(template, context_carta, urlize=urlizar)
-
 
                 # Enviando e-mail com mensagem para usuário.
                 subject = "Capstone | Conta: " + estudante.user.get_full_name()
