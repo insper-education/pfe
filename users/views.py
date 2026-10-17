@@ -1084,7 +1084,6 @@ def envia_contas_senhas(request):
             subject = "Capstone | Conta: Exemplo de Conta"
             recipient_list = [request.user.email, ]
             email(subject, recipient_list, message_email)
-            print(message_email)
 
 
         elif "acao" in request.POST and request.POST["acao"] == "enviar":
@@ -1112,6 +1111,7 @@ def envia_contas_senhas(request):
                     "limite_propostas": limite_propostas.strftime("%d/%m/%Y") if limite_propostas else None,
                     "senha": senha,
                     "coordenacao": coordenacao,
+                    "servidor": settings.SERVER,
                 }
                 
                 # message_email = template_carta.render(Context(context_carta))

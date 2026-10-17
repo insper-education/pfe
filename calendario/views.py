@@ -54,6 +54,8 @@ def calendario(request):
             context["documentos"] = None
 
         context["cerimonias"] = Cerimonia.objects.all().order_by("startDateTime", "tipo_participacao")
+
+        context["tipo_documentos"] = TipoDocumento.objects.all().order_by("nome")
     
         return render(request, "calendario/calendario.html", context)
 
@@ -127,6 +129,14 @@ def atualiza_evento(request):
     else:
         material = request.POST.get("event-material2", None)
         evento.documento2 = Documento.objects.get(id=material) if material else None
+
+    if "event-tipo_documento" in request.POST:
+        tipo_documento = request.POST.get("event-tipo_documento", None)
+        evento.tipo_documento = TipoDocumento.objects.get(id=tipo_documento) if tipo_documento else None
+
+    if "prazo_entrega_atividade_dias" in request.POST:
+        prazo_entrega_atividade_dias = request.POST.get("prazo_entrega_atividade_dias", None)
+        evento.prazo_entrega_atividade_dias = prazo_entrega_atividade_dias
 
     evento.save()
 
