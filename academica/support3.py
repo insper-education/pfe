@@ -106,9 +106,10 @@ def probations(alocacoes, request=None):
     return False
 
 
-def get_media_alocacao_i(alocacao, request=None):
+def get_media_alocacao_i(alocacao, request=None, edicao=None):
     """Retorna média e peso final."""
-    edicao = get_notas_alocacao(alocacao, request=request)
+    if edicao is None:
+        edicao = get_notas_alocacao(alocacao, request=request)
 
     nota_final = 0
     nota_individual = 0

@@ -56,7 +56,9 @@ def get_banca_estudante(avaliacoes_banca, ano, semestre):
 def get_notas_estudante(estudante, request=None, ano=None, semestre=None, checa_banca=True):
     """Recuper as notas do Estudante."""
 
-    if ano and semestre:
+    if ano and semestre and hasattr(estudante, "alocacoes_semestre"):
+        alocacoes = estudante.alocacoes_semestre
+    elif ano and semestre:
         alocacoes = Alocacao.objects.filter(aluno=estudante.pk, projeto__ano=ano, projeto__semestre=semestre).select_related("projeto")
     else:
         alocacoes = Alocacao.objects.filter(aluno=estudante.pk).select_related("projeto")

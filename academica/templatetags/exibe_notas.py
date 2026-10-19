@@ -88,6 +88,13 @@ def get_media_alocacao(alocacao, request=None):
     return get_media_alocacao_i(alocacao, request=request)
 
 @register.filter
+def get_media_alocacao_com_notas(alocacao, notas):
+    """Calcula a média reutilizando as notas já carregadas para o estudante."""
+    if not alocacao:
+        return None
+    return get_media_alocacao_i(alocacao, edicao=notas)
+
+@register.filter
 def media(alocacao, request=None):
     """Retorna média final."""
     return get_media_alocacao_i(alocacao, request=request)["media"]
@@ -98,6 +105,10 @@ def peso(alocacao, request=None):
     return get_media_alocacao_i(alocacao, request=request)["pesos"]
 
 @register.filter
-def recuper_notas_estudante(estudante):
+def recuper_notas_estudante(estudante, ano_semestre=None):
     """Retorna notas do estudante no projeto."""
+    if ano_semestre:
+        ano, semestre = map(int, ano_semestre.split("."))
+        edicoes = get_notas_estudante(estudante, ano=ano, semestre=semestre)
+        return edicoes.get(ano_semestre, [])
     return get_notas_estudante(estudante)
