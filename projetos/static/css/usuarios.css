@@ -6,7 +6,7 @@
 
 .user-info { display: flex; flex-direction: column; gap: 0.25rem; max-width: 100%; }
 .user-info-row { display: flex; align-items: center; gap: 0.5rem; }
-.user-info-row label { font-weight: bold; min-width: 156px; }
+.user-info-row label { font-weight: bold; min-width: 163px; }
 .user-info-row span { flex: 1; }
 .user-info-contact { display: flex; align-items: center; gap: 0.5rem; min-width: 0; word-break: break-all; overflow-wrap: break-word;}
 .user-info-contact a { overflow-wrap: break-word; display: inline-block; max-width: 100%; word-break: break-all;}
