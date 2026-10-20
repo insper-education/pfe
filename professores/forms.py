@@ -1,4 +1,5 @@
 from django import forms
+from django.conf import settings
 from django.utils import timezone
 from django.core.exceptions import ValidationError
 
@@ -54,12 +55,18 @@ class DinamicasForm(forms.Form):
         if inicio and fim and fim <= inicio:
             self.add_error("fim", "Fim deve ser depois de início.")
 
-        # Garantir que os datetimes sejam aware no timezone atual
+        # Normaliza datetimes de acordo com a configuração de timezone do projeto.
         tz = timezone.get_current_timezone()
-        if inicio and timezone.is_naive(inicio):
-            cleaned["inicio"] = timezone.make_aware(inicio, tz)
-        if fim and timezone.is_naive(fim):
-            cleaned["fim"] = timezone.make_aware(fim, tz)
+        if settings.USE_TZ:
+            if inicio and timezone.is_naive(inicio):
+                cleaned["inicio"] = timezone.make_aware(inicio, tz)
+            if fim and timezone.is_naive(fim):
+                cleaned["fim"] = timezone.make_aware(fim, tz)
+        else:
+            if inicio and timezone.is_aware(inicio):
+                cleaned["inicio"] = timezone.make_naive(inicio, tz)
+            if fim and timezone.is_aware(fim):
+                cleaned["fim"] = timezone.make_naive(fim, tz)
         return cleaned
 
 

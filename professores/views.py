@@ -2354,16 +2354,13 @@ def dinamicas_criar(request, data=None):
                 current_end += diferenca + datetime.timedelta(minutes=intervalo)
 
                 if "enviar_mensagem" in request.POST:
-                    if encontro.projeto or encontro.facilitador:
+                    if encontro.projeto:
                         subject = "Capstone | Dinâmica agendada"
                         recipient_list = []
                         if encontro.projeto:
                             alocacoes = Alocacao.objects.filter(projeto=encontro.projeto)
                             for alocacao in alocacoes:
                                 recipient_list.append(alocacao.aluno.user.email)
-                        if encontro.facilitador:
-                            recipient_list.append(encontro.facilitador.email)
-                        recipient_list.append(str(configuracao.coordenacao.user.email))
                         message = message_agendamento_dinamica(encontro, False) # Atualizada
                         email(subject, recipient_list, message)
 
@@ -2431,7 +2428,6 @@ def dinamicas_editar(request, primarykey=None):
 
             # Guarda valores antigos para notificação de cancelamento
             projeto_antigo = encontro.projeto
-            facilitador_antigo = encontro.facilitador
             data_antiga = encontro.startDate
 
             # Atualiza com valores do form
@@ -2452,27 +2448,17 @@ def dinamicas_editar(request, primarykey=None):
                     alocacoes = Alocacao.objects.filter(projeto=projeto_antigo)
                     for alocacao in alocacoes:
                         recipient_list.append(alocacao.aluno.user.email)
-                    recipient_list.append(str(configuracao.coordenacao.user.email))
-                    message = message_agendamento_dinamica(encontro, data_antiga)
-                    email(subject, recipient_list, message)
-
-                if facilitador_antigo and facilitador_antigo != encontro.facilitador:
-                    subject = "Capstone | Dinâmica cancelada"
-                    recipient_list = [facilitador_antigo.email, str(configuracao.coordenacao.user.email)]
                     message = message_agendamento_dinamica(encontro, data_antiga)
                     email(subject, recipient_list, message)
 
                 # Notifica novo agendamento
-                if encontro.projeto or encontro.facilitador:
+                if encontro.projeto:
                     subject = "Capstone | Dinâmica agendada"
                     recipient_list = []
                     if encontro.projeto:
                         alocacoes = Alocacao.objects.filter(projeto=encontro.projeto)
                         for alocacao in alocacoes:
                             recipient_list.append(alocacao.aluno.user.email)
-                    if encontro.facilitador:
-                        recipient_list.append(encontro.facilitador.email)
-                    recipient_list.append(str(configuracao.coordenacao.user.email))
                     cancelado = None
                     if data_antiga != encontro.startDate:
                         cancelado = f"dia {data_antiga.strftime('%d/%m/%Y')} das {data_antiga.strftime('%H:%M')} às {encontro.endDate.strftime('%H:%M')}"
@@ -2489,9 +2475,9 @@ def dinamicas_editar(request, primarykey=None):
                     alocacoes = Alocacao.objects.filter(projeto=encontro.projeto)
                     for alocacao in alocacoes:
                         recipient_list.append(alocacao.aluno.user.email)
-                if encontro.facilitador:
-                    recipient_list.append(encontro.facilitador.email)
-                recipient_list.append(str(configuracao.coordenacao.user.email))
+                # if encontro.facilitador:
+                #     recipient_list.append(encontro.facilitador.email)
+                #recipient_list.append(str(configuracao.coordenacao.user.email))
                 message = message_agendamento_dinamica(encontro, encontro.startDate)
                 email(subject, recipient_list, message)
             encontro.delete()
