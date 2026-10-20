@@ -7,6 +7,7 @@ Data: 15 de Dezembro de 2020
 """
 
 from django.db import models
+from django.db.models import Q
 
 import datetime
 
@@ -120,6 +121,17 @@ class Pares(models.Model):
     class Meta:
         verbose_name = "Avaliação de Pares"
         verbose_name_plural = "Avaliações de Pares"
+        constraints = [   # Isso evita que haja duas avaliações de pares para o mesmo par de alocações e tipo
+            models.UniqueConstraint(
+                fields=("alocacao_de", "alocacao_para", "tipo"),
+                condition=Q(
+                    alocacao_de__isnull=False,
+                    alocacao_para__isnull=False,
+                    tipo__isnull=False,
+                ),
+                name="uniq_pares_de_para_tipo",
+            ),
+        ]
 
 
 class EstiloComunicacao(models.Model):

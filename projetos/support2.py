@@ -364,13 +364,23 @@ def contexto_evolucao_areas(tipo, edicoes, curso="todos", cursos_insper=None):
 
 def get_pares_colegas(projeto, tipo=0):
     alocacoes = Alocacao.objects.filter(projeto=projeto)
-    pares = []
-    feedbacks = []
-    for alocacao in alocacoes:
-        pares.append(Pares.objects.filter(alocacao_de__projeto=projeto, alocacao_para=alocacao, tipo=tipo))
-        feedbacks.append(FeedbackPares.objects.filter(alocacao=alocacao, tipo=tipo).last())
-    colegas = zip(alocacoes, pares, feedbacks)
-    return colegas
+    pares_por_destino = defaultdict(dict)
+
+    registros = Pares.objects.filter(alocacao_de__projeto=projeto,tipo=tipo).exclude(alocacao_de__isnull=True).exclude(alocacao_para__isnull=True).order_by(
+        "alocacao_para_id",
+        "alocacao_de_id",
+        "-momento",
+        "-pk",
+    )
+
+    for par in registros:
+        pares_por_destino[par.alocacao_para_id].setdefault(par.alocacao_de_id,par)
+
+    pares = [list(pares_por_destino[alocacao.id].values()) for alocacao in alocacoes]
+    feedbacks = [FeedbackPares.objects.filter(alocacao=alocacao, tipo=tipo).last() for alocacao in alocacoes]
+    
+    return zip(alocacoes, pares, feedbacks)
+
 
 def get_nativamente(self):
     """Retorna em string com curso mais nativo da proposta."""

@@ -57,7 +57,7 @@
     </h5>
   {% endif %}
 
-  <form action="" method="post"> {% csrf_token %}  
+  <form id="form-avaliacao-pares" action="" method="post"> {% csrf_token %}  
 
     <div class="bloco_texto">{% lng msg_aval_pares.texto msg_aval_pares.texto_en %}</div>
     <hr>
@@ -159,5 +159,11 @@
     </button>
 
   </form>
+
+  <script>
+    document.getElementById("form-avaliacao-pares").addEventListener("submit", function() {
+      this.querySelector('button[type="submit"]').disabled = true;
+    });
+  </script>
 
 {% endblock %}
