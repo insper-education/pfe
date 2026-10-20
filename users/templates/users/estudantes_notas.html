@@ -195,7 +195,8 @@
   <div id="atualizar">
     {% include "tabelas_top_ml.html" with tabela="Estudantes" cabecalhos=cabecalhos captions=captions %}
 
-      {% for aluno in alunos_list %} 
+      {% for aluno in alunos_list %}
+      {% with notas=aluno|recuper_notas_estudante:ano_semestre %}
       <tr class="item">
         <th scope="row" data-order="{{aluno.user.get_full_name}}">
           <a href="{% url 'estudante_detail' aluno.id %}" >
@@ -215,8 +216,8 @@
         {% endif %}
 
         <td>
-          {% if aluno.alocacao_set.all %}
-            {% for alocacao in aluno.alocacao_set.all %}
+          {% if aluno.alocacoes_semestre %}
+            {% for alocacao in aluno.alocacoes_semestre %}
               {% if ano == 0 or alocacao.projeto.ano == ano and alocacao.projeto.semestre == semestre %}
                 {% if alocacao.projeto and alocacao.projeto.organizacao %}
                   [<a href="{% url 'organizacao_completo' alocacao.projeto.organizacao.id %}">{{alocacao.projeto.organizacao}}</a>] <a
@@ -232,7 +233,7 @@
 
         {% with alocacao=aluno.get_alocacoes|dict_key:ano_semestre %}
           <td style="line-height: 1.6em;">
-            {% for aval in aluno|recuper_notas_estudante|dict_key:ano_semestre %}{% nospaces %}<!-- Notas -->
+            {% for aval in notas %}{% nospaces %}<!-- Notas -->
               {% with objs_items=aval.objetivos.items %}
               {% language "pt-br" %}<span data-toggle="tooltip" data-html="true" animation="true" 
               title="{{aval.exame.titulo}} | peso={% widthratio aval.peso 1 100 %}%<br>{% for o,p in objs_items %}&bull;{{o.titulo}}=<b {% if p.0 < 5 %}class='text-danger'{% endif %}>{{p.0|floatformat:1}}</b><br>{% endfor %}"
@@ -257,7 +258,7 @@
 
           {% nospaces %}
           {% if alocacao %}
-            {% with media=alocacao|get_media_alocacao %}
+            {% with media=alocacao|get_media_alocacao_com_notas:notas %}
 
               {% comment %} <!-- Individual --> {% endcomment %}
               <td id="indiv{{aluno.id}}" data-order="{% if media.individual %}{{ media.individual|unlocalize }}{% else %}0{% endif %}"> {% comment %} <!-- Individual --> {% endcomment %}
@@ -333,6 +334,7 @@
           {% endnospaces %}
         {% endwith %}
       </tr>
+      {% endwith %}
       {% endfor %}
     {% include "tabelas_bottom.html" %}
     

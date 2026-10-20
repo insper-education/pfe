@@ -367,7 +367,9 @@ class Aluno(models.Model):
     def get_alocacoes(self):
         """Retorna alocações do estudante."""
         alocacoes = {}  # dicionário para cada alocação do estudante
-        todas_alocacao = Alocacao.objects.filter(aluno=self.pk)
+        todas_alocacao = getattr(self, "alocacoes_semestre", None)
+        if todas_alocacao is None:
+            todas_alocacao = Alocacao.objects.filter(aluno=self.pk).select_related("projeto")
         for alocacao in todas_alocacao:
             ano_semestre = str(alocacao.projeto.ano) + "." + str(alocacao.projeto.semestre)
             alocacoes[ano_semestre] = alocacao

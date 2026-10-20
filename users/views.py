@@ -25,6 +25,7 @@ from django.conf import settings
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.contenttypes.models import ContentType
 from django.db import transaction
+from django.db.models import Prefetch
 from django.db.models.functions import Lower
 from django.http import HttpResponse, JsonResponse
 from django.http import Http404
@@ -375,6 +376,16 @@ def estudantes_notas(request, professor=None):
         # Incluindo os alunos que estão cursando o semestre em algum projeto
         alunos_list = alunos_semestre |\
             alunos_list.filter(ano=ano, semestre=semestre, alocacao__isnull=False).distinct()
+
+        alocacoes_prefetch = Prefetch(
+            "alocacao_set",
+            queryset=Alocacao.objects.filter(
+                projeto__ano=ano,
+                projeto__semestre=semestre,
+            ).select_related("projeto__proposta__organizacao"),
+            to_attr="alocacoes_semestre",
+        )
+        alunos_list = alunos_list.prefetch_related(alocacoes_prefetch)
 
         cabecalhos = [{"pt": "Nome", "en": "Name"},
                         {"pt": "e-mail", "en": "e-mail", "esconder": True},
