@@ -16,6 +16,12 @@ def filtra_composicoes(composicoes, ano, semestre):
 
     composicoes = composicoes.order_by("exame__ordem")
 
+    try:
+        ano = int(ano)
+        semestre = int(semestre)
+    except (ValueError, TypeError):
+        raise ValueError("Ano e semestre não foram bem definidos.")
+    
     composicoes = composicoes.exclude(data_final__year__lt=ano)
     composicoes = composicoes.exclude(data_inicial__year__gt=ano)
     

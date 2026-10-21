@@ -115,7 +115,11 @@ class Projeto(models.Model):
     semestre = models.PositiveIntegerField("Semestre", null=True, blank=True,
                                            help_text="Semestre que o projeto começa")
 
+    ano_cancelado = models.PositiveIntegerField("Ano Cancelado", null=True, blank=True,
+                                                help_text="Ano do projeto que foi cancelado")
 
+    semestre_cancelado = models.PositiveIntegerField("Semestre Cancelado", null=True, blank=True,
+                                                     help_text="Semestre do projeto que foi cancelado")
 
     orientador = models.ForeignKey("users.Professor", null=True, blank=True,
                                    on_delete=models.SET_NULL, related_name="professor_orientador",
@@ -241,12 +245,7 @@ class Projeto(models.Model):
 
     def tem_relatos(self):
         """Retorna todos os possiveis relatos quinzenais para o projeto."""
-        # Antes de 2022 os relatos quinzenais era realizados no Blackboard
-        # Essa função em hardcode não é ideal, mas resolve o problema
-        if self.ano < 2022:
-            return Evento.objects.none()
-        else:
-            return Evento.get_eventos(sigla="RQ", ano=self.ano, semestre=self.semestre)
+        return Evento.get_eventos(sigla="RQ", ano=self.ano, semestre=self.semestre)
     
     def periodo(self):
         configuracao = get_object_or_404(Configuracao)

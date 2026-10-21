@@ -172,7 +172,13 @@
         </h4>
 
         <b>{% lng "Semestre" "Semester" %}</b>:
-        {{projeto.ano}}.{{projeto.semestre}}
+        {% if projeto.ano and projeto.semestre %}
+          {{projeto.ano}}.{{projeto.semestre}}
+        {% elif projeto.ano_cancelado and projeto.semestre_cancelado %}
+          {{projeto.ano_cancelado}}.{{projeto.semestre_cancelado}} <span class="text-danger">({% lng "cancelado" "canceled" %})</span>
+        {% else %}
+          {% lng "SEMESTRE NÃO DEFINIDO" "SEMESTER NOT DEFINED" %}
+        {% endif %}
 
         {% include "tipo_projeto.html" with com_tipo=True %}
         <br>

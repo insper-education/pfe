@@ -45,7 +45,7 @@ def formata_horarios(horarios, formato=None):
 @register.filter
 def horarios_trab_grupo_aulas(projeto):
     """Retorna os horários de trabalho em grupo e aulas do período selecionado."""
-    if projeto:
+    if projeto and projeto.ano and projeto.semestre:
         ano = projeto.ano
         semestre = projeto.semestre
     else:

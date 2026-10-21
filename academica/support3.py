@@ -161,7 +161,7 @@ def get_media_alocacao_i(alocacao, request=None, edicao=None):
     peso_final = round(peso_final, 9)
 
     
-    if alocacao.projeto.ano > 2021:  # A partir de 2022, a nota final é a menor das notas individuais
+    if alocacao.projeto.ano and alocacao.projeto.ano > 2021:  # A partir de 2022, a nota final é a menor das notas individuais
         if individual is not None and individual < 5:  # Caso a nota individual seja menor que 5, a nota final é a menor das notas
             if individual < nota_final:
                 nota_final = individual
