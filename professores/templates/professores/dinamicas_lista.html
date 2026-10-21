@@ -14,6 +14,8 @@
   <link rel="stylesheet" href="{% static 'professores/css/agendamentos.css' %}">
   {% include "heads_calendar.html" %}
   {% include "cores_bancas_mentorias.html" %}
+  <link rel="stylesheet" href="{% static 'bootstrap-select-1.13.14/dist/css/bootstrap-select.min.css' %}">
+  <script src="{% static 'bootstrap-select-1.13.14/dist/js/bootstrap-select.min.js' %}"></script>
 {% endblock %}
 
 {% block content %}
@@ -43,14 +45,14 @@
         <thead style="background-color:rgba(0, 123, 255, 0.1);">
           <tr>
             <th style="padding:2px 8px;">{% lng "Temática" "Theme" %}</th>
-            <th style="padding:2px 8px;">{% lng "Visível" "Visible" %}</th>
+            <th style="padding:2px 8px;">{% lng "Visível para Estudantes" "Visible to Students" %}</th>
           </tr>
         </thead>
         <tbody>
           {% for tematica in tematicas %}
             <tr>
               <td style="padding:2px 8px;">
-                <label for="tematica_{{ tematica.id }}" style="margin-bottom:0;">{{ tematica.nome }}</label>
+                <label for="tematica_{{ tematica.id }}" style="margin-bottom:0;">{% lng tematica.nome tematica.nome_en %}</label>
               </td>
               <td style="padding:2px 8px; text-align:center;">
                 <input type="checkbox"
@@ -112,7 +114,7 @@
     });
   </script>
 
-  {% include "edicoes.html" with com_proximas=True %}
+  {% include "edicoes.html" with com_proximas=True com_tematicas_mentorias=tematicas %}
   {% include "informacoes_ml.html" %}<br>
 
   {% if projeto %}
@@ -128,7 +130,7 @@
     {% if encontros %}
       <table id="MentoriasTable" class="table table-borderless table-sm arredondado"><tbody>
         {% for e in encontros %} 
-          <tr>
+          <tr class="tematica_{{ e.tematica.id }}">
             <td 
               {% if e.bloqueado %}style="background-color:rgba(217, 93, 93, 1);"
               {% elif e.startDate.date|dif_dias_hoje < configuracao.bloq_agend_ment %}style="background-color:rgba(118, 118, 118, 0.5);"
@@ -256,6 +258,9 @@
     function carrega_pagina() {montar_calendario();};
     function carrega_site() {carrega_pagina();};
     window.onload = carrega_site
+
+
+
   </script>
 
   {% include "edicoes_ajax.html" %}

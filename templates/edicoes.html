@@ -501,6 +501,7 @@
             </select>
         </div>
       {% endif %}
+      
 
       {% if tipos_documentos_filtro %}
         <div class="input-group input-group-sm mt-1 mr-4">
@@ -571,6 +572,59 @@
             </select>
         </div>
       {% endif %}
+
+      {% if com_tematicas_mentorias %}
+        <!-- Precisa do bootstrap-select.min.js -->
+        <div class="input-group input-group-sm mt-1 flex-nowrap">
+            <div class="input-group-prepend">
+              <label class="to_label input-group-text" for="tematicas_mentorias"><span class="to_hide">
+                {% lng "Temáticas" "Themes" %}
+              </span></label>
+            </div>
+            <select id="tematicas_mentorias" class="selectpicker form-control form-control-sm" title="Nada selecionado" 
+             data-style="mr-sm border " data-width="12em" multiple>
+              {% for tematica in com_tematicas_mentorias %}
+                <option selected="selected"  class="troca_lingua" data-pt="{{ tematica.nome }}" data-en="{{ tematica.nome_en }}"
+                value="{{ tematica.id }}"  title="{{ tematica.sigla }}">{{ tematica.nome }}</option>
+              {% endfor %}
+            </select>
+        </div>
+        <script>
+          document.addEventListener("DOMContentLoaded", () => {
+            const filterTematicas = document.getElementById("tematicas_mentorias");
+            if (!filterTematicas) {
+              return;
+            }
+
+            const aplicarFiltroTematicas = () => {
+              const selectedOptions = Array.from(filterTematicas.selectedOptions).map((option) => option.value);
+              const linhasTematicas = document.querySelectorAll("tr[class*='tematica_']");
+
+              linhasTematicas.forEach((linha) => {
+                const classesTematica = Array.from(linha.classList)
+                  .filter((cls) => /^tematica_\d+$/.test(cls))
+                  .map((cls) => cls.replace("tematica_", ""));
+
+                if (!classesTematica.length) {
+                  linha.style.display = "";
+                  return;
+                }
+
+                const hasMatchingClass = classesTematica.some((idTematica) => selectedOptions.includes(idTematica));
+                linha.style.display = hasMatchingClass ? "" : "none";
+              });
+            };
+
+            filterTematicas.addEventListener("change", aplicarFiltroTematicas);
+
+            // DataTables recria linhas ao paginar/ordenar/buscar; reaplica o filtro a cada redraw.
+            $(document).on("draw.dt", aplicarFiltroTematicas);
+
+            aplicarFiltroTematicas();
+          });
+        </script>
+      {% endif %}
+
 
     </div>
   </div>
