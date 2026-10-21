@@ -169,7 +169,7 @@
 
                 {% if e.tematica %}
                   <div class="tematica" style="margin: 4px 0px 4px 0px;">
-                    <b>Temática:</b> {{ e.tematica.nome }}
+                    <b>{% lng "Temática" "Theme" %}:</b> {{ e.tematica.nome }}
                   </div>
                 {% endif %}
 
@@ -243,7 +243,7 @@
         {% endif %}
         
       </form>
-      
+
     {% else %}
       <p>{% lng "Não existem encontros." "There are no meetings." %}</p>
     {% endif %}
