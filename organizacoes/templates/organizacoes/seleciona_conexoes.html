@@ -63,40 +63,22 @@
   <form method="post" id="conexoesform" enctype="multipart/form-data"> {% csrf_token %}
 
     {% include "tabelas_top_ml.html" with tabela="Parceiros" cabecalhos=cabecalhos captions=captions tabela_simples=True %}
-      {% for parceiro in parceiros %}
-        {% with conexoes=parceiro.conexao_set.all %}
+      {% for item in parceiros_dados %}
+        {% with parceiro=item.parceiro %}
           <tr class="item {% if not parceiro.user.is_active %}links-claros{% endif %}">
             <th scope="row" style="text-align: center;">
               <input class="conexao" type="checkbox" name="gestor_responsavel" value="{{parceiro.id}}"
-                {% for conexao in conexoes %}
-                  {% if conexao.projeto == projeto %} 
-                    {% if conexao.gestor_responsavel %}
-                      checked
-                    {% endif %}
-                  {% endif %}
-                {% endfor %}
+                {% if item.gestor_responsavel %}checked{% endif %}
               >
             </th>
             <th scope="row" style="text-align: center;">
               <input class="conexao" type="checkbox" name="mentor_tecnico" value="{{parceiro.id}}"
-                {% for conexao in conexoes %}
-                  {% if conexao.projeto == projeto %}
-                    {% if conexao.mentor_tecnico %}
-                      checked
-                    {% endif %}
-                  {% endif %}
-                {% endfor %}
+                {% if item.mentor_tecnico %}checked{% endif %}
               >   
             </th>
             <th scope="row" style="text-align: center;">
               <input class="conexao" type="checkbox" name="recursos_humanos" value="{{parceiro.id}}"
-                {% for conexao in conexoes %}
-                  {% if conexao.projeto == projeto %}
-                    {% if conexao.recursos_humanos %}
-                      checked
-                    {% endif %}
-                  {% endif %}
-                {% endfor %}
+                {% if item.recursos_humanos %}checked{% endif %}
               >   
             </th>
             <td {% if not parceiro.user.is_active %}class="links-claros"{% endif %}>
@@ -145,7 +127,7 @@
           <option selected value> -- selecione um colaborador(a) -- </option>
           <optgroup label="Organização">
           {% for colaborador in todos_parceiros %}  
-            <option value="{{colaborador.id}}" {% if colaborador.id == colaboradores.id %}selected{% endif %}>
+            <option value="{{colaborador.id}}" {% if colaborador.id == colaboradores_id %}selected{% endif %}>
               {{colaborador.user.get_full_name}} [{{colaborador.organizacao}}]
             </option>
           {% endfor %}

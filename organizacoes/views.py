@@ -962,12 +962,57 @@ def seleciona_conexoes(request):
         return JsonResponse({"atualizado": True,})
 
     if projeto.organizacao:
-        parceiros = Parceiro.objects.filter(organizacao=projeto.organizacao)
+        parceiros = (
+            Parceiro.objects.filter(organizacao=projeto.organizacao)
+            .select_related("user", "organizacao")
+            .order_by("user__first_name", "user__last_name", "id")
+        )
     else:
         return HttpResponseNotFound("<h1>Projeto não tem organização definida!</h1>")
 
-    cooperacoes = Conexao.objects.filter(projeto=projeto, colaboracao=True)
-    colaboradores = cooperacoes.last().parceiro if cooperacoes else None
+    conexoes_do_projeto = (
+        Conexao.objects.filter(projeto=projeto)
+        .select_related("parceiro")
+        .order_by("id")
+    )
+
+    conexoes_por_parceiro = {}
+    colaboradores_id = None
+    colaboracao_ultima_id = -1
+    for conexao in conexoes_do_projeto:
+        dados_conexao = conexoes_por_parceiro.setdefault(
+            conexao.parceiro_id,
+            {
+                "gestor_responsavel": False,
+                "mentor_tecnico": False,
+                "recursos_humanos": False,
+            },
+        )
+        dados_conexao["gestor_responsavel"] = (
+            dados_conexao["gestor_responsavel"] or conexao.gestor_responsavel
+        )
+        dados_conexao["mentor_tecnico"] = (
+            dados_conexao["mentor_tecnico"] or conexao.mentor_tecnico
+        )
+        dados_conexao["recursos_humanos"] = (
+            dados_conexao["recursos_humanos"] or conexao.recursos_humanos
+        )
+
+        if conexao.colaboracao and conexao.id > colaboracao_ultima_id:
+            colaboracao_ultima_id = conexao.id
+            colaboradores_id = conexao.parceiro_id
+
+    parceiros_dados = []
+    for parceiro in parceiros:
+        dados_conexao = conexoes_por_parceiro.get(parceiro.id, {})
+        parceiros_dados.append(
+            {
+                "parceiro": parceiro,
+                "gestor_responsavel": dados_conexao.get("gestor_responsavel", False),
+                "mentor_tecnico": dados_conexao.get("mentor_tecnico", False),
+                "recursos_humanos": dados_conexao.get("recursos_humanos", False),
+            }
+        )
     
     cabecalhos = [
         {"pt": "GR", "en": "GR", },
@@ -988,9 +1033,11 @@ def seleciona_conexoes(request):
     context = {
         "titulo": {"pt": "Seleção de Conexões", "en": "Connection Selection"},
         "projeto": projeto,
-        "parceiros": parceiros,
-        "todos_parceiros": Parceiro.objects.all(),
-        "colaboradores": colaboradores,
+        "parceiros_dados": parceiros_dados,
+        "todos_parceiros": Parceiro.objects.select_related("user", "organizacao").order_by(
+            "user__first_name", "user__last_name", "id"
+        ),
+        "colaboradores_id": colaboradores_id,
         "cabecalhos": cabecalhos,
         "captions": [captions],
         }
