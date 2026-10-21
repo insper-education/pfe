@@ -616,24 +616,27 @@ class Configuracao(models.Model):
                               help_text="Língua deafult do sistema")
 
     prazo_avaliar = models.PositiveIntegerField("Prazo para avaliar", default=10,
-                                           help_text="Prazo máximo para orientadores avaliarem entregas")
+                                                help_text="Prazo máximo para orientadores avaliarem entregas")
     
     prazo_avaliar_banca = models.PositiveIntegerField("Prazo para banca", default=30,
-                                           help_text="Prazo máximo para membros de uma banca colocarem suas avaliações")
+                                                      help_text="Prazo máximo para membros de uma banca colocarem suas avaliações")
     
     periodo_relato = models.PositiveIntegerField("Período Relato Quinzenal", default=10,
-                                           help_text="Período para Relato Quinzenal ser preenchido antes do prazo")
+                                                 help_text="Período para Relato Quinzenal ser preenchido antes do prazo")
 
     estudates_por_grupo = models.PositiveIntegerField("Estudantes por Grupo", default=4,
-                                           help_text="Quantidade padrão de estudantes por grupo de projeto")
+                                                      help_text="Quantidade padrão de estudantes por grupo de projeto")
 
     limite_salas_bancas = models.PositiveIntegerField("Limite de Salas para Bancas", default=2,
-                                           help_text="Limite de Salas para Bancas Simultâneas")
+                                                      help_text="Limite de Salas para Bancas Simultâneas")
     
     cotacao_dolar = models.DecimalField("Cotação do Dólar", max_digits=5, decimal_places=2, default=1.0,
-                                           help_text="Cotação do Dólar para conversão de valores")
+                                        help_text="Cotação do Dólar para conversão de valores")
 
     permite_agendar_mentorias = models.BooleanField(default=True, help_text="Permite agendar mentorias")
+
+    bloq_agend_ment = models.PositiveIntegerField("Dias para Bloquear Agendamento de Mentorias", default=0,
+                                                  help_text="Dias para Bloquear Agendamento de Mentorias")
 
     ###----------------------Mensagens----------------------###
     msg_email_automatico = models.TextField("Mensagem de Envio Automático", max_length=1000, null=True, blank=True,

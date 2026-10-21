@@ -138,11 +138,16 @@ def permite_agendar_mentorias(request):
     """Atualiza uma configuração de agendamento de mentorias."""
 
     if request.headers.get("X-Requested-With") != "XMLHttpRequest" or request.method != "POST":
-        return HttpResponse("Erro não identificado.", status=401)
+        return JsonResponse({"atualizado": False, "erro": "Requisição inválida."}, status=400)
 
     configuracao = get_object_or_404(Configuracao)
     configuracao.permite_agendar_mentorias = request.POST.get("permite_agendar_mentorias") == "true"
-    configuracao.save()
+    try:
+        configuracao.bloq_agend_ment = int(request.POST.get("dias_bloq_agend_ment", 0))
+    except ValueError:
+        configuracao.bloq_agend_ment = 0
+
+    configuracao.save(update_fields=["permite_agendar_mentorias", "bloq_agend_ment"])
     return JsonResponse({"atualizado": True})
 
 

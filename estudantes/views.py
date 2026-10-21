@@ -343,8 +343,8 @@ def encontros_marcar(request):
                         mensagem_aviso = {"pt": "Horário está bloqueado para agendamento.", "en": "Time slot is blocked for scheduling."}
                         break
 
-                    elif encontro.startDate.date() <= hoje:
-                        mensagem_aviso = {"pt": "Horário já vencido.", "en": "Time slot has already passed."}
+                    elif (encontro.startDate.date() - hoje).days < configuracao.bloq_agend_ment:
+                        mensagem_aviso = {"pt": f"Horário {encontro.startDate.strftime('%d/%m/%Y às %H:%M')} já vencido.", "en": f"Time slot {encontro.startDate.strftime('%b %d, %y %H:%M')} has already passed."}
                         break
 
                     elif encontro.projeto is None or encontro.projeto == projeto:

@@ -1772,7 +1772,8 @@ def dinamicas_lista(request, edicao=None):
     # Usando para #atualizar a página raiz no edit da banca
     request.session["root_page_url"] = request.build_absolute_uri()
     context["root_page_url"] = request.session["root_page_url"]
-    context["hoje"] = datetime.date.today()
+    #context["hoje"] = datetime.date.today()
+    context["configuracao"] = get_object_or_404(Configuracao)
     context["dias_fundos"] = Evento.objects.filter(tipo_evento__sigla__in=["FERI",])
 
     return render(request, "professores/dinamicas_lista.html", context)
