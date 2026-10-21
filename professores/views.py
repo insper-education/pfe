@@ -1562,7 +1562,7 @@ def agendamento_encontro(request, encontro_id):
     error = mensagem_convite_encontro( encontro=encontro, enviar=True)
     if error:
         mensagem = {"pt": "Erro ao enviar agendamento de e-mail para mentoria: "+str(error), "en": "Error sending mentorship dynamic e-mail scheduling: "+str(error)}
-        return render(request, "generic_ml.html", context={"area_principal": True, "mensagem_erro": mensagem_erro})
+        return render(request, "generic_ml.html", context={"area_principal": True, "mensagem_erro": mensagem})
     else:
         mensagem = {"pt": "Agendamento de e-mail para mentoria enviado com sucesso!", "en": "Mentorship dynamic e-mail scheduling sent successfully!"}
         return render(request, "generic_ml.html", context={"area_principal": True, "mensagem": mensagem})
@@ -1735,10 +1735,32 @@ def bancas_index(request, prof_id=None):
 def dinamicas_lista(request, edicao=None):
     """Mostra os horários de dinâmicas."""
 
-    if request.method == "POST" and "edicao" in request.POST:
-        context = puxa_encontros(request.POST["edicao"])
+    if request.headers.get("X-Requested-With") == "XMLHttpRequest" and request.method == "POST": # Ajax check
+        if "edicao" in request.POST:
+            context = puxa_encontros(request.POST["edicao"])
 
-    else:
+    elif request.method == "POST":
+        print("POST request received for dinamicas_lista")
+        aviso = ""
+        # pega todas as mentorias marcadas
+        dados = request.POST.getlist("mentoria")
+        for d in dados:
+            encontro = get_object_or_404(Encontro, pk=d)
+            error = mensagem_convite_encontro( encontro=encontro, enviar=True)
+            aviso += "Mentoria de projeto: " + encontro.get_projeto().get_titulo_org() + (" não enviada" if error else " enviada") + "<br>"
+
+        mensagem = {
+            "pt": "Agendamentos de Mentorias enviadas.<br><br>" + aviso,
+            "en": "Mentorship Scheduling sent.<br><br>" + aviso,
+        }
+        context = {
+            "voltar": True,
+            "area_principal": True,
+            "mensagem": mensagem,
+        }
+        return render(request, "generic_ml.html", context=context)
+
+    else:  # GET request
 
         informacoes = [
                 (".tematica", "tematica", "theme"),

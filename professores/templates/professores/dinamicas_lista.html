@@ -128,100 +128,122 @@
   <div id="atualizar">
 
     {% if encontros %}
-      <table id="MentoriasTable" class="table table-borderless table-sm arredondado"><tbody>
-        {% for e in encontros %} 
-          <tr class="tematica_{{ e.tematica.id }}">
-            <td 
-              {% if e.bloqueado %}style="background-color:rgba(217, 93, 93, 1);"
-              {% elif e.startDate.date|dif_dias_hoje < configuracao.bloq_agend_ment %}style="background-color:rgba(118, 118, 118, 0.5);"
-              {% elif not e.projeto %}style="background-color:rgb(239, 255, 239);"
-              {% endif %}>
-              
-              {% if e.bloqueado %}
-                <span style="display: inline-block; margin: 8px; background: #ffdddd; color: #b30000; padding: 2px 8px; border-radius: 4px; font-weight: bold;">
-                  {% lng "Bloqueado" "Blocked" %}
-                </span><br>
-              {% elif e.startDate.date|dif_dias_hoje < configuracao.bloq_agend_ment %}
-                <span style="display: inline-block; margin: 8px; background: #ffffcc; color: #666600; padding: 2px 8px; border-radius: 4px; font-weight: bold;">
-                  {% lng "Vencido" "Expired" %}
-                </span><br>
-              {% endif %}
-              <b>{% lng "Horário" "Time" %}:</b> {{e.startDate}} - {{e.endDate|date:'H:i'}}<br>
-              {% if e.facilitador %}
-                <div class="facilitador" style="margin: 4px 0px 4px 0px;">
-                  <b>{% lng_g e.facilitador.genero "Facilitador" "Facilitadora" "Facilitator" %}:</b>
-                  <a class="imprimir" href="{% url 'user_detail' e.facilitador.id %}">{{ e.facilitador.get_full_name }}</a>
-                  <a class="email" href="mailto:{{e.facilitador.email}}">&lt;{{e.facilitador.email}}&gt;</a>&nbsp;
+
+      <form method="post" enctype="multipart/form-data">{% csrf_token %}
+
+        {% if encontros and request.user.eh_admin %}
+          <div class="mt-2 esconder">
+            <button onclick="return confirm('Você tem certeza que deseja enviar mensages de agendamentos?');"
+              type="submit" class="btn btn-warning btn-sm btn-outline-secondary">
+              {% lng "Enviar Agendamentos para Todas as Mentorias Selecionadas" "Send Scheduling to All Selected Mentoring" %}
+            </button>
+          </div>
+        {% endif %}
+
+        <table id="MentoriasTable" class="table table-borderless table-sm arredondado"><tbody>
+          {% for e in encontros %} 
+            <tr class="tematica_{{ e.tematica.id }}">
+              <td 
+                {% if e.bloqueado %}style="background-color:rgba(217, 93, 93, 1);"
+                {% elif e.startDate.date|dif_dias_hoje < configuracao.bloq_agend_ment %}style="background-color:rgba(118, 118, 118, 0.5);"
+                {% elif not e.projeto %}style="background-color:rgb(239, 255, 239);"
+                {% endif %}>
+                
+                {% if e.bloqueado %}
+                  <span style="display: inline-block; margin: 8px; background: #ffdddd; color: #b30000; padding: 2px 8px; border-radius: 4px; font-weight: bold;">
+                    {% lng "Bloqueado" "Blocked" %}
+                  </span><br>
+                {% elif e.startDate.date|dif_dias_hoje < configuracao.bloq_agend_ment %}
+                  <span style="display: inline-block; margin: 8px; background: #ffffcc; color: #666600; padding: 2px 8px; border-radius: 4px; font-weight: bold;">
+                    {% lng "Vencido" "Expired" %}
+                  </span><br>
+                {% endif %}
+                <b>{% lng "Horário" "Time" %}:</b> {{e.startDate}} - {{e.endDate|date:'H:i'}}<br>
+                {% if e.facilitador %}
+                  <div class="facilitador" style="margin: 4px 0px 4px 0px;">
+                    <b>{% lng_g e.facilitador.genero "Facilitador" "Facilitadora" "Facilitator" %}:</b>
+                    <a class="imprimir" href="{% url 'user_detail' e.facilitador.id %}">{{ e.facilitador.get_full_name }}</a>
+                    <a class="email" href="mailto:{{e.facilitador.email}}">&lt;{{e.facilitador.email}}&gt;</a>&nbsp;
+                  </div>
+                {% endif %}
+
+                {% if e.tematica %}
+                  <div class="tematica" style="margin: 4px 0px 4px 0px;">
+                    <b>Temática:</b> {{ e.tematica.nome }}
+                  </div>
+                {% endif %}
+
+                {% if e.location %}
+                  <div class="local" style="margin: 4px 0px 4px 0px;">
+                    <b>Local:</b> {{e.location}}
+                  </div>
+                {% endif %}
+
+                {% if e.link %}
+                  <div class="link" style="margin: 4px 0px 4px 0px;">
+                    <b>Link:</b>
+                    <a href="{{e.link}}" target="_blank" rel="noopener noreferrer">
+                    <span style="word-break: break-all; overflow-wrap: break-word;">{{e.link}}</span>
+                    </a>
+                  </div>
+                {% endif %}
+
+                {% if e.projeto %}
+                  {% include "cabecalho_projeto.html" with projeto=e.projeto %}
+
+                  <div class="grupo" style="margin-top: 8px;">
+                    {% if e.alocacao %}  {% comment %} Banca Probation {% endcomment %}
+                      <b>{% lng "Estudante:" "Student:" %}</b>
+                      {% include "mostra_estudante.html" with alocacao=e.alocacao %}  
+                    {% else %}
+                      {% include "grupo_estudantes.html" with projeto=e.get_projeto %}
+                    {% endif %}
+                  </div>
+
+                  <div class="avaliacao" style="margin-top: 8px; overflow-wrap: break-word;">
+                    &#9733;
+                    <b>{% lng "Formulário de feedback" "Feedback form" %}</b>
+                    <a href="{% url 'encontro_feedback' e.id %}">{{request.scheme}}://{{ request.get_host }}{% url 'encontro_feedback' e.id %}</a>
+                  </div>
+
+                {% else %}
+                  {% lng "Horário Livre" "Available Time" %}<br><br>
+                {% endif %}
+
+                <div class="agendamento">
+
+                  <span>
+                    <label for="ce_{{e.pk}}">{% lng "Mensagem" "Message" %}:</label>
+                    <input type="checkbox" name="mentoria" id="ce_{{e.pk}}" value="{{e.pk}}" class="ml-1" checked="checked" />
+                  </span>
+
+                  <span class="editar esconder mt-1" style="float: left;">
+                    <a data-url="{% url 'agendamento_encontro' e.id %}" href="{% url 'agendamento_encontro' e.id %}">
+                      <button class="btn btn-secondary btn-sm">{% lng "Enviar Convite" "Send Invite" %}</button>
+                    </a>
+                  </span>
+
+                  <span class="editar esconder mt-1" style="float: right;">
+                    <a class="open-modal" data-url="{% url 'dinamicas_editar' e.id %}" href="{% url 'dinamicas_editar' e.id %}"> 
+                      <button class="btn btn-primary">{% lng "Editar" "Edit" %}</button>
+                    </a>
+                  </span>
                 </div>
-              {% endif %}
 
-              {% if e.tematica %}
-                <div class="tematica" style="margin: 4px 0px 4px 0px;">
-                  <b>Temática:</b> {{ e.tematica.nome }}
-                </div>
-              {% endif %}
-
-              {% if e.location %}
-                <div class="local" style="margin: 4px 0px 4px 0px;">
-                  <b>Local:</b> {{e.location}}
-                </div>
-              {% endif %}
-
-              {% if e.link %}
-                <div class="link" style="margin: 4px 0px 4px 0px;">
-                  <b>Link:</b>
-                  <a href="{{e.link}}" target="_blank" rel="noopener noreferrer">
-                  <span style="word-break: break-all; overflow-wrap: break-word;">{{e.link}}</span>
-                  </a>
-                </div>
-              {% endif %}
-
-              {% if e.projeto %}
-                {% include "cabecalho_projeto.html" with projeto=e.projeto %}
-
-                <div class="grupo" style="margin-top: 8px;">
-                  {% if e.alocacao %}  {% comment %} Banca Probation {% endcomment %}
-                    <b>{% lng "Estudante:" "Student:" %}</b>
-                    {% include "mostra_estudante.html" with alocacao=e.alocacao %}  
-                  {% else %}
-                    {% include "grupo_estudantes.html" with projeto=e.get_projeto %}
-                  {% endif %}
-                </div>
-
-                <div class="avaliacao" style="margin-top: 8px; overflow-wrap: break-word;">
-                  &#9733;
-                  <b>{% lng "Formulário de feedback" "Feedback form" %}</b>
-                  <a href="{% url 'encontro_feedback' e.id %}">{{request.scheme}}://{{ request.get_host }}{% url 'encontro_feedback' e.id %}</a>
-                </div>
-
-              {% else %}
-                {% lng "Horário Livre" "Available Time" %}<br><br>
-              {% endif %}
-
-              <span class="editar esconder mt-1" style="float: left;">
-                <a data-url="{% url 'agendamento_encontro' e.id %}" href="{% url 'agendamento_encontro' e.id %}">
-                  <button class="btn btn-secondary btn-sm">{% lng "Enviar Convite" "Send Invite" %}</button>
-                </a>
-              </span>
-
-              <span class="editar esconder mt-1" style="float: right;">
-                <a class="open-modal" data-url="{% url 'dinamicas_editar' e.id %}" href="{% url 'dinamicas_editar' e.id %}"> 
-                  <button class="btn btn-primary">{% lng "Editar" "Edit" %}</button>
-                </a>
-              </span>
-
-            </td>
-          </tr>
-        {% endfor %}
-      </tbody></table>
-      {% if request.user.eh_admin %}
-        <span class="editar esconder" style="float: right;">
-          <a class="open-modal" data-url="{% url 'dinamicas_editar_edicao' edicao %}" href="{% url 'dinamicas_editar_edicao' edicao %}"> 
-            <button class="btn btn-secondary">{% lng "Editar Todas" "Edit All" %}</button>
-          </a>
-        </span>
-      {% endif %}
-      <p>&nbsp;</p>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody></table>
+        {% if request.user.eh_admin %}
+          <span class="editar esconder" style="float: right;">
+            <a class="open-modal" data-url="{% url 'dinamicas_editar_edicao' edicao %}" href="{% url 'dinamicas_editar_edicao' edicao %}"> 
+              <button class="btn btn-secondary">{% lng "Editar Todas" "Edit All" %}</button>
+            </a>
+          </span>
+        {% endif %}
+        
+      </form>
+      
     {% else %}
       <p>{% lng "Não existem encontros." "There are no meetings." %}</p>
     {% endif %}
