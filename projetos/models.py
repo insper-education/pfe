@@ -109,11 +109,13 @@ class Projeto(models.Model):
     titulo_final = models.CharField("Título Final", max_length=160, null=True,
                                     blank=True, help_text="Título Final do projeto")
 
-    ano = models.PositiveIntegerField("Ano", validators=[MinValueValidator(2018), MaxValueValidator(3018)],
+    ano = models.PositiveIntegerField("Ano", null=True, blank=True,
                                       help_text="Ano que o projeto começa")
 
-    semestre = models.PositiveIntegerField("Semestre", validators=[MinValueValidator(1), MaxValueValidator(2)],
+    semestre = models.PositiveIntegerField("Semestre", null=True, blank=True,
                                            help_text="Semestre que o projeto começa")
+
+
 
     orientador = models.ForeignKey("users.Professor", null=True, blank=True,
                                    on_delete=models.SET_NULL, related_name="professor_orientador",
