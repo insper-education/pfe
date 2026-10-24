@@ -1753,12 +1753,14 @@ def dinamicas_lista(request, edicao=None):
             context = puxa_encontros(request.POST["edicao"])
 
     elif request.method == "POST":
-        print("POST request received for dinamicas_lista")
         aviso = ""
         # pega todas as mentorias marcadas
         dados = request.POST.getlist("mentoria")
         for d in dados:
             encontro = get_object_or_404(Encontro, pk=d)
+            if not encontro.get_projeto():
+                aviso += "Mentoria de projeto: " + encontro.get_projeto().get_titulo_org() + " não enviada (sem projeto)<br>"
+                continue
             error = mensagem_convite_encontro( encontro=encontro, enviar=True)
             aviso += "Mentoria de projeto: " + encontro.get_projeto().get_titulo_org() + (" não enviada" if error else " enviada") + "<br>"
 
