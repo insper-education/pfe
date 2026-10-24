@@ -21,6 +21,14 @@ function editEvent(event) {
     $('#event-modal select[name="event-material2"]').val(evento ? evento.material2 : '');
     $('#event-modal input[name="event-start-date"]').datepicker('update', evento ? evento.startDate : '');
     $('#event-modal input[name="event-end-date"]').datepicker('update', evento ? evento.endDate : '');
+    $('#event-modal select[name="event-tipo_documento"]').val(
+        evento && evento.tipo_documento && evento.tipo_documento !== 0 ? String(evento.tipo_documento) : ''
+    );
+    $('#event-modal input[name="event-prazo_entrega_atividade_dias"]').val(
+        evento && evento.prazo_entrega_atividade_dias !== undefined && evento.prazo_entrega_atividade_dias !== null
+            ? evento.prazo_entrega_atividade_dias
+            : ''
+    );
 
     $('#event-modal input[name="arquivo"]').val(''); // Limpa o campo de arquivo
     

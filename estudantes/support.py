@@ -14,7 +14,7 @@ from django.shortcuts import get_object_or_404
 from .models import Pares, Relato
 
 from academica.models import Composicao
-from academica.support import filtra_entregas
+from academica.support import filtra_entregas, filtra_entregas_aulas
 from academica.support5 import filtra_composicoes
 
 from administracao.models import TipoEvento
@@ -218,6 +218,32 @@ def check_avaliacao_pares_final(alocacao):
     return check_avaliacao_pares(alocacao, "APF", "avaliacao_pares_final")
 
 
+def check_atividades_aula(alocacao, ano, semestre):
+    # Verifica se atividades de aula foram submetidas no prazo
+    cor = 'b'
+    prazo = None
+    itens = []
+    hoje = datetime.date.today()
+    projeto = alocacao.projeto if alocacao else None
+    if projeto:
+        entregas = filtra_entregas_aulas(projeto)
+        for entrega in entregas:
+            if "evento" in entrega and entrega["evento"] and entrega["evento"].endDate:
+                diff = (entrega["evento"].endDate - hoje).days + entrega["evento"].prazo_entrega_atividade_dias - 1
+                if diff < 14:  # 14 dias antes do prazo já avisa o estudante (Eventos são mostrados duas semanas antes do prazo)
+                    if entrega["documentos"] and cor not in ['y', 'r']:
+                        cor = 'g'
+                    else:
+                        if not prazo:
+                            prazo = entrega["evento"].endDate + datetime.timedelta(days=(entrega["evento"].prazo_entrega_atividade_dias))
+                        if diff < 0:
+                            cor = 'r'
+                        elif cor != 'r':
+                            cor = 'y'
+                        itens.append( entrega["evento"] )
+    return {"atividades_aula": {"cor": cor, "prazo": prazo, "itens": itens, "atraso": None}}
+
+
 def ver_pendencias_estudante(user, ano, semestre):
     PRAZO = 7
     context = {}
@@ -231,6 +257,7 @@ def ver_pendencias_estudante(user, ano, semestre):
     context.update(check_encontros_marcar(alocacao))
     context.update(check_avaliacao_pares_intermediaria(alocacao))
     context.update(check_avaliacao_pares_final(alocacao))
+    context.update(check_atividades_aula(alocacao, ano, semestre))
     return context
 
 
