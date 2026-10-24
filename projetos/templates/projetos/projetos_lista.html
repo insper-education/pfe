@@ -16,7 +16,7 @@
 {% endblock %}
 
 {% block content %}
-  {% include "edicoes.html" with com_cursos=True com_externos=True avancados=True %}
+  {% include "edicoes.html" with com_cursos=True com_externos=True avancados=True com_cancelados=True %}
   <div id="atualizar">
     {% include "tabelas_top_ml.html" with tabela="Projetos" cabecalhos=cabecalhos %}
       {% for projeto in projetos %}
