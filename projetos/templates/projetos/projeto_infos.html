@@ -917,6 +917,16 @@
             href="{% url 'editar_projeto' projeto.id %}">
             {% lng "Editar" "Edit" %}
           </a>
+
+          {% if user.eh_admin %}
+            <a class="btn wbtn btn-danger"
+              data-toggle="tooltip" data-html="true" animation="true" title="Cancela o projeto, removendo-o do semestre e tornando-o inativo"
+              onClick="return confirm('Tem certeza que deseja cancelar este projeto?') "
+              href="{% url 'cancela_projeto' projeto.id %}">
+              {% lng "Cancelar" "Cancel" %}
+            </a>
+          {% endif %}
+
         </div>
       </div>
 

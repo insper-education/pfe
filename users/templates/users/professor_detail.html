@@ -16,6 +16,52 @@
   <link rel="stylesheet" href="{% static 'css/user_details.css' %}">
   {% include "reload.html" %}
   <link rel="stylesheet" href="{% static 'css/caixa_rolante.css' %}">
+
+  <style>
+
+    .projeto-cancelado-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.28rem;
+      margin-left: 0.35rem;
+      padding: 0.1rem 0.45rem;
+      border: 1px solid #f3b7bd;
+      border-radius: 999px;
+      background: #fdecee;
+      color: #a11d2f;
+      font-size: 0.78rem;
+      font-weight: bold;
+      line-height: 1.2;
+      white-space: nowrap;
+      vertical-align: middle;
+    }
+
+    .projeto-cancelado-badge i {
+      font-size: 0.7rem;
+    }
+
+    .projeto-data-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      margin-left: 0.35rem;
+      padding: 0.1rem 0.45rem;
+      border: 1px solid #d8dee4;
+      border-radius: 999px;
+      background: #f5fff9;
+      color: #4b5563;
+      font-size: 0.78rem;
+      font-weight: 600;
+      line-height: 1.2;
+      white-space: nowrap;
+      vertical-align: middle;
+    }
+
+    .projeto-data-badge i {
+      font-size: 0.68rem;
+      color: #6b7280;
+    }
+  </style>
 {% endblock %}
 
 {% block content %}
@@ -78,7 +124,18 @@
           {% with cestud=projeto.alocacao_set.all.count %}
             {% if cestud > 0 %}
               <li><a href="{% url 'projeto_infos' projeto.id %}">
-              {{projeto.ano}}.{{projeto.semestre}}: [{{projeto.organizacao.nome}}] {{projeto.get_titulo}}
+              [{{projeto.organizacao.nome}}] {{projeto.get_titulo}}
+              {% if projeto.ano_cancelado %}
+                <span class="projeto-cancelado-badge additional-info" data-toggle="tooltip" data-html="true" animation="true" title="Cancelado">
+                  <i class="fas fa-ban" aria-hidden="true"></i>
+                  {% lng "Cancelado" "Canceled" %} {{projeto.ano_cancelado}}.{{projeto.semestre_cancelado}}
+                </span>
+              {% else %}
+                <span class="projeto-data-badge additional-info" data-toggle="tooltip" data-html="true" animation="true" title="Período do projeto">
+                  <i class="far fa-calendar-alt" aria-hidden="true"></i>
+                  {{projeto.ano}}.{{projeto.semestre}}
+                </span>
+              {% endif %}
               <span class="alocacao-chip">
                 <i class="fas fa-user-graduate"></i>
                 {{cestud}} {% lng_n cestud "estudante" "estudantes" "student" "students" %}

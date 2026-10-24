@@ -120,9 +120,12 @@ def get_notas_estudante(estudante, request=None, ano=None, semestre=None, checa_
                                     checa_b = False
                         # else:  # Não tem evento de encerramento
 
-                        # Verifica se já passou o semestre e assim liberar notas
-                        if now.date() > datetime.date(ano_proj, 6 if semestre_proj == 1 else 12, 30):
-                            checa_b = False
+                        # Verifica se já passou o semestre e assim liberar notas.
+                        if isinstance(ano_proj, int) and ano_proj >= 1:
+                            if now.date() > datetime.date(ano_proj, 6 if semestre_proj == 1 else 12, 30):
+                                checa_b = False
+                        else:
+                            logger.warning("Projeto inválido em get_notas_estudante: projeto=%s", alocacao.projeto.pk)
 
                         if checa_b:
                             for membro in banca.membros():

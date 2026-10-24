@@ -238,6 +238,9 @@
             <select class="to_hide filter custom-select w-auto" id="filterEdicao" name="edicao">  {% comment %} Removendo o disabled do select {% endcomment %}
               <optgroup class="opt_edi">
               {% comment %} Se não quiser que aparece a opção todas crie uma variavel n_todas com True {% endcomment %}
+              {% if com_cancelados %}
+                <option class="opt_edi troca_lingua" value="0.0" data-pt="Cancelados" data-en="Cancelled">Cancelados</option>
+              {% endif %}
               {% if not n_todas %}
                 <option class="opt_edi troca_lingua" value="todas" data-pt="Todas" data-en="All">Todas</option>
               {% endif %}

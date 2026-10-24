@@ -2754,6 +2754,28 @@ def editar_projeto(request, primarykey):
     }
     return render(request, "projetos/editar_projeto.html", context)
 
+@login_required
+@permission_required("users.view_administrador", raise_exception=True)
+def cancela_projeto(request, primarykey):
+    """Cancela projeto."""
+    if not request.user.eh_admin:  # Administrador
+        return HttpResponse("Somente administradores podem cancelar projetos.", status=401)
+
+    projeto = get_object_or_404(Projeto, id=primarykey)
+    projeto.ano_cancelado = projeto.ano
+    projeto.semestre_cancelado = projeto.semestre
+    projeto.ano = 0
+    projeto.semestre = 0
+    projeto.save()
+
+    context = {
+        "area_principal": True,
+        "mensagem": {
+            "pt": "Projeto cancelado com sucesso.",
+            "en": "Project canceled successfully."
+        }
+    }
+    return render(request, "generic_ml.html", context=context)
 
 @login_required
 @transaction.atomic

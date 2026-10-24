@@ -201,6 +201,9 @@ class Projeto(models.Model):
 
     @property
     def get_edicao(self):
+        """Retorna o período de realização do projeto."""
+        if self.ano==0 and self.semestre==0:
+            return f"Cancelado {self.ano_cancelado}.{self.semestre_cancelado}"
         if self.ano and self.semestre:
             return str(self.ano)+"."+str(self.semestre)
         return "SEM PERÍODO DEFINIDO"
@@ -228,8 +231,12 @@ class Projeto(models.Model):
         return "[" + org + "] " + self.get_titulo()
 
     def get_titulo_org_periodo(self):
-        """Retorna o título original da proposta."""
+        """Retorna o título original da proposta com a organização e o período de realização."""
         return self.get_titulo_org() + " (" + self.get_edicao + ")"
+
+    def get_titulo_periodo(self):
+        """Retorna o título original da proposta com o período de realização."""
+        return self.get_titulo() + " (" + self.get_edicao + ")"
 
     def get_titulo_org_periodo_seguro(self):
         return re.sub(r"\W+", "", self.get_titulo_org_periodo().replace(' ', '_'))
@@ -890,7 +897,9 @@ class Evento(models.Model):
     @staticmethod
     def get_evento(sigla=None, tipo=None, nome=None, configuracao=None, ano=None, semestre=None):
         """Retorna o último evento do ano/semestre conforme tipo de evento."""
-        return Evento.get_eventos(sigla=sigla, tipo=tipo, nome=nome, configuracao=configuracao, ano=ano, semestre=semestre).last()
+        if ano > 0:
+            return Evento.get_eventos(sigla=sigla, tipo=tipo, nome=nome, configuracao=configuracao, ano=ano, semestre=semestre).last()
+        return None
 
     @staticmethod
     def get_eventos(sigla=None, tipo=None, nome=None, configuracao=None, ano=None, semestre=None):
@@ -1585,7 +1594,7 @@ class Documento(models.Model):
 
     def atrasado(self):
         """Checa se o documento está atrasado (após a data do evento relacionado)."""
-        if self.projeto:
+        if self.projeto and self.projeto.ano > 0:
             composicoes = filtra_composicoes(Composicao.objects.all(), ano=self.projeto.ano, semestre=self.projeto.semestre)
             composicao = composicoes.filter(tipo_documento=self.tipo_documento).last()
             if composicao:
