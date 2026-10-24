@@ -1427,6 +1427,16 @@ class Encontro(models.Model):
         if self.tematica:
             return f"{texto} - {self.tematica}"
         return f"{texto} Sem Tema"
+
+    def get_alocacoes(self):
+        """Retorna as alocações do encontro."""
+        if self.alocacao:
+            return [self.alocacao]
+        elif self.projeto:
+            return self.projeto.get_alocacoes()
+        return []    
+        
+
     class Meta:
         verbose_name = "Encontro/Mentoria"
         verbose_name_plural = "Encontros/Mentorias"

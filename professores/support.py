@@ -146,7 +146,7 @@ def criar_reuniao_meet(subject, start_dt, end_dt, description="", recipient_list
             "description": description,
             "start": {"dateTime": start_dt.isoformat(), "timeZone": "America/Sao_Paulo"},
             "end":   {"dateTime": end_dt.isoformat(),   "timeZone": "America/Sao_Paulo"},
-            #"attendees": [{"email": email} for email in set(recipient_list) if email],   # acaba enviando convite em duplicata para essas pessoas, então não vamos enviar convite automático
+            "attendees": [{"email": email} for email in set(recipient_list) if email],   # acaba enviando convite mas sem maiores informações
             "conferenceData": {
                 "createRequest": {
                     "requestId": str(_uuid.uuid4()),
@@ -329,7 +329,7 @@ def _calendar_invite_banca(banca, subject, recipient_list, mensagem, atualizada=
     }
 
 
-def _calendar_invite_encontro(encontro, subject, recipient_list, mensagem, atualizada=False, excluida=False,
+def _calendar_invite_encontro(encontro, subject, recipient_list, atualizada=False, excluida=False,
                            organizer_email=None, organizer_name=None):
     projeto = encontro.get_projeto()
 
@@ -357,62 +357,41 @@ def _calendar_invite_encontro(encontro, subject, recipient_list, mensagem, atual
     else:
         link_projeto = None
 
-    # estudantes = []
-    # if encontro.alocacao:
-    #     estudantes = [encontro.alocacao.aluno]
-    # else:
-    #     estudantes = list(Aluno.objects.filter(alocacao__projeto=projeto).filter(trancado=False).distinct())
+    estudantes = []
+    if encontro.alocacao:
+        estudantes = [encontro.alocacao.aluno]
+    else:
+        estudantes = list(Aluno.objects.filter(alocacao__projeto=projeto).filter(trancado=False).distinct())
 
     if projeto:
         descricao_linhas = [f"Mentoria de Projeto {projeto.get_titulo_org()}"]
     else:
         descricao_linhas = [f"Mentoria de Projeto"]
-
+    
     if encontro.link:
         descricao_linhas.append("")
         descricao_linhas.append(f"Link: {encontro.link}")
 
-    if projeto and projeto.orientador and projeto.orientador.user:
-        descricao_linhas.append("")
-        descricao_linhas.append(f"Orientador: {projeto.orientador.user.get_full_name()}")
-
     descricao_linhas.append(f"Facilitador: {encontro.facilitador.get_full_name() if encontro.facilitador else 'A definir'}")
 
-    # membros = encontro.membros()
-    # if membros:
-    #     descricao_linhas.append("")
-    #     descricao_linhas.append("Membros da encontro:")
-    #     for membro in membros:
-    #         membro_linha = f"- {membro.get_full_name()}"
-    #         if projeto.orientador and membro == projeto.orientador.user:
-    #             membro_linha += " [orientador]"
-    #         descricao_linhas.append(membro_linha)
-
-    # if estudantes:
-    #     descricao_linhas.append("")
-    #     descricao_linhas.append("Estudantes:")
-    #     for estudante in estudantes:
-    #         descricao_linhas.append(f"- {estudante.user.get_full_name()}")
+    if estudantes:
+        descricao_linhas.append("")
+        descricao_linhas.append("Estudantes:")
+        for estudante in estudantes:
+            descricao_linhas.append(f"- {estudante.user.get_full_name()}")
 
     descricao_linhas.append("")
-
-    if projeto:
-        descricao_linhas.append(f"Projeto: {projeto.get_titulo_org()}")
-        descricao_linhas.append(f"Link do projeto: {link_projeto}")
 
     descricao = "\n".join(descricao_linhas)
 
     attendees_by_email = {}
-    # for membro in membros:
-    #     if membro and membro.email:
-    #         attendees_by_email[membro.email] = membro.get_full_name()
-
-    # for estudante in estudantes:
-    #     if estudante and estudante.user and estudante.user.email:
-    #         attendees_by_email[estudante.user.email] = estudante.user.get_full_name()
 
     if encontro.facilitador and encontro.facilitador.email:
         attendees_by_email[encontro.facilitador.email] = encontro.facilitador.get_full_name()
+
+    for estudante in estudantes:
+        if estudante and estudante.user and estudante.user.email:
+            attendees_by_email[estudante.user.email] = estudante.user.get_full_name()
 
     for email_dest in recipient_list:
         if email_dest and email_dest not in attendees_by_email:
@@ -1255,26 +1234,27 @@ def mensagem_convite_encontro(encontro, atualizada=False, excluida=False, enviar
     if projeto:
         subject += " [" + projeto.organizacao.nome + "] " + projeto.get_titulo()
         link = settings.SERVER + reverse("projeto_infos", args=[projeto.id])
+        form_feedback = settings.SERVER + reverse("encontro_feedback", args=[encontro.id])
     else:
         link = None
 
     recipient_list = []
+    recipient_list_facilitador = []
+    recipient_list_estudantes = []
     if encontro.facilitador and encontro.facilitador.email:
         recipient_list.append(encontro.facilitador.email)
+        recipient_list_facilitador.append(encontro.facilitador.email)
     if projeto and projeto.alocacao_set.exists():
         recipient_list.extend(alocacao.aluno.user.email for alocacao in projeto.alocacao_set.all())
+        recipient_list_estudantes.extend(alocacao.aluno.user.email for alocacao in projeto.alocacao_set.all())
     if configuracao.coordenacao:
         recipient_list.append(configuracao.coordenacao.user.email)
-    # if configuracao.operacao:
-    #     recipient_list.append(configuracao.operacao.email)
 
     if enviar:
         reply_to = None
         organizer_email = None
         organizer_name = None
         if projeto and projeto.orientador and projeto.orientador.user and projeto.orientador.user.email:
-            # organizer_email = encontro.facilitador.email
-            # organizer_name = encontro.facilitador.get_full_name()
             organizer_email = "pfeinsper@gmail.com"
             organizer_name = "Capstone Insper"
             reply_to = [organizer_email]
@@ -1294,22 +1274,24 @@ def mensagem_convite_encontro(encontro, atualizada=False, excluida=False, enviar
             "excluida": excluida,
             "enviar": enviar,
             "link": link,
+            "form_feedback": form_feedback,
         }
-
-        mensagem = render_message("Convite Mentoria", context_carta, urlize=False)
 
         calendar_invite = _calendar_invite_encontro(
             encontro=encontro,
             subject=subject,
             recipient_list=recipient_list,
-            mensagem=mensagem,
             atualizada=atualizada,
             excluida=excluida,
             organizer_email=organizer_email,
             organizer_name=organizer_name,
         )
 
-        error = email(subject, recipient_list, mensagem, calendar_invite=calendar_invite, reply_to=reply_to)
+        mensagem_facilitador = render_message("Convite Mentoria Facilitador", context_carta, urlize=False)
+        mensagem_estudantes = render_message("Convite Mentoria Estudantes", context_carta, urlize=False)
+        error = email(subject, recipient_list_facilitador, mensagem_facilitador, calendar_invite=calendar_invite, reply_to=reply_to)
+        error_estudantes = email(subject, recipient_list_estudantes, mensagem_estudantes, calendar_invite=calendar_invite, reply_to=reply_to)
+
         if calendar_invite:
             encontro.calendar_uid = calendar_invite.get("uid")
             encontro.calendar_sequence = calendar_invite.get("sequence", encontro.calendar_sequence)
@@ -1322,7 +1304,7 @@ def mensagem_convite_encontro(encontro, atualizada=False, excluida=False, enviar
                 "calendar_last_sent_at",
             ])
     
-        return error
+        return error or error_estudantes
         
 
 
@@ -1345,7 +1327,6 @@ def mensagem_orientador(banca, geral=False):
         composicao_individual = Composicao.objects.filter(exame=exame_individual, data_inicial__lte=banca.startDate).order_by("-data_inicial").first()
         if composicao_individual:
             objetivos_individuais = composicao_individual.pesos.all()
-    # pesos = Peso.objects.filter(composicao=composicao)
     
     projeto = banca.get_projeto()
 

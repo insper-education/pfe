@@ -1759,7 +1759,7 @@ def dinamicas_lista(request, edicao=None):
         for d in dados:
             encontro = get_object_or_404(Encontro, pk=d)
             if not encontro.get_projeto():
-                aviso += "Mentoria de projeto: " + encontro.get_projeto().get_titulo_org() + " não enviada (sem projeto)<br>"
+                aviso += "Mentoria de encontro: " + encontro.__str__() + " não enviada (sem projeto)<br>"
                 continue
             error = mensagem_convite_encontro( encontro=encontro, enviar=True)
             aviso += "Mentoria de projeto: " + encontro.get_projeto().get_titulo_org() + (" não enviada" if error else " enviada") + "<br>"
