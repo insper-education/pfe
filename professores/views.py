@@ -557,7 +557,7 @@ def encontro_feedback(request, pk):
         participantes = anota_participacao(request.POST, encontro=encontro)
 
         if "enviar_mensagem" in request.POST:
-            # Mensagem para facilitador
+            # Mensagem para facilitador + orientador + coordenação
             subject = "Capstone | Anotações de Mentoria - " + encontro.projeto.get_titulo_org()
             configuracao = get_object_or_404(Configuracao)
 
@@ -574,11 +574,24 @@ def encontro_feedback(request, pk):
                 "request": request,
             }
 
-            mensagem = render_message("Anotações de Mentoria", context_email)
-            email(subject, recipient_list, mensagem)
+            if recipient_list:
+                mensagem = render_message("Anotações de Mentoria", context_email)
+                email(subject, recipient_list, mensagem)
+
+            # mensagem para os estudantes
+            recipient_list_estudantes = []
+            if encontro.observacoes_estudantes or encontro.anexo_estudantes:
+                alocacoes = encontro.projeto.get_alocacoes()
+                recipient_list_estudantes = list(filter(None, [
+                    alocacao.aluno.user.email for alocacao in alocacoes
+                ]))
+
+                if recipient_list_estudantes:
+                    mensagem_estudantes = render_message("Anotações de Mentoria Estudantes", context_email)
+                    email(subject, recipient_list_estudantes, mensagem_estudantes)
 
             if request.user.is_authenticated:
-                destinatarios = ", ".join(recipient_list)
+                destinatarios = ", ".join(recipient_list + recipient_list_estudantes)
                 messages.success(request,"Observações da mentoria enviadas para: " + destinatarios,extra_tags="lang-pt")
                 messages.success(request,"Mentoring notes sent to: " + destinatarios, extra_tags="lang-en")
                 return redirect("dinamicas_lista")
