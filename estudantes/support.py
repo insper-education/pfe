@@ -229,9 +229,13 @@ def check_atividades_aula(alocacao, ano, semestre):
         entregas = filtra_entregas_aulas(projeto)
         for entrega in entregas:
             if "evento" in entrega and entrega["evento"] and entrega["evento"].endDate:
+                # Apenas atividades com tipo_documento exigem entrega de arquivo.
+                if not entrega["evento"].tipo_documento:
+                    continue
+
                 diff = (entrega["evento"].endDate - hoje).days + entrega["evento"].prazo_entrega_atividade_dias - 1
                 if diff < 14:  # 14 dias antes do prazo já avisa o estudante (Eventos são mostrados duas semanas antes do prazo)
-                    if entrega["documentos"] and cor not in ['y', 'r']:
+                    if entrega.get("documentos") and cor not in ['y', 'r']:
                         cor = 'g'
                     else:
                         if not prazo:
