@@ -42,8 +42,8 @@
         {% if not acompanhamento %}
           <option disabled selected value> -- selecione o contato -- </option>
         {% endif %}
-        {% for parceiro in parceiros %}
-          <option value="{{parceiro.id}}">{{parceiro.user}}</option>
+        {% for parceiro_id, nome, sobrenome in parceiros %}
+          <option value="{{parceiro_id}}">{{nome}} {{sobrenome}}</option>
         {% endfor %}
       </select>
     </div>

@@ -2842,8 +2842,14 @@ def acompanhamento_view(request):
 
         return JsonResponse(data)
 
+    parceiros = (
+        Parceiro.objects.select_related("user")
+        .order_by("user__first_name", "user__last_name")
+        .values_list("id", "user__first_name", "user__last_name")
+    )
+
     context = {
-        "parceiros": Parceiro.objects.all(),
+        "parceiros": parceiros,
         "data_hora": datetime.datetime.now(),
         "url": request.get_full_path(),
     }
