@@ -23,94 +23,120 @@
     {% with dias_ate=item.evento.endDate|dif_dias_hoje dias=14 %} {% comment %} Eventos são mostrados duas semanas antes do prazo {% endcomment %}
     {% with prazo_entrega=item.evento.endDate|adiciona_dias:item.evento.prazo_entrega_atividade_dias %}
       <div class="div_arredondado pintern" {% if dias_ate > dias and request.user.eh_estud %}style="display:none;"{% endif %}>
-        <span class="nome_entrega" {% if dias_ate > dias %}style="color:lightgrey;"{% endif %}>
-        <b>{{item.evento.tipo_documento.nome}}</b>
-        {% if item.evento.endDate %}
-          <span class="texto-longo">
-            {% lng "[prazo" "[deadline" %}
-            {% lng_dl prazo_entrega %}]
-          </span>
-          <span class="texto-curto">
-            {% lng "[prazo" "[deadline" %}
-            {% lng_d prazo_entrega %}]
-          </span>
-        {% endif %}
-        {% if item.evento.tipo_documento %}
-          <a
-            class="troca_lingua_title open-modal {% if dias_ate > dias %}lightgrey{% endif %}"
-            data-toggle="tooltip" data-html="true" animation="true"
-            {% if item.documentos.last %}
-              data-title_pt="Substitui documento" data-title_en="Replaces document"
-              title="Substitui documento"
-              data-url="{% url 'adiciona_documento_estudante' item.evento.tipo_documento.sigla item.documentos.last.id %}"
-            {% else %}
-              data-title_pt="Adicionar documento" data-title_en="Add document"
-              title="Adicionar documento"
-              data-url="{% url 'adiciona_documento_estudante' item.evento.tipo_documento.sigla %}"
+        <span class="nome_entrega" {% if dias_ate > dias %}style="color:lightgrey;"{% endif %}>   
+
+          <div style="width: 100%; border-bottom: 1px solid lightgrey; margin-bottom: 4px; padding-bottom: 2px;">
+            <b>
+              <span style="white-space: nowrap;">{% lng "Aula" "Class" %}</span>
+              <span style="white-space: nowrap;">({{item.evento.startDate|date:"d/m/Y"}}):</span>
+            </b>
+            <span style="white-space: nowrap;">{{item.evento.atividade}}</span>
+            
+            {% if item.evento.endDate %}
+              {% with prazo_dias=prazo_entrega|dif_dias_hoje %}
+                <span class="texto-longo prazo-badge {% if prazo_dias < 0 %}prazo-overdue{% elif prazo_dias == 0 %}prazo-today{% elif prazo_dias <= 3 %}prazo-soon{% endif %}" style="white-space: nowrap;">
+                  {% lng "[prazo" "[deadline" %}
+                  {% lng_dl prazo_entrega %}]
+                </span>
+                <span class="texto-curto prazo-badge {% if prazo_dias < 0 %}prazo-overdue{% elif prazo_dias == 0 %}prazo-today{% elif prazo_dias <= 3 %}prazo-soon{% endif %}" style="white-space: nowrap;">
+                  {% lng "[prazo" "[deadline" %}
+                  {% lng_d prazo_entrega %}]
+                </span>
+              {% endwith %}
             {% endif %}
-            onClick="check_prazo('{{prazo_entrega|date:"Y-m-d"}}T23:59:59');"
-            >
-            {% if item.documentos.last %}<b><i class="fas fa-redo"></i></b>{% else %}<i class="fas fa-file-upload"></i>{% endif %}
-          </a>
-        {% endif %}<br>
-        <ul style="margin-bottom: 2px; padding-left: 22px; width: fit-content;">
-        {% for documento in item.documentos %}
-          <li style="list-style-type:'';">
-            {% if forloop.first%}<b>{% endif %}<span class="fa fa-file"></span>
-            {% if documento.documento and documento.link %}
-              {% lng "Entregue" "Delivered" %}
-              <span class="texto-longo">{% lng_dhl documento.data %}</span>
-              <span class="texto-curto">{% lng_dh documento.data %}</span>
-              <a 
-                {% if documento.usuario %} data-toggle="tooltip" data-html="true" animation="true" title="Entregue por {{documento.usuario.get_full_name}}"{% endif %}
-                class="{% if dias_ate > dias %}lightgrey{% endif %}"
-                href="{{request.scheme}}://{{request.get_host}}{{documento.documento.url}}" target="_blank" rel="noopener noreferrer">(documento)</a>
-              <a 
-                {% if documento.usuario %} data-toggle="tooltip" data-html="true" animation="true" title="Entregue por {{documento.usuario.get_full_name}}"{% endif %}
-                class="{% if dias_ate > dias %}lightgrey{% endif %}"
-                href="{{documento.link}}" target="_blank" rel="noopener noreferrer">(link)</a>
-            {% else %}
-              {% if documento.documento %}
-                <a 
-                  {% if documento.usuario %} data-toggle="tooltip" data-html="true" animation="true" title="Entregue por {{documento.usuario.get_full_name}}"{% endif %}
-                  class="{% if dias_ate > dias %}lightgrey{% endif %}"
-                  href="{{request.scheme}}://{{request.get_host}}{{documento.documento.url}}" target="_blank" rel="noopener noreferrer">
-                  {% lng "Entregue" "Delivered" %}
-                  <span class="texto-longo">{% lng_dhl documento.data %}</span>
-                  <span class="texto-curto">{% lng_dh documento.data %}</span>
-                </a>
-              {% endif %}
-              {% if documento.link %}
-                <a
-                  {% if documento.usuario %} data-toggle="tooltip" data-html="true" animation="true" title="Entregue por {{documento.usuario.get_full_name}}"{% endif %}
-                  class="{% if dias_ate > dias %}lightgrey{% endif %}"
-                  href="{{documento.link}}" target="_blank" rel="noopener noreferrer">
-                  {% lng "Entregue" "Delivered" %}
-                  <span class="texto-longo">{% lng_dhl documento.data %}</span>
-                  <span class="texto-curto">{% lng_dh documento.data %}</span>
-                </a>
-              {% endif %}
-            {% endif %}
-            {% if documento.data|diff_days:prazo_entrega > 0 %}<span style="color: red;">
-              {% lng "[FORA DO PRAZO]" "[OVERDUE]" %}
-            </span>{% endif %}
-            {% if forloop.first%}</b>{% endif %}  
-          </li>
-          {% if item.avaliacoes and item.avaliacoes.first%}
-            {% if documento.data > item.avaliacoes.first.momento %}
-              <span style="color: red;">
-                {% lng "Avaliação desatualizada, orientador irá refazer para a nova entrega!" "Evaluation outdated, advisor will redo for the new delivery!" %}
-              </span>
-            {% endif %}
+          </div>
+
+          {% if item.evento.tipo_documento %}
+            <div>
+              <b>{{item.evento.tipo_documento.nome}}</b>
+              <a
+                class="troca_lingua_title open-modal {% if dias_ate > dias %}lightgrey{% endif %}"
+                data-toggle="tooltip" data-html="true" animation="true"
+                {% if item.documentos.last %}
+                  data-title_pt="Substitui documento" data-title_en="Replaces document"
+                  title="Substitui documento"
+                  data-url="{% url 'adiciona_documento_estudante' item.evento.tipo_documento.sigla item.documentos.last.id %}"
+                {% else %}
+                  data-title_pt="Adicionar documento" data-title_en="Add document"
+                  title="Adicionar documento"
+                  data-url="{% url 'adiciona_documento_estudante' item.evento.tipo_documento.sigla %}"
+                {% endif %}
+                onClick="check_prazo('{{prazo_entrega|date:"Y-m-d"}}T23:59:59');"
+                >
+                {% if item.documentos.last %}<b><i class="fas fa-redo"></i></b>{% else %}<i class="fas fa-file-upload"></i>{% endif %}
+              </a>
+            </div>
+
+          {% elif item.evento.link_ativ %}
+            <div>
+              <b>{% lng "Link da Atividade" "Activity Link" %}</b>
+              <a href="{{item.evento.link_ativ}}" target="_blank" rel="noopener noreferrer">
+                <i class="fas fa-external-link-alt"></i>
+              </a>
+            </div>
           {% endif %}
-        {% empty %}
-          {% if item.composicao.tipo_documento %}
-            <span {% if dias_ate > dias %}style="color:lightgrey;"{% endif %}>
-              {% lng "Sem arquivos" "No files" %}
-            </span><br>
+          
+          {% if item.documentos %}
+            <ul style="margin-bottom: 2px; padding-left: 22px; width: fit-content;">
+              {% for documento in item.documentos %}
+                <li style="list-style-type:'';">
+                  {% if forloop.first%}<b>{% endif %}<span class="fa fa-file"></span>
+                  {% if documento.documento and documento.link %}
+                    {% lng "Entregue" "Delivered" %}
+                    <span class="texto-longo">{% lng_dhl documento.data %}</span>
+                    <span class="texto-curto">{% lng_dh documento.data %}</span>
+                    <a 
+                      {% if documento.usuario %} data-toggle="tooltip" data-html="true" animation="true" title="Entregue por {{documento.usuario.get_full_name}}"{% endif %}
+                      class="{% if dias_ate > dias %}lightgrey{% endif %}"
+                      href="{{request.scheme}}://{{request.get_host}}{{documento.documento.url}}" target="_blank" rel="noopener noreferrer">(documento)</a>
+                    <a 
+                      {% if documento.usuario %} data-toggle="tooltip" data-html="true" animation="true" title="Entregue por {{documento.usuario.get_full_name}}"{% endif %}
+                      class="{% if dias_ate > dias %}lightgrey{% endif %}"
+                      href="{{documento.link}}" target="_blank" rel="noopener noreferrer">(link)</a>
+                  {% else %}
+                    {% if documento.documento %}
+                      <a 
+                        {% if documento.usuario %} data-toggle="tooltip" data-html="true" animation="true" title="Entregue por {{documento.usuario.get_full_name}}"{% endif %}
+                        class="{% if dias_ate > dias %}lightgrey{% endif %}"
+                        href="{{request.scheme}}://{{request.get_host}}{{documento.documento.url}}" target="_blank" rel="noopener noreferrer">
+                        {% lng "Entregue" "Delivered" %}
+                        <span class="texto-longo">{% lng_dhl documento.data %}</span>
+                        <span class="texto-curto">{% lng_dh documento.data %}</span>
+                      </a>
+                    {% endif %}
+                    {% if documento.link %}
+                      <a
+                        {% if documento.usuario %} data-toggle="tooltip" data-html="true" animation="true" title="Entregue por {{documento.usuario.get_full_name}}"{% endif %}
+                        class="{% if dias_ate > dias %}lightgrey{% endif %}"
+                        href="{{documento.link}}" target="_blank" rel="noopener noreferrer">
+                        {% lng "Entregue" "Delivered" %}
+                        <span class="texto-longo">{% lng_dhl documento.data %}</span>
+                        <span class="texto-curto">{% lng_dh documento.data %}</span>
+                      </a>
+                    {% endif %}
+                  {% endif %}
+                  {% if documento.data|diff_days:prazo_entrega > 0 %}<span style="color: red;">
+                    {% lng "[FORA DO PRAZO]" "[OVERDUE]" %}
+                  </span>{% endif %}
+                  {% if forloop.first%}</b>{% endif %}  
+                </li>
+                {% if item.avaliacoes and item.avaliacoes.first%}
+                  {% if documento.data > item.avaliacoes.first.momento %}
+                    <span style="color: red;">
+                      {% lng "Avaliação desatualizada, orientador irá refazer para a nova entrega!" "Evaluation outdated, advisor will redo for the new delivery!" %}
+                    </span>
+                  {% endif %}
+                {% endif %}
+              {% empty %}
+                {% if item.composicao.tipo_documento %}
+                  <span {% if dias_ate > dias %}style="color:lightgrey;"{% endif %}>
+                    {% lng "Sem arquivos" "No files" %}
+                  </span><br>
+                {% endif %}
+              {% endfor %} 
+            </ul>
           {% endif %}
-        {% endfor %} 
-        </ul>
+        </span>
       </div>
     {% endwith %}
     {% endwith %}

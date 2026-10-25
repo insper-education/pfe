@@ -8,6 +8,7 @@ Data: 17 de Dezembro de 2020
 
 import datetime
 import dateutil.parser
+from urllib.parse import urlparse
 
 from django.contrib.auth.decorators import login_required, permission_required
 from django.db import transaction
@@ -24,6 +25,25 @@ from documentos.models import TipoDocumento
 from projetos.models import Configuracao, Evento, Organizacao, Documento, Cerimonia
 
 from users.models import PFEUser
+
+
+def _normaliza_url(url):
+    """Garante URL com esquema para evitar links quebrados."""
+    if not url:
+        return None
+
+    url = url.strip()
+    if not url:
+        return None
+
+    parsed = urlparse(url)
+    if parsed.scheme:
+        return url
+
+    if url.startswith("//"):
+        return f"https:{url}"
+
+    return f"https://{url}"
 
 
 @login_required
@@ -133,6 +153,15 @@ def atualiza_evento(request):
     if "event-tipo_documento" in request.POST:
         tipo_documento = request.POST.get("event-tipo_documento", None)
         evento.tipo_documento = TipoDocumento.objects.get(id=tipo_documento) if tipo_documento else None
+
+    if "event-link_ativ" in request.POST:
+        link_ativ = request.POST.get("event-link_ativ", None)
+        link_ativ = _normaliza_url(link_ativ)
+        if link_ativ:
+            max_length = Evento._meta.get_field("link_ativ").max_length
+            evento.link_ativ = link_ativ[:max_length] if max_length else link_ativ
+        else:
+            evento.link_ativ = None
 
     if "event-prazo_entrega_atividade_dias" in request.POST:
         prazo_entrega_atividade_dias = request.POST.get("event-prazo_entrega_atividade_dias", None)

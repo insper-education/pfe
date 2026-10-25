@@ -1,0 +1,36 @@
+
+.prazo-badge {
+  align-items: center;
+  gap: 0.25rem;
+  margin-left: 0.35rem;
+  padding: 0.1rem 0.1rem;
+  border: 1px solid #d6dbe1;
+  border-radius: 3px;
+  background: #f6f8fa;
+  color: #344054;
+  font-size: 0.78rem;
+  line-height: 1.15;
+  font-weight: 600;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+.prazo-badge.prazo-soon {
+  background: #fff7e6;
+  border-color: #ffd59a;
+  color: #8a4b00;
+}
+
+.prazo-badge.prazo-today {
+  background: #e8f0ff;
+  border-color: #a8c4ff;
+  color: #174ea6;
+  font-weight: 700;
+}
+
+.prazo-badge.prazo-overdue {
+  background: #fdecee;
+  border-color: #f3b7bd;
+  color: #a11d2f;
+  font-weight: 700;
+}

@@ -13,6 +13,25 @@ from django.utils.safestring import mark_safe
 
 register = template.Library()
 
+
+def _concat_text(base_text, extra_text):
+    if extra_text:
+        return f"{base_text} {extra_text}"
+    return base_text
+
+
+def _date_or_text(value, fmt=None):
+    """Retorna data formatada se possível; senão, retorna texto simples."""
+    if value is None:
+        return ""
+    strftime = getattr(value, "strftime", None)
+    if callable(strftime) and fmt:
+        try:
+            return value.strftime(fmt)
+        except (TypeError, ValueError):
+            return str(value)
+    return str(value)
+
 def thtml(pt_text, en_text):
     if pt_text is not None and en_text is not None:
         return mark_safe(f'''<span lang="pt">{pt_text}</span><span lang="en" style="display:none">{en_text}</span>''')
@@ -30,34 +49,54 @@ def lng(pt_text, en_text):
 # Para mostrar datas de forma curta
 @register.simple_tag
 def lng_d(date, pt_text="", en_text=""):
-    pt_text = date.strftime("%d/%m/%y") + ( " " + pt_text if pt_text else "")
-    en_text = date.strftime("%b %d, %y") + ( " " + en_text if en_text else "")
-    return thtml(pt_text, en_text)
+    pt_base = _date_or_text(date, "%d/%m/%y")
+    en_base = _date_or_text(date, "%b %d, %y")
+    return thtml(_concat_text(pt_base, pt_text), _concat_text(en_base, en_text))
 
 # Para mostrar datas em um formato mais longo
 @register.simple_tag
 def lng_dl(date, pt_text="", en_text=""):
-    locale.setlocale(locale.LC_ALL, "pt_BR.UTF-8")
-    pt_text = date.strftime("%d de %B de %Y") + ( " " + pt_text if pt_text else "")
-    locale.setlocale(locale.LC_ALL, "en_US.UTF-8")
-    en_text = date.strftime("%B %d, %Y") + ( " " + en_text if en_text else "")
-    return thtml(pt_text, en_text)
+    strftime = getattr(date, "strftime", None)
+    if callable(strftime):
+        locale.setlocale(locale.LC_ALL, "pt_BR.UTF-8")
+        pt_base = _date_or_text(date, "%d de %B de %Y")
+        locale.setlocale(locale.LC_ALL, "en_US.UTF-8")
+        en_base = _date_or_text(date, "%B %d, %Y")
+    else:
+        pt_base = _date_or_text(date)
+        en_base = _date_or_text(date)
+
+    return thtml(_concat_text(pt_base, pt_text), _concat_text(en_base, en_text))
 
 # Para mostrar datas e horas
 @register.simple_tag
 def lng_dh(date, pt_text="", en_text=""):
-    pt_text = date.strftime("%d/%m/%y %H:%M") + ( " " + pt_text if pt_text else "" )
-    en_text = date.strftime("%b %d, %y %I:%M%p") + ( " " + en_text if en_text else "")
-    return thtml(pt_text, en_text)
+    strftime = getattr(date, "strftime", None)
+    if callable(strftime):
+        locale.setlocale(locale.LC_ALL, "pt_BR.UTF-8")
+        pt_base = _date_or_text(date, "%d/%m/%y %H:%M")
+        locale.setlocale(locale.LC_ALL, "en_US.UTF-8")
+        en_base = _date_or_text(date, "%b %d, %y %I:%M%p")
+    else:
+        pt_base = _date_or_text(date)
+        en_base = _date_or_text(date)
+
+    return thtml(_concat_text(pt_base, pt_text), _concat_text(en_base, en_text))
 
 # Para mostrar datas e horas no formato longo
 @register.simple_tag
 def lng_dhl(date, pt_text="", en_text=""):
-    locale.setlocale(locale.LC_ALL, "pt_BR.UTF-8")
-    pt_text = date.strftime("%d de %B de %Y às %H:%M") + ( " " + pt_text if pt_text else "")
-    locale.setlocale(locale.LC_ALL, "en_US.UTF-8")
-    en_text = date.strftime("%B %d, %Y at %I:%M%p") + ( " " + en_text if en_text else "")
-    return thtml(pt_text, en_text)
+    strftime = getattr(date, "strftime", None)
+    if callable(strftime):
+        locale.setlocale(locale.LC_ALL, "pt_BR.UTF-8")
+        pt_base = _date_or_text(date, "%d de %B de %Y às %H:%M")
+        locale.setlocale(locale.LC_ALL, "en_US.UTF-8")
+        en_base = _date_or_text(date, "%B %d, %Y at %I:%M%p")
+    else:
+        pt_base = _date_or_text(date)
+        en_base = _date_or_text(date)
+
+    return thtml(_concat_text(pt_base, pt_text), _concat_text(en_base, en_text))
 
 @register.simple_tag
 def lng_d_de_ate(data_inicial, data_final):

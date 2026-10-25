@@ -811,6 +811,9 @@ class Evento(models.Model):
     tipo_documento = models.ForeignKey("documentos.TipoDocumento", null=True, blank=True, on_delete=models.SET_NULL,
                                        help_text="Tipo de documento para entrega de atividade em aula")
 
+    link_ativ = models.URLField("Link da Atividade", max_length=300, null=True, blank=True,
+                                help_text="Link da Atividade em aula")
+
     prazo_entrega_atividade_dias = models.PositiveIntegerField("Prazo de Entrega da Atividade (dias)", default=0,
                                            help_text="Prazo de entrega da atividade em dias, caso seja uma atividade em aula")
 
@@ -906,7 +909,7 @@ class Evento(models.Model):
         return None
 
     @staticmethod
-    def get_eventos(sigla=None, tipo=None, nome=None, configuracao=None, ano=None, semestre=None):
+    def get_eventos(sigla=None, tipo=None, nome=None, configuracao=None, ano=None, semestre=None, ate=None):
         """Retorna todos os eventos de um ano e semestre conforme tipo de evento selecionado."""
 
         if configuracao:
@@ -927,6 +930,9 @@ class Evento(models.Model):
             eventos = Evento.objects.filter(startDate__year=ano, startDate__month__lt=7)
         else:
             eventos = Evento.objects.filter(startDate__year=ano, startDate__month__gte=7)
+
+        if ate: # Até que dia
+            eventos = eventos.filter(startDate__lte=ate)
 
         if sigla:
             eventos = eventos.filter(tipo_evento__sigla=sigla)

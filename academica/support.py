@@ -46,18 +46,17 @@ def get_nota_peso(avaliacoes):
     return nota, peso
 
 
-def filtra_entregas_aulas(projeto):  # São sempre de grupo
+def filtra_entregas_aulas(projeto, ate=None):  # São sempre de grupo
     """Filtra as entregas para atividades de aula de acordo com o projeto."""
 
     entregas = []
-    eventos = Evento.get_eventos(sigla="A", ano=projeto.ano, semestre=projeto.semestre)
+    eventos = Evento.get_eventos(sigla="A", ano=projeto.ano, semestre=projeto.semestre, ate=ate)
     for evento in eventos:
         if evento.tipo_documento:
-            documentos = Documento.objects.filter(tipo_documento=evento.tipo_documento,
-                                                    projeto=projeto)
-            entregas.append({"evento": evento,
-                            "documentos": documentos,
-                            })
+            documentos = Documento.objects.filter(tipo_documento=evento.tipo_documento, projeto=projeto)
+            entregas.append({"evento": evento, "documentos": documentos})
+        elif evento.link_ativ:
+            entregas.append({"evento": evento, "link_ativ": evento.link_ativ})
         
     return entregas
 

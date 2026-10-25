@@ -78,6 +78,7 @@
             material: {% if evento.documento %}{{ evento.documento.id }}{% else %}0{% endif %},
             material2: {% if evento.documento2 %}{{ evento.documento2.id }}{% else %}0{% endif %},
             tipo_documento: {% if evento.tipo_documento %}{{ evento.tipo_documento.id }}{% else %}0{% endif %},
+            link_ativ: {% if evento.link_ativ %}"{{ evento.link_ativ }}"{% else %}""{% endif %},
             prazo_entrega_atividade_dias: {% if evento.prazo_entrega_atividade_dias %}{{ evento.prazo_entrega_atividade_dias }}{% else %}0{% endif %},
             type: "{{ evento.tipo_evento.id }}",  // ID do evento
             sigla: "{{evento.tipo_evento.sigla}}",
@@ -103,6 +104,7 @@
               material: {% if evento.documento %}{{evento.documento.id}}{% else %}0{% endif %},
               material2: {% if evento.documento2 %}{{evento.documento2.id}}{% else %}0{% endif %},
               tipo_documento: {% if evento.tipo_documento %}{{evento.tipo_documento.id}}{% else %}0{% endif %},
+              link_ativ: {% if evento.link_ativ %}"{{ evento.link_ativ }}"{% else %}""{% endif %},
               prazo_entrega_atividade_dias: {% if evento.prazo_entrega_atividade_dias %}{{evento.prazo_entrega_atividade_dias}}{% else %}0{% endif %},
               type: "{{evento.tipo_evento.id}}",  // ID do evento
               sigla: "{{evento.tipo_evento.sigla}}",

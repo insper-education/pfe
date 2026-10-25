@@ -8,6 +8,8 @@ from django.templatetags.static import static
 register = template.Library()
 
 
+
+### NÃO SEI SE É UMA BOA IDEIA USAR ISSO, VAI DEIXAR MAIS PESADA TODAS AS CHAMADAS
 @register.simple_tag
 def static_mtime(path):
     """Return static URL with mtime querystring for automatic cache busting in dev."""

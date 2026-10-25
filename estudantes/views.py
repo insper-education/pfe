@@ -1239,7 +1239,7 @@ def atividades_aula(request):
     if not projeto:
         return HttpResponse("Você não está alocado em um projeto esse semestre.", status=401)
 
-    entregas = filtra_entregas_aulas(projeto)
+    entregas = filtra_entregas_aulas(projeto, datetime.date.today())
 
     context["projeto"] = projeto
     context["entregas"] = entregas

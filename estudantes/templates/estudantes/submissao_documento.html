@@ -29,18 +29,22 @@
         {% else %}
           <b>{{item.composicao.exame.titulo}}</b>
         {% endif %}
+
         {% if item.evento.endDate %}
-          <span class="texto-longo">
-            {% lng "[prazo" "[deadline" %}
-            {% lng_dl item.evento.endDate %}]
-          </span>
-          <span class="texto-curto">
-            {% lng "[prazo" "[deadline" %}
-            {% lng_d item.evento.endDate %}]
-          </span>
+          {% with prazo_dias=item.evento.endDate|dif_dias_hoje %}
+            <span class="texto-longo prazo-badge {% if prazo_dias < 0 %}prazo-overdue{% elif prazo_dias == 0 %}prazo-today{% elif prazo_dias <= 6 %}prazo-soon{% endif %}">
+              {% lng "[prazo" "[deadline" %}
+              {% lng_dl item.evento.endDate %}]
+            </span>
+            <span class="texto-curto prazo-badge {% if prazo_dias < 0 %}prazo-overdue{% elif prazo_dias == 0 %}prazo-today{% elif prazo_dias <= 6 %}prazo-soon{% endif %}">
+              {% lng "[prazo" "[deadline" %}
+              {% lng_d item.evento.endDate %}]
+            </span>
+          {% endwith %}
         {% endif %}
+
         {% if item.composicao.tipo_documento %}
-          <a id="adiciona"
+          <a id="adiciona" style="margin-left: 8px;"
             class="troca_lingua_title open-modal {% if dias_ate > dias %}lightgrey{% endif %}"
             data-toggle="tooltip" data-html="true" animation="true"
             {% if item.documentos.last %}

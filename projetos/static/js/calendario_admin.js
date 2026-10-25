@@ -24,6 +24,7 @@ function editEvent(event) {
     $('#event-modal select[name="event-tipo_documento"]').val(
         evento && evento.tipo_documento && evento.tipo_documento !== 0 ? String(evento.tipo_documento) : ''
     );
+    $('#event-modal input[name="event-link_ativ"]').val(evento ? evento.link_ativ : '');
     $('#event-modal input[name="event-prazo_entrega_atividade_dias"]').val(
         evento && evento.prazo_entrega_atividade_dias !== undefined && evento.prazo_entrega_atividade_dias !== null
             ? evento.prazo_entrega_atividade_dias
