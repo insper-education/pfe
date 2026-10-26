@@ -235,7 +235,7 @@ def adiciona_documento(request, organizacao_id=None, projeto_id=None, tipo_nome=
     lingua = 0
     data = datetime.datetime.now()
     if documento:
-        # data = documento.data
+        data = documento.data  # como o documento já existe, não alterar a data de criação
         confidencial = documento.confidencial
         anotacao = documento.anotacao
         lingua = documento.lingua_do_documento
