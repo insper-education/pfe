@@ -901,9 +901,13 @@ class Evento(models.Model):
     def get_evento(sigla=None, tipo=None, nome=None, configuracao=None, ano=None, semestre=None):
         """Retorna o último evento do ano/semestre conforme tipo de evento."""
         try:
-            ano_int = int(ano) if ano is not None else None
-            if ano_int and ano_int > 0:
-                return Evento.get_eventos(sigla=sigla, tipo=tipo, nome=nome, configuracao=configuracao, ano=ano_int, semestre=semestre).last()
+            if ano is None and semestre is None and configuracao is not None:
+                return Evento.get_eventos(sigla=sigla, tipo=tipo, nome=nome, configuracao=configuracao).last()
+            else:
+                ano_int = int(ano) if ano is not None else None
+                if ano_int and ano_int > 0:
+                    return Evento.get_eventos(sigla=sigla, tipo=tipo, nome=nome, configuracao=configuracao, ano=ano_int, semestre=semestre).last()
+
         except (TypeError, ValueError):
             pass
         return None
