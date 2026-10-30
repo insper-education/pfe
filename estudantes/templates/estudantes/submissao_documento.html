@@ -32,11 +32,11 @@
 
         {% if item.evento.endDate %}
           {% with prazo_dias=item.evento.endDate|dif_dias_hoje %}
-            <span class="texto-longo prazo-badge {% if prazo_dias < 0 %}prazo-overdue{% elif prazo_dias == 0 %}prazo-today{% elif prazo_dias <= 6 %}prazo-soon{% endif %}">
+            <span class="texto-longo prazo-badge {% if prazo_dias == 0 %}prazo-overdue{% elif prazo_dias < 1 %}prazo-today{% elif prazo_dias <= 6 %}prazo-soon{% endif %}">
               {% lng "[prazo" "[deadline" %}
               {% lng_dl item.evento.endDate %}]
             </span>
-            <span class="texto-curto prazo-badge {% if prazo_dias < 0 %}prazo-overdue{% elif prazo_dias == 0 %}prazo-today{% elif prazo_dias <= 6 %}prazo-soon{% endif %}">
+            <span class="texto-curto prazo-badge {% if prazo_dias == 0 %}prazo-overdue{% elif prazo_dias < 1 %}prazo-today{% elif prazo_dias <= 6 %}prazo-soon{% endif %}">
               {% lng "[prazo" "[deadline" %}
               {% lng_d item.evento.endDate %}]
             </span>
