@@ -471,7 +471,7 @@
           {% if documento %}
             <input type="hidden" id="documentos" name="documentos" value="{{documento_id}}"/>
             {% if documento.documento %}
-            <small>Arquivo atual:
+            <small>{% lng "Arquivo atual" "Current file" %}:
               <a href="{{request.scheme}}://{{request.get_host}}{{documento.documento.url}}" target="_blank" rel="noopener noreferrer">{{documento.filename}} ({{documento.data}})</a>
             </small>
             {% endif %}
@@ -624,6 +624,43 @@
       $("#link").on("input",function(e) {
         $("#arquivo").prop("required", !$(this).val());
       });
+    {% endif %}
+
+    {% if not travado %}
+      // Com arquivo novo, a data acompanha o relógio até o usuário editá-la manualmente.
+      (function() {
+        var campoData = document.getElementById("data");
+        if (!campoData) { return; }
+
+        var dataOriginal = campoData.value;
+        var timerData = null;
+
+        function dataHoraAtual() {
+          var agora = new Date();
+          agora.setMinutes(agora.getMinutes() - agora.getTimezoneOffset());
+          return agora.toISOString().slice(0, 16);
+        }
+
+        function paraAtualizacao() {
+          if (timerData) {
+            clearInterval(timerData);
+            timerData = null;
+          }
+        }
+
+        $("#arquivo").on("change", function() {
+          paraAtualizacao();
+          if (this.files && this.files.length) {
+            campoData.value = dataHoraAtual();
+            timerData = setInterval(function() { campoData.value = dataHoraAtual(); }, 60000);
+          } else {
+            campoData.value = dataOriginal;
+          }
+        });
+
+        // Evento "input" só dispara por edição do usuário, não por atribuição de value.
+        $(campoData).on("input change", paraAtualizacao);
+      })();
     {% endif %}
 
   </script>
