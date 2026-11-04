@@ -175,8 +175,17 @@
               
               <td class="organizacao">
                 <div id="proposta{{proposta.id}}" style="float:left; width: 85%;">
-                  {% include "organizacoes/includes/bloco_organizacao.html" with organizacao=proposta.organizacao %}
+                  {% if proposta.organizacao %}
+                    {% include "organizacoes/includes/bloco_organizacao.html" with organizacao=proposta.organizacao %}
+                  {% else %}
+                    <span style="color:red">{% lng "Não Conectada" "Not Connected" %}</span>
+                    <a style="display: block; color: #274c77; text-decoration: underline;"
+                    href="website" target="_blank" rel="noopener noreferrer" class="imprimir">
+                      {% if proposta.nome_organizacao %}{{proposta.nome_organizacao}}{% else %}Nome não definido.{% endif %}
+                    </a>
+                  {% endif %}
                 </div>
+
                 <div class="esconder" style="float:right;">
                   <a data-proposta="{{proposta.id}}" class="open-modal"
                     href="{% url 'link_organizacao' proposta.id %}"
