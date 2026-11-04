@@ -8,6 +8,8 @@
 {% load static %}
 {% load aderencia_aluno %}
 {% load linguas %}
+{% load addhttp %}
+
 
 {% block head %}
 
@@ -180,7 +182,7 @@
                   {% else %}
                     <span style="color:red">{% lng "Não Conectada" "Not Connected" %}</span>
                     <a style="display: block; color: #274c77; text-decoration: underline;"
-                    href="website" target="_blank" rel="noopener noreferrer" class="imprimir">
+                    href="{{proposta.website|add_http}}" target="_blank" rel="noopener noreferrer" class="imprimir">
                       {% if proposta.nome_organizacao %}{{proposta.nome_organizacao}}{% else %}Nome não definido.{% endif %}
                     </a>
                   {% endif %}
