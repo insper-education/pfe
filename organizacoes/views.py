@@ -594,36 +594,37 @@ def organizacoes_lista(request):
         "parceiro_set",
         queryset=Parceiro.objects.filter(user__is_active=True).select_related("user"),
     )
-    organizacoes = Organizacao.objects.select_related("segmento").prefetch_related(
-        propostas_prefetch,
-        anotacoes_prefetch,
-        parceiros_prefetch,
+    organizacoes = list(
+        Organizacao.objects.select_related("segmento").prefetch_related(
+            propostas_prefetch,
+            anotacoes_prefetch,
+            parceiros_prefetch,
+        )
     )
 
     fechados = []
-    desde = []
+    enviadas = []
     contato = []
     grupos = []
 
     for organizacao in organizacoes:
         propostas = list(organizacao.proposta_set.all())
-        if propostas:
-            primeira_proposta = propostas[0]
-            desde.append(f"{primeira_proposta.ano}.{primeira_proposta.semestre}")
-        else:
-            desde.append("---------")
 
         if organizacao.anotacoes_carregadas:
             contato.append(organizacao.anotacoes_carregadas[-1])
         else:
             contato.append("---------")
 
+        periodos_propostas = set((proposta.ano, proposta.semestre) for proposta in propostas)
+        enviadas.append(f"{len(propostas):03d}<br>" + f"<small>({', '.join(f'{ano}.{semestre}' for ano, semestre in sorted(periodos_propostas))})</small>" or "")
+
+        periodos_projetos = set((projeto.ano, projeto.semestre) for proposta in propostas for projeto in proposta.projeto_set.all())
         projetos = [
             projeto
             for proposta in propostas
             for projeto in proposta.projeto_set.all()
         ]
-        fechados.append(len(projetos))
+        fechados.append(f"{len(projetos):03d}<br>" + f"<small>({', '.join(f'{ano}.{semestre}' for ano, semestre in sorted(periodos_projetos))})</small>" or "")
 
         tipo_estudantes = []
         for projeto in projetos:
@@ -635,8 +636,8 @@ def organizacoes_lista(request):
             tipo_estudantes.append("[" + "|".join(tipos) + "] ")
         grupos.append(tipo_estudantes)
 
-    organizacoes_list = zip(organizacoes, fechados, desde, contato, grupos)
-    total_organizacoes = organizacoes.count()
+    organizacoes_list = zip(organizacoes, fechados, enviadas, contato, grupos)
+    total_organizacoes = len(organizacoes)
     total_submetidos = Proposta.objects.count()
     total_fechados = Projeto.objects.filter(alocacao__isnull=False).distinct().count()
 
@@ -646,7 +647,6 @@ def organizacoes_lista(request):
         {"pt": "Chamar", "en": "Call" },
         {"pt": "Segmento", "en": "Segment" },
         {"pt": "Último <br>Contato", "en": "Last <br>Contact" },
-        {"pt": "Parceira <br>Desde", "en": "Partner <br>Since" },
         {"pt": "Propostas <br>Enviadas", "en": "Submitted <br>Proposals" },
         {"pt": "Projetos <br>Fechados", "en": "Closed <br>Projects" },
         {"pt": "Grupos de Estudantes", "en": "Group of Students", "esconder": True },

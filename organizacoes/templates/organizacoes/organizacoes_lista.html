@@ -45,43 +45,41 @@
   {% include "botao_adiciona.html" with url_add="cadastrar_organizacao" txt_pt="Cadastrar Nova Organização" txt_en="Register New Organization" %}
 
   {% include "tabelas_top_ml.html" with tabela="Organizacoes" captions=captions cabecalhos=cabecalhos %}
-    {% for organizacao, fechados, desde, contato, grupos in organizacoes_list %} 
+    {% for organizacao, fechados, enviadas, contato, grupos in organizacoes_list %} 
       <tr class="item">
 
-      <th scope="row" data-sort="{{organizacao.nome}}">
-        <a href="{% url 'organizacao_completo' organizacao.id %}">{{organizacao.nome}}</a>
-      </th>
+        <th scope="row" data-sort="{{organizacao.nome}}">
+          <a href="{% url 'organizacao_completo' organizacao.id %}">{{organizacao.nome}}</a>
+        </th>
 
-      <td class="text-center">
-        {% if organizacao.chamar %}
-          <span class="badge badge-success">{% lng "Sim" "Yes" %}</span>
-        {% else %}
-          <span class="badge badge-secondary">{% lng "Não" "No" %}</span>
-        {% endif %}
-      </td>
-
-      <td>
-        {% if organizacao.segmento %}
-          <span class="texto-longo">{% lng organizacao.segmento.nome organizacao.segmento.nome_en %} </span>
-          <span class="texto-curto">
-            <div class="text-center">{{organizacao.segmento.icone}}</div>
-          </span>
-        {% endif %}
-      </td>
-
-      <td>
-        {% if contato == '---------' %}
-          ---------
-        {% else %}
-          {{contato.momento|date:"m/Y"}}
-        {% endif %}
+        <td class="text-center">
+          {% if organizacao.chamar %}
+            <span class="badge badge-success">{% lng "Sim" "Yes" %}</span>
+          {% else %}
+            <span class="badge badge-secondary">{% lng "Não" "No" %}</span>
+          {% endif %}
         </td>
 
-        <td>{{desde}}</td>
+        <td>
+          {% if organizacao.segmento %}
+            <span class="texto-longo">{% lng organizacao.segmento.nome organizacao.segmento.nome_en %} </span>
+            <span class="texto-curto">
+              <div class="text-center">{{organizacao.segmento.icone}}</div>
+            </span>
+          {% endif %}
+        </td>
 
-        <td class="text-center">{{organizacao.proposta_set.count|stringformat:"03d"}}</td>
+        <td>
+          {% if contato == '---------' %}
+            ---------
+          {% else %}
+            {{contato.momento|date:"m/Y"}}
+          {% endif %}
+        </td>
 
-        <td class="text-center">{{fechados|stringformat:"03d"}}</td>
+        <td class="text-center">{{enviadas|safe}}</td>
+
+        <td class="text-center">{{fechados|safe}}</td>
 
         <td class="text-center">
           <div class="grupos-badges">
