@@ -56,6 +56,10 @@ GOOGLE_SCOPES = [
     "https://www.googleapis.com/auth/meetings.space.settings",
 ]
 
+
+def _calendar_timezone_name():
+    return getattr(settings, "TIME_ZONE", None) or "America/Sao_Paulo"
+
 def configurar_meet_como_aberto(creds, join_url):
     """Configura um Google Meet para permitir entrada sem aprovação."""
     meeting_code = urlparse(join_url).path.strip("/")
@@ -141,11 +145,13 @@ def criar_reuniao_meet(subject, start_dt, end_dt, description="", recipient_list
             primary_calendar.get("summary"),
         )
 
+        tz_name = _calendar_timezone_name()
+
         event = {
             "summary": subject,
             "description": description,
-            "start": {"dateTime": start_dt.isoformat(), "timeZone": "America/Sao_Paulo"},
-            "end":   {"dateTime": end_dt.isoformat(),   "timeZone": "America/Sao_Paulo"},
+            "start": {"dateTime": start_dt.isoformat(), "timeZone": tz_name},
+            "end":   {"dateTime": end_dt.isoformat(),   "timeZone": tz_name},
             "attendees": [{"email": email} for email in set(recipient_list) if email],   # acaba enviando convite mas sem maiores informações
             "conferenceData": {
                 "createRequest": {
@@ -206,13 +212,28 @@ def _ics_format_dt(dt):
 
     if timezone.is_naive(dt):
         dt = timezone.make_aware(dt, timezone.get_default_timezone())
-    dt_utc = dt.astimezone(timezone.utc)
+    dt_utc = dt.astimezone(datetime.timezone.utc)
     return dt_utc.strftime("%Y%m%dT%H%M%SZ")
+
+
+def _ics_format_local_dt(dt):
+    if dt is None:
+        return None
+
+    # Para DTSTART/DTEND, preserva horário local de São Paulo no ICS
+    # para evitar deslocamentos de 1h em clientes como Outlook.
+    if timezone.is_naive(dt):
+        dt_local = dt
+    else:
+        dt_local = timezone.localtime(dt, timezone.get_default_timezone()).replace(tzinfo=None)
+
+    return dt_local.strftime("%Y%m%dT%H%M%S")
 
 
 def _calendar_invite_banca(banca, subject, recipient_list, mensagem, atualizada=False, excluida=False,
                            organizer_email=None, organizer_name=None):
     projeto = banca.get_projeto()
+    tz_name = _calendar_timezone_name()
 
     domain = settings.EMAIL_HOST_USER.split("@")[-1] if "@" in settings.EMAIL_HOST_USER else "localhost"
     uid = banca.calendar_uid or f"banca-{banca.id}@{domain}"
@@ -221,11 +242,11 @@ def _calendar_invite_banca(banca, subject, recipient_list, mensagem, atualizada=
     organizer_mail = organizer_email or settings.EMAIL_HOST_USER
     organizer_cn = organizer_name or "Capstone"
 
-    start_dt = _ics_format_dt(banca.startDate)
+    start_dt = _ics_format_local_dt(banca.startDate)
     end_reference = banca.endDate
     if not end_reference and banca.startDate:
         end_reference = banca.startDate + datetime.timedelta(hours=1)
-    end_dt = _ics_format_dt(end_reference)
+    end_dt = _ics_format_local_dt(end_reference)
 
     if not start_dt or not end_dt:
         return None
@@ -306,8 +327,8 @@ def _calendar_invite_banca(banca, subject, recipient_list, mensagem, atualizada=
         f"UID:{uid}",
         f"SEQUENCE:{sequence}",
         f"DTSTAMP:{_ics_format_dt(timezone.now())}",
-        f"DTSTART:{start_dt}",
-        f"DTEND:{end_dt}",
+        f"DTSTART;TZID={tz_name}:{start_dt}",
+        f"DTEND;TZID={tz_name}:{end_dt}",
         f"SUMMARY:{_ics_escape(subject)}",
         f"DESCRIPTION:{_ics_escape(descricao)}",
         f"LOCATION:{_ics_escape(location)}",
@@ -332,6 +353,7 @@ def _calendar_invite_banca(banca, subject, recipient_list, mensagem, atualizada=
 def _calendar_invite_encontro(encontro, subject, recipient_list, atualizada=False, excluida=False,
                            organizer_email=None, organizer_name=None):
     projeto = encontro.get_projeto()
+    tz_name = _calendar_timezone_name()
 
     domain = settings.EMAIL_HOST_USER.split("@")[-1] if "@" in settings.EMAIL_HOST_USER else "localhost"
     uid = encontro.calendar_uid or f"encontro-{encontro.id}@{domain}"
@@ -340,11 +362,11 @@ def _calendar_invite_encontro(encontro, subject, recipient_list, atualizada=Fals
     organizer_mail = organizer_email or settings.EMAIL_HOST_USER
     organizer_cn = organizer_name or "Capstone"
 
-    start_dt = _ics_format_dt(encontro.startDate)
+    start_dt = _ics_format_local_dt(encontro.startDate)
     end_reference = encontro.endDate
     if not end_reference and encontro.startDate:
         end_reference = encontro.startDate + datetime.timedelta(hours=1)
-    end_dt = _ics_format_dt(end_reference)
+    end_dt = _ics_format_local_dt(end_reference)
 
     if not start_dt or not end_dt:
         return None
@@ -418,8 +440,8 @@ def _calendar_invite_encontro(encontro, subject, recipient_list, atualizada=Fals
         f"UID:{uid}",
         f"SEQUENCE:{sequence}",
         f"DTSTAMP:{_ics_format_dt(timezone.now())}",
-        f"DTSTART:{start_dt}",
-        f"DTEND:{end_dt}",
+        f"DTSTART;TZID={tz_name}:{start_dt}",
+        f"DTEND;TZID={tz_name}:{end_dt}",
         f"SUMMARY:{_ics_escape(subject)}",
         f"DESCRIPTION:{_ics_escape(descricao)}",
         f"LOCATION:{_ics_escape(location)}",
@@ -444,6 +466,7 @@ def _calendar_invite_encontro(encontro, subject, recipient_list, atualizada=Fals
 def _calendar_invite_reuniao(reuniao, subject, recipient_list, mensagem, atualizada=False, excluida=False,
                            organizer_email=None, organizer_name=None):
     projeto = reuniao.get_projeto()
+    tz_name = _calendar_timezone_name()
 
     domain = settings.EMAIL_HOST_USER.split("@")[-1] if "@" in settings.EMAIL_HOST_USER else "localhost"
     uid = reuniao.calendar_uid or f"reuniao-{reuniao.id}@{domain}"
@@ -452,9 +475,9 @@ def _calendar_invite_reuniao(reuniao, subject, recipient_list, mensagem, atualiz
     organizer_mail = organizer_email or settings.EMAIL_HOST_USER
     organizer_cn = organizer_name or "Capstone"
 
-    start_dt = _ics_format_dt(reuniao.data_hora)
+    start_dt = _ics_format_local_dt(reuniao.data_hora)
     end_reference = reuniao.data_hora + datetime.timedelta(hours=1) if reuniao.data_hora else None
-    end_dt = _ics_format_dt(end_reference)
+    end_dt = _ics_format_local_dt(end_reference)
 
     if not start_dt or not end_dt:
         return None
@@ -515,8 +538,8 @@ def _calendar_invite_reuniao(reuniao, subject, recipient_list, mensagem, atualiz
         f"UID:{uid}",
         f"SEQUENCE:{sequence}",
         f"DTSTAMP:{_ics_format_dt(timezone.now())}",
-        f"DTSTART:{start_dt}",
-        f"DTEND:{end_dt}",
+        f"DTSTART;TZID={tz_name}:{start_dt}",
+        f"DTEND;TZID={tz_name}:{end_dt}",
         f"SUMMARY:{_ics_escape(subject)}",
         f"DESCRIPTION:{_ics_escape(descricao)}",
         f"LOCATION:{_ics_escape(location)}",
