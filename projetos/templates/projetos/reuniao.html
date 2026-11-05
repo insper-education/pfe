@@ -59,6 +59,7 @@
       background-color: #fff0f0;
       color: #888;
       cursor: not-allowed;
+      pointer-events: none;
     }
 
     .audit-meta {
@@ -159,8 +160,8 @@
           title="Marque esta opção se você precisa abonar uma falta pois estava em visita na empresa do projeto em horário de atividades presenciais."
           data-toggle="tooltip" data-html="true" animation="true"
         >
-          <input class="form-check-input ms-0" type="checkbox" id="visita_externa" name="visita_externa" {% if reuniao.visita_externa %}checked{% endif %}>
-          <label for="visita_externa" class="form-check-label form_label mb-0" style="font-size:0.97em; width:auto; color:#888;">{% lng "Visita externa em período de atividades presenciais" "External visit during in-person activities" %}</label>
+          <input class="form-check-input ms-0 ptravar" type="checkbox" id="visita_externa" name="visita_externa" {% if reuniao.visita_externa %}checked{% endif %}>
+          <label for="visita_externa" class="form-check-label form_label mb-0 ptravar" style="font-size:0.97em; width:auto; color:#888;">{% lng "Visita externa em período de atividades presenciais" "External visit during in-person activities" %}</label>
         </div>
       </div>
 
@@ -205,10 +206,10 @@
           <label for="arquivo" style="font-size: 0.88em; color: #1976d2;">
             {% lng "Você pode anexar um arquivo à sua reunião (opcional)" "You can attach a file to your meeting (optional)" %}
           </label>
-          <input id="arquivo" type="file" name="arquivo" style="font-size: 0.8em; margin: 5px;" {% include "formatos_suportados.html" %}>
+          <input id="arquivo" class="ptravar" type="file" name="arquivo" style="font-size: 0.8em; margin: 5px;" {% include "formatos_suportados.html" %}>
           {% if reuniao.anexo %}
             <div style="font-size: 0.8em; margin-bottom: 4px; line-height: 1.0;">
-              <input type="hidden" id="documentos" name="documentos" value="{{reuniao.anexo.id}}"/>
+              <input type="hidden" class="ptravar" id="documentos" name="documentos" value="{{reuniao.anexo.id}}"/>
               {% lng "Arquivo atual" "Current file" %}:
               <a href="{{request.scheme}}://{{request.get_host}}{{reuniao.anexo.documento.url}}" target="_blank" rel="noopener noreferrer">{{reuniao.anexo.filename}} ({{reuniao.anexo.data}})</a>
             </div>
@@ -282,8 +283,14 @@
         {% else %}
           if (isChecked) {
             input.classList.add("disabled");
+            if (input.type === "file") {
+              input.disabled = true;
+            }
           } else {
             input.classList.remove("disabled");
+            if (input.type === "file") {
+              input.disabled = false;
+            }
           }
         {% endif %}
       });

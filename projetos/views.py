@@ -1229,11 +1229,14 @@ def documenta_reuniao(request, reuniao_id_g=None):  # Id da reunião para editar
                     documento.save()
                     reuniao.anexo = documento
 
-        reuniao.travado = "travado" in request.POST
-        if reuniao.usuario:
-            reuniao.atualizado_por = request.user
-        else:
-            reuniao.usuario = request.user
+        if request.user.eh_prof_a:
+            reuniao.travado = "travado" in request.POST
+            if reuniao.usuario:
+                reuniao.atualizado_por = request.user
+            else:
+                reuniao.usuario = request.user
+
+
         reuniao.save()
 
         participantes = anota_participacao(request.POST, reuniao=reuniao)
@@ -1411,11 +1414,13 @@ def agenda_reuniao(request, reuniao_id_g=None):  # Id da reunião para editar, N
                     documento.save()
                     reuniao.anexo = documento
 
-        reuniao.travado = "travado" in request.POST
-        if reuniao.usuario:
-            reuniao.atualizado_por = request.user
-        else:
-            reuniao.usuario = request.user
+        if request.user.eh_prof_a:
+            reuniao.travado = "travado" in request.POST
+            if reuniao.usuario:
+                reuniao.atualizado_por = request.user
+            else:
+                reuniao.usuario = request.user
+
         reuniao.save()
 
         participantes = anota_participacao(request.POST, reuniao=reuniao)
