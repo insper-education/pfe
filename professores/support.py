@@ -15,6 +15,7 @@ from urllib.parse import urlparse
 from google.oauth2.credentials import Credentials
 from google.auth.transport.requests import AuthorizedSession, Request
 from googleapiclient.discovery import build
+from googleapiclient.errors import HttpError
 import uuid as _uuid
 
 from django.conf import settings
@@ -59,6 +60,36 @@ GOOGLE_SCOPES = [
 
 def _calendar_timezone_name():
     return getattr(settings, "TIME_ZONE", None) or "America/Sao_Paulo"
+
+
+def _google_calendar_service():
+    if not all([
+        getattr(settings, "GOOGLE_CLIENT_ID", None),
+        getattr(settings, "GOOGLE_CLIENT_SECRET", None),
+        getattr(settings, "GOOGLE_REFRESH_TOKEN", None),
+        getattr(settings, "GOOGLE_CALENDAR_ID", None),
+    ]):
+        logger.error("Credenciais do Google Calendar/Meet não configuradas.")
+        return None, None
+
+    creds = Credentials(
+        token=None,
+        refresh_token=settings.GOOGLE_REFRESH_TOKEN,
+        token_uri="https://oauth2.googleapis.com/token",
+        client_id=settings.GOOGLE_CLIENT_ID,
+        client_secret=settings.GOOGLE_CLIENT_SECRET,
+        scopes=GOOGLE_SCOPES,
+    )
+    creds.refresh(Request())
+
+    calendar_service = build(
+        "calendar",
+        "v3",
+        credentials=creds,
+        cache_discovery=False,
+    )
+
+    return calendar_service, creds
 
 def configurar_meet_como_aberto(creds, join_url):
     """Configura um Google Meet para permitir entrada sem aprovação."""
@@ -109,31 +140,9 @@ def criar_reuniao_meet(subject, start_dt, end_dt, description="", recipient_list
     try:
         recipient_list = recipient_list or []
 
-        if not all([
-            getattr(settings, "GOOGLE_CLIENT_ID", None),
-            getattr(settings, "GOOGLE_CLIENT_SECRET", None),
-            getattr(settings, "GOOGLE_REFRESH_TOKEN", None),
-        ]):
-            logger.error("Credenciais do Google Calendar/Meet não configuradas.")
+        calendar_service, creds = _google_calendar_service()
+        if not calendar_service or not creds:
             return None, None
-
-        creds = Credentials(
-            token=None,
-            refresh_token=settings.GOOGLE_REFRESH_TOKEN,
-            token_uri="https://oauth2.googleapis.com/token",
-            client_id=settings.GOOGLE_CLIENT_ID,
-            client_secret=settings.GOOGLE_CLIENT_SECRET,
-            scopes=GOOGLE_SCOPES,
-        )
-        creds.refresh(Request())
-
-        #service = build("calendar", "v3", credentials=creds)
-        calendar_service = build(
-            "calendar",
-            "v3",
-            credentials=creds,
-            cache_discovery=False,
-        )
 
         primary_calendar = calendar_service.calendars().get(
             calendarId="primary",
@@ -198,6 +207,115 @@ def criar_reuniao_meet(subject, start_dt, end_dt, description="", recipient_list
     except Exception as exc:
         logger.error("Erro ao criar reunião Google Meet: %s", exc)
         return None, None
+
+
+def _google_banca_event_id(banca):
+    # Event ID do Google deve usar caracteres compatíveis com base32hex.
+    return _uuid.uuid5(_uuid.NAMESPACE_DNS, f"pfe-banca-{banca.id}").hex
+
+
+def _sync_banca_google_calendar(banca, subject, recipient_list, excluida=False, organizer_email=None, organizer_name=None):
+    if not banca or not banca.id:
+        return None
+
+    calendar_service, _ = _google_calendar_service()
+    if not calendar_service:
+        return None
+
+    event_id = _google_banca_event_id(banca)
+
+    try:
+        if excluida:
+            try:
+                calendar_service.events().patch(
+                    calendarId=settings.GOOGLE_CALENDAR_ID,
+                    eventId=event_id,
+                    body={"status": "cancelled"},
+                    sendUpdates="none",
+                ).execute()
+                logger.info("Evento de banca cancelado no Google Calendar: banca_id=%s, event_id=%s", banca.id, event_id)
+                return event_id
+            except HttpError as exc:
+                if getattr(exc, "resp", None) and exc.resp.status == 404:
+                    logger.info("Evento de banca não encontrado para cancelamento: banca_id=%s, event_id=%s", banca.id, event_id)
+                    return None
+                raise
+
+        if not banca.startDate:
+            logger.error("Banca sem data de início, não foi possível sincronizar no Google Calendar: banca_id=%s", banca.id)
+            return None
+
+        end_dt = banca.endDate or (banca.startDate + datetime.timedelta(hours=1))
+        projeto = banca.get_projeto()
+        tz_name = _calendar_timezone_name()
+        link_projeto = settings.SERVER + reverse("projeto_infos", args=[projeto.id])
+
+        location_parts = []
+        if banca.location:
+            location_parts.append(banca.location)
+        if banca.link:
+            location_parts.append(banca.link)
+        location = " | ".join(location_parts) if location_parts else "A definir"
+
+        orientador_texto = organizer_name or "A definir"
+        if not organizer_name and projeto.orientador and projeto.orientador.user:
+            orientador_texto = projeto.orientador.user.get_full_name()
+
+        descricao_linhas = [
+            f"Banca do Projeto {projeto.get_titulo_org()}",
+            "",
+            f"Responsável (orientador): {orientador_texto}",
+            f"Projeto: {projeto.get_titulo_org()}",
+            f"Link do projeto: {link_projeto}",
+        ]
+        if banca.link:
+            descricao_linhas.insert(2, f"Link: {banca.link}")
+
+        attendees = []
+        seen_emails = set()
+        for email_dest in recipient_list:
+            if not email_dest or email_dest in seen_emails:
+                continue
+            seen_emails.add(email_dest)
+            attendees.append({"email": email_dest})
+
+        if organizer_email and organizer_email not in seen_emails:
+            attendees.append({"email": organizer_email})
+
+        event_payload = {
+            "summary": subject,
+            "description": "\n".join(descricao_linhas),
+            "start": {"dateTime": banca.startDate.isoformat(), "timeZone": tz_name},
+            "end": {"dateTime": end_dt.isoformat(), "timeZone": tz_name},
+            "location": location,
+            "attendees": attendees,
+            "source": {"title": "Capstone PFE", "url": link_projeto},
+        }
+
+        try:
+            calendar_service.events().update(
+                calendarId=settings.GOOGLE_CALENDAR_ID,
+                eventId=event_id,
+                body=event_payload,
+                sendUpdates="none",
+            ).execute()
+            logger.info("Evento de banca atualizado no Google Calendar: banca_id=%s, event_id=%s", banca.id, event_id)
+        except HttpError as exc:
+            if getattr(exc, "resp", None) and exc.resp.status == 404:
+                event_payload["id"] = event_id
+                calendar_service.events().insert(
+                    calendarId=settings.GOOGLE_CALENDAR_ID,
+                    body=event_payload,
+                    sendUpdates="none",
+                ).execute()
+                logger.info("Evento de banca criado no Google Calendar: banca_id=%s, event_id=%s", banca.id, event_id)
+            else:
+                raise
+
+        return event_id
+    except Exception:
+        logger.exception("Falha ao sincronizar banca no Google Calendar: banca_id=%s", banca.id)
+        return None
 
 
 def _ics_escape(text):
@@ -1227,6 +1345,18 @@ def mensagem_edicao_banca(banca, atualizada=False, excluida=False, enviar=False,
             organizer_email=organizer_email,
             organizer_name=organizer_name,
         )
+
+        # Sincroniza também no calendário oficial da conta de serviço
+        # mantendo o orientador como responsável textual/organizacional.
+        _sync_banca_google_calendar(
+            banca=banca,
+            subject=subject,
+            recipient_list=recipient_list,
+            excluida=excluida,
+            organizer_email=organizer_email,
+            organizer_name=organizer_name,
+        )
+
         error = email(subject, recipient_list, mensagem, calendar_invite=calendar_invite, reply_to=reply_to)
         
         if calendar_invite:
