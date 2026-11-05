@@ -18,6 +18,7 @@ from django.core.management import call_command
 from django.core.management import execute_from_command_line
 
 from .support5 import envia_mensagens_avisos, envia_mensagens_eventos
+from .models import Reuniao
 
 from academica.support import lanca_descontos
 
@@ -118,6 +119,18 @@ def envia_aviso():
     """Envia avisos por e-mail."""
     avisos_do_dia()
     eventos_do_dia()
+
+
+@shared_task
+def trava_reunioes():
+    """Trava reuniões do dia."""
+    hoje = datetime.date.today()
+    inicio = hoje - datetime.timedelta(days=120)  # Trava reuniões com data de até 120 dias atrás
+    reunioes = Reuniao.objects.filter(data_hora__date__gte=inicio, data_hora__date__lt=hoje, travado=False)
+    for reuniao in reunioes:
+        reuniao.travado = True
+        reuniao.save()
+        logger.info(f"Reunião {reuniao.id} travada automaticamente.")
 
 
 @shared_task

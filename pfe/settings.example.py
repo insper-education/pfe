@@ -281,6 +281,10 @@ CELERY_BEAT_SCHEDULE = {
         "task": "projetos.tasks.envia_aviso",
         "schedule": crontab(minute=0, hour=10),
     },
+    "trava_reunioes": {
+        "task": "projetos.tasks.trava_reunioes",
+        "schedule": crontab(minute=0, hour=1),
+    },
     "certbot-renew": {
         "task": "projetos.tasks.certbot_renew",
         "schedule": crontab(minute=0, hour=0, day_of_month='1'),
