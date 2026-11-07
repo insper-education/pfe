@@ -12,6 +12,53 @@
 {% block head %}
   <link rel="stylesheet" href="{% static 'css/tab_simples.css' %}">
   <script src="{% static 'js/sort.js' %}"></script>
+  <style>
+    .atas-wrapper {
+      border: 1px solid #e9ecef;
+      border-radius: 0.35rem;
+      background-color: #fff;
+      padding: 0.35rem;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    #AtasTable {
+      width: 100%;
+      margin-bottom: 0;
+    }
+
+    #AtasTable thead th {
+      font-weight: 600;
+      letter-spacing: 0.2px;
+    }
+
+    #AtasTable tbody tr.item:hover {
+      background-color: rgba(23, 162, 184, 0.06);
+    }
+
+    #AtasTable td,
+    #AtasTable th {
+      padding: 0.45rem 0.55rem;
+    }
+
+    #AtasTable .date-cell {
+      background-color: #f8fbfd;
+      font-weight: 600;
+    }
+
+    #AtasTable .empty-row {
+      text-align: center;
+      color: #6c757d;
+      font-style: italic;
+    }
+
+    .tooltip-inner {
+      max-width: 280px;
+      text-align: left;
+      white-space: normal;
+      line-height: 1.35;
+    }
+  </style>
 {% endblock %}
 
 {% block content %}
@@ -23,14 +70,14 @@
 
   {% if template and template.documento %}
     <a target="_blank" rel="noopener noreferrer" href="{{request.scheme}}://{{request.get_host}}{{template.documento.url}}">
-      <i class="far fa-file-alt"></i> {{template.tipo_documento}}
+      <i class="far fa-file-alt"></i> {% lng template.tipo_documento.nome template.tipo_documento.nome_en %}
     </a><br>
   {% endif %}
 
   <br>
 
-  <div class="table-responsive">
-    <table id="AtasTable" class="table-bordered table-sm">
+  <div class="table-responsive atas-wrapper">
+    <table id="AtasTable" class="table table-bordered table-sm table-hover">
       <thead class="table-info">
         <tr>
           <th>{% lng "Data" "Date" %}</th>
@@ -42,14 +89,17 @@
         {% for group in grouped %}
           {% for obj in group.list %}
             <tr class="item">
-              {% ifchanged %}<td style="vertical-align:middle" rowspan="{{ group.list|length }}">{{obj.data|date:"DATE_FORMAT"}}</td>{% endifchanged %}
-              <td style="text-align:center; padding: 2px; border-top-style: dotted;{% if not forloop.last %}border-bottom-style: dotted;{% endif %}">
+              {% ifchanged %}<td class="date-cell" style="vertical-align:middle" rowspan="{{ group.list|length }}">{{obj.data|date:"DATE_FORMAT"}}</td>{% endifchanged %}
+              <td style="text-align:center; border-top-style: dotted;{% if not forloop.last %}border-bottom-style: dotted;{% endif %}">
                 {% if obj.documento %}
-                  <a class="btn btn-light btn-outline-info btn-sm tab_botao"
+                  <a class="btn btn-light btn-outline-info btn-sm tab_botao troca_lingua_title"
                     href="{{request.scheme}}://{{request.get_host}}{{obj.documento.url}}" 
                     target="_blank" rel="noopener noreferrer"
                     {% if obj.anotacao %}
-                      data-toggle="tooltip" data-html="true" animation="true" title="anotação: {{obj.anotacao}}"
+                      data-toggle="tooltip" data-html="true" animation="true" 
+                      data-title_pt="<strong>Anotação</strong><br>{{obj.anotacao|linebreaksbr}}"
+                      data-title_en="<strong>Note</strong><br>{{obj.anotacao|linebreaksbr}}"
+                      title="<strong>Anotação</strong><br>{{obj.anotacao|linebreaksbr}}"
                     {% endif %}
                   >{{obj.documento|get_tipo}}</a>
                 {% elif obj.link %}
@@ -57,7 +107,10 @@
                     href="{{obj.link}}" 
                     target="_blank" rel="noopener noreferrer"
                     {% if obj.anotacao %}
-                      data-toggle="tooltip" data-html="true" animation="true" title="anotação: {{obj.anotacao}}"
+                      data-toggle="tooltip" data-html="true" animation="true" 
+                      data-title_pt="<strong>Anotação</strong><br>{{obj.anotacao|linebreaksbr}}"
+                      data-title_en="<strong>Note</strong><br>{{obj.anotacao|linebreaksbr}}"
+                      title="<strong>Anotação</strong><br>{{obj.anotacao|linebreaksbr}}"
                     {% endif %}
                   >link</a>
                 {% endif %}
@@ -65,7 +118,7 @@
             </tr>
           {% endfor %}
         {% empty %}
-          <tr><td colspan="2">
+          <tr><td colspan="2" class="empty-row">
             {% lng "Não existem atas disponíveis." "There are no minutes available." %}
           </td></tr>
         {% endfor %}
