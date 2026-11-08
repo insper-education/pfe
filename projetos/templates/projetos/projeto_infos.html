@@ -616,7 +616,8 @@
     </div>
 
 
-    {% if medias_oo %}
+    {% with descontos=projeto|get_descontos_projeto %}
+    {% if medias_oo or descontos.0 > 0.0 %}
       <hr>
       <h4 id="medias_de_grupo">
         {% lng "Médias de Grupo" "Group Averages" %}:
@@ -628,6 +629,14 @@
           <span class="badge badge-secondary" style="white-space: nowrap;">{% lng key.titulo key.titulo_en %} = {{value.media|stringformat:".1f"}}</span>
         {% endif %}
       {% endfor %}
+      {% if descontos.0 > 0.0 %}
+        <a href="{% url 'descontos' %}?projeto_id={{projeto.id}}" style="text-decoration: none;">
+          <span class="badge badge-warning" style="white-space: nowrap;"
+          data-toggle="tooltip" data-html="true" animation="true"
+          title="{% for msg in descontos.1 %}{{ msg }}<br>{% endfor %}"
+          >{% lng "Desconto" "Discount" %} = {{descontos.0|stringformat:".1f"}}</span>
+        </a>
+      {% endif %}
       
       <span class="badge badge-info" style="white-space: nowrap;">
         {% lng "Média Grupo Geral" "General Group Average" %} =
@@ -699,6 +708,7 @@
       </script>
 
     {% endif %}
+    {% endwith %}
 
     {% if user.eh_prof_a %}
       {% if projeto|has_relatos %}  

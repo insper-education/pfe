@@ -176,6 +176,9 @@ def lista_areas_interesse(request):
 @permission_required("users.altera_professor", raise_exception=True)
 def descontos(request):
     """Mostra tabela com os possíveis descontos."""
+
+    projeto_id = request.GET.get("projeto_id")
+    alocacao_id = request.GET.get("alocacao_id")
     
     if request.method == "POST":
 
@@ -190,11 +193,22 @@ def descontos(request):
         else:
             mensagem_aviso = None
 
-        if "edicao" not in request.POST:
-            return HttpResponse("Algum erro não identificado.", status=401)
-        
-        ano, semestre = request.POST["edicao"].split('.')
-        descontos = Desconto.objects.filter(Q(alocacao__projeto__ano=ano, alocacao__projeto__semestre=semestre) | Q(projeto__ano=ano, projeto__semestre=semestre))
+        if alocacao_id:
+            descontos = Desconto.objects.filter(alocacao_id=alocacao_id).select_related("alocacao", "alocacao__aluno", "alocacao__projeto", "evento", "evento__tipo_evento", "reuniao", "encontro", "encontro__tematica")
+        elif projeto_id:
+            descontos = Desconto.objects.filter(projeto_id=projeto_id).select_related("alocacao", "alocacao__aluno", "alocacao__projeto", "evento", "evento__tipo_evento", "reuniao", "encontro", "encontro__tematica")
+        else:
+            if "edicao" not in request.POST:
+                return HttpResponse("Algum erro não identificado.", status=401)
+            ano, semestre = request.POST["edicao"].split('.')
+            descontos = (
+                Desconto.objects
+                .filter(
+                    Q(alocacao__projeto__ano=ano, alocacao__projeto__semestre=semestre)
+                    | Q(projeto__ano=ano, projeto__semestre=semestre)
+                )
+                .select_related("projeto", "alocacao", "alocacao__aluno", "alocacao__projeto", "abonado")
+            )
         cabecalhos = [{"pt": "Data", "en": "Date", "tipo": "data_hora"},
                       {"pt": "Alocação/Projeto", "en": "Allocation/Project"},
                       {"pt": "Referência", "en": "Reference"},

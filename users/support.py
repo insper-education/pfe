@@ -129,17 +129,27 @@ def get_edicoes(tipo, anual=False, minimo=None):  # Minimo no formato "ano.semes
             (Q(ano=m_ano) & Q(semestre__gte=m_semestre))
         )
 
+    pares = (
+        pares.exclude(ano__isnull=True)
+        .exclude(semestre__isnull=True)
+        .exclude(ano=0)
+        .exclude(semestre=0)
+        .order_by("ano", "semestre")
+        .distinct("ano", "semestre")
+        .values_list("ano", "semestre")
+    )
+
+    pares_lista = list(pares)
+    if not pares_lista:
+        return [], None, None
+
     edicoes = []
-    ano, semestre = None, None
-    for pair in pares.order_by("ano", "semestre").distinct("ano", "semestre"):
-        ano = pair.get("ano")
-        semestre = pair.get("semestre")
-        if ano == None or semestre == None or ano == 0 or semestre == 0:
-            continue
+    for ano, semestre in pares_lista:
         if anual and semestre == 1:
             edicoes.append(f"{ano}.1/2")
         edicoes.append(f"{ano}.{semestre}")
 
+    ano, semestre = pares_lista[-1]
     return edicoes, ano, semestre
 
 

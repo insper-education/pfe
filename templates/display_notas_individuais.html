@@ -51,8 +51,10 @@
 
           {% if descontos.0 > 0 %}
             <td class="td_desc" style="cursor:pointer;" data-toggle="tooltip" data-html="true" animation="true" 
-                title="{% for e in descontos.1 %}{{e}}<br>{% endfor %}">
-              <span style="white-space: nowrap;">{% lng "Descontos" "Discounts" %}=</span><span style="white-space: nowrap;">{% lng_2 descontos.0 %}</span>
+             title="{% for e in descontos.1 %}{{e}}<br>{% endfor %}">
+              <a href="{% url 'descontos' %}?alocacao_id={{alocacao.id}}" style="text-decoration: none;">
+                <span style="white-space: nowrap;">{% lng "Descontos" "Discounts" %}=</span><span style="white-space: nowrap;">{% lng_2 descontos.0 %}</span>
+              </a>
             </td>
             <script>
               descontos_{{alocacao.id}} = {{descontos.0|unlocalize}};

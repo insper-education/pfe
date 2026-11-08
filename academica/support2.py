@@ -138,11 +138,47 @@ def get_descontos_alocacao(alocacao):
     Recupera os descontos de uma alocação, somando as notas e coletando mensagens.
     Retorna (soma das notas, lista de mensagens).
     """
-    descontos = Desconto.objects.filter(Q(alocacao=alocacao) | Q(projeto=alocacao.projeto)).select_related("alocacao", "projeto")
+    descontos = (
+        Desconto.objects
+        .filter(
+            Q(alocacao_id=alocacao.id) | Q(projeto_id=alocacao.projeto_id),
+            abonado__isnull=True,
+            nota__gt=0,
+        )
+        .select_related(
+            "evento",
+            "evento__tipo_evento",
+            "reuniao",
+            "encontro",
+            "encontro__tematica",
+        )
+    )
     nota_descontos = 0.0
     mensagens = []
     for desconto in descontos:
-        if desconto.nota > 0 and desconto.abonado is None:
-            nota_descontos += float(desconto.nota)
-            mensagens.append(desconto.get_mensagem())
+        nota_descontos += float(desconto.nota)
+        mensagens.append(desconto.get_mensagem())
+    return nota_descontos, mensagens
+
+def get_descontos_projeto(projeto):
+    """
+    Recupera os descontos de um projeto, somando as notas e coletando mensagens.
+    Retorna (soma das notas, lista de mensagens).
+    """
+    descontos = (
+        Desconto.objects
+        .filter(projeto_id=projeto.id, abonado__isnull=True, nota__gt=0)
+        .select_related(
+            "evento",
+            "evento__tipo_evento",
+            "reuniao",
+            "encontro",
+            "encontro__tematica",
+        )
+    )
+    nota_descontos = 0.0
+    mensagens = []
+    for desconto in descontos:
+        nota_descontos += float(desconto.nota)
+        mensagens.append(desconto.get_mensagem())
     return nota_descontos, mensagens
