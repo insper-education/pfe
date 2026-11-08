@@ -63,13 +63,13 @@
               <td>
                 <span lang="pt">
                   {% language "pt-br" %}
-                    <span class="texto-longo">{{ dia|date:"DATE_FORMAT" }}</span>
+                    <span class="texto-longo">{{ dia|date:"l, d/m/Y" }}</span>
                     <span class="texto-curto">{{ dia|date:"d/m/Y" }}</span>
                   {% endlanguage %}
                 </span>
                 <span lang="en" style="display:none">
                   {% language "en" %}
-                    <span class="texto-longo">{{ dia|date:"F d, Y" }}</span>
+                    <span class="texto-longo">{{ dia|date:"l, F d, Y" }}</span>
                     <span class="texto-curto">{{ dia|date:"M d, Y" }}</span>
                   {% endlanguage %}
                 </span>
@@ -79,8 +79,34 @@
         {% endfor %}
       </tbody>
     </table>
-  {% endif %}
 
+    <br>
+    <b>{% lng "Abonos de falta por estudante" "Absences per student" %}:</b>
+    <table class="tabela-padrao table-bordered table-sm ">
+      <thead>
+        <tr>
+          <th>{% lng "Estudante" "Student" %}</th> 
+          <th>{% lng "Datas" "Dates" %}</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for estudante, dias  in reunioes|get_estudantes_abonados %}
+          <tr style="padding-left: 18px;">
+              <td>{{ estudante }} <b>({{ dias|length }} {% lng "dias" "days" %})</b></td>
+              <td><ul>
+                {% for dia in dias %}
+                  <li>
+                  <span lang="pt">{% language "pt-br" %}{{ dia|date:"d/m" }}{% endlanguage %}</span>
+                  <span lang="en" style="display:none">{% language "en" %}{{ dia|date:"M d, Y" }}{% endlanguage %}</span>
+                  </li>
+                {% endfor %}
+              </ul></td>
+            </td>  
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% endif %}
 
 
 

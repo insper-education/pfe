@@ -84,3 +84,40 @@ def get_abonos_falta(reunioes):
         return list(por_dia.items())
     except Exception as e:
         return []
+
+
+@register.filter()
+def get_estudantes_abonados(reunioes):
+    """Retorna lista de (estudantes, datas abonadas)."""
+    if not reunioes:
+        return []
+    try:
+        if hasattr(reunioes, "values_list"):
+            reunioes_abono = reunioes.filter(visita_externa=True)
+            ids_reunioes = reunioes_abono.values_list("id", flat=True)
+        else:
+            ids_reunioes = [r.id for r in reunioes if getattr(r, "visita_externa", False)]
+
+        participantes = (
+            ReuniaoParticipante.objects
+            .filter(reuniao_id__in=ids_reunioes, situacao=1, participante__tipo_de_usuario=1)
+            .select_related("reuniao", "participante")
+            .order_by("participante__first_name", "participante__last_name", "reuniao__data_hora")
+        )
+
+        por_estudante = OrderedDict()
+        for rp in participantes:
+            if not rp.participante or not rp.reuniao or not rp.reuniao.data_hora:
+                continue
+            nome = rp.participante.get_full_name()
+            dia = rp.reuniao.data_hora.date()
+            if nome not in por_estudante:
+                por_estudante[nome] = set()
+            por_estudante[nome].add(dia)
+
+        for nome in por_estudante:
+            por_estudante[nome] = sorted(por_estudante[nome])
+
+        return list(por_estudante.items())
+    except Exception as e:
+        return []
