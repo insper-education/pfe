@@ -1082,6 +1082,20 @@ def reunioes(request, todos=None):
     else:
         return HttpResponse("Acesso não autorizado.", status=401)
 
+    captions = [ [
+                {"pt": "Estudante", "en": "Student", "cor": "#0d6efd;"},
+                {"pt": "Professor", "en": "Professor", "cor": "#f91734;"},
+                {"pt": "Parceiro", "en": "Partner", "cor": "#fd9e14;"},
+            ] ]
+    if request.user.eh_prof_a:
+        captions.append(
+            [
+                {"pt": "Faltou", "en": "Absent", "cor_borda": "#dc3545;"},
+                {"pt": "Falta Justificada", "en": "Excused", "cor_borda": "#e6a000;"},
+                {"pt": "Convidado", "en": "Invited", "cor_borda": "#007bff;"},
+            ]
+        )
+
     context = {
             "cabecalhos": [
                 {"pt": "Título", "en": "Title"},
@@ -1097,6 +1111,7 @@ def reunioes(request, todos=None):
             "reunioes": reunioes,
             "todos": todos if todos else "",  # Usado para o criar reunioes
             "Reuniao": Reuniao,
+            "captions": captions,
         }
     return render(request, "projetos/reunioes.html", context)
 

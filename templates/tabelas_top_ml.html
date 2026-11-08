@@ -28,9 +28,18 @@
       <caption style="text-align: right; padding-top: 6px;"><small>
         {% for linhas in captions %}
           {% for caption in linhas %}
-            <span style="white-space: nowrap;"><b {% if caption.cor %}style="color: {{caption.cor}};"{% endif %}>{{caption.sigla|safe}}</b>:
-              {% lng caption.pt|safe caption.en|safe %}
-            </span>
+            {% if caption.sigla %}
+              <span style="white-space: nowrap;"><b {% if caption.cor %}style="color: {{caption.cor}};"{% endif %}>{{caption.sigla|safe}}</b>:
+                {% lng caption.pt|safe caption.en|safe %}
+              </span>
+            {% else %}
+              <span style="white-space: nowrap; 
+               {% if caption.cor %}color: {{caption.cor}};{% endif %}
+               {% if caption.cor_borda %}border: 1px solid {{caption.cor_borda}}; border-radius: 0.35rem; padding: 0.15rem 0.2rem; margin-right: 0.2rem;{% endif %}
+               ">
+                {% lng caption.pt|safe caption.en|safe %}
+              </span>
+            {% endif %}
             {% if not forloop.last %}|{% endif %}
           {% endfor %}
           {% if not forloop.last %}<br>{% endif %}

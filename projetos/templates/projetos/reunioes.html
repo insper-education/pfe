@@ -12,6 +12,27 @@
 
 {% block head %}
   {% include "tabelas_includes.html" %}
+  <style>
+    .nome_longo {
+      display: inline-block;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      width: 18em;
+      vertical-align: bottom;
+    }
+    .nome_box {
+      display: inline-block;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 12em;
+      vertical-align: bottom;
+      padding: 0.05rem 0.2rem;
+      font-size: 0.8rem;
+    }
+  </style>
+
 {% endblock %}
 
 {% block content %}
@@ -31,14 +52,44 @@
           {% endfor %}
         </td>
         <td><a href="{% url 'projeto_infos' reuniao.projeto.id %}">{{reuniao.projeto}}</a></td>
-        <td>{{reuniao.criacao|date:"d/m/Y"}}{% if user.eh_prof_a %}<br>[{{reuniao.usuario.get_full_name}}]{% endif %}</td>
+        <td>
+          {{reuniao.criacao|date:"d/m/Y"}}{% if user.eh_prof_a %}<br>
+          {% if reuniao.usuario.tipo_de_usuario == 1 or reuniao.usuario.tipo_de_usuario == 4 %}
+            <span class="nome_box" title="Estudante" aria-label="Estudante" style="color: #0d6efd;">
+          {% elif reuniao.usuario.tipo_de_usuario == 2 %}
+            <span class="nome_box" title="Professor" aria-label="Professor" style="color: #f91734;">
+          {% elif reuniao.usuario.tipo_de_usuario == 3 %}
+            <span class="nome_box" title="Parceiro" aria-label="Parceiro" style="color: #fd9e14;">
+          {% else %}
+            <span class="nome_box">
+          {% endif %}
+            {{reuniao.usuario.get_full_name}}
+          </span>
+          {% endif %}
+        </td>
         <td data-sort="{{reuniao.data_hora|date:'Y-m-d\TH:i:s' }}">{{reuniao.data_hora|date:"d/m/Y H:i"}}</td>
         <td class="text-center">{% if reuniao.visita_externa %}<span class="badge bg-success" title="Sim" aria-label="Sim">&#10003;</span>{% endif %}</td>
         <td>{{reuniao.local}}</td>
         <td><div style="line-height: 1.10; font-size: 0.8em;">
           {% for rp in reuniao.participantes_reuniao.all %}
-            {% if rp.situacao == 1 %}
-              &bull; {{ rp.participante.get_full_name }} ({{ rp.participante.get_tipo_de_usuario_display }})<br>
+            {% if rp.situacao != 0 %}
+              <div 
+              {% if request.user.eh_prof_a and rp.situacao != 1 %}
+                style="border: 1px solid; border-radius: 0.25rem; padding: 0.1rem; margin-bottom: 0.1rem;
+                border-color: {% if rp.situacao == 2 %}#dc3545;{% elif rp.situacao == 3 %}#e6a000;{% elif rp.situacao == 4 %}#007bff;{% endif %}"
+              {% endif %}>
+                {% if rp.participante.tipo_de_usuario == 1 or rp.participante.tipo_de_usuario == 4 %}
+                  <span class="nome_longo" title="Estudante" aria-label="Estudante" style="color: #0d6efd;">&bull;
+                {% elif rp.participante.tipo_de_usuario == 2 %}
+                  <span class="nome_longo" title="Professor" aria-label="Professor" style="color: #f91734;">&bull;
+                {% elif rp.participante.tipo_de_usuario == 3 %}
+                  <span class="nome_longo" title="Parceiro" aria-label="Parceiro" style="color: #fd9e14;">&bull;
+                {% else %}
+                  <span class="nome_longo">
+                {% endif %}
+                {{ rp.participante.get_full_name }}
+                </span>
+              </div>
             {% endif %}
           {% endfor %}
         </div></td>
