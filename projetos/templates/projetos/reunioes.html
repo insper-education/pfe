@@ -6,7 +6,9 @@
 {% endcomment %}
 
 {% load static %}
+{% load i18n %}
 {% load linguas %}
+{% load reunioes %}
 
 {% block head %}
   {% include "tabelas_includes.html" %}
@@ -43,6 +45,45 @@
       </tr>
     {% endfor %}
   {% include "tabelas_bottom.html" %}
+
+  {% if request.user.eh_admin %}
+    {% comment %} Tabela com informações consolidadas dos abonos de falta por cada dia {% endcomment %}
+    <br>
+    <b>{% lng "Abonos de falta por dia" "Absences per day" %}:</b>
+    <table class="tabela-padrao table-bordered table-sm ">
+      <thead>
+        <tr>
+          <th>{% lng "Data" "Date" %}</th>
+          <th>{% lng "Estudantes" "Students" %}</th> 
+        </tr>
+      </thead>
+      <tbody>
+        {% for dia, estudantes in reunioes|get_abonos_falta %}
+          <tr style="padding-left: 18px;">
+              <td>
+                <span lang="pt">
+                  {% language "pt-br" %}
+                    <span class="texto-longo">{{ dia|date:"DATE_FORMAT" }}</span>
+                    <span class="texto-curto">{{ dia|date:"d/m/Y" }}</span>
+                  {% endlanguage %}
+                </span>
+                <span lang="en" style="display:none">
+                  {% language "en" %}
+                    <span class="texto-longo">{{ dia|date:"F d, Y" }}</span>
+                    <span class="texto-curto">{{ dia|date:"M d, Y" }}</span>
+                  {% endlanguage %}
+                </span>
+              </td>
+              <td><ul>{% for estudante in estudantes %}<li>{{ estudante }}</li>{% endfor %}</ul></td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% endif %}
+
+
+
+
 
   <script>
     function carrega_pagina(){

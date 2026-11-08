@@ -1071,13 +1071,14 @@ def reunioes(request, todos=None):
             reunioes = Reuniao.objects.filter(projeto=associado.projeto)
         else:
             return HttpResponse("Nenhuma alocação encontrada.", status=404)
-        
+
     elif request.user.eh_prof_a:
         if todos:
             reunioes = Reuniao.objects.filter(projeto__ano=configuracao.ano, projeto__semestre=configuracao.semestre)
         else:
             projetos = Projeto.objects.filter(orientador=request.user.professor, ano=configuracao.ano, semestre=configuracao.semestre)
             reunioes = Reuniao.objects.filter(projeto__in=projetos)
+
     else:
         return HttpResponse("Acesso não autorizado.", status=401)
 
