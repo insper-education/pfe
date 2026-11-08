@@ -145,7 +145,7 @@
             <tr class="tematica_{{ e.tematica.id }}">
               <td 
                 {% if e.bloqueado %}style="background-color:rgba(217, 93, 93, 1);"
-                {% elif e.startDate.date|dif_dias_hoje < configuracao.bloq_agend_ment %}style="background-color:rgba(118, 118, 118, 0.5);"
+                {% elif e.startDate.date|dif_dias_hoje < configuracao.bloq_agend_ment %}style="background-color:rgba(188, 188, 188, 0.5);"
                 {% elif not e.projeto %}style="background-color:rgb(239, 255, 239);"
                 {% endif %}>
                 
