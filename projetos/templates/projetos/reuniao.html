@@ -118,7 +118,11 @@
         {% if projetos|length == 1 %}
           {% with projeto=projetos.0 %}
             <input type="hidden" id="projeto" name="projeto" value="{{ projeto.id }}">
+            {% if request.user.eh_prof_a %}
+              <a href="{% url 'projeto_infos' projeto.id %}">
+            {% endif %}
             <span style="font-size:0.97em;">{{ projeto }}</span>
+            {% if request.user.eh_prof_a %}</a>{% endif %}
           {% endwith %}
         {% else %}
           <select id="projeto" name="projeto" class="form-select form-select-sm med-input" required>
