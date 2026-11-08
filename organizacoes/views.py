@@ -30,7 +30,7 @@ from calendario.support import cria_material_documento
 from users.support import adianta_semestre, get_edicoes, retrocede_semestre
 from users.models import PFEUser, Parceiro, Aluno, Alocacao
 
-from projetos.models import Proposta, Organizacao, Projeto, Configuracao, Feedback
+from projetos.models import Proposta, Organizacao, Projeto, Configuracao, Feedback, Acompanhamento
 from projetos.models import Anotacao, Conexao, Documento, TipoRetorno, Evento, FeedbackEstudante
 from operacional.models import Curso
 from documentos.models import TipoDocumento
@@ -688,6 +688,7 @@ def organizacao_completo(request, org=None):  # acertar isso para pk
         "projetos": Projeto.objects.filter(proposta__organizacao=organizacao),
         "cursos": Curso.objects.all().order_by("id"),
         "feedbacks_estudantes": FeedbackEstudante.objects.filter(projeto__proposta__organizacao=organizacao),
+        "acompanhamento_interm_organizacao": Acompanhamento.objects.filter(autor__parceiro__organizacao=organizacao),
         "cooperacoes": Conexao.objects.filter(parceiro__organizacao=organizacao, colaboracao=True),
     }
     return render(request, "organizacoes/organizacao_completo.html", context=context)

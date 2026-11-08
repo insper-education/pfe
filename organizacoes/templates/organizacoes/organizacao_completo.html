@@ -433,6 +433,27 @@
       text-transform: uppercase;
       letter-spacing: 0.01em;
     }
+
+    .acompanhamento-tag {
+      display: inline-flex;
+      align-items: center;
+      margin: 0 0.25rem 0.3rem 0;
+      padding: 0.16rem 0.5rem;
+      border: 1px solid #d7e3f5;
+      border-radius: 999px;
+      background: #f4f8ff;
+      color: #2f4f6f;
+      font-size: 0.78rem;
+      font-weight: 600;
+      line-height: 1.2;
+      cursor: default;
+      transition: background-color 0.15s ease, border-color 0.15s ease;
+    }
+
+    .acompanhamento-tag:hover {
+      background: #ecf3ff;
+      border-color: #c4d6f1;
+    }
   </style>
 {% endblock %}
 
@@ -782,25 +803,45 @@
     </div>
   {% endif %}
 
-  {% if user.eh_admin and feedbacks_estudantes %}
-    <hr>
-    <div class="mb-3">
-      <h5>
-        {% lng "Feedbacks dos estudantes sobre organização" "Student feedbacks about organization" %}
-      </h5>
-      {% for feedback in feedbacks_estudantes %}
-        <a href="{% url 'mostra_feedback_estudante' feedback.id %}"
-          data-toggle="tooltip" data-html="true" animation="true" title="{{feedback.projeto}} - {{feedback.estudante.user.get_full_name}}">
-          {% if feedback.recomendaria == 1 %}
-            <i class="fas fa-ban text-danger{% if feedback.outros %} border-bottom border-primary{% endif %}"></i>
-          {% elif feedback.recomendaria == 2 %}
-            <i class="fas fa-exclamation-triangle text-warning{% if feedback.outros %} border-bottom border-primary{% endif %}"></i>
-          {% elif feedback.recomendaria == 3 %}
-            <i class="fas fa-check-circle text-success{% if feedback.outros %} border-bottom border-primary{% endif %}"></i>
-          {% endif %}
-        </a>
-      {% endfor %}
-    </div>
+  {% if user.eh_admin %}
+    {% if acompanhamento_interm_organizacao or feedbacks_estudantes %}
+      <hr>
+      {% if feedbacks_estudantes %}
+        <div class="mb-3">
+          <h5>
+            {% lng "Feedbacks dos estudantes sobre organização" "Student feedbacks about organization" %}
+          </h5>
+          {% for feedback in feedbacks_estudantes %}
+            <a href="{% url 'mostra_feedback_estudante' feedback.id %}"
+              data-toggle="tooltip" data-html="true" animation="true" title="{{feedback.projeto}} - {{feedback.estudante.user.get_full_name}}">
+              {% if feedback.recomendaria == 1 %}
+                <i class="fas fa-ban text-danger{% if feedback.outros %} border-bottom border-primary{% endif %}"></i>
+              {% elif feedback.recomendaria == 2 %}
+                <i class="fas fa-exclamation-triangle text-warning{% if feedback.outros %} border-bottom border-primary{% endif %}"></i>
+              {% elif feedback.recomendaria == 3 %}
+                <i class="fas fa-check-circle text-success{% if feedback.outros %} border-bottom border-primary{% endif %}"></i>
+              {% endif %}
+            </a>
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      {% if acompanhamento_interm_organizacao %}
+        <div class="mb-3">
+          <h5>
+            {% lng "Acompanhamento intermediário da organização" "Interim follow-up of the organization" %}
+          </h5>
+          {% for acompanhamento in acompanhamento_interm_organizacao %}
+            <span class="acompanhamento-tag"
+              data-toggle="tooltip" data-html="true" animation="true" title="<b>{{acompanhamento.autor}}</b>:<br> {{acompanhamento.texto}}">
+              {{acompanhamento.data|date:"d/m/Y"}}
+            </span>
+          {% endfor %}
+        </div>
+      {% endif %}
+
+    {% endif %}
+
   {% endif %}
 
   <hr>
