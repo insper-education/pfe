@@ -615,16 +615,37 @@ def organizacoes_lista(request):
         else:
             contato.append("---------")
 
-        periodos_propostas = set((proposta.ano, proposta.semestre) for proposta in propostas)
-        enviadas.append(f"{len(propostas):03d}<br>" + f"<small>({', '.join(f'{ano}.{semestre}' for ano, semestre in sorted(periodos_propostas))})</small>" or "")
+        periodos_propostas = sorted(
+            {
+                (proposta.ano, proposta.semestre)
+                for proposta in propostas
+                if proposta.ano is not None and proposta.semestre is not None
+            }
+        )
+        len_propostas = len(propostas)
+        propostas_txt = f"{len_propostas:03d}"
+        if len_propostas > 0:
+            propostas_txt += f"<br><small>({', '.join(f'{ano}.{semestre}' for ano, semestre in periodos_propostas)})</small>"
+        enviadas.append(propostas_txt)
 
-        periodos_projetos = set((projeto.ano, projeto.semestre) for proposta in propostas for projeto in proposta.projeto_set.all())
+        periodos_projetos = sorted(
+            {
+                (projeto.ano, projeto.semestre)
+                for proposta in propostas
+                for projeto in proposta.projeto_set.all()
+                if projeto.ano is not None and projeto.semestre is not None
+            }
+        )
         projetos = [
             projeto
             for proposta in propostas
             for projeto in proposta.projeto_set.all()
         ]
-        fechados.append(f"{len(projetos):03d}<br>" + f"<small>({', '.join(f'{ano}.{semestre}' for ano, semestre in sorted(periodos_projetos))})</small>" or "")
+        len_projetos = len(projetos)
+        fechados_txt = f"{len_projetos:03d}"
+        if len_projetos > 0:
+            fechados_txt += f"<br><small>({', '.join(f'{ano}.{semestre}' for ano, semestre in periodos_projetos)})</small>"
+        fechados.append(fechados_txt)
 
         tipo_estudantes = []
         for projeto in projetos:
