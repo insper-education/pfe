@@ -43,5 +43,34 @@
   <div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'pendencias_professores' %}">
     {% lng "Pendências professores" "Professors' pending tasks" %}
   </a></div>
+  <br>
+  
+  <h5>
+    {% lng "Tabelas de alocação" "Allocation tables" %}
+  </h5>
+  <div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'orientadores_tabela' %}">
+    {% lng "Orientadores" "Advisors" %}
+  </a><a href="{% url 'orientadores_tabela_completa' %}">
+    {% lng "(completa)" "(complete)" %}
+  </a></div>
+  <div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'coorientadores_tabela' %}">
+    {% lng "Coorientadores" "Co-advisors" %}
+  </a> <a href="{% url 'coorientadores_tabela_completa' %}">
+    {% lng "(completa)" "(complete)" %}
+  </a></div>
+  <div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'organizacoes_tabela' %}">
+    {% lng "Organizações" "Organizations" %}
+  </a></div>
+  <div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'bancas_tabela_alocacao' %}">
+    {% lng "Bancas" "Examination Boards" %}
+  </a> <a href="{% url 'bancas_tabela_alocacao_completa' %}">
+    {% lng "(completa)" "(complete)" %}
+  </a></div>
+  <div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'aulas_tabela' %}">
+    {% lng "Aulas" "Classes" %}
+  </a></div>
+  <div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'mentorias_tabela' %}">
+    {% lng "Mentorias" "Mentorships" %}
+  </a></div>
 
 {% endif %}
