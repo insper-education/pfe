@@ -252,6 +252,8 @@ def distribuicao_areas(request, tipo = "estudantes"):
         )
 
         context["tipo"] = tipo
+        context["edicao"] = edicao
+        context["cursos"] = cursos_insper
     
     else:
 

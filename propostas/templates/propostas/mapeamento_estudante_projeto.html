@@ -135,7 +135,7 @@
               {% lng "Proposta não disponibilizada" "Proposal not available" %}
             </span>
           </div>
-          <div class="cap_cursos">
+          <div class="cap_cursos text-muted small">
             {% for curso in cursos %}
               <span><b>{{curso.sigla_curta}}</b>: {{curso.nome}}</span>
               {% if not forloop.last %}|{% endif %}

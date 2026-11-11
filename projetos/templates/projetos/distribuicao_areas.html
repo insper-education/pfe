@@ -179,6 +179,11 @@
         grid-template-columns: 1fr;
       }
     }
+    
+    #IndividDistr th:first-child, #IndividDistr td:first-child {
+      border-right: 3px solid #e2e8f0;
+    }
+  
   </style>
 
   {% comment %} Para janela dos Tooltips {% endcomment %}
@@ -269,16 +274,18 @@
     </div>
 
     <hr><br>
-    
+
     <b>
       {% lng "Tabela Individualizada de Distribuição" "Individualized Distribution Table" %}
     </b>
     <div class="table-responsive mb-1">
-      <table id="BloqueadosTable" class="table-bordered table-sm">
+      <table id="IndividDistr" class="table-bordered table-sm">
         <thead class="table-info">
           <tr>
             <th class="horizontal-header">{% lng "Nome" "Name" %}</th>
-            <th class="horizontal-header">{% lng "Edição" "Edition" %}</th>
+            {% if edicao == "todas" %}
+              <th class="horizontal-header">{% lng "Edição" "Edition" %}</th>
+            {% endif %}
             {% for area in areas %}
               <th class="vertical-header">{% lng area.titulo area.titulo_en %}</th>
             {% endfor %}
@@ -289,15 +296,19 @@
             <tr class="item">
               <td>
                 {% if tipo == "estudantes" %}
-                  <a href="{% url 'user_detail' dado.id %}" target="_blank">{{ dado.get_full_name }}</a>
+                  <a href="{% url 'user_detail' dado.id %}" target="_blank">{{ dado.get_full_name }} [{{ dado.aluno.curso2.sigla_curta }}]</a>
                 {% elif tipo == "propostas" %}
                   <a href="{% url 'proposta_completa' dado.id %}" target="_blank">{{ dado.get_titulo_org }}</a>
                 {% elif tipo == "projetos" %}
                   <a href="{% url 'projeto_infos' dado.id %}" target="_blank">{{ dado.get_titulo_org }}</a>
                 {% endif %}
               </td>
-              <td>{% if tipo == "estudantes" %}{{ dado.aluno.get_ultimo_periodo }}
-                {% else %}{{ dado.get_edicao }}{% endif %}</td>
+              {% if edicao == "todas" %}
+                <td>
+                  {% if tipo == "estudantes" %}{{ dado.aluno.get_ultimo_periodo }}
+                  {% else %}{{ dado.get_edicao }}{% endif %}
+                </td>
+              {% endif %}
               {% for area in areas %}
                 {% with niveis_por_area=tabela_niveis|dict_get:dado.id %}
                   {% with nivel=niveis_por_area|dict_get:area.id %}
@@ -314,6 +325,14 @@
             </tr>
           {% endfor %}
         </tbody>
+        <caption>
+          <div class="cap_cursos text-muted small">
+            {% for curso in cursos %}
+              <span><b>{{curso.sigla_curta}}</b>: {{curso.nome}}</span>
+              {% if not forloop.last %}|{% endif %}
+            {% endfor %}
+          </div>
+        </caption>
       </table>
     </div>
 
