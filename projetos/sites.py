@@ -11,6 +11,7 @@ import zipfile
 import os
 
 from django.conf import settings
+from django.core.exceptions import PermissionDenied
 from django.http import Http404
 from django.views.static import serve as static_serve
 from django.shortcuts import get_object_or_404
@@ -22,6 +23,7 @@ from django.shortcuts import render, redirect
 from .models import Projeto, Configuracao
 from .support import get_upload_path
 
+from administracao.support import usuario_sem_acesso
 from users.models import Alocacao
 
 def sites(request, projeto_id, path):
@@ -64,10 +66,15 @@ def sites(request, projeto_id, path):
 
 @login_required
 def upload_site_e_pastas(request, projeto_id):
+    usuario_sem_acesso(request, (1, 2, 4))
+    projeto = get_object_or_404(Projeto, id=projeto_id)
+
+    if request.user.tipo_de_usuario == 1 and not Alocacao.objects.filter(
+        projeto=projeto, aluno=request.user.aluno
+    ).exists():
+        raise PermissionDenied("Você não participa deste projeto.")
     
     if request.method == "POST":
-        projeto = get_object_or_404(Projeto, id=projeto_id)
-
         if "Carregar" in request.POST:
             if "zipsite" not in request.FILES:
                 return HttpResponse("Nenhum arquivo foi enviado.")
