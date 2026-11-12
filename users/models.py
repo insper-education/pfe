@@ -35,14 +35,15 @@ class PFEUser(AbstractUser):
     # email
     # is_active
     # add additional fields in here
-    TIPO_DE_USUARIO_CHOICES = (
-        (1, "estudante"),
-        (2, "professor"),
-        (3, "parceiro"),
-        (4, "administrador"),
+    TIPO_DE_USUARIO_CHOICES = (  # Com cor para cada usuário
+        (1, "estudante", "#0d6efd"),
+        (2, "professor", "#dc3545"),
+        (3, "parceiro", "#f3c611"),
+        (4, "administrador", "#198754"),
     )
+    TIPO_DE_USUARIO_CORES = {tipo: cor for tipo, _, cor in TIPO_DE_USUARIO_CHOICES}
     tipo_de_usuario = \
-        models.PositiveSmallIntegerField(choices=TIPO_DE_USUARIO_CHOICES, default=1,
+        models.PositiveSmallIntegerField(choices=[subl[:2] for subl in TIPO_DE_USUARIO_CHOICES], default=1,
                                          help_text="cada usuário tem um perfil único")
 
     telefone = models.CharField(max_length=30, null=True, blank=True,
@@ -130,6 +131,10 @@ class PFEUser(AbstractUser):
                     celular = "+55 (11) " + celular[:5] + "-" + celular[5:]
             return celular
         return None
+
+    def get_cor(self):
+        """Retorna a cor do usuário."""
+        return self.TIPO_DE_USUARIO_CORES.get(self.tipo_de_usuario, "#000000")
 
     @property
     def eh_estud(self):
