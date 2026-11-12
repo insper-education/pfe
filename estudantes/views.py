@@ -1413,30 +1413,45 @@ def opcao_temporaria(request):
 
 @login_required
 def validate_feedback(request):
-    if request.method == "POST":
+    """Recebe texto em JSON, solicita feedback ao serviço de IA e devolve a resposta como JSON."""
+    if request.method != "POST":
+        return JsonResponse({"message": "Invalid request method."}, status=400)
+
+    try:
         data = json.loads(request.body)
-        texto = data.get("texto", '')
-        email = data.get("email", '')
-        if not texto or not email:
-            return JsonResponse({"message": "Invalid request data."}, status=400)
-        
-        url = Estrutura.loads(nome="IA Feedback")["servidor"]
-        post_data = {
-            "user": email,
-            "text": texto,
-            "response_type": "json"
-        }
+    except (ValueError, UnicodeDecodeError):
+        logger.warning(
+            "Invalid JSON in validate_feedback: user_id=%s ip=%s content_type=%s",
+            request.user.pk,
+            request.META.get("REMOTE_ADDR"),
+            request.content_type,
+        )
+        return JsonResponse({"message": "Invalid JSON request body."}, status=400)
 
-        post_data = json.dumps(post_data).encode("utf-8")
-        headers = {"Content-Type": "application/json"}
+    if not isinstance(data, dict):
+        return JsonResponse({"message": "Invalid request data."}, status=400)
 
-        req = urllib.request.Request(url, data=post_data, headers=headers)
-        try:
-            with urllib.request.urlopen(req, timeout=30) as response:
-                response_txt = response.read().decode("utf-8")
-                response_data = json.loads(response_txt)
-        except Exception as e:
-            return JsonResponse({"message": "failed"}, status=400)
-           
-        return JsonResponse({"message": "request received", "response_data": response_data})
-    return JsonResponse({"message": 'Invalid request method.'}, status=400)
+    texto = data.get("texto")
+    email = request.user.email
+    if not isinstance(texto, str) or not texto.strip() or not email:
+        return JsonResponse({"message": "Invalid request data."}, status=400)
+    
+    url = Estrutura.loads(nome="IA Feedback")["servidor"]
+    post_data = {
+        "user": email,
+        "text": texto,
+        "response_type": "json"
+    }
+
+    post_data = json.dumps(post_data).encode("utf-8")
+    headers = {"Content-Type": "application/json"}
+
+    req = urllib.request.Request(url, data=post_data, headers=headers)
+    try:
+        with urllib.request.urlopen(req, timeout=30) as response:
+            response_txt = response.read().decode("utf-8")
+            response_data = json.loads(response_txt)
+    except Exception:
+        return JsonResponse({"message": "failed"}, status=400)
+       
+    return JsonResponse({"message": "request received", "response_data": response_data})
