@@ -14,13 +14,14 @@ from django.db.models.functions import Lower
 from django.http import HttpResponse, HttpResponseNotFound, JsonResponse
 from django.shortcuts import get_object_or_404, render
 from django.utils import timezone
+from django.utils.html import escape
+from django.views.decorators.http import require_POST
+from ratelimit.decorators import ratelimit
 
 from .models import PerguntasRespostas
-#from projetos.models import Projeto, Area
 from projetos.models import Proposta, Configuracao,  Recomendada, Organizacao, Disciplina
 from projetos.messages import email
 
-#from users.models import Opcao, Aluno, Alocacao
 from users.models import PFEUser
 from operacional.models import Curso
 
@@ -71,30 +72,41 @@ def atualiza_proposta(request, primarykey=None):
 
 @login_required
 @transaction.atomic
+@ratelimit(key="user", rate="5/m", block=True)
+@require_POST
 def proposta_pergunta(request, primarykey=None):
     """Cria uma pergunta sobre uma proposta (AJAX)."""
 
     if primarykey is None:
         return HttpResponse("Erro não identificado.", status=401)
     
-    if request.headers.get("X-Requested-With") != "XMLHttpRequest" or request.method != "POST":  # Ajax check
+    if request.headers.get("X-Requested-With") != "XMLHttpRequest":  # Ajax check
         return HttpResponse("Erro não identificado.", status=401)
 
     proposta = get_object_or_404(Proposta, pk=primarykey)
+
+    if request.user.eh_estud:
+        if (request.user.aluno.ano != proposta.ano or
+                request.user.aluno.semestre != proposta.semestre or
+                not proposta.disponivel):
+            return JsonResponse({"message": "Você não pode perguntar sobre esta proposta."}, status=403)
+    elif not request.user.eh_prof_a:
+        return JsonResponse({"message": "Você não pode perguntar sobre esta proposta."}, status=403)
     
-    if "pergunta" in request.POST:
+    pergunta = request.POST.get("pergunta", "").strip()
+    if pergunta and len(pergunta) <= 3000:
         pergunta_resposta = PerguntasRespostas(
             proposta=proposta,
-            pergunta=request.POST["pergunta"],
+            pergunta=pergunta,
             quem_perguntou=request.user,
         )
         pergunta_resposta.save()
 
         # Enviando e-mail com mensagem para usuários.
         mensagem = (
-            f"O estudante: <b>{request.user.get_full_name()}</b>, fez uma pergunta sobre a proposta: <b>{proposta.titulo}</b>."
+            f"O estudante: <b>{escape(request.user.get_full_name())}</b>, fez uma pergunta sobre a proposta: <b>{escape(proposta.titulo)}</b>."
         )
-        mensagem += f"\n\n<br><br>Pergunta: <i>{pergunta_resposta.pergunta}</i>"
+        mensagem += f"\n\n<br><br>Pergunta: <i>{escape(pergunta_resposta.pergunta)}</i>"
         mensagem += (
             f"\n\n<br><br>Link para a proposta: {request.scheme}://{request.get_host()}/propostas/proposta_completa/{proposta.id}"
         )
@@ -111,29 +123,51 @@ def proposta_pergunta(request, primarykey=None):
         }
         return JsonResponse(data)
 
-    return HttpResponse("Pergunta não informada.", status=401)
+    return HttpResponse("Pergunta ausente ou acima do limite de 3000 caracteres.", status=400)
 
 
 @login_required
 @transaction.atomic
+@permission_required("users.altera_professor", raise_exception=True)
+@require_POST
 def proposta_resposta(request, primarykey=None):
     """Responde uma pergunta sobre uma proposta (AJAX)."""
 
     if primarykey is None:
         return HttpResponse("Erro não identificado.", status=401)
 
-    if request.headers.get("X-Requested-With") != "XMLHttpRequest" or request.method != "POST":  # Ajax check
+    if request.headers.get("X-Requested-With") != "XMLHttpRequest":  # Ajax check
         return HttpResponse("Erro não identificado.", status=401)
 
     proposta = get_object_or_404(Proposta, pk=primarykey)
     
     if "pergunta_id" in request.POST and "resposta" in request.POST:
-        pergunta_resposta = get_object_or_404(PerguntasRespostas, pk=request.POST["pergunta_id"])
-        pergunta_resposta.resposta = request.POST["resposta"]
+        resposta = request.POST["resposta"].strip()
+        if not resposta or len(resposta) > 3000:
+            return HttpResponse("Resposta ausente ou acima do limite de 3000 caracteres.", status=400)
+
+        try:
+            pergunta_id = int(request.POST["pergunta_id"])
+        except (TypeError, ValueError):
+            return HttpResponse("Pergunta inválida.", status=400)
+
+        pergunta_resposta = get_object_or_404(
+            PerguntasRespostas, pk=pergunta_id, proposta=proposta
+        )
+        pergunta_resposta.resposta = resposta
         pergunta_resposta.quem_respondeu = request.user
 
-        if "em_nome" in request.POST and request.POST["em_nome"]:
-            pergunta_resposta.em_nome_de = PFEUser.objects.get(pk=int(request.POST["em_nome"]))
+        em_nome = request.POST.get("em_nome", "")
+        if em_nome:
+            try:
+                em_nome_id = int(em_nome)
+            except (TypeError, ValueError):
+                return HttpResponse("Parceiro inválido.", status=400)
+            pergunta_resposta.em_nome_de = get_object_or_404(
+                PFEUser,
+                pk=em_nome_id,
+                parceiro__organizacao=proposta.organizacao,
+            )
         else:
             pergunta_resposta.em_nome_de = None
 
@@ -141,9 +175,9 @@ def proposta_resposta(request, primarykey=None):
         pergunta_resposta.save()
 
         # Enviando e-mail com mensagem para usuários.
-        mensagem = f"Sua pergunta sobre a proposta <b>[{proposta.organizacao.sigla}] {proposta.titulo}</b> foi respondida."
-        mensagem += f"\n\n<br><br>Pergunta: <i>{pergunta_resposta.pergunta}</i>"
-        mensagem += f"\n\n<br><br>Resposta: <i>{pergunta_resposta.resposta}</i>"
+        mensagem = f"Sua pergunta sobre a proposta <b>[{escape(proposta.organizacao.sigla)}] {escape(proposta.titulo)}</b> foi respondida."
+        mensagem += f"\n\n<br><br>Pergunta: <i>{escape(pergunta_resposta.pergunta)}</i>"
+        mensagem += f"\n\n<br><br>Resposta: <i>{escape(pergunta_resposta.resposta)}</i>"
         mensagem += f"\n\n<br><br>Link para a proposta: {request.scheme}://{request.get_host()}/propostas/proposta_detalhes/{proposta.id}"
         subject = "Capstone | Pergunta sobre proposta de projeto"
         configuracao = get_object_or_404(Configuracao)
