@@ -289,6 +289,23 @@ def preenche_proposta_pdf(campos, proposta):
     proposta.recursos = decodificar("recursos", campos)
     proposta.observacoes = decodificar("observacoes", campos)
 
+    mensagem = ""
+    if not proposta.nome:
+        proposta.nome = "NOME NÃO DEFINIDO"
+        mensagem += "NOME NÃO DEFINIDO<br>"
+    if not proposta.titulo:
+        proposta.titulo = "TÍTULO NÃO DEFINIDO"
+        mensagem += "TÍTULO NÃO DEFINIDO<br>"
+    if not proposta.descricao:
+        proposta.descricao = "DESCRIÇÃO NÃO DEFINIDA"
+        mensagem += "DESCRIÇÃO NÃO DEFINIDA<br>"
+    if not proposta.expectativas:
+        proposta.expectativas = "EXPECTATIVAS NÃO DEFINIDAS"
+        mensagem += "EXPECTATIVAS NÃO DEFINIDAS<br>"
+
+    if mensagem:
+        return None, mensagem
+
     # Não usar mais os campos de texto livre para contatos
     proposta.contatos_tecnicos = decodificar("contatos_tecnicos", campos)
     proposta.contatos_administrativos = decodificar("contatos_administrativos", campos)
@@ -319,23 +336,6 @@ def preenche_proposta_pdf(campos, proposta):
     proposta.iniciar =  "interesse#2" in check_values
     proposta.identificar =  "interesse#3" in check_values
     proposta.mentorar =  "interesse#4" in check_values
-    
-    mensagem = ""
-    if proposta.nome == None:
-        proposta.nome = "NOME NÃO DEFINIDO"
-        mensagem += "NOME NÃO DEFINIDO<br>"
-    if proposta.titulo == None:
-        proposta.titulo = "TÍTULO NÃO DEFINIDO"
-        mensagem += "TÍTULO NÃO DEFINIDO<br>"
-    if proposta.descricao == None:
-        proposta.descricao = "DESCRIÇÃO NÃO DEFINIDA"
-        mensagem += "DESCRIÇÃO NÃO DEFINIDA<br>"
-    if proposta.expectativas == None:
-        proposta.expectativas = "EXPECTATIVAS NÃO DEFINIDAS"
-        mensagem += "EXPECTATIVAS NÃO DEFINIDAS<br>"
-
-    if mensagem:
-        return None, mensagem
     
     proposta.save()
     proposta.contatos.set(contatos)
