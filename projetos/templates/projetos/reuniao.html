@@ -102,6 +102,13 @@
       font-size: 0.95em;
     }
 
+    .campo-bloqueado-msg {
+      margin-top: 0.25rem;
+      margin-left: 1.45rem;
+      font-size: 0.83rem;
+      color: #a56a00;
+    }
+
   </style>
 
 {% endblock %}
@@ -159,9 +166,9 @@
                 value="{% if reuniao.data_hora %}{{reuniao.data_hora|date:"Y-m-d\TH:i"}}{% endif %}" required>
         </div>
         <div class="form-check m-0 ms-lg-2 ps-2 ps-lg-0 troca_lingua_title"
-          data-title_pt="Marque esta opção se você precisa abonar uma falta pois estava em visita na empresa do projeto em horário de atividades presenciais."
-          data-title_en="Check this option if you need to excuse an absence because you were visiting the project company during in-person activity hours."
-          title="Marque esta opção se você precisa abonar uma falta pois estava em visita na empresa do projeto em horário de atividades presenciais."
+          data-title_pt="Marque esta opção se você precisa abonar uma falta pois estava em visita na empresa do projeto em horário de atividades presenciais.<br>Esta opção só estará disponível para estudantes se houver pelo menos um professor ou parceiro marcado como presente na reunião.<br>Para o abono ser válido, é necessário que a reunião seja registrada no mesmo dia do evento."
+          data-title_en="Check this option if you need to excuse an absence because you were visiting the project company during in-person activity hours.<br>This option will only be available for students if there is at least one professor or partner marked as present in the meeting.<br>For the excuse to be valid, it is necessary that the meeting is recorded on the same day of the event."
+          title="Marque esta opção se você precisa abonar uma falta pois estava em visita na empresa do projeto em horário de atividades presenciais.<br>Esta opção só estará disponível para estudantes se houver pelo menos um professor ou parceiro marcado como presente na reunião.<br>Para o abono ser válido, é necessário que a reunião seja registrada no mesmo dia do evento."
           data-toggle="tooltip" data-html="true" animation="true"
         >
           <input class="form-check-input ms-0 ptravar" type="checkbox" id="visita_externa" name="visita_externa" {% if reuniao.visita_externa %}checked{% endif %}>
@@ -309,7 +316,43 @@
           icone.classList.add("fa-unlock");
         }
       {% endif %}
+      {% if user.eh_estud %}
+        atualizaVisitaExternaEstudante();
+      {% endif %}
     }
+
+    {% if user.eh_estud %}
+      function temAcompanhamentoProfessorOuParceiro() {
+        const projetoInput = document.getElementById("projeto");
+        if (!projetoInput) {
+          return false;
+        }
+        const projetoId = projetoInput.value;
+        const seletor =
+          `.envolvidos.projeto_${projetoId} input[type="radio"][value="1"].eh_prof_a:checked, ` +
+          `.envolvidos.projeto_${projetoId} input[type="radio"][value="1"].eh_parc:checked`;
+        return document.querySelector(seletor) !== null;
+      }
+
+      function atualizaVisitaExternaEstudante() {
+        const visitaExterna = document.getElementById("visita_externa");
+        if (!visitaExterna) {
+          return;
+        }
+
+        const travado = document.getElementById("travado").checked;
+        visitaExterna.dataset.bloqueadoAcompanhamento = "0";
+        if (travado) {
+          return;
+        }
+
+        const permitido = temAcompanhamentoProfessorOuParceiro();
+        if (!permitido) {
+          visitaExterna.checked = false;
+          visitaExterna.dataset.bloqueadoAcompanhamento = "1";
+        }
+      }
+    {% endif %}
 
     // Filtra envolvidos por projeto
     function filtraEnvolvidos() {
@@ -322,12 +365,35 @@
           row.style.display = "none";
         }
       });
+      {% if user.eh_estud %}
+        atualizaVisitaExternaEstudante();
+      {% endif %}
     }
     document.getElementById("projeto").addEventListener("change", filtraEnvolvidos);
+
+    {% if user.eh_estud %}
+      document.addEventListener("change", function(event) {
+        if (event.target.matches('.envolvidos input[type="radio"]')) {
+          atualizaVisitaExternaEstudante();
+        }
+      });
+
+      document.getElementById("visita_externa").addEventListener("click", function(event) {
+        const bloqueado = event.currentTarget.dataset.bloqueadoAcompanhamento === "1";
+        if (bloqueado) {
+          event.preventDefault();
+          event.currentTarget.checked = false;
+          alert("Você só pode marcar visita externa quando houver pelo menos um professor ou parceiro marcado como presente na reunião.");
+        }
+      });
+    {% endif %}
     
     window.onload = function() {
       filtraEnvolvidos();
       trava_tudo();
+      {% if user.eh_estud %}
+        atualizaVisitaExternaEstudante();
+      {% endif %}
     };
   </script>
 
