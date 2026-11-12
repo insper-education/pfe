@@ -22,6 +22,8 @@ from .models import Reuniao
 
 from academica.support import lanca_descontos
 
+from users.models import Aluno
+
 # Ensure shared tasks defined outside tasks.py are registered by Celery autodiscovery
 from .messages import send_mail_task  # noqa: F401
 
@@ -144,3 +146,16 @@ def apaga_tmp():
 def decontos():
     """Calcula descontos para estudantes do semestre."""
     lanca_descontos()
+
+@shared_task
+def desativa_estudantes_antigos():
+    """Desativa estudantes antigos deixando eles desativados no sistema."""
+    hoje = datetime.date.today()
+    ano_limite = hoje.year - 1
+    semestre_limite = 2 if hoje.month >= 7 else 1
+    estudantes_antigos = Aluno.objects.filter(ano__lt=ano_limite) | Aluno.objects.filter(ano=ano_limite, semestre__lt=semestre_limite)
+    for estudante in estudantes_antigos:
+        estudante.user.is_active = False
+        estudante.user.save()
+        logger.info(f"Estudante {estudante.id} desativado automaticamente.")
+    

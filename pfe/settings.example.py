@@ -297,6 +297,10 @@ CELERY_BEAT_SCHEDULE = {
         'task': 'projetos.tasks.decontos',
         'schedule': crontab(hour=5, minute=10),
     },
+    'desativa_estudantes_antigos': {
+        'task': 'projetos.tasks.desativa_estudantes_antigos',
+        'schedule': crontab(minute=20, hour=5, day_of_month=3, month_of_year='2,8'),
+    },
 }
 
 SITE_ID = 1
