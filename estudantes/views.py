@@ -1157,7 +1157,19 @@ def pesos_rubricas(request):
 
     composicoes_com_peso = Composicao.objects.filter(peso__peso__gt=0).distinct()
     
-    composicoes = filtra_composicoes(composicoes_com_peso, ano, semestre)
+    try:
+        composicoes = filtra_composicoes(composicoes_com_peso, ano, semestre)
+    except ValueError:
+        logger.warning(
+            "Invalid year/semester in pesos_rubricas: user_id=%s ip=%s",
+            request.user.pk,
+            request.META.get("REMOTE_ADDR"),
+        )
+        context = {
+            "area_principal": True,
+            "mensagem_aviso": {"pt": "Ano e semestre inválidos.", "en": "Invalid year and semester."},
+        }
+        return render(request, "generic_ml.html", context=context, status=400)
     
     # Para cada composição, veja todos os objetivos associados
     objetivos_unicos = {}
