@@ -1699,6 +1699,7 @@ def dinamicas_index(request, facilit_id=None):
 
 # @login_required
 # @permission_required("users.altera_professor", raise_exception=True)
+# É permitido que qualquer professor veja o calendário de bancas, mesmo que não seja admin
 def bancas_index(request, prof_id=None):
     """Menus de bancas e calendario de bancas."""
     if prof_id is not None:

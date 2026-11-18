@@ -19,8 +19,7 @@
   <div id="calendar"></div>
 </div>
 
-<h4 style="margin: 8px 0 0 0;">
-  {% lng "Legendas" "Captions" %}</h4>
+<h4 style="margin: 8px 0 0 0;">{% lng "Legendas" "Captions" %}</h4>
 <div class="wrap table-responsive">  
   <div class="legenda" style="display: flex;">
     <div class="legenda-block">
@@ -233,24 +232,6 @@
           }
         ],
 
-        eventClick: function(event, jsEvent, view) {
-          // Para editar uma banca
-          $(".tooltip").remove();
-          if(event.event.id) {
-            var elem = document.createElement( "span" );
-            $( elem ).data( "url", "{% url 'bancas_editar' %}"+event.event.id);
-            abrir_modal.call(elem, null);
-          }
-        },
-
-        dateClick: function(info) {
-          // Para criar uma nova banca, reproveitando a data clicada
-          $(".tooltip").remove();
-          var elem = document.createElement( "span" );
-          $( elem ).data( "url", "{% url 'bancas_criar' %}");
-          $( elem ).data( "data", info.dateStr);
-          abrir_modal.call(elem, null);
-        },
 
         eventMouseEnter: function (info) {
           $(info.el).tooltip({
@@ -259,19 +240,43 @@
           }).tooltip("show");
         },
 
-        eventDragStart: function(info) {
-          $(".tooltip").remove();
-        },
-        
-        eventResize: function(info) {
-          $(".tooltip").remove();
-          atualiza(info.event);
-        },
 
-        eventDrop: function(info) {
-          $(".tooltip").remove();
-          atualiza(info.event);
-        },
+        {% if request.user.is_authenticated and request.user.eh_prof_a %}
+
+          eventClick: function(event, jsEvent, view) {
+            // Para editar uma banca
+            $(".tooltip").remove();
+            if(event.event.id) {
+              var elem = document.createElement( "span" );
+              $( elem ).data( "url", "{% url 'bancas_editar' %}"+event.event.id);
+              abrir_modal.call(elem, null);
+            }
+          },
+
+          dateClick: function(info) {
+            // Para criar uma nova banca, reproveitando a data clicada
+            $(".tooltip").remove();
+            var elem = document.createElement( "span" );
+            $( elem ).data( "url", "{% url 'bancas_criar' %}");
+            $( elem ).data( "data", info.dateStr);
+            abrir_modal.call(elem, null);
+          },
+
+          eventDragStart: function(info) {
+            $(".tooltip").remove();
+          },
+          
+          eventResize: function(info) {
+            $(".tooltip").remove();
+            atualiza(info.event);
+          },
+
+          eventDrop: function(info) {
+            $(".tooltip").remove();
+            atualiza(info.event);
+          },
+
+        {% endif %}
 
       });
 

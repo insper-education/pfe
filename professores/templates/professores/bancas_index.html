@@ -23,8 +23,9 @@
 
   <div id="atualizar">
     {% include "calendario_bancas.html" %}
-    <br>
-    {% include "sem_banca.html" %}
+    {% if request.user.is_authenticated and request.user.eh_prof_a %}
+      <br>{% include "sem_banca.html" %}
+    {% endif %}
   </div>
 
   <script>
