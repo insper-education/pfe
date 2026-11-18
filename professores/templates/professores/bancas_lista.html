@@ -183,6 +183,14 @@
           </a>
         </h5>
         {% include "sem_banca.html" %}
+        {% if sem_banca_avancado %}
+          <h5>{% lng "Projetos avançados sem bancas agendadas (opcional)" "Advanced projects without scheduled examination boards (optional)" %}:
+            <a href="mailto:{% for projeto in sem_banca_avancado %}{{projeto.orientador.user.email}}{% if not forloop.last %};{% endif %}{% endfor %}?subject=Capstone%20Insper%20-%20Projeto:%20{{projeto}}&body=Orientador{% if sem_banca_avancado|length > 1 %}s{% endif %}%20,%0D%0A%0D%0Aatenciosamente,%20{{configuracao.coordenacao.user.get_full_name}}%20(coordenação%20Capstone)" target="_blank">
+              <i class="fas fa-mail-bulk"></i>
+            </a>
+          </h5>
+          {% include "sem_banca.html" with sem_banca=sem_banca_avancado %}
+        {% endif %}
       {% endif %}
     </div>
 

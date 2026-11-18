@@ -300,6 +300,7 @@ def _otimiza_bancas(queryset):
 def puxa_bancas(edicao):
     """Puxa as bancas de acordo com a edição selecionada."""
     sem_banca = []
+    sem_banca_avancado = []
     projeto = None
     configuracao = get_object_or_404(Configuracao)
     if edicao == "proximas":
@@ -316,7 +317,8 @@ def puxa_bancas(edicao):
                 projetos_agendados.add(projeto_id)
             if projeto_alocacao_id:
                 projetos_agendados.add(projeto_alocacao_id)
-        sem_banca = projetos.exclude(id__in=projetos_agendados)
+        sem_banca = projetos.exclude(id__in=projetos_agendados).filter(avancado__isnull=True)
+        sem_banca_avancado = projetos.exclude(id__in=projetos_agendados).filter(avancado__isnull=False)
 
     elif edicao == "todas":
         bancas = Banca.objects.all().order_by("startDate")
@@ -337,6 +339,7 @@ def puxa_bancas(edicao):
     context = {
         "bancas": bancas,
         "sem_banca": sem_banca,
+        "sem_banca_avancado": sem_banca_avancado,
         "projeto": projeto,
         "edicao": edicao,
     }
