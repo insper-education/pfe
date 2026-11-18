@@ -583,8 +583,8 @@ def proposta_editar(request, slug=None):
                             erros_pt.append(f"{field}: {erro}")
                             erros_en.append(f"{field}: {erro}")
                 
-                mensagem_erro_pt = "; ".join(erros_pt) if erros_pt else "Formulário inválido."
-                mensagem_erro_en = "; ".join(erros_en) if erros_en else "Invalid form."
+                mensagem_erro_pt = "Formulário inválido.<br>" + "; ".join(erros_pt) 
+                mensagem_erro_en = "Invalid form.<br>" + "; ".join(erros_en)
                 
                 context = {
                     "voltar": True,
