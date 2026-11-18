@@ -567,10 +567,28 @@ def proposta_editar(request, slug=None):
         if (not liberadas_propostas) or (request.user.is_authenticated and request.user.eh_admin):
             form = PropostaForm(request.POST, request.FILES)
             if not form.is_valid():
-                # Volta com erros; página de submissão mostra o form novamente
+                # Extrai erros específicos do formulário
+                erros_pt = []
+                erros_en = []
+                
+                for field, errors in form.errors.items():
+                    if field == "__all__":
+                        # Erros não-field (validações globais)
+                        for erro in errors:
+                            erros_pt.append(str(erro))
+                            erros_en.append(str(erro))
+                    else:
+                        # Erros de campo específicos
+                        for erro in errors:
+                            erros_pt.append(f"{field}: {erro}")
+                            erros_en.append(f"{field}: {erro}")
+                
+                mensagem_erro_pt = "; ".join(erros_pt) if erros_pt else "Formulário inválido."
+                mensagem_erro_en = "; ".join(erros_en) if erros_en else "Invalid form."
+                
                 context = {
                     "voltar": True,
-                    "mensagem_erro": {"pt": "Formulário inválido.", "en": "Invalid form."},
+                    "mensagem_erro": {"pt": mensagem_erro_pt, "en": mensagem_erro_en},
                 }
                 return render(request, "generic_ml.html", context=context)
 
