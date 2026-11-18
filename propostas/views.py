@@ -549,17 +549,6 @@ def proposta_editar(request, slug=None):
 
     if request.user and request.user.is_authenticated:
 
-        if request.user.eh_estud:  # estudante
-            mensagem_erro = {
-                "pt": "Você não está cadastrado como parceiro!",
-                "en": "You are not registered as a partner!",
-            }
-            context = {
-                "area_principal": True,
-                "mensagem_erro": mensagem_erro,
-            }
-            return render(request, "generic_ml.html", context=context)
-
         if request.user.eh_parc:  # parceiro
             parceiro = get_object_or_404(Parceiro, pk=request.user.parceiro.pk)
             organizacao = parceiro.organizacao
@@ -756,19 +745,6 @@ def carrega_proposta(request):
 
     configuracao = get_object_or_404(Configuracao)
     ano, semestre = adianta_semestre(configuracao.ano, configuracao.semestre)
-
-    if request.user and request.user.is_authenticated:
-
-        if request.user.eh_estud:  # estudantes
-            mensagem_erro = {
-                "pt": "Você não está cadastrado como parceiro!",
-                "en": "You are not registered as a partner!",
-            }
-            context = {
-                "area_principal": True,
-                "mensagem_erro": mensagem_erro,
-            }
-            return render(request, "generic_ml.html", context=context)
 
     if request.method == "POST":
 
