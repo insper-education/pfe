@@ -45,26 +45,33 @@ def atualiza_proposta(request, primarykey=None):
     # Troca Conformidade de Proposta
     for dict in request.POST:
         if dict[0:5] == "dict[":
-            tmp = request.POST[dict] == "true"
-            setattr(proposta, dict[5:-1], tmp)
+            if request.POST[dict] in ["true", "false"]:
+                tmp = request.POST[dict] == "true"
+                setattr(proposta, dict[5:-1], tmp)
 
     # Define analisador
-    if "autorizador" in request.POST:
+    if "dict[autorizador]" in request.POST:
         try:
-            if request.POST["autorizador"] == "0":
+            if request.POST["dict[autorizador]"] == "0":
                 proposta.autorizado = None
             else:
-                proposta.autorizado = PFEUser.objects.get(pk=request.POST["autorizador"])
+                proposta.autorizado = PFEUser.objects.get(pk=request.POST["dict[autorizador]"])
         except PFEUser.DoesNotExist:
             return HttpResponse("Analisador não encontrado.", status=401)
     
-    # Disponibiliza proposta
-    if "disponibilizar" in request.POST:
-        proposta.disponivel = request.POST["disponibilizar"] == "sim"
-
     # Anotações internas
     if "anotacoes" in request.POST:
-        proposta.anotacoes = request.POST["anotacoes"]
+        proposta.anotacoes = request.POST["anotacoes"].strip()
+
+    if "dict[colaboracao]" in request.POST:
+        organizacao_id = request.POST["dict[colaboracao]"].strip()
+        if organizacao_id:
+            try:
+                proposta.colaboracao = Organizacao.objects.get(pk=organizacao_id)
+            except Organizacao.DoesNotExist:
+                return HttpResponse("Organização não encontrada.", status=401)
+        else:
+            proposta.colaboracao = None
 
     proposta.save()
     return JsonResponse({"atualizado": True})

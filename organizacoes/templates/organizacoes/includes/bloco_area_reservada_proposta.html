@@ -1,0 +1,48 @@
+{% comment %}
+  Desenvolvido para o Projeto Final de Engenharia
+  Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+  Data: 19 de Dezembro de 2026
+{% endcomment %}
+
+{% load static %}
+{% load linguas %}
+
+<div>
+  <label style="font-size: 13px;" for="internacional">
+    <input style="position: relative; top: 2px;" type="checkbox" name="internacional" id="internacional" class="fechar_proposta" {% if proposta.internacional %}checked{% endif %}>
+    <b>{% lng "Internacional" "International" %}</b>
+    {% lng "(projeto sendo realizado com uma instituição no estrangeiro)" "(project being carried out with an institution abroad)" %}
+  </label>
+</div>
+
+<div>
+  <label style="font-size: 13px;" for="intercambio">
+    <input style="position: relative; top: 2px;" type="checkbox" name="intercambio" id="intercambio" class="fechar_proposta" {% if proposta.intercambio %}checked{% endif %}>
+    <b>{% lng "Intercâmbio" "Exchange" %}</b>
+    {% lng "(estudantes farão projeto no intercâmbio com acompanhamento do Insper)" "(students will do project on exchange with Insper monitoring)" %}
+  </label>
+</div>
+
+<div>
+  <label style="font-size: 13px;" for="empreendendo">
+    <input style="position: relative; top: 2px;" type="checkbox" name="empreendendo" id="empreendendo" class="fechar_proposta" {% if proposta.empreendendo %}checked{% endif %}>
+    <b>{% lng "Estudantes Empreendedores" "Entrepeneur Students" %}</b> 
+    {% lng "(proposta de grupo de estudantes regulares empreendendo em próprio projeto)" "(proposal of group of regular students undertaking in own project)" %}
+  </label>
+</div>
+
+<div>
+  <label style="font-size: 13px;" for="colaboracao">
+    <b>{% lng "Colaboração" "Collaboration" %}</b> 
+    {% lng "(proposta foi desenvolvida com a colaboração de uma outra organização)" "(proposal was developed with the collaboration of another organization)" %}:
+  </label>
+  <select name="colaboracao" id="colaboracao" class="selectpicker fechar_proposta" data-live-search="true" data-width="100%" data-size="10">
+      <option value=""> -- nenhuma organização -- </option>
+      {% for organizacao in organizacoes %}
+        <option value="{{organizacao.id}}" {% if proposta.colaboracao.id == organizacao.id %}selected="selected"{% endif %}>
+          {{organizacao.nome}}
+        </option>  
+      {% endfor %}
+  </select>
+</div>
+

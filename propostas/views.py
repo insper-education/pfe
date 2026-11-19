@@ -491,6 +491,7 @@ def proposta_completa(request, primarykey):
         "liberacao_visualizacao": Evento.objects.filter(tipo_evento__sigla="APDE").last(),
         "conformidades": proposta.CONFORMIDADES,
         "cores_opcoes": Estrutura.loads(nome="Cores Opcoes"),
+        "organizacoes": Organizacao.objects.all().order_by("nome"),
     }
     return render(request, "propostas/proposta_completa.html", context=context)
 

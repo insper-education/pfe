@@ -163,6 +163,25 @@
     padding: 0.75rem 1rem;
   }
   
+
+  .card-reservada {
+    border-radius: 8px;
+    border: none;
+    width: 700px;
+    max-width: 100%;
+  }
+  
+  .card-reservada .card-header {
+    border-radius: 8px 8px 0 0 !important;
+    border-bottom: none;
+    padding: 0.5rem 1rem;
+    background: linear-gradient(135deg, #141414 0%, #050505 100%);
+  }
+  
+  .card-reservada .card-body {
+    padding: 0.75rem 1rem;
+  }
+
   .radio-group {
     display: flex;
     gap: 1rem;
@@ -379,9 +398,9 @@
             <div class="radio-item">
               <input class="fechar_proposta disponibilizar" 
                     type="radio" 
-                    name="disponibilizar" 
+                    name="disponivel" 
                     id="disp_sim"
-                    value="sim"
+                    value="true"
                     {% if proposta.disponivel %}checked{% endif %}>
               <label for="disp_sim">
                 {% lng "Sim" "Yes" %}
@@ -391,9 +410,9 @@
             <div class="radio-item">
               <input class="fechar_proposta disponibilizar" 
                     type="radio" 
-                    name="disponibilizar" 
+                    name="disponivel" 
                     id="disp_nao"
-                    value="nao"
+                    value="false"
                     {% if not proposta.disponivel %}checked{% endif %}>
               <label for="disp_nao">
                 {% lng "Não" "No" %}
@@ -409,6 +428,18 @@
             </span>
           </div>
 
+        </div>
+      </div>
+
+      <div class="card card-reservada shadow-sm mb-4">
+        <div class="card-header text-white">
+          <h6 class="mb-0" style="font-size: 0.95rem;">
+            <i class="fas fa-lock mr-2"></i>
+            {% lng "Área Reservada" "Reserved Area" %}
+          </h6>
+        </div>
+        <div class="card-body">
+          {% include "organizacoes/includes/bloco_area_reservada_proposta.html" with proposta=proposta %}
         </div>
       </div>
 
@@ -566,22 +597,41 @@
   <script>
       
     function fechar_proposta() {
-      var autorizador = $("#autorizador option:selected").attr("value");
-      var disponibilizar = $("input[name=disponibilizar]:checked", "#disponibilizacaoform").val();
-      var anotacoes = $("#anotacoes").val();
-
+      
       var dict = {};
       $(".fechar_proposta").each(function() {
-        dict[$(this).attr("name")] = $(this).is(":checked");
+        var name = $(this).attr("name");
+        var value;
+        
+        if( $(this).is(":checkbox") ) {
+          value = $(this).is(":checked");
+        } else if( $(this).is("select") ) {
+          value = $(this).val();
+        } else if( $(this).is("input[type=radio]") ) {
+          value = $("input[name='" + name + "']:checked").val();
+        } else if( $(this).is("textarea") ) {
+          value = $(this).val();
+        } else if( $(this).is("input[type=text]") ) {
+          value = $(this).val();
+        } else {
+          value = $(this).val();
+        }
+        
+        dict[name] = value;
       })
 
       url = "{% url 'atualiza_proposta' proposta.id %}";
 
       data = {
-        autorizador: autorizador,
-        disponibilizar: disponibilizar,
         dict: dict,
-        anotacoes: anotacoes,
+        anotacoes: $("#anotacoes").val(),
+        {% comment %} 
+        autorizador: $("#autorizador option:selected").attr("value"),
+        disponibilizar: $("input[name=disponibilizar]:checked", "#disponibilizacaoform").val(),
+        internacional: $("#internacional").is(":checked"),
+        intercambio: $("#intercambio").is(":checked"),
+        empreendendo: $("#empreendendo").is(":checked"),
+        colaboracao: $("#colaboracao option:selected").attr("value") {% endcomment %}
       };
       
       function success(response){
