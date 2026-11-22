@@ -10,6 +10,17 @@ class MaintenanceModeMiddleware:
 
     def __call__(self, request):
         path = request.META.get('PATH_INFO', "")
+
+        # Evita acessar sessão/autenticação em rotas de arquivos.
+        file_prefixes = (
+            '/arquivos/',
+            settings.STATIC_URL,
+            settings.MEDIA_URL,
+            '/favicon.ico',
+        )
+        if any(prefix and path.startswith(prefix) for prefix in file_prefixes):
+            return self.get_response(request)
+
         if (request.user.is_authenticated and request.user.tipo_de_usuario!=4) and settings.MAINTENANCE_MODE and path!=reverse("manutencao"):
             response = redirect(reverse("manutencao"))
         elif (request.user.is_authenticated and request.user.tipo_de_usuario!=4) and (not settings.MAINTENANCE_MODE) and path==reverse("manutencao"):
