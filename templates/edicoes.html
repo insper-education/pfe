@@ -416,7 +416,9 @@
               {% lng "Todas" "All" %}
             </option>
             {% for entrega in com_entregas %}
-              <option class="opt_edi" value="{{entrega.id}}">{{entrega}}</option>
+              <option class="opt_edi troca_lingua" value="{{entrega.id}}" data-pt="{{entrega.titulo}}" data-en="{{entrega.titulo_en}}">
+                {% lng entrega.titulo entrega.titulo_en %}
+              </option>
             {% endfor %}
           </select>
           <div class="separador input-group-addon"></div>

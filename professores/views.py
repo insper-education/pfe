@@ -356,11 +356,14 @@ def avaliar_entregas(request, prof_id=None):
             edicoes = get_edicoes(Projeto)[0]
 
         # Coletando os tipos de entregas que podem ser avaliadas
-        exames = {
-            c.exame
-            for c in Composicao.objects.filter(entregavel=True).select_related("exame")
-            if c.exame
-        }
+        exames = sorted(
+            {
+                c.exame
+                for c in Composicao.objects.filter(entregavel=True).select_related("exame")
+                if c.exame
+            },
+            key=lambda exame: ((exame.titulo or "").casefold(), exame.titulo or "", exame.pk),
+        )
 
         selecionada_edicao = f"{configuracao.ano}.{configuracao.semestre}"
         edicao = request.GET.get("edicao", None)

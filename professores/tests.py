@@ -1,6 +1,11 @@
 from copy import deepcopy
+from types import SimpleNamespace
+from unittest.mock import patch
 
-from django.test import SimpleTestCase
+from django.test import RequestFactory, SimpleTestCase
+
+from academica.models import Exame
+from .views import avaliar_entregas
 
 from .rubricas_evidencias import (
     RubricConfigError,
@@ -43,3 +48,35 @@ class RubricaEvidenciasEngineTests(SimpleTestCase):
         config["rubric"]["nodes"][0]["options"][0]["maximum_grade"] = "Z"
         with self.assertRaises(RubricConfigError):
             validate_rubric_config(config)
+
+
+class AvaliarEntregasTests(SimpleTestCase):
+    def test_tipos_entregas_sao_unicos_e_ordenados_por_titulo(self):
+        exame_z = Exame(pk=1, titulo="Zebra")
+        exame_a = Exame(pk=2, titulo="alfa")
+        exame_sem_titulo = Exame(pk=3, titulo=None)
+        composicoes = [
+            SimpleNamespace(exame=exame_z),
+            SimpleNamespace(exame=exame_a),
+            SimpleNamespace(exame=exame_z),
+            SimpleNamespace(exame=None),
+            SimpleNamespace(exame=exame_sem_titulo),
+        ]
+        request = RequestFactory().get("/")
+        request.user = SimpleNamespace(
+            is_authenticated=True, eh_admin=True, has_perms=lambda permissions: True,
+        )
+        configuracao = SimpleNamespace(ano=2026, semestre=1)
+
+        with patch("professores.views.get_object_or_404", return_value=configuracao), \
+             patch("professores.views.get_edicoes", return_value=(["2026.1"],)), \
+             patch("professores.views.Composicao.objects.filter") as filtrar, \
+             patch("professores.views.render") as render:
+            filtrar.return_value.select_related.return_value = composicoes
+            avaliar_entregas(request, prof_id="todos")
+
+        filtrar.assert_called_once_with(entregavel=True)
+        self.assertEqual(
+            render.call_args.kwargs["context"]["tipos_entregas"],
+            [exame_sem_titulo, exame_a, exame_z],
+        )
