@@ -51,8 +51,14 @@ pg_restore --dbname=pfe --host=127.0.0.1 --port=5432 --username=pfe --no-passwor
 
 # Backup pelo Django (para windows soh consegui assim)
 PUXAR (servidor)> python manage.py dumpdata --natural-primary --natural-foreign > dump.json
+# Os comandos abaixo apagam os dados locais. Verifique a conexao e faca backup antes.
+# A tabela do Textgrader eh criada somente se estiver ausente; uma tabela existente nao e alterada.
+SUBIR (cliente)> python manage.py preparar_textgrader
 SUBIR (cliente)> python manage.py flush --no-input
+# Neste ambiente, flush nao limpa a tabela do Textgrader.
+SUBIR (cliente)> psql -h 127.0.0.1 -p 5432 -U pfe -d pfe -v ON_ERROR_STOP=1 -c "TRUNCATE TABLE textgrader.access_log RESTART IDENTITY;"
 SUBIR (cliente)> python manage.py loaddata dump.json
+# Interrompa a sequencia se algum comando falhar.
 
 # Virtual environment
 source ./env/bin/activate
