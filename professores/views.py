@@ -1329,7 +1329,7 @@ def banca_avaliar(request, slug, documento_id=None):
         if destaque is not None:
             destaque = True if destaque == "True" else False
 
-        atrasado, sem_documentos = bloqueia_avaliacao(documentos, evento)
+        atrasado_g, sem_documentos = bloqueia_avaliacao(documentos, evento)
 
         entender = request.GET.get("entender", None)
         idear = request.GET.get("idear", None)
@@ -1385,7 +1385,7 @@ def banca_avaliar(request, slug, documento_id=None):
             "testar": testar,
             "implementar": implementar,
             "evento": evento,
-            "atrasado": atrasado,
+            "atrasado": atrasado_g,  # Só grupo
             "sem_documentos": sem_documentos,
             "rubric_allowed_grades": rubric_allowed_grades,
         }
