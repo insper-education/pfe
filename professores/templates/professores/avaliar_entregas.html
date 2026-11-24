@@ -259,7 +259,13 @@
                             {% lng "[FORA DO PRAZO]" "[OVERDUE]" %}
                           </span>{% endif %}
                         {% endwith %}
-                        {% if forloop.first%}</b>{% endif %}  
+                        {% if forloop.first%}</b>{% endif %}
+
+                        {% if user and user.eh_admin %}
+                            <a class="open-modal" data-url="{% url 'edita_documento' documento.id %}" data-toggle="tooltip" data-html="true" animation="true" title="editar"
+                            >&nbsp;<i class="fas fa-pencil-alt" style="font-size: 0.7em;"></i></a>          
+                        {% endif %}
+
                       </li>
                       {% if item.avaliacoes and item.avaliacoes.first%}
                         {% if documento.data > item.avaliacoes.first.momento %}
@@ -328,7 +334,12 @@
                               {% lng "[FORA DO PRAZO]" "[OVERDUE]" %}
                             </span>{% endif %}
                           {% endwith %}
-                          {% if forloop.first%}</b>{% endif %}  
+                          {% if forloop.first%}</b>{% endif %}
+                          {% if user and user.eh_admin %}
+                            <a class="open-modal" data-url="{% url 'edita_documento' documento.id %}" data-toggle="tooltip" data-html="true" animation="true" title="editar"
+                            >&nbsp;<i class="fas fa-pencil-alt" style="font-size: 0.7em;"></i></a>          
+                          {% endif %}
+
                         </li>
                         {% if values.avaliacoes and values.avaliacoes.first%}
                           {% if documento.data > values.avaliacoes.first.momento %}
@@ -593,5 +604,9 @@
 
   {% include "edicoes_ajax.html" %}
   {% include "mostra_api.html" with endpoints=endpoints %}
+
+  {% if user.eh_admin %}
+    {% include "base-modal.html" %}
+  {% endif %}
 
 {% endblock %}
