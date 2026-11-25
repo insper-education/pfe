@@ -1,10 +1,12 @@
 from copy import deepcopy
+from datetime import date, datetime
 from types import SimpleNamespace
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 
 from django.test import RequestFactory, SimpleTestCase
 
 from academica.models import Exame
+from .support import bloqueia_avaliacao
 from .views import avaliar_entregas
 
 from .rubricas_evidencias import (
@@ -80,3 +82,38 @@ class AvaliarEntregasTests(SimpleTestCase):
             render.call_args.kwargs["context"]["tipos_entregas"],
             [exame_sem_titulo, exame_a, exame_z],
         )
+
+
+class BloqueiaAvaliacaoTests(SimpleTestCase):
+    def test_sem_documento_antes_e_depois_do_prazo(self):
+        documentos = Mock()
+        documentos.first.return_value = None
+        casos = [
+            (date(2026, 11, 25), (False, False)),
+            (date(2026, 11, 24), (True, True)),
+        ]
+        with patch("professores.support.datetime.datetime") as relogio:
+            relogio.now.return_value = datetime(2026, 11, 25, 12)
+            for prazo, esperado in casos:
+                with self.subTest(prazo=prazo):
+                    self.assertEqual(
+                        bloqueia_avaliacao(documentos, SimpleNamespace(endDate=prazo)),
+                        esperado,
+                    )
+
+    def test_documentos_entregues_mantem_regras_de_atraso(self):
+        documentos = Mock()
+        evento = SimpleNamespace(endDate=date(2026, 11, 24))
+        casos = [
+            (datetime(2026, 11, 24, 23), False, (False, False)),
+            (datetime(2026, 11, 25, 8), False, (True, False)),
+            (datetime(2026, 11, 25, 8), True, (False, False)),
+        ]
+        with patch("professores.support.datetime.datetime") as relogio:
+            relogio.now.return_value = datetime(2026, 11, 25, 12)
+            for data, tolerado, esperado in casos:
+                with self.subTest(data=data, tolerado=tolerado):
+                    documentos.first.return_value = SimpleNamespace(
+                        data=data, atraso_tolerado=tolerado,
+                    )
+                    self.assertEqual(bloqueia_avaliacao(documentos, evento), esperado)
