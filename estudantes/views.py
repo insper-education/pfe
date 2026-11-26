@@ -830,14 +830,18 @@ def avaliacao_pares(request, momento):
                 "mensagem": {"pt": "Dados atualizados.", "en": "Data updated."},
             }
             return render(request, "generic_ml.html", context=context)
-        
+
+        entregue = None
         pares = []
         for alocacao in alocacoes:
             par = Pares.objects.filter(alocacao_de=alocacao_de, alocacao_para=alocacao, tipo=tipo).first()
             pares.append(par)
+            if par and par.momento:
+                entregue = par.momento
 
         colegas = zip(alocacoes, pares)
         context["colegas"] = colegas
+        context["entregue"] = entregue
 
     else:  # Supostamente professores
         context["mensagem_aviso"] = {"pt": "Você não está cadastrado como estudante.", "en": "You are not registered as a student."}

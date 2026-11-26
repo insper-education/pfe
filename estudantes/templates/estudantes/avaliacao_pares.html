@@ -7,6 +7,7 @@
 
 {% load static %}
 {% load linguas %}
+{% load date_extras %}
 
 {% block head %}
   <link rel="stylesheet" href="{% static 'css/div_arrend.css' %}">
@@ -31,31 +32,55 @@
 
 {% block content %}
 
-  {% if vencido > limite_vencimento %}
-    <h5 class="red-bold">
-      {% if momento == "intermediaria" %}
-        {% lng "Fora do Período de Avaliação de Pares Intermediária" "Out of Intermediate Peer Evaluation Period" %}
-      {% else %}
-        {% lng "Fora do Período de Avaliação de Pares Final" "Out of Final Evaluation Period" %}
-      {% endif %}
-    </h5>
-  {% elif vencido > 0 %}
-    <h5 class="red-bold">
-      {% if momento == "intermediaria" %}
-        {% lng "Você perdeu o período regular da Avaliação de Pares Intermediária" "You missed the regular period of Intermediate Peer Evaluation" %}
-      {% else %}
-        {% lng "Você perdeu o período regular da Avaliação de Pares Final" "You missed the regular period of Final Peer Evaluation" %}
-      {% endif %}
-    </h5>
-  {% else %}
-    <h5>
-      {% if momento == "intermediaria" %}
-        {% lng "Período de Avaliação de Pares Intermediária" "Intermediate Peer Evaluation Period" %}
-      {% else %}
-        {% lng "Período de Avaliação de Pares Final" "Final Peer Evaluation Period" %}
-      {% endif %}
-    </h5>
-  {% endif %}
+  <div class="mb-3">
+    {% if entregue %}
+      {% with atraso=entregue|diff_days:fim %}
+        {% if atraso > 0 %}
+          <h5 class="yellow-bold">
+            {% if momento == "intermediaria" %}
+              {% lng "Você entregou a Avaliação de Pares Intermediária com atraso de" "You submitted the Intermediate Peer Evaluation late by" %}
+            {% else %}
+              {% lng "Você entregou a Avaliação de Pares Final com atraso de" "You submitted the Final Peer Evaluation late by" %}
+            {% endif %}
+            ({% lng_dh entregue %})
+          </h5>
+        {% else %}
+          <h5 class="green-bold">
+          {% if momento == "intermediaria" %}
+            {% lng "Você já entregou a Avaliação de Pares Intermediária" "You have already submitted the Intermediate Peer Evaluation" %}
+          {% else %}
+            {% lng "Você já entregou a Avaliação de Pares Final" "You have already submitted the Final Peer Evaluation" %}
+          {% endif %}
+          ({% lng_dh entregue %})
+        {% endif %}
+      </h5>
+      {% endwith %}
+    {% elif vencido > limite_vencimento %}
+      <h5 class="red-bold">
+        {% if momento == "intermediaria" %}
+          {% lng "Fora do Período de Avaliação de Pares Intermediária" "Out of Intermediate Peer Evaluation Period" %}
+        {% else %}
+          {% lng "Fora do Período de Avaliação de Pares Final" "Out of Final Evaluation Period" %}
+        {% endif %}
+      </h5>
+    {% elif vencido > 0 %}
+      <h5 class="red-bold">
+        {% if momento == "intermediaria" %}
+          {% lng "Você perdeu o período regular da Avaliação de Pares Intermediária, mas ainda pode entregar com atraso" "You missed the regular period of Intermediate Peer Evaluation, but you can still submit late" %}
+        {% else %}
+          {% lng "Você perdeu o período regular da Avaliação de Pares Final, mas ainda pode entregar com atraso" "You missed the regular period of Final Peer Evaluation, but you can still submit late" %}
+        {% endif %}
+      </h5>
+    {% else %}
+      <h5>
+        {% if momento == "intermediaria" %}
+          {% lng "Período de Avaliação de Pares Intermediária" "Intermediate Peer Evaluation Period" %}
+        {% else %}
+          {% lng "Período de Avaliação de Pares Final" "Final Peer Evaluation Period" %}
+        {% endif %}
+      </h5>
+    {% endif %}
+  </div>
 
   <form id="form-avaliacao-pares" action="" method="post"> {% csrf_token %}  
 
@@ -79,7 +104,8 @@
         </b></label><br>
         <textarea id="aprecia{{colega.id}}" name="aprecia{{colega.id}}" rows="4" cols="80" maxlength="1000" 
         {% if not colega.aluno.externo %}required{% endif %}
-        {% if vencido > limite_vencimento or user.tipo_de_usuario != 1%}disabled{% endif %}>{% if par.aprecia %}{{par.aprecia}}{% endif %}</textarea>
+        {% if vencido > limite_vencimento or user.tipo_de_usuario != 1%}disabled{% endif %}
+        {% if vencido > 0 and entregue %}disabled{% endif %}>{% if par.aprecia %}{{par.aprecia}}{% endif %}</textarea>
       </div>
 
       <div class="div_arredondado">
@@ -90,7 +116,8 @@
         </b></label><br>
         <textarea id="atrapalhando{{colega.id}}" name="atrapalhando{{colega.id}}" rows="4" cols="80" maxlength="1000"
         {% if not colega.aluno.externo %}required{% endif %}
-        {% if vencido > limite_vencimento or user.tipo_de_usuario != 1%}disabled{% endif %}>{% if par.atrapalhando %}{{par.atrapalhando}}{% endif %}</textarea>
+        {% if vencido > limite_vencimento or user.tipo_de_usuario != 1%}disabled{% endif %}
+        {% if vencido > 0 and entregue %}disabled{% endif %}>{% if par.atrapalhando %}{{par.atrapalhando}}{% endif %}</textarea>
       </div>
 
       <div class="div_arredondado">
@@ -101,7 +128,8 @@
         </b></label><br>
         <textarea id="mudar{{colega.id}}" name="mudar{{colega.id}}" rows="4" cols="80" maxlength="1000"
         {% if not colega.aluno.externo %}required{% endif %}
-        {% if vencido > limite_vencimento or user.tipo_de_usuario != 1%}disabled{% endif %}>{% if par.mudar %}{{par.mudar}}{% endif %}</textarea>
+        {% if vencido > limite_vencimento or user.tipo_de_usuario != 1%}disabled{% endif %}
+        {% if vencido > 0 and entregue %}disabled{% endif %}>{% if par.mudar %}{{par.mudar}}{% endif %}</textarea>
       </div>
 
       <div class="div_arredondado">
@@ -113,7 +141,9 @@
           {% for tipo in TIPO_ENTREGA %}
             <label><input type="radio" name="entrega{{colega.id}}" value="{{tipo.0}}" 
               {% if not colega.aluno.externo %}required{% endif %}
-              {% if vencido > limite_vencimento or user.tipo_de_usuario != 1%}disabled{% endif %} {% if par.entrega == tipo.0 %}checked="checked"{% endif %}>
+              {% if vencido > limite_vencimento or user.tipo_de_usuario != 1%}disabled{% endif %}
+              {% if vencido > 0 and entregue %}disabled{% endif %}
+              {% if par.entrega == tipo.0 %}checked="checked"{% endif %}>
               {% lng tipo.1 tipo.2 %}</label>
           {% endfor %}
         </div>
@@ -129,7 +159,9 @@
           {% for tipo in TIPO_INICIATIVA %}
             <label><input type="radio" name="iniciativa{{colega.id}}" value="{{tipo.0}}" 
               {% if not colega.aluno.externo %}required{% endif %}
-              {% if par.iniciativa == tipo.0 %}checked="checked"{% endif %} {% if vencido > limite_vencimento or user.tipo_de_usuario != 1%}disabled{% endif %}>
+              {% if par.iniciativa == tipo.0 %}checked="checked"{% endif %}
+              {% if vencido > 0 and entregue %}disabled{% endif %}
+              {% if vencido > limite_vencimento or user.tipo_de_usuario != 1%}disabled{% endif %}>
               {% lng tipo.1 tipo.2 %}</label>
           {% endfor %}
         </div>
@@ -144,7 +176,9 @@
           {% for tipo in TIPO_COMUNICACAO %}
             <label><input type="radio" name="comunicacao{{colega.id}}" value="{{tipo.0}}" 
               {% if not colega.aluno.externo %}required{% endif %}
-              {% if par.comunicacao == tipo.0 %}checked="checked"{% endif %} {% if vencido > limite_vencimento or user.tipo_de_usuario != 1%}disabled{% endif %}>
+              {% if par.comunicacao == tipo.0 %}checked="checked"{% endif %}
+              {% if vencido > 0 and entregue %}disabled{% endif %}
+              {% if vencido > limite_vencimento or user.tipo_de_usuario != 1%}disabled{% endif %}>
               {% lng tipo.1 tipo.2 %}</label>
           {% endfor %}
         </div>
@@ -154,7 +188,10 @@
 
     {% endfor %}
 
-    <button class="btn btn-primary mb-1" {% if vencido > limite_vencimento or user.tipo_de_usuario != 1%}disabled{% endif %} type="submit">
+    <button class="btn btn-primary mb-1"
+     {% if vencido > limite_vencimento or user.tipo_de_usuario != 1%}disabled{% endif %}
+     {% if vencido > 0 and entregue %}disabled{% endif %}
+     type="submit">
       {% lng "Enviar" "Submit" %}
     </button>
 
