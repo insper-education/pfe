@@ -7,6 +7,15 @@
 {% load linguas %}
 {% load bleach %}
 
+<style>
+  .info_pasta {
+    word-wrap: break-word;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+    max-width: 100%;
+  }
+</style>
+
 {# Site do Projeto #}
 {% if projeto.site %}
   <div class="mt-2">
@@ -20,7 +29,7 @@
         {% endif %}
       </div>
       <div>&#127760;&nbsp;</div>
-      <div style="overflow-wrap: anywhere; word-break: break-word;">
+      <div class="info_pasta">
         <a href="{{request.scheme}}://{{request.get_host}}{{projeto.site}}" target="_blank" rel="noopener noreferrer">{{request.scheme}}://{{request.get_host}}{{projeto.site}}</a>
       </div>
     </div>
@@ -33,7 +42,7 @@
     <b>{% lng "URL do LaTeX" "LaTeX URL" %}:</b>
     <div style="display: flex; align-items: flex-start; padding-left: 18px;">
       <div>&#128221;&nbsp;</div>
-      <div style="overflow-wrap: anywhere; word-break: break-word;"><a href="{{projeto.url_latex}}" target="_blank" rel="noopener noreferrer">{{projeto.url_latex}}</a></div>
+      <div class="info_pasta"><a href="{{projeto.url_latex}}" target="_blank" rel="noopener noreferrer">{{projeto.url_latex}}</a></div>
     </div>
   </div>
 {% endif %}
@@ -44,7 +53,7 @@
     <b>{% lng "URL do Time no Github" "Team URL on Github" %}:</b>
     <div style="display: flex; align-items: flex-start; padding-left: 18px;">
       <div>&#128187;&nbsp;</div>
-      <div style="overflow-wrap: anywhere; word-break: break-word;"><a href="{{projeto.url_time_github}}" target="_blank" rel="noopener noreferrer">{{projeto.url_time_github}}</a></div>
+      <div class="info_pasta"><a href="{{projeto.url_time_github}}" target="_blank" rel="noopener noreferrer">{{projeto.url_time_github}}</a></div>
     </div>
   </div>
 {% endif %}
@@ -55,7 +64,7 @@
     <b>{% lng "Conta AWS" "AWS Account" %}:</b>
     <div style="display: flex; align-items: flex-start; padding-left: 18px;">
       <div>&#9729;&nbsp;</div>
-      <div>{{projeto.conta_aws|linebreaks}}</div>
+      <div class="info_pasta">{{projeto.conta_aws|linebreaks}}</div>
     </div>
   </div>
 {% endif %}
@@ -66,7 +75,7 @@
     <b>{% lng "Apontamento para acesso a LLM" "LLM Access Information" %}:</b>
     <div style="display: flex; align-items: flex-start; padding-left: 18px;">
       <div>&#128273;&nbsp;</div>
-      <div>{{projeto.apontamento_llm|linebreaks}}</div>
+      <div class="info_pasta">{{projeto.apontamento_llm|linebreaks}}</div>
     </div>
   </div>
 {% endif %}
@@ -77,7 +86,7 @@
     <b>{% lng "Lista de equipamentos" "Equipment list" %}:</b>
     <div style="display: flex; align-items: flex-start; padding-left: 18px;">
       <div>&#128736;&nbsp;</div>
-      <div>{{projeto.lista_equipamentos|linebreaks}}</div>
+      <div class="info_pasta">{{projeto.lista_equipamentos|linebreaks}}</div>
     </div>
   </div>
 {% endif %}
@@ -88,7 +97,7 @@
     <b>{% lng "Lista de compras" "Purchase list" %}:</b>
     <div style="display: flex; align-items: flex-start; padding-left: 18px;">
       <div>&#128179;&nbsp;</div>
-      <div>{{projeto.lista_compras|linebreaks}}</div>
+      <div class="info_pasta">{{projeto.lista_compras|linebreaks}}</div>
     </div>
   </div>
 {% endif %}
@@ -99,7 +108,7 @@
     <b>{% lng "Outras pastas do projeto" "Other project folders" %}:</b>
     <div style="display: flex; align-items: flex-start; padding-left: 18px;">
       <div>&#128193;&nbsp;</div>
-      <div>{{projeto.pastas_do_projeto|linebreaks|bleach_urlize|safe}}</div>
+      <div class="info_pasta">{{projeto.pastas_do_projeto|linebreaks|bleach_urlize|safe}}</div>
     </div>
   </div>
 {% endif %}
