@@ -1,6 +1,13 @@
 from copy import deepcopy
+from datetime import date, datetime
+from types import SimpleNamespace
+from unittest.mock import Mock, patch
 
-from django.test import SimpleTestCase
+from django.test import RequestFactory, SimpleTestCase
+
+from academica.models import Exame
+from .support import bloqueia_avaliacao
+from .views import avaliar_entregas
 
 from .rubricas_evidencias import (
     RubricConfigError,
@@ -43,3 +50,70 @@ class RubricaEvidenciasEngineTests(SimpleTestCase):
         config["rubric"]["nodes"][0]["options"][0]["maximum_grade"] = "Z"
         with self.assertRaises(RubricConfigError):
             validate_rubric_config(config)
+
+
+class AvaliarEntregasTests(SimpleTestCase):
+    def test_tipos_entregas_sao_unicos_e_ordenados_por_titulo(self):
+        exame_z = Exame(pk=1, titulo="Zebra")
+        exame_a = Exame(pk=2, titulo="alfa")
+        exame_sem_titulo = Exame(pk=3, titulo=None)
+        composicoes = [
+            SimpleNamespace(exame=exame_z),
+            SimpleNamespace(exame=exame_a),
+            SimpleNamespace(exame=exame_z),
+            SimpleNamespace(exame=None),
+            SimpleNamespace(exame=exame_sem_titulo),
+        ]
+        request = RequestFactory().get("/")
+        request.user = SimpleNamespace(
+            is_authenticated=True, eh_admin=True, has_perms=lambda permissions: True,
+        )
+        configuracao = SimpleNamespace(ano=2026, semestre=1)
+
+        with patch("professores.views.get_object_or_404", return_value=configuracao), \
+             patch("professores.views.get_edicoes", return_value=(["2026.1"],)), \
+             patch("professores.views.Composicao.objects.filter") as filtrar, \
+             patch("professores.views.render") as render:
+            filtrar.return_value.select_related.return_value = composicoes
+            avaliar_entregas(request, prof_id="todos")
+
+        filtrar.assert_called_once_with(entregavel=True)
+        self.assertEqual(
+            render.call_args.kwargs["context"]["tipos_entregas"],
+            [exame_sem_titulo, exame_a, exame_z],
+        )
+
+
+class BloqueiaAvaliacaoTests(SimpleTestCase):
+    def test_sem_documento_antes_e_depois_do_prazo(self):
+        documentos = Mock()
+        documentos.first.return_value = None
+        casos = [
+            (date(2026, 11, 25), (False, False)),
+            (date(2026, 11, 24), (True, True)),
+        ]
+        with patch("professores.support.datetime.datetime") as relogio:
+            relogio.now.return_value = datetime(2026, 11, 25, 12)
+            for prazo, esperado in casos:
+                with self.subTest(prazo=prazo):
+                    self.assertEqual(
+                        bloqueia_avaliacao(documentos, SimpleNamespace(endDate=prazo)),
+                        esperado,
+                    )
+
+    def test_documentos_entregues_mantem_regras_de_atraso(self):
+        documentos = Mock()
+        evento = SimpleNamespace(endDate=date(2026, 11, 24))
+        casos = [
+            (datetime(2026, 11, 24, 23), False, (False, False)),
+            (datetime(2026, 11, 25, 8), False, (True, False)),
+            (datetime(2026, 11, 25, 8), True, (False, False)),
+        ]
+        with patch("professores.support.datetime.datetime") as relogio:
+            relogio.now.return_value = datetime(2026, 11, 25, 12)
+            for data, tolerado, esperado in casos:
+                with self.subTest(data=data, tolerado=tolerado):
+                    documentos.first.return_value = SimpleNamespace(
+                        data=data, atraso_tolerado=tolerado,
+                    )
+                    self.assertEqual(bloqueia_avaliacao(documentos, evento), esperado)

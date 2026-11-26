@@ -356,11 +356,14 @@ def avaliar_entregas(request, prof_id=None):
             edicoes = get_edicoes(Projeto)[0]
 
         # Coletando os tipos de entregas que podem ser avaliadas
-        exames = {
-            c.exame
-            for c in Composicao.objects.filter(entregavel=True).select_related("exame")
-            if c.exame
-        }
+        exames = sorted(
+            {
+                c.exame
+                for c in Composicao.objects.filter(entregavel=True).select_related("exame")
+                if c.exame
+            },
+            key=lambda exame: ((exame.titulo or "").casefold(), exame.titulo or "", exame.pk),
+        )
 
         selecionada_edicao = f"{configuracao.ano}.{configuracao.semestre}"
         edicao = request.GET.get("edicao", None)
@@ -1326,7 +1329,41 @@ def banca_avaliar(request, slug, documento_id=None):
         if destaque is not None:
             destaque = True if destaque == "True" else False
 
-        atrasado, sem_documentos = bloqueia_avaliacao(documentos, evento)
+        _, sem_documentos = bloqueia_avaliacao(documentos, evento)
+
+        atrasado_g = False
+        if exame.sigla == "BI":
+            documento_grupo = Documento.objects.filter(tipo_documento__nome="Relatório Intermediário de Grupo", projeto=projeto).order_by("data").last()
+            if not documento_grupo or documento_grupo.atrasado():
+                atrasado_g = True
+                if documento_grupo and documento_grupo.atraso_tolerado:
+                    atrasado_g = False
+        elif exame.sigla == "BF":
+            documento_grupo = Documento.objects.filter(tipo_documento__nome="Relatório Final de Grupo", projeto=projeto).order_by("data").last()
+            if not documento_grupo or documento_grupo.atrasado():
+                atrasado_g = True
+                if documento_grupo and documento_grupo.atraso_tolerado:
+                    atrasado_g = False
+
+        atrasado_i = {}
+        for alocacao in alocacoes:
+            if exame.sigla == "BI":
+                documento_individual = Documento.objects.filter(tipo_documento__nome="Relatório Intermediário Individual", projeto=projeto, usuario=alocacao.aluno.user).order_by("data").last()
+                if not documento_individual or documento_individual.atrasado():
+                    atrasado_i[alocacao.id] = True
+                    if documento_individual and documento_individual.atraso_tolerado:
+                        atrasado_i[alocacao.id] = False
+                else:
+                    atrasado_i[alocacao.id] = False
+            elif exame.sigla == "BF":
+                documento_individual = Documento.objects.filter(tipo_documento__nome="Relatório Final Individual", projeto=projeto, usuario=alocacao.aluno.user).order_by("data").last()
+                if not documento_individual or documento_individual.atrasado():
+                    atrasado_i[alocacao.id] = True
+                    if documento_individual and documento_individual.atraso_tolerado:
+                        atrasado_i[alocacao.id] = False
+                else:
+                    atrasado_i[alocacao.id] = False
+            
 
         entender = request.GET.get("entender", None)
         idear = request.GET.get("idear", None)
@@ -1382,7 +1419,8 @@ def banca_avaliar(request, slug, documento_id=None):
             "testar": testar,
             "implementar": implementar,
             "evento": evento,
-            "atrasado": atrasado,
+            "atrasado_g": atrasado_g,  # Só grupo
+            "atrasado_i": atrasado_i,  # Por alocação
             "sem_documentos": sem_documentos,
             "rubric_allowed_grades": rubric_allowed_grades,
         }
