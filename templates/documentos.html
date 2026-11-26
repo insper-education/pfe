@@ -60,7 +60,7 @@
       
       {% if user and user.eh_admin %}
         <div style="white-space: nowrap;">
-          <a class="open-modal" data-url="{% url 'edita_documento' documento.id %}" data-toggle="tooltip" data-html="true" animation="true" title="editar"
+          <a class="open-modal esconder" data-url="{% url 'edita_documento' documento.id %}" data-toggle="tooltip" data-html="true" animation="true" title="editar"
           >&nbsp;<i class="fas fa-pencil-alt" style="font-size: 0.7em;"></i></a>
 
           {% if documento.tipo_documento.sigla == "RFR" %}

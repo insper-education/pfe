@@ -16,7 +16,6 @@
 
   {% if user.eh_admin %}
     {% include "botao_adiciona.html" with url_add="adiciona_documento_tipo" url_param=tipo.sigla txt_pt="Cadastrar Nova Entrada" txt_en="Register New Entry" open_modal=True %}
-    {% include "base-modal.html" %}
   {% endif %}
   
   <div id="atualizar">
@@ -29,7 +28,13 @@
                 {% if relatorio.data %}{{relatorio.data|date:"d/m/Y"}}{% endif %}
                 {% if relatorio.confidencial %}<span class="badge badge-danger">{% lng "CONFIDENCIAL" "CONFIDENTIAL" %}</span>{% endif %}
               </td>
-              <td>{% if relatorio.anotacao %}{{relatorio.anotacao}}{% endif %}</td>
+              <td>
+                {% if relatorio.anotacao %}{{relatorio.anotacao}}{% endif %}
+                {% if user and user.eh_admin %}
+                  <a class="open-modal esconder" data-url="{% url 'edita_documento' relatorio.id %}" data-toggle="tooltip" data-html="true" animation="true" title="editar"
+                  >&nbsp;<i class="fas fa-pencil-alt" style="font-size: 0.7em;"></i></a>
+                {% endif %}
+              </td>
               <td>
                 {% if relatorio.projeto %}
                   {% if user.eh_prof_a %}<a href="{% url 'projeto_infos' relatorio.projeto.id %}">{% endif %}
@@ -86,4 +91,8 @@
 
   {% include "edicoes_ajax.html" with tabela="Materias" %}
   
+  {% if user.eh_admin %}
+    {% include "base-modal.html" %}
+  {% endif %}
+
 {% endblock %}
