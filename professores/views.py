@@ -22,7 +22,7 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.db import transaction
 from django.db.models import Case, When, Value, F, Func, FloatField, Max, Prefetch, Q
 from django.db.models.functions import Lower
-from django.http import HttpResponse, HttpResponseNotFound, JsonResponse, HttpResponseForbidden
+from django.http import Http404, HttpResponse, HttpResponseNotFound, JsonResponse, HttpResponseForbidden
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.utils import timezone
@@ -1802,10 +1802,15 @@ def dinamicas_lista(request, edicao=None):
             }
         
         if edicao:
+            edicao = edicao.strip()
             if '.' in edicao:
                 context["selecionada_edicao"] = edicao
-            elif edicao != "proximas" and edicao != "todas":
+            elif edicao in ("proximas", "todas"):
+                pass
+            elif edicao.isdigit():
                 context["projeto"] = get_object_or_404(Projeto, id=edicao)
+            else:
+                raise Http404("Edição inválida.")
         
     # Usando para #atualizar a página raiz no edit da banca
     request.session["root_page_url"] = request.build_absolute_uri()
@@ -1887,10 +1892,15 @@ def bancas_lista(request, edicao=None):
         context["edicoes"] = get_edicoes(Projeto)[0]
 
         if edicao:
+            edicao = edicao.strip()
             if '.' in edicao:
                 context["selecionada_edicao"] = edicao
-            elif edicao != "proximas" and edicao != "todas":
+            elif edicao in ("proximas", "todas"):
+                pass
+            elif edicao.isdigit():
                 context["projeto"] = get_object_or_404(Projeto, id=edicao)
+            else:
+                raise Http404("Edição inválida.")
 
     return render(request, "professores/bancas_lista.html", context)
 
