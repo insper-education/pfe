@@ -1094,6 +1094,8 @@ def banca_avaliar(request, slug, documento_id=None):
     if request.method == "POST":
         if "avaliador" in request.POST:
 
+            # Serializa reenvios concorrentes da mesma banca antes de arquivar e recriar notas.
+            Projeto.objects.select_for_update().get(pk=projeto.pk)
             avaliador = get_object_or_404(PFEUser, pk=int(request.POST["avaliador"]))
             # Identifica que uma avaliação/observação já foi realizada anteriormente
             avaliacoes_anteriores = Avaliacao2.objects.filter(projeto=projeto, avaliador=avaliador, exame=exame)
@@ -1216,9 +1218,15 @@ def banca_avaliar(request, slug, documento_id=None):
                             if idx_alocacao >= objetivos_individuais_possiveis:
                                 continue
                             pk_objetivo, conceito = request.POST[aval].split('.')
+                            objetivo_individual = get_object_or_404(ObjetivosDeAprendizagem, pk=pk_objetivo)
+                            avaliacoes_anteriores_individuais = Avaliacao2.objects.filter(
+                                projeto=projeto, exame=exame_individual, avaliador=avaliador,
+                                alocacao=alocacao, objetivo=objetivo_individual,
+                            )
+                            move_avaliacoes(avaliacoes_anteriores_individuais)
                             julgamentos_individuais[alocacao][idx_alocacao] = Avaliacao2.objects.create(projeto=projeto, exame=exame_individual, avaliador=avaliador)
                             julgamentos_individuais[alocacao][idx_alocacao].alocacao = alocacao
-                            julgamentos_individuais[alocacao][idx_alocacao].objetivo = get_object_or_404(ObjetivosDeAprendizagem, pk=pk_objetivo)
+                            julgamentos_individuais[alocacao][idx_alocacao].objetivo = objetivo_individual
 
                             if conceito == "NA":
                                 julgamentos_individuais[alocacao][idx_alocacao].na = True
